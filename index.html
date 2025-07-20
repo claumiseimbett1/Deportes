@@ -382,14 +382,10 @@
             opacity: 0.7;
         }
 
-        .loading-row td, .error-row td {
+        .loading-row {
             text-align: center;
-            padding: 40px;
             color: #a5a5a5;
-        }
-        
-        .error-row td {
-            color: #f44336;
+            font-style: italic;
         }
 
         /* Sponsors Section */
@@ -682,10 +678,10 @@
                     <button class="tab-button" onclick="openTab(event, '800m-libre-masculino')">800M Libre Masculino</button>
                 </div>
 
-                <!-- Pestaña 800M Libre Femenino -->
+                <!-- Pestaña 800M Libre -->
                 <div id="800m-libre-femenino" class="tab-content active">
                     <h3>800M Libre Femenino - Resultados Oficiales</h3>
-                    <table class="results-table" id="resultsTableFemenino">
+                    <table class="results-table" id="resultsTable">
                         <thead>
                             <tr>
                                 <th>Pos.</th>
@@ -699,7 +695,9 @@
                         </thead>
                         <tbody>
                             <tr class="loading-row">
-                                <td colspan="7">🔄 Cargando datos...</td>
+                                <td colspan="7" style="text-align: center; padding: 40px; color: #a5a5a5;">
+                                    🔄 Cargando datos desde Google Sheets...
+                                </td>
                             </tr>
                         </tbody>
                     </table>
@@ -708,11 +706,11 @@
                 <!-- Pestaña 800M Libre Masculino -->
                 <div id="800m-libre-masculino" class="tab-content">
                     <h3>800M Libre Masculino - Resultados Oficiales</h3>
-                    <table class="results-table" id="resultsTableMasculino">
+                    <table class="results-table" id="resultsTable">
                         <thead>
                             <tr>
                                 <th>Pos.</th>
-                                <th>Nadador</th>
+                                <th>Nadadora</th>
                                 <th>Equipo</th>
                                 <th>Edad</th>
                                 <th>Categoría</th>
@@ -722,7 +720,9 @@
                         </thead>
                         <tbody>
                             <tr class="loading-row">
-                                <td colspan="7">🔄 Cargando datos...</td>
+                                <td colspan="7" style="text-align: center; padding: 40px; color: #a5a5a5;">
+                                    🔄 Cargando datos desde Google Sheets...
+                                </td>
                             </tr>
                         </tbody>
                     </table>
@@ -799,58 +799,41 @@
     </footer>
 
     <script>
-        // --- CONFIGURACIÓN ---
+        // Variables globales
+        let lastUpdateTime = null;
+        let loadAttempts = 0;
+        const MAX_ATTEMPTS = 3;
+
+        // Configuración
         const CONFIG = {
+            API_KEY: 'AIzaSyDcUEGyS6grOV_p8Z6d9WofiFNMYQBblIk',
             SHEET_ID: '1AKzRm64pn_1JaL4n0Tx3xupfDdkU91Oc-nN2kf7z4PE',
-            CATEGORIES: [
-                {
-                    sheetName: '800M LIBRE FEMENINO',
-                    tableId: 'resultsTableFemenino',
-                    gid: '0' // GID de la hoja femenina
-                },
-                {
-                    sheetName: '800M LIBRE MASCULINO',
-                    tableId: 'resultsTableMasculino',
-                    gid: '1442152758' // GID de la hoja masculina
-                }
-            ],
-            RELOAD_INTERVAL: 30000, // 30 segundos
+            SHEET_NAME: 'RECORD MASTER',
+            USE_API_KEY: true
         };
 
-        // --- VARIABLES GLOBALES ---
-        let lastUpdateTime = null;
-
-        // --- ELEMENTOS DEL DOM ---
+        // Elementos DOM
         const statusIndicator = document.getElementById('statusIndicator');
         const lastUpdateElement = document.getElementById('lastUpdateTime');
+        const resultsTable = document.getElementById('resultsTable');
+        const recordsTable = document.getElementById('recordsTable');
 
-        // --- FUNCIONES PRINCIPALES ---
-
-        /**
-         * Actualiza el indicador de estado global.
-         * @param {string} type - 'loading', 'success', o 'error'
-         * @param {string} message - El mensaje a mostrar.
-         */
+        // Función para actualizar el indicador de estado
         function updateStatus(type, message) {
-            if (!statusIndicator) return;
             statusIndicator.className = `status-indicator status-${type}`;
             statusIndicator.textContent = message;
-            statusIndicator.style.display = 'inline-block';
-            statusIndicator.style.opacity = '1';
-
+            
             if (type === 'success' || type === 'error') {
                 setTimeout(() => {
                     statusIndicator.style.opacity = '0';
                     setTimeout(() => {
                         statusIndicator.style.display = 'none';
                     }, 300);
-                }, 5000);
+                }, 3000);
             }
         }
-        
-        /**
-         * Actualiza la hora de la última carga de datos.
-         */
+
+        // Función para actualizar tiempo de última actualización
         function updateLastUpdateTime() {
             const now = new Date();
             const timeString = now.toLocaleTimeString('es-CO', {
@@ -859,187 +842,273 @@
                 second: '2-digit',
                 timeZone: 'America/Bogota'
             });
-            if(lastUpdateElement) lastUpdateElement.textContent = timeString;
+            lastUpdateElement.textContent = timeString;
             lastUpdateTime = now;
         }
 
-        /**
-         * Parsea texto en formato CSV a un array de arrays.
-         * @param {string} csvText - El texto CSV.
-         * @returns {Array<Array<string>>} - Los datos parseados.
-         */
+        // Parser CSV mejorado
         function parseCSV(csvText) {
-            return csvText.split('\n').map(row => row.split(',').map(cell => cell.replace(/"/g, '').trim()));
+            const rows = [];
+            const lines = csvText.split('\n');
+            
+            for (let line of lines) {
+                if (!line.trim()) continue;
+                
+                const cols = [];
+                let currentCol = '';
+                let inQuotes = false;
+                
+                for (let i = 0; i < line.length; i++) {
+                    const char = line[i];
+                    const nextChar = line[i + 1];
+                    
+                    if (char === '"') {
+                        if (inQuotes && nextChar === '"') {
+                            currentCol += '"';
+                            i++;
+                        } else {
+                            inQuotes = !inQuotes;
+                        }
+                    } else if (char === ',' && !inQuotes) {
+                        cols.push(currentCol.trim());
+                        currentCol = '';
+                    } else {
+                        currentCol += char;
+                    }
+                }
+                
+                cols.push(currentCol.trim());
+                
+                if (cols.some(cell => cell && cell.trim() !== '')) {
+                    rows.push(cols);
+                }
+            }
+            
+            return rows;
         }
 
-        /**
-         * Carga los datos de una hoja de cálculo específica de Google Sheets.
-         * @param {object} category - El objeto de configuración de la categoría.
-         * @returns {Promise<Array<Array<string>>>} - Una promesa que resuelve con los datos de la hoja.
-         */
-        async function fetchSheetData(category) {
-            const { sheetName, gid } = category;
-            const csvUrl = `https://docs.google.com/spreadsheets/d/${CONFIG.SHEET_ID}/export?format=csv&gid=${gid}&t=${new Date().getTime()}`;
+        // Método principal para cargar datos desde Google Sheets
+        async function loadSheetData() {
+            loadAttempts++;
+            updateStatus('loading', '🔄 Cargando resultados...');
             
             try {
-                const response = await fetch(csvUrl);
-                if (!response.ok) {
-                    throw new Error(`Error de red: ${response.status}`);
+                let data = null;
+                
+                // Intentar con API Key primero
+                if (CONFIG.USE_API_KEY) {
+                    const ranges = [
+                        `${CONFIG.SHEET_NAME}!A:Z`,
+                        `${CONFIG.SHEET_NAME}!A1:Z1000`,
+                        'A:Z',
+                        'A1:Z1000'
+                    ];
+                    
+                    for (const range of ranges) {
+                        try {
+                            const url = `https://sheets.googleapis.com/v4/spreadsheets/${CONFIG.SHEET_ID}/values/${range}?key=${CONFIG.API_KEY}`;
+                            console.log(`🔍 Probando rango: ${range}`);
+                            
+                            const response = await fetch(url, {
+                                method: 'GET',
+                                headers: {
+                                    'Accept': 'application/json',
+                                    'Cache-Control': 'no-cache'
+                                }
+                            });
+                            
+                            if (response.ok) {
+                                const responseData = await response.json();
+                                if (responseData.values && responseData.values.length > 0) {
+                                    data = responseData.values;
+                                    console.log(`✅ Datos encontrados: ${data.length} filas`);
+                                    break;
+                                }
+                            }
+                        } catch (error) {
+                            console.log(`❌ Error en rango ${range}:`, error.message);
+                        }
+                    }
                 }
-                const text = await response.text();
-                if (text && text.trim().toLowerCase().includes('<!doctype html')) {
-                    throw new Error('La hoja de cálculo no es pública.');
+                
+                // Si no hay datos con API Key, intentar CSV
+                if (!data) {
+                    console.log('📄 Intentando método CSV...');
+                    const csvUrls = [
+                        `https://docs.google.com/spreadsheets/d/${CONFIG.SHEET_ID}/export?format=csv&gid=0`,
+                        `https://docs.google.com/spreadsheets/d/${CONFIG.SHEET_ID}/export?format=csv`
+                    ];
+                    
+                    for (const url of csvUrls) {
+                        try {
+                            const response = await fetch(url);
+                            if (response.ok) {
+                                const text = await response.text();
+                                if (text && !text.includes('<!DOCTYPE')) {
+                                    data = parseCSV(text);
+                                    console.log(`✅ CSV parseado: ${data.length} filas`);
+                                    break;
+                                }
+                            }
+                        } catch (error) {
+                            console.log('❌ Error CSV:', error.message);
+                        }
+                    }
                 }
-                return parseCSV(text);
-
+                
+                if (data && data.length > 0) {
+                    updateResultsTable(data);
+                    updateLastUpdateTime();
+                    updateStatus('success', '✅ Datos cargados');
+                    loadAttempts = 0;
+                } else {
+                    throw new Error('No se pudieron obtener datos');
+                }
+                
             } catch (error) {
-                 console.error(`❌ Error al cargar los datos para "${sheetName}":`, error);
-                 throw error;
+                console.error('❌ Error cargando datos:', error);
+                
+                if (loadAttempts < MAX_ATTEMPTS) {
+                    updateStatus('loading', `🔄 Reintentando... (${loadAttempts}/${MAX_ATTEMPTS})`);
+                    setTimeout(() => loadSheetData(), 5000);
+                } else {
+                    updateStatus('error', '❌ Error cargando datos');
+                    showErrorFallback();
+                }
             }
         }
 
-        /**
-         * Renderiza los datos en la tabla HTML correspondiente.
-         * @param {Array<Array<string>>} data - Los datos de los resultados.
-         * @param {string} tableId - El ID de la tabla a actualizar.
-         */
-        function renderResultsTable(data, tableId) {
-            const table = document.getElementById(tableId);
-            if (!table) return;
-
-            const tbody = table.querySelector('tbody');
-            let htmlContent = '';
-            let currentCategoryGroup = '';
+        // Función para actualizar la tabla de resultados
+        function updateResultsTable(data) {
+            const tbody = resultsTable.querySelector('tbody');
+            if (!tbody) return;
             
-            const dataRows = data.slice(1); // Omitir encabezados del CSV
-
-            dataRows.forEach(row => {
-                if (!row || row.length === 0 || row.every(cell => !cell.trim())) return;
+            let htmlContent = '';
+            let currentCategory = '';
+            
+            // Procesar datos
+            for (let i = 0; i < data.length; i++) {
+                const row = data[i];
+                if (!row || row.length === 0) continue;
                 
-                if (row.length === 1 && row[0]) {
-                     currentCategoryGroup = row[0];
-                     htmlContent += `<tr class="category-header"><td colspan="7">${currentCategoryGroup}</td></tr>`;
-                } 
-                else if (row.length > 1) {
-                    const [pos, nadador, equipo, edad, categoria, tiempo, puntos] = row;
+                // Detectar si es una categoría o un resultado
+                if (row.length === 1 || (row[0] && !row[1])) {
+                    // Es una categoría
+                    currentCategory = row[0];
+                    htmlContent += `
+                        <tr class="category-header">
+                            <td colspan="7">${currentCategory}</td>
+                        </tr>`;
+                } else if (row.length >= 6) {
+                    // Es un resultado
+                    const [pos, nadadora, equipo, edad, categoria, tiempo, puntos] = row;
                     
+                    // Generar medallas para las posiciones
                     let displayPos = pos;
                     if (pos === '1') displayPos = '🥇 1°';
                     else if (pos === '2') displayPos = '🥈 2°';
                     else if (pos === '3') displayPos = '🥉 3°';
-                    else if (pos && !isNaN(pos) && pos.trim()) displayPos = `${pos}°`;
+                    else if (pos && pos !== '-') displayPos = `${pos}°`;
                     
-                    const nadadorLabel = tableId.includes('Femenino') ? 'Nadadora' : 'Nadador';
-
                     htmlContent += `
                         <tr>
                             <td data-label="Pos." class="rank">${displayPos || '-'}</td>
-                            <td data-label="${nadadorLabel}">${nadador || '-'}</td>
+                            <td data-label="Nadadora">${nadadora || '-'}</td>
                             <td data-label="Equipo">${equipo || '-'}</td>
                             <td data-label="Edad">${edad || '-'}</td>
-                            <td data-label="Categoría">${categoria || currentCategoryGroup}</td>
+                            <td data-label="Categoría">${categoria || currentCategory}</td>
                             <td data-label="Tiempo Final" class="time">${tiempo || '-'}</td>
                             <td data-label="Puntos" class="points">${puntos || '-'}</td>
                         </tr>`;
                 }
-            });
+            }
             
-            tbody.innerHTML = htmlContent || '<tr class="error-row"><td colspan="7">No hay datos de resultados para mostrar.</td></tr>';
+            tbody.innerHTML = htmlContent || '<tr><td colspan="7" style="text-align: center;">No hay datos disponibles</td></tr>';
+            resultsTable.classList.remove('loading');
         }
 
-        /**
-         * Muestra un mensaje de error en una tabla específica.
-         * @param {string} tableId - El ID de la tabla.
-         * @param {string} sheetName - El nombre de la hoja para el mensaje.
-         */
-        function renderErrorFallback(tableId, sheetName) {
-            const table = document.getElementById(tableId);
-            if (!table) return;
-            const tbody = table.querySelector('tbody');
+        // Función para mostrar error con fallback
+        function showErrorFallback() {
+            const tbody = resultsTable.querySelector('tbody');
             tbody.innerHTML = `
-                <tr class="error-row">
-                    <td colspan="7" style="padding: 40px 20px;">
-                        <strong>❌ No se pudieron cargar los datos para ${sheetName}.</strong><br>
+                <tr>
+                    <td colspan="7" style="text-align: center; padding: 40px; color: #f44336;">
+                        ❌ No se pudieron cargar los datos desde Google Sheets<br>
                         <small style="color: #a5a5a5; margin-top: 10px; display: block;">
-                            Por favor, verifica que la hoja de Google Sheet sea pública ("Cualquier persona con el enlace").
+                            Verifica que el Google Sheet sea público o intenta recargar la página
                         </small>
+                        <button onclick="retryLoad()" style="margin-top: 15px; padding: 10px 20px; background: #00ADEF; color: white; border: none; border-radius: 5px; cursor: pointer;">
+                            🔄 Reintentar
+                        </button>
                     </td>
                 </tr>`;
         }
-        
-        /**
-         * Orquesta la carga de datos para todas las categorías configuradas.
-         */
-        async function loadAllData() {
-            updateStatus('loading', '🔄 Actualizando resultados...');
-            
-            const promises = CONFIG.CATEGORIES.map(category => 
-                fetchSheetData(category)
-                    .then(data => ({ status: 'fulfilled', data, category }))
-                    .catch(error => ({ status: 'rejected', error, category }))
-            );
 
-            const results = await Promise.all(promises);
-            
-            let allSucceeded = true;
-            results.forEach(result => {
-                if (result.status === 'fulfilled') {
-                    renderResultsTable(result.data, result.category.tableId);
-                } else {
-                    allSucceeded = false;
-                    renderErrorFallback(result.category.tableId, result.category.sheetName);
-                }
-            });
-
-            if (allSucceeded) {
-                updateStatus('success', '✅ Resultados actualizados');
-                updateLastUpdateTime();
-            } else {
-                updateStatus('error', '⚠️ Error al cargar algunos datos');
-            }
+        // Función para reintentar carga
+        function retryLoad() {
+            loadAttempts = 0;
+            loadSheetData();
         }
 
-        /**
-         * Maneja el cambio de pestañas.
-         */
+        // Funciones para tabs
         function openTab(evt, tabName) {
-            const tabcontent = document.getElementsByClassName("tab-content");
-            for (let i = 0; i < tabcontent.length; i++) {
+            var i, tabcontent, tabbuttons;
+            
+            tabcontent = document.getElementsByClassName("tab-content");
+            for (i = 0; i < tabcontent.length; i++) {
                 tabcontent[i].classList.remove("active");
             }
             
-            const tabbuttons = document.getElementsByClassName("tab-button");
-            for (let i = 0; i < tabbuttons.length; i++) {
+            tabbuttons = document.getElementsByClassName("tab-button");
+            for (i = 0; i < tabbuttons.length; i++) {
                 tabbuttons[i].classList.remove("active");
             }
             
-            const tabElement = document.getElementById(tabName);
-            if(tabElement) tabElement.classList.add("active");
-            if(evt.currentTarget) evt.currentTarget.classList.add("active");
+            document.getElementById(tabName).classList.add("active");
+            evt.currentTarget.classList.add("active");
         }
 
-        // --- INICIALIZACIÓN Y EVENTOS ---
-        
-        document.addEventListener('DOMContentLoaded', () => {
-            console.log('🚀 Página cargada. Iniciando sistema de actualización.');
-            loadAllData();
-            setInterval(loadAllData, CONFIG.RELOAD_INTERVAL);
+        // Función para recargar datos automáticamente
+        function startAutoReload() {
+            // Cargar datos inicialmente
+            loadSheetData();
+            
+            // Recargar cada 30 segundos
+            setInterval(() => {
+                console.log('🔄 Recarga automática...');
+                loadSheetData();
+            }, 30000);
+        }
+
+        // Event listeners
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🚀 Página cargada, iniciando sistema de actualización automática...');
+            console.log('📋 Google Sheet ID:', CONFIG.SHEET_ID);
+            console.log('🔑 API Key configurada:', CONFIG.API_KEY ? 'Sí' : 'No');
+            
+            startAutoReload();
         });
 
-        window.addEventListener('focus', () => {
+        // Recargar cuando la ventana vuelva al foco
+        window.addEventListener('focus', function() {
             if (lastUpdateTime && (Date.now() - lastUpdateTime.getTime()) > 60000) {
                 console.log('👁️ Ventana enfocada, recargando datos...');
-                loadAllData();
+                loadSheetData();
             }
         });
-        
-        window.addEventListener('online', () => {
+
+        // Recargar cuando se restaure la conexión a internet
+        window.addEventListener('online', function() {
             console.log('🌐 Conexión restaurada, recargando datos...');
-            loadAllData();
+            loadAttempts = 0;
+            loadSheetData();
         });
 
-        window.addEventListener('offline', () => updateStatus('error', '📡 Sin conexión a internet'));
-
+        // Mostrar estado offline
+        window.addEventListener('offline', function() {
+            updateStatus('error', '📡 Sin conexión a internet');
+        });
     </script>
 </body>
 </html>
+                
