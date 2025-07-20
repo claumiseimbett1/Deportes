@@ -980,32 +980,59 @@
 
         // Función para actualizar la tabla de resultados
         function updateResultsTable(data) {
+            console.log('📊 Datos totales recibidos:', data.length, 'filas');
+            console.log('🔍 Primeras 5 filas:', data.slice(0, 5));
+            
             // Separar datos por género
             const dataFemenino = [];
             const dataMasculino = [];
             let currentSection = '';
+            let isProcessingData = false;
             
             // Identificar secciones y separar datos
             for (let i = 0; i < data.length; i++) {
                 const row = data[i];
                 if (!row || row.length === 0) continue;
                 
-                // Detectar sección principal
-                const firstCell = row[0] ? row[0].toString().toUpperCase() : '';
+                // Convertir la fila a string para debugging
+                console.log(`Fila ${i}:`, row);
                 
-                if (firstCell.includes('FEMENINO')) {
+                // Detectar sección principal - buscar en toda la fila
+                const rowText = row.join(' ').toUpperCase();
+                
+                if (rowText.includes('FEMENINO') || rowText.includes('FEMENIL') || rowText.includes('MUJERES')) {
                     currentSection = 'FEMENINO';
+                    isProcessingData = true;
+                    console.log('✅ Sección FEMENINO detectada en fila', i);
                     continue;
-                } else if (firstCell.includes('MASCULINO')) {
+                } else if (rowText.includes('MASCULINO') || rowText.includes('VARONES') || rowText.includes('HOMBRES')) {
                     currentSection = 'MASCULINO';
+                    isProcessingData = true;
+                    console.log('✅ Sección MASCULINO detectada en fila', i);
                     continue;
                 }
                 
-                // Agregar filas según la sección actual
-                if (currentSection === 'FEMENINO') {
-                    dataFemenino.push(row);
-                } else if (currentSection === 'MASCULINO') {
-                    dataMasculino.push(row);
+                // Si no hemos encontrado ninguna sección todavía, intentar detectar por contenido
+                if (!currentSection && row.length >= 6) {
+                    // Si parece ser una fila de datos, asumimos que es femenino (primera sección)
+                    currentSection = 'FEMENINO';
+                    isProcessingData = true;
+                }
+                
+                // Si estamos procesando datos, agregar filas según la sección actual
+                if (isProcessingData && currentSection) {
+                    // Verificar si es una fila de encabezados
+                    const firstCell = row[0] ? row[0].toString().toLowerCase() : '';
+                    if (firstCell.includes('pos') || firstCell.includes('nadador') || firstCell.includes('equipo')) {
+                        console.log('📋 Fila de encabezados detectada, saltando...');
+                        continue;
+                    }
+                    
+                    if (currentSection === 'FEMENINO') {
+                        dataFemenino.push(row);
+                    } else if (currentSection === 'MASCULINO') {
+                        dataMasculino.push(row);
+                    }
                 }
             }
             
@@ -1013,6 +1040,48 @@
                 femenino: dataFemenino.length,
                 masculino: dataMasculino.length
             });
+            
+            // Si no se encontraron secciones específicas, intentar dividir por la mitad
+            if (dataFemenino.length === 0 && dataMasculino.length === 0) {
+                console.log('⚠️ No se encontraron marcadores de género, intentando división automática...');
+                
+                // Filtrar solo filas con datos válidos
+                const validData = data.filter(row => 
+                    row && row.length >= 6 && 
+                    row[0] && row[0].toString().trim() !== '' &&
+                    !row[0].toString().toLowerCase().includes('pos') &&
+                    !row[0].toString().toLowerCase().includes('nadador')
+                );
+                
+                // Buscar un separador natural (fila vacía o cambio de patrón)
+                let splitIndex = -1;
+                for (let i = 1; i < validData.length - 1; i++) {
+                    // Buscar una brecha o cambio en los datos
+                    if (!validData[i][1] || validData[i][1].toString().trim() === '') {
+                        splitIndex = i;
+                        break;
+                    }
+                }
+                
+                if (splitIndex === -1) {
+                    // Si no hay separador, dividir por la mitad
+                    splitIndex = Math.floor(validData.length / 2);
+                }
+                
+                // Asignar primera mitad a femenino, segunda a masculino
+                for (let i = 0; i < validData.length; i++) {
+                    if (i < splitIndex) {
+                        dataFemenino.push(validData[i]);
+                    } else {
+                        dataMasculino.push(validData[i]);
+                    }
+                }
+                
+                console.log('📊 División automática:', {
+                    femenino: dataFemenino.length,
+                    masculino: dataMasculino.length
+                });
+            }
             
             // Actualizar tabla femenina
             updateTableContent(resultsTableFem, dataFemenino, 'Nadadora');
