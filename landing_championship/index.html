@@ -1,0 +1,1089 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IV Championship Master - AquaTEN</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background-color: #ffffff;
+            color: #0b1039;
+            line-height: 1.6;
+        }
+
+        /* Header */
+        .header {
+            background-color: #ffffff;
+            box-shadow: 0 2px 15px rgba(11, 16, 57, 0.1);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 15px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo-box {
+            height: 60px;
+            display: flex;
+            align-items: center;
+        }
+
+        .logo-box img {
+            height: 100%;
+            width: auto;
+        }
+
+        /* Video Hero Section */
+        .video-hero {
+            margin-top: 90px;
+            position: relative;
+            width: 100%;
+            height: 70vh;
+            min-height: 500px;
+            overflow: hidden;
+            background-color: #0b1039;
+        }
+
+        .video-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        .video-container video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border: none;
+        }
+
+        .video-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(11, 16, 57, 0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .hero-content {
+            text-align: center;
+            z-index: 1;
+            padding: 0 20px;
+        }
+
+        .hero-content h1 {
+            font-size: 4em;
+            color: #ffffff;
+            margin-bottom: 20px;
+            font-weight: 700;
+            letter-spacing: -1px;
+        }
+
+        .hero-content .subtitle {
+            font-size: 1.5em;
+            color: #f0f6ff;
+            font-weight: 300;
+        }
+
+        /* Info & Contact Section */
+        .info-section, .contact-section {
+            padding: 100px 20px;
+            background-color: #ffffff;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 2.8em;
+            color: #0b1039;
+            margin-bottom: 60px;
+            font-weight: 700;
+        }
+
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 40px;
+            margin-bottom: 60px;
+        }
+        
+        .contact-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 40px;
+            justify-content: center;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .info-card, .contact-card-link {
+            background: #ffffff;
+            border: 1px solid #f0f6ff;
+            border-radius: 20px;
+            padding: 50px 30px;
+            text-align: center;
+            box-shadow: 0 5px 25px rgba(11, 16, 57, 0.08);
+            transition: all 0.3s ease;
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .info-card:hover, .contact-card-link:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 40px rgba(11, 16, 57, 0.15);
+            border-color: #00ADEF;
+        }
+
+        /* Iconos SVG minimalistas */
+        .sticker-icon {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 25px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .sticker-icon svg {
+            width: 100%;
+            height: 100%;
+        }
+
+        .info-card h3, .contact-card-link h3 {
+            color: #0b1039;
+            font-size: 1.8em;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        .info-card p, .contact-card-link p {
+            color: #a5a5a5;
+            font-size: 1.1em;
+            line-height: 1.8;
+        }
+
+        /* Results Section */
+        .results-section {
+            padding: 100px 20px;
+            background: #f0f6ff;
+        }
+
+        .results-container {
+            background: #ffffff;
+            border-radius: 20px;
+            padding: 50px;
+            box-shadow: 0 10px 40px rgba(11, 16, 57, 0.1);
+            border: 2px solid #f0f6ff;
+        }
+
+        /* Pestañas de Resultados */
+        .tabs {
+            display: flex;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #f0f6ff;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .tab-button {
+            padding: 15px 30px;
+            cursor: pointer;
+            background-color: transparent;
+            border: none;
+            border-bottom: 3px solid transparent;
+            color: #0b1039;
+            font-size: 1.1em;
+            transition: all 0.3s ease;
+            margin: 0 10px;
+            border-radius: 10px 10px 0 0;
+            font-weight: 500;
+        }
+
+        .tab-button:hover {
+            color: #00ADEF;
+            background-color: rgba(0, 173, 239, 0.05);
+        }
+
+        .tab-button.active {
+            color: #00ADEF;
+            border-bottom: 3px solid #00ADEF;
+            background-color: #f0f6ff;
+            font-weight: 600;
+        }
+
+        .tab-content {
+            display: none;
+            padding: 30px 0;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .tab-content h3 {
+            color: #0b1039;
+            margin-bottom: 30px;
+            text-align: center;
+            font-size: 1.8em;
+            font-weight: 600;
+        }
+
+        /* Tabla de Resultados */
+        .results-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background-color: #ffffff;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 5px 25px rgba(11, 16, 57, 0.08);
+        }
+
+        .results-table th, .results-table td {
+            padding: 15px 20px;
+            text-align: left;
+            border-bottom: 1px solid #f0f6ff;
+        }
+
+        .results-table th {
+            background-color: #0b1039;
+            color: #ffffff;
+            font-weight: 600;
+            font-size: 1em;
+        }
+
+        .results-table tr:nth-child(even) td {
+            background-color: #fafcff;
+        }
+
+        .results-table tr:hover td {
+            background-color: #f0f6ff;
+            transition: background-color 0.3s ease;
+        }
+
+        .results-table .rank {
+            font-weight: bold;
+            color: #0b1039;
+            text-align: center;
+        }
+
+        .results-table .time {
+            font-family: 'Courier New', Courier, monospace;
+            font-weight: bold;
+            color: #0b1039;
+            text-align: center;
+        }
+
+        .results-table .points {
+            font-weight: bold;
+            color: #00ADEF;
+            text-align: center;
+        }
+
+        /* Categoría headers */
+        .category-header {
+            background: linear-gradient(135deg, #0b1039 0%, #00ADEF 100%) !important;
+            color: #ffffff !important;
+            text-align: center;
+            font-size: 1.1em;
+            font-weight: bold;
+        }
+
+        .category-header td {
+            border-bottom: 2px solid #00ADEF !important;
+        }
+
+        /* Sponsors Section */
+        .sponsors-section {
+            padding: 100px 20px;
+            background: #ffffff;
+        }
+
+        .sponsors-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 40px;
+            margin-top: 50px;
+        }
+
+        .sponsor-card {
+            background: #ffffff;
+            border: 2px solid #f0f6ff;
+            border-radius: 20px;
+            padding: 40px;
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            text-decoration: none;
+            display: block;
+        }
+
+        .sponsor-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(11, 16, 57, 0.15);
+            border-color: #00ADEF;
+        }
+
+        .sponsor-logo {
+            height: 80px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .sponsor-logo img {
+            max-height: 100%;
+            max-width: 100%;
+            object-fit: contain;
+            filter: grayscale(100%);
+            transition: filter 0.3s ease;
+        }
+
+        .sponsor-card:hover .sponsor-logo img {
+            filter: grayscale(0%);
+        }
+
+        .sponsor-name {
+            font-size: 1.2em;
+            color: #0b1039;
+            font-weight: 600;
+        }
+
+        /* CTA Section */
+        .cta-section {
+            padding: 100px 20px;
+            background: linear-gradient(135deg, #0b1039 0%, #0b5079 100%);
+            text-align: center;
+            position: relative;
+        }
+
+        .cta-section h2 {
+            color: #ffffff;
+            font-size: 3em;
+            margin-bottom: 25px;
+            font-weight: 700;
+        }
+
+        .cta-section p {
+            color: #f0f6ff;
+            font-size: 1.3em;
+            margin-bottom: 40px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .cta-button {
+            display: inline-block;
+            background: #00ADEF;
+            color: #ffffff;
+            padding: 18px 50px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1.2em;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 20px rgba(0, 173, 239, 0.3);
+        }
+
+        .cta-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 30px rgba(0, 173, 239, 0.5);
+            background: #0099d8;
+        }
+
+        /* Footer */
+        .footer {
+            background-color: #0b1039;
+            color: #ffffff;
+            padding: 50px 20px;
+            text-align: center;
+        }
+
+        .footer p {
+            margin-bottom: 10px;
+            color: #f0f6ff;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero-content h1 {
+                font-size: 2.5em;
+            }
+
+            .hero-content .subtitle {
+                font-size: 1.2em;
+            }
+
+            .section-title {
+                font-size: 2em;
+            }
+
+            .nav-container {
+                padding: 15px 20px;
+            }
+
+            .logo-box {
+                height: 45px;
+            }
+
+            .video-hero {
+                height: 60vh;
+                min-height: 400px;
+            }
+
+            .info-section, .results-section, .sponsors-section, .cta-section, .contact-section {
+                padding: 60px 20px;
+            }
+
+            .sponsors-grid {
+                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+                gap: 25px;
+            }
+
+            .tabs {
+                flex-direction: column;
+            }
+
+            .tab-button {
+                width: 100%;
+                text-align: center;
+                margin: 5px 0;
+                border-radius: 8px;
+            }
+
+            .tab-button.active {
+                border-left: 3px solid #00ADEF;
+                border-bottom: 1px solid #f0f6ff;
+            }
+
+            .results-table th, .results-table td {
+                padding: 10px 12px;
+                font-size: 0.9em;
+            }
+
+            .results-table thead {
+                display: none;
+            }
+
+            .results-table tr {
+                display: block;
+                margin-bottom: 15px;
+                border: 1px solid #f0f6ff;
+                border-radius: 8px;
+                background-color: #ffffff;
+            }
+
+            .results-table td {
+                display: block;
+                text-align: right;
+                padding-left: 50%;
+                position: relative;
+            }
+
+            .results-table td::before {
+                content: attr(data-label);
+                position: absolute;
+                left: 10px;
+                font-weight: bold;
+                text-align: left;
+                color: #0b1039;
+            }
+
+            .cards-grid, .contact-grid {
+                grid-template-columns: 1fr;
+                gap: 25px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <nav class="nav-container">
+            <div class="logo-box">
+                <img src="img/LogoChampion2025.png" alt="Logo IV Championship Master">
+            </div>
+            <div class="logo-box">
+                <img src="img/LogoClubes.png" alt="Logo Clubes">
+            </div>
+        </nav>
+    </header>
+
+    <!-- Video Hero Section -->
+    <section class="video-hero">
+        <div class="video-container">
+            <video autoplay muted loop playsinline src="video/promocional.mp4">
+                Tu navegador no soporta la etiqueta de video.
+            </video>
+        </div>
+        <div class="video-overlay">
+            <div class="hero-content">
+                <h1>IV Championship Master</h1>
+                <p class="subtitle">Competencia de Natación Master</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Info Section -->
+    <section class="info-section">
+        <div class="container">
+            <h2 class="section-title">Información del Evento</h2>
+            <div class="cards-grid">
+                <div class="info-card">
+                    <div class="sticker-icon">
+                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2Z" stroke="#00ADEF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M12 6V12L16 14" stroke="#00ADEF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    </div>
+                    <h3>Categorías</h3>
+                    <p>Competencias para todas las categorías master desde 25+ hasta 80+ años</p>
+                </div>
+                <div class="info-card">
+                    <div class="sticker-icon">
+                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="3" y="4" width="18" height="18" rx="2" ry="2" stroke="#0b5079" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><line x1="16" y1="2" x2="16" y2="6" stroke="#0b5079" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><line x1="8" y1="2" x2="8" y2="6" stroke="#0b5079" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><line x1="3" y1="10" x2="21" y2="10" stroke="#0b5079" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    </div>
+                    <h3>Fecha</h3>
+                    <p>Del 15 al 17 de marzo de 2024 en nuestras instalaciones</p>
+                </div>
+                <div class="info-card">
+                    <div class="sticker-icon">
+                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 8V12L14.5 14.5" stroke="#00ADEF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M20.9998 12C20.9998 16.9706 16.9704 21 11.9998 21C7.02926 21 2.99982 16.9706 2.99982 12C2.99982 7.02944 7.02926 3 11.9998 3C13.8837 3 15.6265 3.58628 17.0615 4.61538" stroke="#00ADEF" stroke-width="2" stroke-linecap="round"/><path d="M18 5.5L21 2.5M21 2.5L18 2.5M21 2.5V5.5" stroke="#00ADEF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    </div>
+                    <h3>Premios</h3>
+                    <p>Medallas y trofeos para los primeros lugares de cada categoría</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Results Section -->
+    <section class="results-section">
+        <div class="container">
+            <h2 class="section-title">Resultados en Tiempo Real</h2>
+            <div class="results-container">
+                <div class="tabs">
+                    <button class="tab-button active" onclick="openTab(event, '1500m-libre')">1500M Libre</button>
+                    <button class="tab-button" onclick="openTab(event, 'records-master')">Records Master</button>
+                </div>
+
+                <!-- Pestaña 1500M Libre -->
+                <div id="1500m-libre" class="tab-content active">
+                    <h3>🏊‍♀️ 1500M Libre Femenino - Resultados Oficiales</h3>
+                    <table class="results-table">
+                        <thead>
+                            <tr>
+                                <th>Pos.</th>
+                                <th>Nadadora</th>
+                                <th>Equipo</th>
+                                <th>Edad</th>
+                                <th>Categoría</th>
+                                <th>Tiempo Final</th>
+                                <th>Puntos</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="category-header">
+                                <td colspan="7">INFANTIL B</td>
+                            </tr>
+                            <tr>
+                                <td data-label="Pos." class="rank">🥇 1°</td>
+                                <td data-label="Nadadora">ANGELES CONDE GUEVARA</td>
+                                <td data-label="Equipo">NNG</td>
+                                <td data-label="Edad">12</td>
+                                <td data-label="Categoría">Infantil B</td>
+                                <td data-label="Tiempo Final" class="time">25:14.84</td>
+                                <td data-label="Puntos" class="points">9</td>
+                            </tr>
+                            <tr class="category-header">
+                                <td colspan="7">JUVENIL A</td>
+                            </tr>
+                            <tr>
+                                <td data-label="Pos." class="rank">🥇 1°</td>
+                                <td data-label="Nadadora">SALOME BERROCAL LOPEZ</td>
+                                <td data-label="Equipo">NNG</td>
+                                <td data-label="Edad">14</td>
+                                <td data-label="Categoría">Juvenil A</td>
+                                <td data-label="Tiempo Final" class="time">25:54.19</td>
+                                <td data-label="Puntos" class="points">9</td>
+                            </tr>
+                            <tr>
+                                <td data-label="Pos." class="rank">🥈 2°</td>
+                                <td data-label="Nadadora">SARAY BERROCAL LOPEZ</td>
+                                <td data-label="Equipo">NNG</td>
+                                <td data-label="Edad">14</td>
+                                <td data-label="Categoría">Juvenil A</td>
+                                <td data-label="Tiempo Final" class="time">25:58.50</td>
+                                <td data-label="Puntos" class="points">7</td>
+                            </tr>
+                            <tr class="category-header">
+                                <td colspan="7">MAYORES</td>
+                            </tr>
+                            <tr>
+                                <td data-label="Pos." class="rank">🥇 1°</td>
+                                <td data-label="Nadadora">MANUELA RODRIGUEZ</td>
+                                <td data-label="Equipo">NNG</td>
+                                <td data-label="Edad">27</td>
+                                <td data-label="Categoría">Mayores</td>
+                                <td data-label="Tiempo Final" class="time">39:06.00</td>
+                                <td data-label="Puntos" class="points">9</td>
+                            </tr>
+                            <tr class="category-header">
+                                <td colspan="7">MASTER A</td>
+                            </tr>
+                            <tr>
+                                <td data-label="Pos." class="rank" style="text-align: center; color: #a5a5a5;">-</td>
+                                <td data-label="Nadadora" style="color: #a5a5a5; font-style: italic;">Sin participantes</td>
+                                <td data-label="Equipo" style="color: #a5a5a5;">-</td>
+                                <td data-label="Edad" style="color: #a5a5a5;">-</td>
+                                <td data-label="Categoría" style="color: #a5a5a5;">Master A</td>
+                                <td data-label="Tiempo Final" style="color: #a5a5a5;">-</td>
+                                <td data-label="Puntos" style="color: #a5a5a5;">-</td>
+                            </tr>
+                            <tr class="category-header">
+                                <td colspan="7">MASTER B</td>
+                            </tr>
+                            <tr>
+                                <td data-label="Pos." class="rank">🥇 1°</td>
+                                <td data-label="Nadadora">TATIANA MONTES</td>
+                                <td data-label="Equipo">NNG</td>
+                                <td data-label="Edad">37</td>
+                                <td data-label="Categoría">Master B</td>
+                                <td data-label="Tiempo Final" class="time">34:10.00</td>
+                                <td data-label="Puntos" class="points">9</td>
+                            </tr>
+                            <tr class="category-header">
+                                <td colspan="7">MASTER C</td>
+                            </tr>
+                            <tr>
+                                <td data-label="Pos." class="rank" style="text-align: center; color: #a5a5a5;">-</td>
+                                <td data-label="Nadadora" style="color: #a5a5a5; font-style: italic;">Sin participantes</td>
+                                <td data-label="Equipo" style="color: #a5a5a5;">-</td>
+                                <td data-label="Edad" style="color: #a5a5a5;">-</td>
+                                <td data-label="Categoría" style="color: #a5a5a5;">Master C</td>
+                                <td data-label="Tiempo Final" style="color: #a5a5a5;">-</td>
+                                <td data-label="Puntos" style="color: #a5a5a5;">-</td>
+                            </tr>
+                            <tr class="category-header">
+                                <td colspan="7">MASTER D</td>
+                            </tr>
+                            <tr>
+                                <td data-label="Pos." class="rank">🥇 1°</td>
+                                <td data-label="Nadadora">Claudia Milena Serpa Imbett</td>
+                                <td data-label="Equipo">MNM</td>
+                                <td data-label="Edad">45</td>
+                                <td data-label="Categoría">Master D</td>
+                                <td data-label="Tiempo Final" class="time">41:09.00</td>
+                                <td data-label="Puntos" class="points">9</td>
+                            </tr>
+                            <tr class="category-header">
+                                <td colspan="7">MASTER E</td>
+                            </tr>
+                            <tr>
+                                <td data-label="Pos." class="rank" style="text-align: center; color: #a5a5a5;">-</td>
+                                <td data-label="Nadadora" style="color: #a5a5a5; font-style: italic;">Sin participantes</td>
+                                <td data-label="Equipo" style="color: #a5a5a5;">-</td>
+                                <td data-label="Edad" style="color: #a5a5a5;">-</td>
+                                <td data-label="Categoría" style="color: #a5a5a5;">Master E</td>
+                                <td data-label="Tiempo Final" style="color: #a5a5a5;">-</td>
+                                <td data-label="Puntos" style="color: #a5a5a5;">-</td>
+                            </tr>
+                            <tr class="category-header">
+                                <td colspan="7">MASTER F</td>
+                            </tr>
+                            <tr>
+                                <td data-label="Pos." class="rank" style="text-align: center; color: #a5a5a5;">-</td>
+                                <td data-label="Nadadora" style="color: #a5a5a5; font-style: italic;">Sin participantes</td>
+                                <td data-label="Equipo" style="color: #a5a5a5;">-</td>
+                                <td data-label="Edad" style="color: #a5a5a5;">-</td>
+                                <td data-label="Categoría" style="color: #a5a5a5;">Master F</td>
+                                <td data-label="Tiempo Final" style="color: #a5a5a5;">-</td>
+                                <td data-label="Puntos" style="color: #a5a5a5;">-</td>
+                            </tr>
+                            <tr class="category-header">
+                                <td colspan="7">MASTER G</td>
+                            </tr>
+                            <tr>
+                                <td data-label="Pos." class="rank" style="text-align: center; color: #a5a5a5;">-</td>
+                                <td data-label="Nadadora" style="color: #a5a5a5; font-style: italic;">Sin participantes</td>
+                                <td data-label="Equipo" style="color: #a5a5a5;">-</td>
+                                <td data-label="Edad" style="color: #a5a5a5;">-</td>
+                                <td data-label="Categoría" style="color: #a5a5a5;">Master G</td>
+                                <td data-label="Tiempo Final" style="color: #a5a5a5;">-</td>
+                                <td data-label="Puntos" style="color: #a5a5a5;">-</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Pestaña Records Master -->
+                <div id="records-master" class="tab-content">
+                    <h3>🏆 Records de Categoría Master Masculino</h3>
+                    <table class="results-table">
+                        <thead>
+                            <tr>
+                                <th>Distancia</th>
+                                <th>Atleta</th>
+                                <th>Equipo</th>
+                                <th>Categoría</th>
+                                <th>Tiempo Record</th>
+                                <th>Fecha</th>
+                                <th>Competencia</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="category-header">
+                                <td colspan="7">50M LIBRE</td>
+                            </tr>
+                            <tr>
+                                <td data-label="Distancia">50m Libre</td>
+                                <td data-label="Atleta">LUIS SEBASTIAN PAEZ</td>
+                                <td data-label="Equipo">NNG</td>
+                                <td data-label="Categoría">Mayores</td>
+                                <td data-label="Tiempo Record" class="time">00:24.70</td>
+                                <td data-label="Fecha">12/4/2020</td>
+                                <td data-label="Competencia">NACIONAL INTERCLUBES</td>
+                            </tr>
+                            <tr>
+                                <td data-label="Distancia">50m Libre</td>
+                                <td data-label="Atleta">Julian arbelaez</td>
+                                <td data-label="Equipo">DELFINES</td>
+                                <td data-label="Categoría">Master A</td>
+                                <td data-label="Tiempo Record" class="time">00:30.97</td>
+                                <td data-label="Fecha">12/13/2020</td>
+                                <td data-label="Competencia">II CHAMPIONSHIP MASTER</td>
+                            </tr>
+                            <tr>
+                                <td data-label="Distancia">50m Libre</td>
+                                <td data-label="Atleta">HERNANDO ALBERTO URREA SERNA</td>
+                                <td data-label="Equipo">DELFINES</td>
+                                <td data-label="Categoría">Master B</td>
+                                <td data-label="Tiempo Record" class="time">00:32.44</td>
+                                <td data-label="Fecha">6/2/2019</td>
+                                <td data-label="Competencia">TORNEO FREE STYLE</td>
+                            </tr>
+                            <tr>
+                                <td data-label="Distancia">50m Libre</td>
+                                <td data-label="Atleta">RAFAEL RIVERO BLANCO</td>
+                                <td data-label="Equipo">NNG</td>
+                                <td data-label="Categoría">Master C</td>
+                                <td data-label="Tiempo Record" class="time">00:31.68</td>
+                                <td data-label="Fecha">4/19/2020</td>
+                                <td data-label="Competencia">CHAMPIONSHIP MASTER</td>
+                            </tr>
+                            <tr>
+                                <td data-label="Distancia">50m Libre</td>
+                                <td data-label="Atleta">DANIEL MONTOYA</td>
+                                <td data-label="Equipo">NNG</td>
+                                <td data-label="Categoría">Master D</td>
+                                <td data-label="Tiempo Record" class="time">00:34.40</td>
+                                <td data-label="Fecha">12/13/2020</td>
+                                <td data-label="Competencia">II CHAMPIONSHIP MASTER</td>
+                            </tr>
+                            <tr>
+                                <td data-label="Distancia">50m Libre</td>
+                                <td data-label="Atleta">Libardo Pinzón Vivas</td>
+                                <td data-label="Equipo">MASTER</td>
+                                <td data-label="Categoría">Master E</td>
+                                <td data-label="Tiempo Record" class="time">00:32.97</td>
+                                <td data-label="Fecha">4/19/2020</td>
+                                <td data-label="Competencia">CHAMPIONSHIP MASTER</td>
+                            </tr>
+                            <tr>
+                                <td data-label="Distancia">50m Libre</td>
+                                <td data-label="Atleta">Alejo valdez</td>
+                                <td data-label="Equipo">DELFINES</td>
+                                <td data-label="Categoría">Master G</td>
+                                <td data-label="Tiempo Record" class="time">00:45.84</td>
+                                <td data-label="Fecha">10/21/2019</td>
+                                <td data-label="Competencia">CAIMAN DE ORO</td>
+                            </tr>
+                            <tr class="category-header">
+                                <td colspan="7">100M LIBRE</td>
+                            </tr>
+                            <tr>
+                                <td data-label="Distancia">100m Libre</td>
+                                <td data-label="Atleta">LUIS SEBASTIAN PAEZ</td>
+                                <td data-label="Equipo">NNG</td>
+                                <td data-label="Categoría">Mayores</td>
+                                <td data-label="Tiempo Record" class="time">00:53.87</td>
+                                <td data-label="Fecha">12/4/2020</td>
+                                <td data-label="Competencia">NACIONAL INTERCLUBES</td>
+                            </tr>
+                            <tr>
+                                <td data-label="Distancia">100m Libre</td>
+                                <td data-label="Atleta">Julian arbelaez</td>
+                                <td data-label="Equipo">DELFINES</td>
+                                <td data-label="Categoría">Master A</td>
+                                <td data-label="Tiempo Record" class="time">01:11.63</td>
+                                <td data-label="Fecha">12/13/2020</td>
+                                <td data-label="Competencia">II CHAMPIONSHIP MASTER</td>
+                            </tr>
+                            <tr>
+                                <td data-label="Distancia">100m Libre</td>
+                                <td data-label="Atleta">HERNANDO ALBERTO URREA SERNA</td>
+                                <td data-label="Equipo">DELFINES</td>
+                                <td data-label="Categoría">Master B</td>
+                                <td data-label="Tiempo Record" class="time">01:13.53</td>
+                                <td data-label="Fecha">6/24/2019</td>
+                                <td data-label="Competencia">ALL STAR 2.0</td>
+                            </tr>
+                            <tr>
+                                <td data-label="Distancia">100m Libre</td>
+                                <td data-label="Atleta">DANIEL MONTOYA</td>
+                                <td data-label="Equipo">NNG</td>
+                                <td data-label="Categoría">Master C</td>
+                                <td data-label="Tiempo Record" class="time">01:24.60</td>
+                                <td data-label="Fecha">6/2/2019</td>
+                                <td data-label="Competencia">TORNEO FREE STYLE</td>
+                            </tr>
+                            <tr>
+                                <td data-label="Distancia">100m Libre</td>
+                                <td data-label="Atleta">DANIEL MONTOYA</td>
+                                <td data-label="Equipo">NNG</td>
+                                <td data-label="Categoría">Master D</td>
+                                <td data-label="Tiempo Record" class="time">01:21.25</td>
+                                <td data-label="Fecha">12/13/2020</td>
+                                <td data-label="Competencia">II CHAMPIONSHIP MASTER</td>
+                            </tr>
+                            <tr>
+                                <td data-label="Distancia">100m Libre</td>
+                                <td data-label="Atleta">Libardo Pinzón Vivas</td>
+                                <td data-label="Equipo">MASTER</td>
+                                <td data-label="Categoría">Master E</td>
+                                <td data-label="Tiempo Record" class="time">01:14.46</td>
+                                <td data-label="Fecha">12/2/2019</td>
+                                <td data-label="Competencia">TORNEO CLAUSURA LNC 2023</td>
+                            </tr>
+                            <tr>
+                                <td data-label="Distancia">100m Libre</td>
+                                <td data-label="Atleta">Fernando Suarez</td>
+                                <td data-label="Equipo">NNG</td>
+                                <td data-label="Categoría">Master G</td>
+                                <td data-label="Tiempo Record" class="time">02:37.96</td>
+                                <td data-label="Fecha">12/13/2020</td>
+                                <td data-label="Competencia">II CHAMPIONSHIP MASTER</td>
+                            </tr>
+                            <tr class="category-header">
+                                <td colspan="7">200M LIBRE</td>
+                            </tr>
+                            <tr>
+                                <td data-label="Distancia">200m Libre</td>
+                                <td data-label="Atleta">LUIS SEBASTIAN PAEZ</td>
+                                <td data-label="Equipo">NNG</td>
+                                <td data-label="Categoría">Mayores</td>
+                                <td data-label="Tiempo Record" class="time">02:04.37</td>
+                                <td data-label="Fecha">3/2/2020</td>
+                                <td data-label="Competencia">PERLA DEL SINÚ</td>
+                            </tr>
+                            <tr>
+                                <td data-label="Distancia">200m Libre</td>
+                                <td data-label="Atleta">Julian arbelaez</td>
+                                <td data-label="Equipo">DELFINES</td>
+                                <td data-label="Categoría">Master A</td>
+                                <td data-label="Tiempo Record" class="time">02:51.60</td>
+                                <td data-label="Fecha">12/13/2020</td>
+                                <td data-label="Competencia">II CHAMPIONSHIP MASTER</td>
+                            </tr>
+                            <tr>
+                                <td data-label="Distancia">200m Libre</td>
+                                <td data-label="Atleta">HERNANDO ALBERTO URREA SERNA</td>
+                                <td data-label="Equipo">DELFINES</td>
+                                <td data-label="Categoría">Master B</td>
+                                <td data-label="Tiempo Record" class="time">03:01.94</td>
+                                <td data-label="Fecha">6/24/2019</td>
+                                <td data-label="Competencia">ALL STAR 2.0</td>
+                            </tr>
+                            <tr>
+                                <td data-label="Distancia">200m Libre</td>
+                                <td data-label="Atleta">RAFAEL RIVERO BLANCO</td>
+                                <td data-label="Equipo">NNG</td>
+                                <td data-label="Categoría">Master C</td>
+                                <td data-label="Tiempo Record" class="time">03:32.10</td>
+                                <td data-label="Fecha">4/19/2020</td>
+                                <td data-label="Competencia">CHAMPIONSHIP MASTER</td>
+                            </tr>
+                            <tr>
+                                <td data-label="Distancia">200m Libre</td>
+                                <td data-label="Atleta">DANIEL MONTOYA</td>
+                                <td data-label="Equipo">NNG</td>
+                                <td data-label="Categoría">Master D</td>
+                                <td data-label="Tiempo Record" class="time">03:09.16</td>
+                                <td data-label="Fecha">12/13/2020</td>
+                                <td data-label="Competencia">II CHAMPIONSHIP MASTER</td>
+                            </tr>
+                            <tr>
+                                <td data-label="Distancia">200m Libre</td>
+                                <td data-label="Atleta">Libardo Pinzón Vivas</td>
+                                <td data-label="Equipo">MASTER</td>
+                                <td data-label="Categoría">Master E</td>
+                                <td data-label="Tiempo Record" class="time">02:40.40</td>
+                                <td data-label="Fecha">12/2/2019</td>
+                                <td data-label="Competencia">TORNEO CLAUSURA LNC 2023</td>
+                            </tr>
+                            <tr>
+                                <td data-label="Distancia">200m Libre</td>
+                                <td data-label="Atleta">Fernando Suarez</td>
+                                <td data-label="Equipo">NNG</td>
+                                <td data-label="Categoría">Master G</td>
+                                <td data-label="Tiempo Record" class="time">06:09.00</td>
+                                <td data-label="Fecha">12/13/2020</td>
+                                <td data-label="Competencia">II CHAMPIONSHIP MASTER</td>
+                            </tr>
+                            <tr class="category-header">
+                                <td colspan="7">200M COMBINADO</td>
+                            </tr>
+                            <tr>
+                                <td data-label="Distancia">200m Combinado</td>
+                                <td data-label="Atleta">CAMILO BERRIO BERRIO</td>
+                                <td data-label="Equipo">NNG</td>
+                                <td data-label="Categoría">Mayores</td>
+                                <td data-label="Tiempo Record" class="time">02:42.94</td>
+                                <td data-label="Fecha">4/19/2020</td>
+                                <td data-label="Competencia">CHAMPIONSHIP MASTER</td>
+                            </tr>
+                            <tr>
+                                <td data-label="Distancia">200m Combinado</td>
+                                <td data-label="Atleta">Juan Fernando Arango Meneses</td>
+                                <td data-label="Equipo">MASTER</td>
+                                <td data-label="Categoría">Master A</td>
+                                <td data-label="Tiempo Record" class="time">04:35.50</td>
+                                <td data-label="Fecha">4/19/2020</td>
+                                <td data-label="Competencia">CHAMPIONSHIP MASTER</td>
+                            </tr>
+                            <tr>
+                                <td data-label="Distancia">200m Combinado</td>
+                                <td data-label="Atleta">CHRISTIAN RUBIO VERGARA</td>
+                                <td data-label="Equipo">AQUARIUM</td>
+                                <td data-label="Categoría">Master B</td>
+                                <td data-label="Tiempo Record" class="time">04:13.62</td>
+                                <td data-label="Fecha">4/19/2020</td>
+                                <td data-label="Competencia">CHAMPIONSHIP MASTER</td>
+                            </tr>
+                            <tr>
+                                <td data-label="Distancia">200m Combinado</td>
+                                <td data-label="Atleta">Libardo Pinzón Vivas</td>
+                                <td data-label="Equipo">MASTER</td>
+                                <td data-label="Categoría">Master E</td>
+                                <td data-label="Tiempo Record" class="time">03:23.56</td>
+                                <td data-label="Fecha">4/19/2020</td>
+                                <td data-label="Competencia">CHAMPIONSHIP MASTER</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Sponsors Section -->
+    <section class="sponsors-section">
+        <div class="container">
+            <h2 class="section-title">Nuestros Patrocinadores</h2>
+            <div class="sponsors-grid">
+                <a href="#" target="_blank" class="sponsor-card">
+                    <div class="sponsor-logo"><img src="https://via.placeholder.com/200x80/FAFAFA/CCCCCC?text=Sponsor+1" alt="Patrocinador 1"></div>
+                    <div class="sponsor-name">Empresa Patrocinadora 1</div>
+                </a>
+                <a href="#" target="_blank" class="sponsor-card">
+                    <div class="sponsor-logo"><img src="https://via.placeholder.com/200x80/FAFAFA/CCCCCC?text=Sponsor+2" alt="Patrocinador 2"></div>
+                    <div class="sponsor-name">Empresa Patrocinadora 2</div>
+                </a>
+                <a href="#" target="_blank" class="sponsor-card">
+                    <div class="sponsor-logo"><img src="https://via.placeholder.com/200x80/FAFAFA/CCCCCC?text=Sponsor+3" alt="Patrocinador 3"></div>
+                    <div class="sponsor-name">Empresa Patrocinadora 3</div>
+                </a>
+                <a href="#" target="_blank" class="sponsor-card">
+                    <div class="sponsor-logo"><img src="https://via.placeholder.com/200x80/FAFAFA/CCCCCC?text=Sponsor+4" alt="Patrocinador 4"></div>
+                    <div class="sponsor-name">Empresa Patrocinadora 4</div>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section">
+        <div class="container">
+            <h2>¿Listo para competir?</h2>
+            <p>Únete a los mejores nadadores master en esta emocionante competencia</p>
+            <a href="#" class="cta-button">Más Información</a>
+        </div>
+    </section>
+    
+    <!-- Contact Section -->
+    <section class="contact-section">
+        <div class="container">
+            <h2 class="section-title">Contacto</h2>
+            <div class="contact-grid">
+                <!-- WhatsApp Card -->
+                <a href="https://wa.me/573001234567" target="_blank" class="contact-card-link">
+                    <div class="sticker-icon">
+                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M16.75 13.96C16.41 13.79 15.31 13.24 15.08 13.15C14.86 13.06 14.7 13.02 14.54 13.28C14.38 13.55 13.91 14.11 13.75 14.28C13.59 14.45 13.43 14.47 13.16 14.3C12.89 14.13 12.06 13.85 11.07 12.99C10.29 12.3 9.73 11.48 9.59 11.21C9.45 10.94 9.56 10.81 9.7 10.67C9.83 10.53 9.99 10.33 10.13 10.18C10.27 10.03 10.32 9.9 10.42 9.73C10.52 9.56 10.47 9.4 10.39 9.27C10.31 9.14 9.85 7.97 9.66 7.52C9.47 7.07 9.28 7.13 9.14 7.12H8.62C8.42 7.12 8.13 7.19 7.89 7.43C7.65 7.67 6.96 8.31 6.96 9.56C6.96 10.81 7.92 12.01 8.06 12.18C8.2 12.35 9.85 14.8 12.29 15.76C14.73 16.72 14.73 16.34 15.13 16.3C15.53 16.26 16.54 15.68 16.75 15.13C16.96 14.58 16.96 14.12 16.88 13.96H16.75Z" stroke="#0b5079" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M12.04 21.82C17.56 21.82 22 17.38 22 11.86C22 6.34 17.56 1.9 12.04 1.9C6.52 1.9 2.08 6.34 2.08 11.86C2.08 14.13 2.84 16.24 4.12 17.9L2.56 21.34L6.17 19.95C7.73 21.13 9.79 21.82 12.04 21.82Z" stroke="#00ADEF" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    </div>
+                    <h3>WhatsApp</h3>
+                    <p>+57 300 123 4567</p>
+                </a>
+                <!-- Instagram Card -->
+                <a href="https://www.instagram.com/tu_usuario" target="_blank" class="contact-card-link">
+                    <div class="sticker-icon">
+                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="2" y="2" width="20" height="20" rx="5" ry="5" stroke="#00ADEF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M16 11.37C16 13.38 14.21 15 12 15C9.79 15 8 13.38 8 11.37C8 9.36 9.79 7.75 12 7.75C14.21 7.75 16 9.36 16 11.37Z" stroke="#0b5079" stroke-width="2"/><path d="M17.5 6.5H17.51" stroke="#0b5079" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    </div>
+                    <h3>Instagram</h3>
+                    <p>@AquaTEN_Club</p>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2024 AquaTEN - Club Deportivo</p>
+            <p>IV Championship Master - Todos los derechos reservados</p>
+        </div>
+    </footer>
+
+    <script>
+        function openTab(evt, tabName) {
+            var i, tabcontent, tabbuttons;
+            
+            tabcontent = document.getElementsByClassName("tab-content");
+            for (i = 0; i < tabcontent.length; i++) {
+                tabcontent[i].classList.remove("active");
+            }
+            
+            tabbuttons = document.getElementsByClassName("tab-button");
+            for (i = 0; i < tabbuttons.length; i++) {
+                tabbuttons[i].classList.remove("active");
+            }
+            
+            document.getElementById(tabName).classList.add("active");
+            evt.currentTarget.classList.add("active");
+        }
+    </script>
+</body>
+</html>
