@@ -1,35 +1,4 @@
-        // Event listeners
-        document.addEventListener('DOMContentLoaded', function() {
-            console.log('🚀 Página cargada, iniciando sistema de actualización automática...');
-            console.log('📋 Tu Google Sheet: "RECORD MASTER"');
-            console.log('🕐 Última modificación detectada: hace 1 hora');
-            
-            // Agregar botón de prueba temporal
-            addTestButton();
-            
-            startAutoReload();
-        });
-
-        // Función para agregar botón de prueba (temporal)
-        function addTestButton() {
-            const testButton = document.createElement('button');
-            testButton.innerHTML = '🧪 Probar conexión';
-            testButton.style.cssText = `
-                position: fixed;
-                bottom: 20px;
-                right: 20px;
-                z-index: 9999;
-                padding: 10px 20px;
-                background: #ff9800;
-                color: white;
-                border: none;
-                border-radius: 25px;
-                cursor: pointer;
-                font-weight: 600;
-                box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-            `;
-            testButton.onclick = function() {
-                console.log('🧪 Iniciando prueba<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
@@ -53,11 +22,6 @@
         @keyframes slideIn {
             from { transform: translateX(100%); opacity: 0; }
             to { transform: translateX(0); opacity: 1; }
-        }
-
-        @keyframes slideOut {
-            from { transform: translateX(0); opacity: 1; }
-            to { transform: translateX(100%); opacity: 0; }
         }
 
         @keyframes pulse {
@@ -187,10 +151,10 @@
             font-weight: 300;
         }
 
-        /* Info & Contact Section */
-        .info-section, .contact-section {
+        /* Results Section */
+        .results-section {
             padding: 100px 20px;
-            background-color: #ffffff;
+            background: #f0f6ff;
         }
 
         .container {
@@ -206,132 +170,12 @@
             font-weight: 700;
         }
 
-        .cards-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 40px;
-            margin-bottom: 60px;
-        }
-        
-        .contact-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 40px;
-            justify-content: center;
-            max-width: 800px;
-            margin: 0 auto;
-        }
-
-        .info-card, .contact-card-link {
-            background: #ffffff;
-            border: 1px solid #f0f6ff;
-            border-radius: 20px;
-            padding: 50px 30px;
-            text-align: center;
-            box-shadow: 0 5px 25px rgba(11, 16, 57, 0.08);
-            transition: all 0.3s ease;
-            text-decoration: none;
-            color: inherit;
-        }
-
-        .info-card:hover, .contact-card-link:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 15px 40px rgba(11, 16, 57, 0.15);
-            border-color: #00ADEF;
-        }
-
-        /* Iconos SVG minimalistas */
-        .sticker-icon {
-            width: 80px;
-            height: 80px;
-            margin: 0 auto 25px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .sticker-icon svg {
-            width: 100%;
-            height: 100%;
-        }
-
-        .info-card h3, .contact-card-link h3 {
-            color: #0b1039;
-            font-size: 1.8em;
-            margin-bottom: 15px;
-            font-weight: 600;
-        }
-
-        .info-card p, .contact-card-link p {
-            color: #a5a5a5;
-            font-size: 1.1em;
-            line-height: 1.8;
-        }
-
-        /* Results Section */
-        .results-section {
-            padding: 100px 20px;
-            background: #f0f6ff;
-        }
-
         .results-container {
             background: #ffffff;
             border-radius: 20px;
             padding: 50px;
             box-shadow: 0 10px 40px rgba(11, 16, 57, 0.1);
             border: 2px solid #f0f6ff;
-        }
-
-        /* Pestañas de Resultados */
-        .tabs {
-            display: flex;
-            margin-bottom: 30px;
-            border-bottom: 2px solid #f0f6ff;
-            flex-wrap: wrap;
-            justify-content: center;
-        }
-
-        .tab-button {
-            padding: 15px 30px;
-            cursor: pointer;
-            background-color: transparent;
-            border: none;
-            border-bottom: 3px solid transparent;
-            color: #0b1039;
-            font-size: 1.1em;
-            transition: all 0.3s ease;
-            margin: 0 10px;
-            border-radius: 10px 10px 0 0;
-            font-weight: 500;
-        }
-
-        .tab-button:hover {
-            color: #00ADEF;
-            background-color: rgba(0, 173, 239, 0.05);
-        }
-
-        .tab-button.active {
-            color: #00ADEF;
-            border-bottom: 3px solid #00ADEF;
-            background-color: #f0f6ff;
-            font-weight: 600;
-        }
-
-        .tab-content {
-            display: none;
-            padding: 30px 0;
-        }
-
-        .tab-content.active {
-            display: block;
-        }
-
-        .tab-content h3 {
-            color: #0b1039;
-            margin-bottom: 30px;
-            text-align: center;
-            font-size: 1.8em;
-            font-weight: 600;
         }
 
         /* Indicador de última actualización */
@@ -380,150 +224,6 @@
             transition: background-color 0.3s ease;
         }
 
-        .results-table .rank {
-            font-weight: bold;
-            color: #0b1039;
-            text-align: center;
-        }
-
-        .results-table .time {
-            font-family: 'Courier New', Courier, monospace;
-            font-weight: bold;
-            color: #0b1039;
-            text-align: center;
-        }
-
-        .results-table .points {
-            font-weight: bold;
-            color: #00ADEF;
-            text-align: center;
-        }
-
-        /* Categoría headers - ESTILO UNIFORME PARA TODAS LAS CATEGORÍAS */
-        .category-header {
-            background: linear-gradient(135deg, #0b1039 0%, #00ADEF 100%) !important;
-            color: #ffffff !important;
-            text-align: center;
-            font-size: 1.1em;
-            font-weight: bold;
-        }
-
-        .category-header td {
-            border-bottom: 2px solid #00ADEF !important;
-            color: #ffffff !important;
-        }
-
-        /* Loading state para la tabla */
-        .results-table.loading {
-            opacity: 0.7;
-        }
-
-        .loading-row {
-            text-align: center;
-            color: #a5a5a5;
-            font-style: italic;
-        }
-
-        /* Sponsors Section */
-        .sponsors-section {
-            padding: 100px 20px;
-            background: #ffffff;
-        }
-
-        .sponsors-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 40px;
-            margin-top: 50px;
-        }
-
-        .sponsor-card {
-            background: #ffffff;
-            border: 2px solid #f0f6ff;
-            border-radius: 20px;
-            padding: 40px;
-            text-align: center;
-            transition: all 0.3s ease;
-            cursor: pointer;
-            text-decoration: none;
-            display: block;
-        }
-
-        .sponsor-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 30px rgba(11, 16, 57, 0.15);
-            border-color: #00ADEF;
-        }
-
-        .sponsor-logo {
-            height: 80px;
-            margin-bottom: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .sponsor-logo img {
-            max-height: 100%;
-            max-width: 100%;
-            object-fit: contain;
-            filter: grayscale(100%);
-            transition: filter 0.3s ease;
-        }
-
-        .sponsor-card:hover .sponsor-logo img {
-            filter: grayscale(0%);
-        }
-
-        .sponsor-name {
-            font-size: 1.2em;
-            color: #0b1039;
-            font-weight: 600;
-        }
-
-        /* CTA Section */
-        .cta-section {
-            padding: 100px 20px;
-            background: linear-gradient(135deg, #0b1039 0%, #0b5079 100%);
-            text-align: center;
-            position: relative;
-        }
-
-        .cta-section h2 {
-            color: #ffffff;
-            font-size: 3em;
-            margin-bottom: 25px;
-            font-weight: 700;
-        }
-
-        .cta-section p {
-            color: #f0f6ff;
-            font-size: 1.3em;
-            margin-bottom: 40px;
-            max-width: 600px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-
-        .cta-button {
-            display: inline-block;
-            background: #00ADEF;
-            color: #ffffff;
-            padding: 18px 50px;
-            border-radius: 50px;
-            text-decoration: none;
-            font-weight: 600;
-            font-size: 1.2em;
-            transition: all 0.3s ease;
-            box-shadow: 0 5px 20px rgba(0, 173, 239, 0.3);
-        }
-
-        .cta-button:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 30px rgba(0, 173, 239, 0.5);
-            background: #0099d8;
-        }
-
         /* Footer */
         .footer {
             background-color: #0b1039;
@@ -537,102 +237,36 @@
             color: #f0f6ff;
         }
 
+        /* Debug panel */
+        .debug-panel {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            background: rgba(0, 0, 0, 0.9);
+            color: #0f0;
+            padding: 15px;
+            border-radius: 10px;
+            font-family: monospace;
+            font-size: 12px;
+            max-width: 400px;
+            max-height: 300px;
+            overflow-y: auto;
+            z-index: 10000;
+        }
+
+        .debug-log {
+            margin: 2px 0;
+        }
+
         /* Responsive */
         @media (max-width: 768px) {
             .hero-content h1 {
                 font-size: 2.5em;
             }
 
-            .hero-content .subtitle {
-                font-size: 1.2em;
-            }
-
-            .section-title {
-                font-size: 2em;
-            }
-
-            .nav-container {
-                padding: 15px 20px;
-            }
-
-            .logo-box {
-                height: 45px;
-            }
-
-            .video-hero {
-                height: 60vh;
-                min-height: 400px;
-            }
-
-            .info-section, .results-section, .sponsors-section, .cta-section, .contact-section {
-                padding: 60px 20px;
-            }
-
-            .sponsors-grid {
-                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-                gap: 25px;
-            }
-
-            .tabs {
-                flex-direction: column;
-            }
-
-            .tab-button {
-                width: 100%;
-                text-align: center;
-                margin: 5px 0;
-                border-radius: 8px;
-            }
-
-            .tab-button.active {
-                border-left: 3px solid #00ADEF;
-                border-bottom: 1px solid #f0f6ff;
-            }
-
             .results-table th, .results-table td {
                 padding: 10px 12px;
                 font-size: 0.9em;
-            }
-
-            .results-table thead {
-                display: none;
-            }
-
-            .results-table tr {
-                display: block;
-                margin-bottom: 15px;
-                border: 1px solid #f0f6ff;
-                border-radius: 8px;
-                background-color: #ffffff;
-            }
-
-            .results-table td {
-                display: block;
-                text-align: right;
-                padding-left: 50%;
-                position: relative;
-            }
-
-            .results-table td::before {
-                content: attr(data-label);
-                position: absolute;
-                left: 10px;
-                font-weight: bold;
-                text-align: left;
-                color: #0b1039;
-            }
-
-            .cards-grid, .contact-grid {
-                grid-template-columns: 1fr;
-                gap: 25px;
-            }
-
-            .status-indicator {
-                position: relative;
-                top: auto;
-                right: auto;
-                margin: 10px auto;
-                display: inline-block;
             }
         }
     </style>
@@ -670,36 +304,6 @@
         </div>
     </section>
 
-    <!-- Info Section -->
-    <section class="info-section">
-        <div class="container">
-            <h2 class="section-title">Información del Evento</h2>
-            <div class="cards-grid">
-                <div class="info-card">
-                    <div class="sticker-icon">
-                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2Z" stroke="#00ADEF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M12 6V12L16 14" stroke="#00ADEF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                    </div>
-                    <h3>Categorías</h3>
-                    <p>Competencias para todas las categorías master desde 25+ hasta 80+ años</p>
-                </div>
-                <div class="info-card">
-                    <div class="sticker-icon">
-                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="3" y="4" width="18" height="18" rx="2" ry="2" stroke="#0b5079" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><line x1="16" y1="2" x2="16" y2="6" stroke="#0b5079" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><line x1="8" y1="2" x2="8" y2="6" stroke="#0b5079" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><line x1="3" y1="10" x2="21" y2="10" stroke="#0b5079" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                    </div>
-                    <h3>Fecha</h3>
-                    <p>Del 15 al 17 de marzo de 2024 en nuestras instalaciones</p>
-                </div>
-                <div class="info-card">
-                    <div class="sticker-icon">
-                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 8V12L14.5 14.5" stroke="#00ADEF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M20.9998 12C20.9998 16.9706 16.9704 21 11.9998 21C7.02926 21 2.99982 16.9706 2.99982 12C2.99982 7.02944 7.02926 3 11.9998 3C13.8837 3 15.6265 3.58628 17.0615 4.61538" stroke="#00ADEF" stroke-width="2" stroke-linecap="round"/><path d="M18 5.5L21 2.5M21 2.5L18 2.5M21 2.5V5.5" stroke="#00ADEF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                    </div>
-                    <h3>Premios</h3>
-                    <p>Medallas y trofeos para los primeros lugares de cada categoría</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
     <!-- Results Section -->
     <section class="results-section">
         <div class="container">
@@ -709,172 +313,25 @@
                     Última actualización: <span class="time" id="lastUpdateTime">Cargando...</span>
                 </div>
                 
-                <div class="tabs">
-                    <button class="tab-button active" onclick="openTab(event, '1500m-libre')">1500M Libre</button>
-                    <button class="tab-button" onclick="openTab(event, 'records-master')">Records Master</button>
-                </div>
-
-                <!-- Pestaña 1500M Libre -->
-                <div id="1500m-libre" class="tab-content active">
-                    <h3>🏊‍♀️ 1500M Libre Femenino - Resultados Oficiales</h3>
-                    <table class="results-table" id="resultsTable">
-                        <thead>
-                            <tr>
-                                <th>Pos.</th>
-                                <th>Nadadora</th>
-                                <th>Equipo</th>
-                                <th>Edad</th>
-                                <th>Categoría</th>
-                                <th>Tiempo Final</th>
-                                <th>Puntos</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr class="loading-row">
-                                <td colspan="7" style="text-align: center; padding: 40px; color: #a5a5a5;">
-                                    🔄 Cargando datos desde Google Sheets...
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-
-                <!-- Pestaña Records Master -->
-                <div id="records-master" class="tab-content">
-                    <h3>🏆 Records de Categoría Master Masculino</h3>
-                    <table class="results-table">
-                        <thead>
-                            <tr>
-                                <th>Distancia</th>
-                                <th>Atleta</th>
-                                <th>Equipo</th>
-                                <th>Categoría</th>
-                                <th>Tiempo Record</th>
-                                <th>Fecha</th>
-                                <th>Competencia</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr class="category-header">
-                                <td colspan="7">50M LIBRE</td>
-                            </tr>
-                            <tr>
-                                <td data-label="Distancia">50m Libre</td>
-                                <td data-label="Atleta">LUIS SEBASTIAN PAEZ</td>
-                                <td data-label="Equipo">NNG</td>
-                                <td data-label="Categoría">Mayores</td>
-                                <td data-label="Tiempo Record" class="time">00:24.70</td>
-                                <td data-label="Fecha">12/4/2020</td>
-                                <td data-label="Competencia">NACIONAL INTERCLUBES</td>
-                            </tr>
-                            <tr>
-                                <td data-label="Distancia">50m Libre</td>
-                                <td data-label="Atleta">Julian arbelaez</td>
-                                <td data-label="Equipo">DELFINES</td>
-                                <td data-label="Categoría">Master A</td>
-                                <td data-label="Tiempo Record" class="time">00:30.97</td>
-                                <td data-label="Fecha">12/13/2020</td>
-                                <td data-label="Competencia">II CHAMPIONSHIP MASTER</td>
-                            </tr>
-                            <tr>
-                                <td data-label="Distancia">50m Libre</td>
-                                <td data-label="Atleta">HERNANDO ALBERTO URREA SERNA</td>
-                                <td data-label="Equipo">DELFINES</td>
-                                <td data-label="Categoría">Master B</td>
-                                <td data-label="Tiempo Record" class="time">00:32.44</td>
-                                <td data-label="Fecha">6/2/2019</td>
-                                <td data-label="Competencia">TORNEO FREE STYLE</td>
-                            </tr>
-                            <tr>
-                                <td data-label="Distancia">50m Libre</td>
-                                <td data-label="Atleta">RAFAEL RIVERO BLANCO</td>
-                                <td data-label="Equipo">NNG</td>
-                                <td data-label="Categoría">Master C</td>
-                                <td data-label="Tiempo Record" class="time">00:31.68</td>
-                                <td data-label="Fecha">4/19/2020</td>
-                                <td data-label="Competencia">CHAMPIONSHIP MASTER</td>
-                            </tr>
-                            <tr>
-                                <td data-label="Distancia">50m Libre</td>
-                                <td data-label="Atleta">DANIEL MONTOYA</td>
-                                <td data-label="Equipo">NNG</td>
-                                <td data-label="Categoría">Master D</td>
-                                <td data-label="Tiempo Record" class="time">00:34.40</td>
-                                <td data-label="Fecha">12/13/2020</td>
-                                <td data-label="Competencia">II CHAMPIONSHIP MASTER</td>
-                            </tr>
-                            <tr>
-                                <td data-label="Distancia">50m Libre</td>
-                                <td data-label="Atleta">Libardo Pinzón Vivas</td>
-                                <td data-label="Equipo">MASTER</td>
-                                <td data-label="Categoría">Master E</td>
-                                <td data-label="Tiempo Record" class="time">00:32.97</td>
-                                <td data-label="Fecha">4/19/2020</td>
-                                <td data-label="Competencia">CHAMPIONSHIP MASTER</td>
-                            </tr>
-                            <tr>
-                                <td data-label="Distancia">50m Libre</td>
-                                <td data-label="Atleta">Alejo valdez</td>
-                                <td data-label="Equipo">DELFINES</td>
-                                <td data-label="Categoría">Master G</td>
-                                <td data-label="Tiempo Record" class="time">00:45.84</td>
-                                <td data-label="Fecha">10/21/2019</td>
-                                <td data-label="Competencia">CAIMAN DE ORO</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Sponsors Section -->
-    <section class="sponsors-section">
-        <div class="container">
-            <h2 class="section-title">Nuestros Patrocinadores</h2>
-            <div class="sponsors-grid">
-                <a href="#" target="_blank" class="sponsor-card">
-                    <div class="sponsor-logo"><img src="https://via.placeholder.com/200x80/FAFAFA/CCCCCC?text=Sponsor+3" alt="Patrocinador 3"></div>
-                    <div class="sponsor-name">Empresa Patrocinadora 3</div>
-                </a>
-                <a href="#" target="_blank" class="sponsor-card">
-                    <div class="sponsor-logo"><img src="https://via.placeholder.com/200x80/FAFAFA/CCCCCC?text=Sponsor+4" alt="Patrocinador 4"></div>
-                    <div class="sponsor-name">Empresa Patrocinadora 4</div>
-                </a>
-            </div>
-        </div>
-    </section>
-
-    <!-- CTA Section -->
-    <section class="cta-section">
-        <div class="container">
-            <h2>¿Listo para competir?</h2>
-            <p>Únete a los mejores nadadores master en esta emocionante competencia</p>
-            <a href="#" class="cta-button">Más Información</a>
-        </div>
-    </section>
-    
-    <!-- Contact Section -->
-    <section class="contact-section">
-        <div class="container">
-            <h2 class="section-title">Contacto</h2>
-            <div class="contact-grid">
-                <!-- WhatsApp Card -->
-                <a href="https://wa.me/573001234567" target="_blank" class="contact-card-link">
-                    <div class="sticker-icon">
-                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M16.75 13.96C16.41 13.79 15.31 13.24 15.08 13.15C14.86 13.06 14.7 13.02 14.54 13.28C14.38 13.55 13.91 14.11 13.75 14.28C13.59 14.45 13.43 14.47 13.16 14.3C12.89 14.13 12.06 13.85 11.07 12.99C10.29 12.3 9.73 11.48 9.59 11.21C9.45 10.94 9.56 10.81 9.7 10.67C9.83 10.53 9.99 10.33 10.13 10.18C10.27 10.03 10.32 9.9 10.42 9.73C10.52 9.56 10.47 9.4 10.39 9.27C10.31 9.14 9.85 7.97 9.66 7.52C9.47 7.07 9.28 7.13 9.14 7.12H8.62C8.42 7.12 8.13 7.19 7.89 7.43C7.65 7.67 6.96 8.31 6.96 9.56C6.96 10.81 7.92 12.01 8.06 12.18C8.2 12.35 9.85 14.8 12.29 15.76C14.73 16.72 14.73 16.34 15.13 16.3C15.53 16.26 16.54 15.68 16.75 15.13C16.96 14.58 16.96 14.12 16.88 13.96H16.75Z" stroke="#0b5079" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M12.04 21.82C17.56 21.82 22 17.38 22 11.86C22 6.34 17.56 1.9 12.04 1.9C6.52 1.9 2.08 6.34 2.08 11.86C2.08 14.13 2.84 16.24 4.12 17.9L2.56 21.34L6.17 19.95C7.73 21.13 9.79 21.82 12.04 21.82Z" stroke="#00ADEF" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                    </div>
-                    <h3>WhatsApp</h3>
-                    <p>+57 300 123 4567</p>
-                </a>
-                <!-- Instagram Card -->
-                <a href="https://www.instagram.com/tu_usuario" target="_blank" class="contact-card-link">
-                    <div class="sticker-icon">
-                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="2" y="2" width="20" height="20" rx="5" ry="5" stroke="#00ADEF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M16 11.37C16 13.38 14.21 15 12 15C9.79 15 8 13.38 8 11.37C8 9.36 9.79 7.75 12 7.75C14.21 7.75 16 9.36 16 11.37Z" stroke="#0b5079" stroke-width="2"/><path d="M17.5 6.5H17.51" stroke="#0b5079" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                    </div>
-                    <h3>Instagram</h3>
-                    <p>@AquaTEN_Club</p>
-                </a>
+                <h3>🏊‍♀️ Resultados desde Google Sheets</h3>
+                <table class="results-table" id="resultsTable">
+                    <thead>
+                        <tr>
+                            <th>Columna 1</th>
+                            <th>Columna 2</th>
+                            <th>Columna 3</th>
+                            <th>Columna 4</th>
+                            <th>Columna 5</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td colspan="5" style="text-align: center; padding: 40px; color: #a5a5a5;">
+                                🔄 Cargando datos desde Google Sheets...
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
         </div>
     </section>
@@ -887,936 +344,289 @@
         </div>
     </footer>
 
+    <!-- Debug Panel -->
+    <div id="debugPanel" class="debug-panel" style="display: none;">
+        <div style="font-weight: bold; color: #fff; margin-bottom: 10px;">🔍 Debug Console</div>
+        <div id="debugLogs"></div>
+    </div>
+
     <script>
+        // Configuración
+        const CONFIG = {
+            API_KEY: 'AIzaSyDcUEGyS6grOV_p8Z6d9WofiFNMYQBblIk',
+            SHEET_ID: '1AKzRm64pn_1JaL4n0Tx3xupfDdkU91Oc-nN2kf7z4PE',
+            SHEET_NAME: 'RECORD MASTER',
+            USE_API_KEY: true,
+            DEBUG_MODE: true
+        };
+
         // Variables globales
-        let lastUpdateTime = null;
-        let loadAttempts = 0;
-        const MAX_ATTEMPTS = 3;
+        let debugLogs = [];
 
-        // Elementos DOM
-        const statusIndicator = document.getElementById('statusIndicator');
-        const lastUpdateElement = document.getElementById('lastUpdateTime');
-        const resultsTable = document.getElementById('resultsTable');
-
-        // Función para actualizar el indicador de estado
-        function updateStatus(type, message) {
-            statusIndicator.className = `status-indicator status-${type}`;
-            statusIndicator.textContent = message;
+        // Función de debug
+        function debug(message, data = null) {
+            const timestamp = new Date().toLocaleTimeString();
+            const logMessage = `[${timestamp}] ${message}`;
+            console.log(logMessage, data || '');
             
-            if (type === 'success' || type === 'error') {
-                setTimeout(() => {
-                    statusIndicator.style.opacity = '0';
-                    setTimeout(() => {
-                        statusIndicator.style.display = 'none';
-                    }, 300);
-                }, 3000);
+            if (CONFIG.DEBUG_MODE) {
+                debugLogs.push(logMessage);
+                if (debugLogs.length > 50) debugLogs.shift();
+                updateDebugPanel();
             }
         }
 
-        // Función para actualizar tiempo de última actualización
-        function updateLastUpdateTime() {
-            const now = new Date();
-            const timeString = now.toLocaleTimeString('es-CO', {
-                hour: '2-digit',
-                minute: '2-digit',
-                second: '2-digit',
-                timeZone: 'America/Bogota'
-            });
-            lastUpdateElement.textContent = timeString;
-            lastUpdateTime = now;
+        // Actualizar panel de debug
+        function updateDebugPanel() {
+            const panel = document.getElementById('debugPanel');
+            const logsDiv = document.getElementById('debugLogs');
+            
+            if (CONFIG.DEBUG_MODE && panel) {
+                panel.style.display = 'block';
+                logsDiv.innerHTML = debugLogs.map(log => 
+                    `<div class="debug-log">${log}</div>`
+                ).join('');
+                logsDiv.scrollTop = logsDiv.scrollHeight;
+            }
         }
 
-        // Parser CSV mejorado y optimizado
+        // Actualizar indicador de estado
+        function updateStatus(type, message) {
+            const statusIndicator = document.getElementById('statusIndicator');
+            statusIndicator.className = `status-indicator status-${type}`;
+            statusIndicator.textContent = message;
+            debug(`Status: ${type} - ${message}`);
+        }
+
+        // Actualizar tiempo
+        function updateLastUpdateTime() {
+            const now = new Date();
+            const timeString = now.toLocaleTimeString('es-CO');
+            document.getElementById('lastUpdateTime').textContent = timeString;
+        }
+
+        // Parser CSV simple
         function parseCSV(csvText) {
             const rows = [];
             const lines = csvText.split('\n');
             
             for (let line of lines) {
                 if (!line.trim()) continue;
-                
-                const cols = [];
-                let currentCol = '';
-                let inQuotes = false;
-                
-                for (let i = 0; i < line.length; i++) {
-                    const char = line[i];
-                    const nextChar = line[i + 1];
-                    
-                    if (char === '"') {
-                        if (inQuotes && nextChar === '"') {
-                            currentCol += '"';
-                            i++; // Saltar la siguiente comilla
-                        } else {
-                            inQuotes = !inQuotes;
-                        }
-                    } else if (char === ',' && !inQuotes) {
-                        cols.push(currentCol.trim());
-                        currentCol = '';
-                    } else {
-                        currentCol += char;
-                    }
-                }
-                
-                cols.push(currentCol.trim());
-                
-                if (cols.some(cell => cell && cell.trim() !== '')) {
-                    rows.push(cols);
-                }
+                const cols = line.split(',').map(col => col.trim().replace(/^"|"$/g, ''));
+                rows.push(cols);
             }
             
             return rows;
         }
 
-        // Configuración: Usar API Key habilitada con manejo de CORS
-        const USE_API_KEY = true; // ✅ API Key habilitada
-        const API_KEY = 'AIzaSyDcUEGyS6grOV_p8Z6d9WofiFNMYQBblIk'; // ✅ Tu API Key
-        
-        // Método principal para cargar datos desde Google Sheets
+        // Cargar datos con API Key
+        async function loadWithAPIKey() {
+            debug('🔑 Intentando cargar con API Key...');
+            
+            const ranges = [
+                `${CONFIG.SHEET_NAME}!A:Z`,
+                `${CONFIG.SHEET_NAME}!A1:Z1000`,
+                'A:Z'
+            ];
+            
+            for (const range of ranges) {
+                try {
+                    const url = `https://sheets.googleapis.com/v4/spreadsheets/${CONFIG.SHEET_ID}/values/${range}?key=${CONFIG.API_KEY}`;
+                    debug(`📡 Probando rango: ${range}`);
+                    
+                    const response = await fetch(url);
+                    debug(`📊 Respuesta: ${response.status} ${response.statusText}`);
+                    
+                    if (response.ok) {
+                        const data = await response.json();
+                        if (data.values && data.values.length > 0) {
+                            debug(`✅ Datos encontrados: ${data.values.length} filas`);
+                            return data.values;
+                        }
+                    } else {
+                        const error = await response.json();
+                        debug(`❌ Error API: ${JSON.stringify(error)}`);
+                    }
+                } catch (error) {
+                    debug(`❌ Error de conexión: ${error.message}`);
+                }
+            }
+            
+            return null;
+        }
+
+        // Cargar datos con CSV
+        async function loadWithCSV() {
+            debug('📄 Intentando cargar con CSV...');
+            
+            const csvUrls = [
+                `https://docs.google.com/spreadsheets/d/${CONFIG.SHEET_ID}/export?format=csv&gid=0`,
+                `https://docs.google.com/spreadsheets/d/${CONFIG.SHEET_ID}/export?format=csv`
+            ];
+            
+            for (const url of csvUrls) {
+                try {
+                    debug(`📡 Probando URL CSV...`);
+                    const response = await fetch(url);
+                    
+                    if (response.ok) {
+                        const text = await response.text();
+                        if (text && !text.includes('<!DOCTYPE')) {
+                            const rows = parseCSV(text);
+                            debug(`✅ CSV parseado: ${rows.length} filas`);
+                            return rows;
+                        }
+                    }
+                } catch (error) {
+                    debug(`❌ Error CSV: ${error.message}`);
+                }
+            }
+            
+            return null;
+        }
+
+        // Función principal para cargar datos
         async function loadSheetData() {
-            loadAttempts++;
-            updateStatus('loading', '🔄 Cargando resultados...');
+            updateStatus('loading', '🔄 Cargando datos...');
             
-            // Si está deshabilitada la API Key, ir directo a CSV
-            if (!USE_API_KEY) {
-                console.log('📄 Usando solo método CSV (API Key deshabilitada)');
-                await loadSheetDataAlternative();
-                return;
+            let data = null;
+            
+            // Intentar con API Key primero
+            if (CONFIG.USE_API_KEY) {
+                data = await loadWithAPIKey();
             }
             
-            try {
-                const SHEET_ID = '1AKzRm64pn_1JaL4n0Tx3xupfDdkU91Oc-nN2kf7z4PE';
-                
-                // Probar diferentes rangos y nombres de hoja
-                const ranges = [
-                    'RECORD%20MASTER!A:Z',  // Tu hoja principal con más columnas
-                    'RECORD%20MASTER!A:G',  // Tu hoja principal
-                    'RECORD%20MASTER!A1:Z1000', // Rango específico
-                    'A:Z',  // Sin especificar hoja, más columnas
-                    'A1:Z1000' // Rango específico sin hoja
-                ];
-                
-                let data = null;
-                let activeRange = '';
-                
-                console.log('🔑 Intentando con API Key...');
-                
-                // Intentar con API Key primero
-                for (const range of ranges) {
-                    try {
-                        const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${range}?key=${API_KEY}`;
-                        console.log(`🔍 Probando rango con API Key: ${range}`);
-                        
-                        const response = await fetch(url, {
-                            method: 'GET',
-                            headers: {
-                                'Accept': 'application/json',
-                                'Cache-Control': 'no-cache',
-                                'Pragma': 'no-cache'
-                            },
-                            mode: 'cors', // Explícitamente permitir CORS
-                            credentials: 'omit' // No enviar credentials
-                        });
-                        
-                        console.log(`📊 Respuesta API: ${response.status} ${response.statusText}`);
-                        
-                        if (response.ok) {
-                            const responseData = await response.json();
-                            console.log(`📊 Datos recibidos para ${range}:`, responseData);
-                            
-                            if (responseData.values && responseData.values.length > 0) {
-                                data = responseData;
-                                activeRange = range;
-                                console.log(`✅ Datos encontrados en: ${range} (${responseData.values.length} filas)`);
-                                break;
-                            } else {
-                                console.log(`⚠️ Sin datos en rango: ${range}`);
-                            }
-                        } else {
-                            const errorData = await response.json();
-                            console.log(`❌ Error API ${response.status} en ${range}:`, errorData);
-                            
-                            // Si es error 403 de referentes, intentar con CSV
-                            if (response.status === 403) {
-                                console.log('🔄 Error 403 detectado, probando método CSV...');
-                                await loadSheetDataAlternative();
-                                return;
-                            }
-                        }
-                    } catch (rangeError) {
-                        console.log(`❌ Error de conexión en rango ${range}:`, rangeError.message);
-                        console.log('🔄 Failed to fetch detectado, probando método CSV...');
-                        
-                        // Si es el primer rango y falla, ir directo a CSV
-                        if (range === ranges[0]) {
-                            await loadSheetDataAlternative();
-                            return;
-                        }
-                        continue;
-                    }
-                }
-                
-                if (data && data.values && data.values.length > 0) {
-                    updateResultsTable(data.values);
-                    updateLastUpdateTime();
-                    updateStatus('success', '✅ Datos cargados con API Key');
-                    loadAttempts = 0;
-                    console.log(`🎉 ${data.values.length} filas cargadas exitosamente desde: ${activeRange}`);
-                } else {
-                    console.log('⚠️ Sin datos con API Key, probando método CSV...');
-                    await loadSheetDataAlternative();
-                }
-                
-            } catch (error) {
-                console.error('❌ Error general con API Key:', error);
-                console.log('🔄 Fallback a método CSV debido a error general...');
-                await loadSheetDataAlternative();
+            // Si falla, intentar con CSV
+            if (!data) {
+                data = await loadWithCSV();
+            }
+            
+            // Actualizar tabla con los datos
+            if (data && data.length > 0) {
+                updateTable(data);
+                updateStatus('success', '✅ Datos cargados');
+                updateLastUpdateTime();
+            } else {
+                updateStatus('error', '❌ No se pudieron cargar los datos');
+                showError();
             }
         }
 
-        // Método alternativo usando exportación CSV (Anti Failed to Fetch)
-        async function loadSheetDataAlternative() {
-            try {
-                const SHEET_ID = '1AKzRm64pn_1JaL4n0Tx3xupfDdkU91Oc-nN2kf7z4PE';
-                
-                // URLs optimizadas para evitar CORS y Failed to Fetch
-                const exportUrls = [
-                    // Método 1: Exportación directa (más confiable)
-                    `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv&gid=0`,
-                    `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv`,
-                    
-                    // Método 2: Con parámetros adicionales para evitar cache
-                    `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv&gid=0&timestamp=${Date.now()}`,
-                    `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv&cachebust=${Math.random()}`,
-                    
-                    // Método 3: Google Visualization API (última opción)
-                    `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=RECORD%20MASTER`,
-                ];
-                
-                let csvText = '';
-                let successUrl = '';
-                let lastError = '';
-                
-                console.log('📄 Iniciando método CSV alternativo...');
-                
-                for (const url of exportUrls) {
-                    try {
-                        console.log('🔄 Probando URL CSV:', url.substring(0, 80) + '...');
-                        
-                        // Configuración anti "Failed to fetch"
-                        const fetchConfig = {
-                            method: 'GET',
-                            headers: {
-                                'Cache-Control': 'no-cache, no-store, must-revalidate',
-                                'Pragma': 'no-cache',
-                                'Expires': '0'
-                            },
-                            mode: 'cors',
-                            credentials: 'omit',
-                            // Timeout personalizado
-                            signal: AbortSignal.timeout ? AbortSignal.timeout(10000) : undefined
-                        };
-                        
-                        const response = await fetch(url, fetchConfig);
-                        
-                        console.log(`📊 Respuesta CSV: ${response.status} ${response.statusText}`);
-                        
-                        if (response.ok) {
-                            csvText = await response.text();
-                            console.log('📄 Texto CSV recibido (primeros 300 chars):', csvText.substring(0, 300));
-                            
-                            // Validaciones más estrictas para evitar HTML de error
-                            const isValidCSV = csvText && 
-                                             csvText.trim() !== '' && 
-                                             !csvText.includes('<!DOCTYPE') &&
-                                             !csvText.includes('<html') &&
-                                             !csvText.includes('<HTML') &&
-                                             !csvText.includes('Error') &&
-                                             !csvText.includes('Access denied') &&
-                                             !csvText.includes('Permission denied') &&
-                                             csvText.length > 20 &&
-                                             (csvText.includes(',') || csvText.includes('\n'));
-                            
-                            if (isValidCSV) {
-                                successUrl = url;
-                                console.log('✅ CSV válido obtenido de:', url.substring(0, 60) + '...');
-                                break;
-                            } else {
-                                console.log('⚠️ CSV inválido o contiene errores');
-                                lastError = 'CSV inválido o contiene HTML de error';
-                            }
-                        } else {
-                            lastError = `HTTP ${response.status}: ${response.statusText}`;
-                            console.log('❌ Error HTTP:', lastError);
-                            
-                            // Leer el contenido del error para más información
-                            try {
-                                const errorText = await response.text();
-                                if (errorText.length < 500) {
-                                    console.log('📄 Contenido del error:', errorText);
-                                }
-                            } catch (e) {
-                                console.log('❌ No se pudo leer el contenido del error');
-                            }
-                        }
-                    } catch (urlError) {
-                        lastError = urlError.message;
-                        console.log('❌ Error en URL:', url.substring(0, 60) + '...', urlError.message);
-                        
-                        // Información adicional sobre el tipo de error
-                        if (urlError.name === 'TypeError' && urlError.message.includes('Failed to fetch')) {
-                            console.log('🚨 Error "Failed to fetch" detectado. Posibles causas:');
-                            console.log('   - Problemas de CORS');
-                            console.log('   - Google Sheet no es público');
-                            console.log('   - Problemas de red');
-                            console.log('   - Bloqueador de anuncios activo');
-                        }
-                        continue;
-                    }
+        // Actualizar tabla con datos
+        function updateTable(data) {
+            const tbody = document.querySelector('#resultsTable tbody');
+            
+            // Limpiar tabla
+            tbody.innerHTML = '';
+            
+            // Procesar filas
+            data.forEach((row, index) => {
+                if (index === 0 && row.some(cell => cell.toLowerCase().includes('column'))) {
+                    // Actualizar headers si la primera fila contiene headers
+                    updateHeaders(row);
+                    return;
                 }
                 
-                if (!csvText || csvText.trim() === '') {
-                    throw new Error(`No se pudo obtener datos válidos de ninguna URL. Último error: ${lastError}`);
+                const tr = document.createElement('tr');
+                
+                // Asegurar que tenemos al menos 5 columnas
+                for (let i = 0; i < 5; i++) {
+                    const td = document.createElement('td');
+                    td.textContent = row[i] || '-';
+                    tr.appendChild(td);
                 }
                 
-                const rows = parseCSV(csvText);
-                console.log('📊 Filas parseadas desde CSV:', rows.length);
-                console.log('📄 Primeras 3 filas:', rows.slice(0, 3));
-                
-                if (rows && rows.length > 0) {
-                    updateResultsTable(rows);
-                    updateLastUpdateTime();
-                    updateStatus('success', '✅ Datos cargados (CSV)');
-                    loadAttempts = 0;
-                    console.log(`✅ ${rows.length} filas cargadas exitosamente (método CSV)`);
-                } else {
-                    throw new Error('No se encontraron datos válidos en el CSV parseado');
-                }
-                
-            } catch (error) {
-                console.error('❌ Error cargando datos (método CSV):', error);
-                
-                if (loadAttempts < MAX_ATTEMPTS) {
-                    updateStatus('loading', `🔄 Reintentando... (${loadAttempts}/${MAX_ATTEMPTS})`);
-                    setTimeout(() => loadSheetData(), 5000);
-                } else {
-                    updateStatus('error', '❌ Error cargando datos');
-                    showErrorFallback();
-                }
+                tbody.appendChild(tr);
+            });
+            
+            debug(`✅ Tabla actualizada con ${data.length} filas`);
+        }
+
+        // Actualizar headers de la tabla
+        function updateHeaders(headers) {
+            const thead = document.querySelector('#resultsTable thead tr');
+            thead.innerHTML = '';
+            
+            // Tomar solo las primeras 5 columnas
+            for (let i = 0; i < Math.min(5, headers.length); i++) {
+                const th = document.createElement('th');
+                th.textContent = headers[i] || `Columna ${i + 1}`;
+                thead.appendChild(th);
             }
         }
 
-        // Función mejorada para mostrar datos de fallback con diagnóstico
-        function showErrorFallback() {
-            const tbody = document.querySelector('#1500m-libre .results-table tbody');
-            if (!tbody) return;
-            
+        // Mostrar error
+        function showError() {
+            const tbody = document.querySelector('#resultsTable tbody');
             tbody.innerHTML = `
                 <tr>
-                    <td colspan="7" style="text-align: center; padding: 40px; color: #f44336;">
-                        ❌ Error: "Failed to fetch"<br>
-                        <small style="color: #666; margin-top: 15px; display: block; line-height: 1.5;">
-                            <strong>Posibles soluciones:</strong><br>
-                            1. Verificar que el Google Sheet sea público<br>
-                            2. Desactivar bloqueador de anuncios temporalmente<br>
-                            3. Verificar conexión a internet<br>
-                            4. Probar en modo incógnito del navegador<br>
-                            5. Verificar configuraciones de CORS del servidor
+                    <td colspan="5" style="text-align: center; padding: 40px; color: #f44336;">
+                        ❌ No se pudieron cargar los datos<br>
+                        <small style="color: #666; margin-top: 10px; display: block;">
+                            Verifica que el Google Sheet sea público
                         </small>
-                        <div style="margin-top: 20px;">
-                            <button onclick="retryLoad()" style="margin: 5px; padding: 8px 16px; background: #00ADEF; color: white; border: none; border-radius: 4px; cursor: pointer;">
-                                🔄 Reintentar
-                            </button>
-                            <button onclick="diagnoseFetchError().then(result => console.log('Diagnóstico:', result))" style="margin: 5px; padding: 8px 16px; background: #ff9800; color: white; border: none; border-radius: 4px; cursor: pointer;">
-                                🔍 Diagnosticar
-                            </button>
-                            <button onclick="checkSheetPublic()" style="margin: 5px; padding: 8px 16px; background: #9c27b0; color: white; border: none; border-radius: 4px; cursor: pointer;">
-                                📊 Verificar Sheet
-                            </button>
-                        </div>
-                    </td>
-                </tr>`;
-        }
-
-        // Función para verificar si el Google Sheet es público
-        async function checkSheetPublic() {
-            const SHEET_ID = '1AKzRm64pn_1JaL4n0Tx3xupfDdkU91Oc-nN2kf7z4PE';
-            const publicUrl = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/edit`;
-            
-            console.log('🔍 Verificando si el Google Sheet es público...');
-            console.log('📋 URL del Sheet:', publicUrl);
-            
-            // Abrir en nueva ventana para que el usuario pueda verificar
-            const newWindow = window.open(publicUrl, '_blank');
-            
-            if (newWindow) {
-                console.log('✅ Google Sheet abierto en nueva ventana');
-                console.log('🔧 Verifica que el Sheet sea público:');
-                console.log('   1. Clic en "Compartir" (botón azul)');
-                console.log('   2. Cambiar a "Cualquier persona con el enlace puede ver"');
-                console.log('   3. Asegurarse de que sea "Viewer" (no Editor)');
-                console.log('   4. Guardar cambios');
-                
-                alert('Google Sheet abierto en nueva ventana.\n\nVerifica que sea público:\n1. Clic en "Compartir"\n2. "Cualquier persona con el enlace puede ver"\n3. Rol: "Viewer"\n\nLuego cierra esta ventana y haz clic en "Reintentar"');
-            } else {
-                console.log('❌ No se pudo abrir nueva ventana (bloqueador de pop-ups)');
-                alert('No se pudo abrir automáticamente.\n\nVe manualmente a:\n' + publicUrl + '\n\nY verifica que sea público.');
-            }
-        }
-
-        // Función de prueba específica para tu Google Sheet y API Key;">
-                        ❌ No se pudieron cargar los datos desde Google Sheets<br>
-                        <small style="color: #a5a5a5; margin-top: 10px; display: block;">
-                            Verifica que el Google Sheet sea público o intenta recargar la página
-                        </small>
-                        <button onclick="retryLoad()" style="margin-top: 15px; padding: 10px 20px; background: #00ADEF; color: white; border: none; border-radius: 5px; cursor: pointer;">
+                        <button onclick="loadSheetData()" style="margin-top: 15px; padding: 10px 20px; background: #00ADEF; color: white; border: none; border-radius: 5px; cursor: pointer;">
                             🔄 Reintentar
                         </button>
                     </td>
                 </tr>`;
         }
 
-        // Función para reintentar carga manualmente
-        function retryLoad() {
-            loadAttempts = 0;
-            loadSheetData();
-        }
-
-        // Función mejorada para actualizar la tabla de resultados
-        function updateResultsTable(data) {
-            const tbody = document.querySelector('#1500m-libre .results-table tbody');
-            if (!tbody) return;
+        // Función de prueba
+        async function testConnection() {
+            debug('🧪 === INICIANDO PRUEBA DE CONEXIÓN ===');
+            debug(`📊 Sheet ID: ${CONFIG.SHEET_ID}`);
+            debug(`🔑 API Key: ${CONFIG.API_KEY.substring(0, 10)}...`);
             
-            console.log('📊 Procesando', data.length, 'filas de datos');
-            console.log('🔍 Primeras 3 filas:', data.slice(0, 3));
-            
-            let htmlContent = '';
-            let currentCategory = '';
-            let processedRows = 0;
-            
-            // Detectar si la primera fila son headers
-            let startRow = 0;
-            if (data[0] && data[0].length > 0) {
-                const firstCell = data[0][0] ? data[0][0].toString().toLowerCase() : '';
-                if (firstCell.includes('pos') || firstCell.includes('lugar') || 
-                    firstCell.includes('puesto') || firstCell.includes('#') ||
-                    firstCell.includes('rank') || firstCell === '1') {
-                    startRow = 1;
-                    console.log('📋 Headers detectados en fila 1, iniciando desde fila 2');
+            // Probar API Key
+            const apiUrl = `https://sheets.googleapis.com/v4/spreadsheets/${CONFIG.SHEET_ID}/values/A1:Z1?key=${CONFIG.API_KEY}`;
+            try {
+                const response = await fetch(apiUrl);
+                debug(`API Response: ${response.status}`);
+                if (response.ok) {
+                    const data = await response.json();
+                    debug('✅ API Key funciona correctamente');
+                    debug(`Datos obtenidos: ${JSON.stringify(data.values?.[0]?.slice(0, 3))}`);
+                } else {
+                    const error = await response.json();
+                    debug(`❌ Error API: ${error.error?.message}`);
                 }
+            } catch (error) {
+                debug(`❌ Error de conexión: ${error.message}`);
             }
             
-            // Procesar datos fila por fila
-            for (let i = startRow; i < data.length; i++) {
-                const row = data[i];
-                if (!row || row.length === 0) continue;
-                
-                console.log(`🔍 Procesando fila ${i}:`, row);
-                
-                // Variables para los datos
-                let pos, nadadora, equipo, edad, categoria, tiempo, puntos;
-                
-                // Detectar automáticamente la estructura de datos
-                // Buscar patrones en las columnas
-                for (let j = 0; j < row.length; j++) {
-                    const cell = row[j] ? row[j].toString().trim() : '';
-                    
-                    // Detectar categoría (palabras clave)
-                    if (cell.match(/^(INFANTIL|JUVENIL|MAYORES|MASTER|SENIOR)/i) && !categoria) {
-                        categoria = cell;
-                        console.log(`📂 Categoría detectada en columna ${j}: ${categoria}`);
-                    }
-                    
-                    // Detectar posición (números 1-10 al inicio)
-                    if (cell.match(/^[1-9]$/) && !pos) {
-                        pos = cell;
-                    }
-                    
-                    // Detectar tiempo (formato mm:ss.ss)
-                    if (cell.match(/^\d{1,2}:\d{2}\.\d{2}$/) && !tiempo) {
-                        tiempo = cell;
-                    }
-                    
-                    // Detectar puntos (números > 10)
-                    if (cell.match(/^\d{1,2}$/) && parseInt(cell) > 10 && !puntos) {
-                        puntos = cell;
-                    }
-                    
-                    // Detectar edad (números 10-99)
-                    if (cell.match(/^\d{2}$/) && !edad) {
-                        edad = cell;
-                    }
-                    
-                    // Detectar equipo (siglas 2-4 letras)
-                    if (cell.match(/^[A-Z]{2,4}$/) && !equipo) {
-                        equipo = cell;
-                    }
-                    
-                    // Detectar nadadora (texto largo, nombres)
-                    if (cell.length > 5 && cell.match(/[a-zA-Z\s]+/) && 
-                        !cell.match(/^(INFANTIL|JUVENIL|MAYORES|MASTER)/i) && 
-                        !nadadora) {
-                        nadadora = cell;
-                    }
+            // Probar CSV
+            const csvUrl = `https://docs.google.com/spreadsheets/d/${CONFIG.SHEET_ID}/export?format=csv`;
+            try {
+                const response = await fetch(csvUrl);
+                debug(`CSV Response: ${response.status}`);
+                if (response.ok) {
+                    const text = await response.text();
+                    debug(`✅ CSV accesible, longitud: ${text.length} caracteres`);
                 }
-                
-                // Si no encontramos patrones, usar estructura secuencial
-                if (!pos && !nadadora && !categoria) {
-                    if (row.length >= 7) {
-                        [pos, nadadora, equipo, edad, categoria, tiempo, puntos] = row;
-                    } else if (row.length >= 6) {
-                        [pos, nadadora, equipo, categoria, tiempo, puntos] = row;
-                        edad = '-';
-                    } else if (row.length >= 5) {
-                        [pos, nadadora, categoria, tiempo, puntos] = row;
-                        equipo = '-';
-                        edad = '-';
-                    } else if (row.length >= 3) {
-                        [nadadora, categoria, tiempo] = row;
-                        pos = '-';
-                        equipo = '-';
-                        edad = '-';
-                        puntos = '-';
-                    }
-                }
-                
-                // Limpiar y validar datos
-                categoria = categoria ? categoria.toString().trim().toUpperCase() : '';
-                nadadora = nadadora ? nadadora.toString().trim() : '';
-                pos = pos ? pos.toString().trim() : '';
-                
-                console.log(`📝 Datos procesados: pos=${pos}, nadadora=${nadadora}, categoria=${categoria}`);
-                
-                // Skip filas completamente vacías
-                if (!categoria && !nadadora && !pos) continue;
-                
-                // Si es solo una categoría sin nadadora, probablemente es un header de categoría
-                if (categoria && (!nadadora || nadadora === '' || nadadora === '-') && 
-                    categoria.match(/^(INFANTIL|JUVENIL|MAYORES|MASTER)/i)) {
-                    if (categoria !== currentCategory) {
-                        currentCategory = categoria;
-                        htmlContent += `
-                            <tr class="category-header">
-                                <td colspan="7">${categoria}</td>
-                            </tr>`;
-                        console.log(`📂 Header de categoría agregado: ${categoria}`);
-                    }
-                    continue;
-                }
-                
-                // Si cambia la categoría y hay nadadora, agregar header
-                if (categoria && categoria !== currentCategory && categoria !== '' && 
-                    categoria !== '-' && nadadora && nadadora !== '') {
-                    currentCategory = categoria;
-                    htmlContent += `
-                        <tr class="category-header">
-                            <td colspan="7">${categoria}</td>
-                        </tr>`;
-                    console.log(`📂 Nuevo header de categoría: ${categoria}`);
-                }
-                
-                // Agregar fila de resultado si hay nadadora
-                if (nadadora && nadadora !== '' && nadadora !== '-' && 
-                    !nadadora.toLowerCase().includes('sin participantes') &&
-                    !nadadora.toLowerCase().includes('vacío') &&
-                    !nadadora.toLowerCase().includes('vacio') &&
-                    nadadora.length > 2) {
-                    
-                    // Generar medallas/posiciones
-                    let displayPos = '';
-                    if (pos == 1 || pos === '1') displayPos = '🥇 1°';
-                    else if (pos == 2 || pos === '2') displayPos = '🥈 2°';
-                    else if (pos == 3 || pos === '3') displayPos = '🥉 3°';
-                    else if (pos && pos !== '-' && pos !== '') displayPos = `${pos}°`;
-                    else displayPos = '-';
-                    
-                    htmlContent += `
-                        <tr>
-                            <td data-label="Pos." class="rank">${displayPos}</td>
-                            <td data-label="Nadadora">${nadadora}</td>
-                            <td data-label="Equipo">${equipo || '-'}</td>
-                            <td data-label="Edad">${edad || '-'}</td>
-                            <td data-label="Categoría">${categoria || '-'}</td>
-                            <td data-label="Tiempo Final" class="time">${tiempo || '-'}</td>
-                            <td data-label="Puntos" class="points">${puntos || '-'}</td>
-                        </tr>`;
-                    processedRows++;
-                    console.log(`✅ Fila agregada: ${nadadora} - ${categoria}`);
-                }
-            }
-            
-            // Si no se procesó nada, mostrar mensaje
-            if (htmlContent === '') {
-                htmlContent = `
-                    <tr>
-                        <td colspan="7" style="text-align: center; padding: 40px; color: #a5a5a5;">
-                            📝 Datos disponibles pero estructura no reconocida<br>
-                            <small style="display: block; margin-top: 10px; color: #666;">
-                                Total de filas: ${data.length} | Filas con datos: ${data.filter(row => row && row.length > 0).length}
-                            </small>
-                            <button onclick="showRawData()" style="margin-top: 15px; padding: 8px 16px; background: #00ADEF; color: white; border: none; border-radius: 4px; cursor: pointer;">
-                                Ver datos raw
-                            </button>
-                        </td>
-                    </tr>`;
-            }
-            
-            tbody.innerHTML = htmlContent;
-            resultsTable.classList.remove('loading');
-            
-            console.log(`✅ Tabla actualizada: ${processedRows} resultados de ${data.length} filas`);
-            
-            // Guardar datos para debugging
-            window.lastLoadedData = data;
-        }
-
-        // Función para mostrar datos raw (debugging)
-        function showRawData() {
-            if (window.lastLoadedData) {
-                console.log('📊 DATOS RAW COMPLETOS:', window.lastLoadedData);
-                alert(`Datos cargados: ${window.lastLoadedData.length} filas.\nRevisa la consola (F12) para ver los datos completos.`);
+            } catch (error) {
+                debug(`❌ Error CSV: ${error.message}`);
             }
         }
 
-        // Funciones para tabs
-        function openTab(evt, tabName) {
-            var i, tabcontent, tabbuttons;
+        // Inicializar cuando se carga la página
+        document.addEventListener('DOMContentLoaded', function() {
+            debug('🚀 Página cargada, iniciando...');
             
-            tabcontent = document.getElementsByClassName("tab-content");
-            for (i = 0; i < tabcontent.length; i++) {
-                tabcontent[i].classList.remove("active");
-            }
-            
-            tabbuttons = document.getElementsByClassName("tab-button");
-            for (i = 0; i < tabbuttons.length; i++) {
-                tabbuttons[i].classList.remove("active");
-            }
-            
-            document.getElementById(tabName).classList.add("active");
-            evt.currentTarget.classList.add("active");
-        }
-
-        // Función para recargar datos automáticamente
-        function startAutoReload() {
             // Cargar datos inicialmente
             loadSheetData();
             
             // Recargar cada 30 segundos
-            setInterval(() => {
-                console.log('🔄 Recarga automática programada...');
-                loadSheetData();
-            }, 30000);
-        }
-
-        // Event listeners
-        document.addEventListener('DOMContentLoaded', function() {
-            console.log('🚀 Página cargada, iniciando sistema de actualización automática...');
-            console.log('📋 Tu Google Sheet: "RECORD MASTER"');
-            console.log('🔑 API Key habilitada:', API_KEY);
-            console.log('📊 ID del Sheet:', '1AKzRm64pn_1JaL4n0Tx3xupfDdkU91Oc-nN2kf7z4PE');
+            setInterval(loadSheetData, 30000);
             
-            // Agregar botón de prueba temporal
-            addTestButton();
+            // Hacer funciones disponibles globalmente para debugging
+            window.testConnection = testConnection;
+            window.loadSheetData = loadSheetData;
             
-            startAutoReload();
+            debug('💡 Comandos disponibles en consola:');
+            debug('   testConnection() - Probar conexión');
+            debug('   loadSheetData() - Recargar datos');
         });
-
-        // Función para agregar botón de prueba (temporal)
-        function addTestButton() {
-            const testButton = document.createElement('button');
-            testButton.innerHTML = '🔑 Probar API Key';
-            testButton.style.cssText = `
-                position: fixed;
-                bottom: 20px;
-                right: 20px;
-                z-index: 9999;
-                padding: 12px 24px;
-                background: linear-gradient(135deg, #4CAF50, #45a049);
-                color: white;
-                border: none;
-                border-radius: 25px;
-                cursor: pointer;
-                font-weight: 600;
-                font-size: 14px;
-                box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
-                transition: all 0.3s ease;
-            `;
-            
-            testButton.onmouseover = function() {
-                this.style.transform = 'translateY(-2px)';
-                this.style.boxShadow = '0 6px 20px rgba(76, 175, 80, 0.4)';
-            };
-            
-            testButton.onmouseout = function() {
-                this.style.transform = 'translateY(0)';
-                this.style.boxShadow = '0 4px 15px rgba(76, 175, 80, 0.3)';
-            };
-            
-            testButton.onclick = function() {
-                console.log('🧪 Iniciando prueba manual con API Key...');
-                testButton.innerHTML = '⏳ Probando...';
-                testButton.style.background = 'linear-gradient(135deg, #ff9800, #f57c00)';
-                
-                loadAttempts = 0;
-                loadSheetData().then(() => {
-                    testButton.innerHTML = '✅ Completado';
-                    testButton.style.background = 'linear-gradient(135deg, #4CAF50, #45a049)';
-                    setTimeout(() => {
-                        testButton.innerHTML = '🔑 Probar API Key';
-                    }, 2000);
-                });
-            };
-            
-            document.body.appendChild(testButton);
-            
-            // Remover botón después de 3 minutos
-            setTimeout(() => {
-                if (testButton.parentNode) {
-                    testButton.style.opacity = '0';
-                    setTimeout(() => {
-                        if (testButton.parentNode) {
-                            testButton.parentNode.removeChild(testButton);
-                        }
-                    }, 300);
-                }
-            }, 180000);
-        }
-
-        // Función de diagnóstico avanzado para "Failed to fetch"
-        async function diagnoseFetchError() {
-            console.log('🔍 === DIAGNÓSTICO COMPLETO DE "FAILED TO FETCH" ===');
-            
-            const SHEET_ID = '1AKzRm64pn_1JaL4n0Tx3xupfDdkU91Oc-nN2kf7z4PE';
-            
-            // Test 1: Verificar conectividad básica
-            console.log('📡 Test 1: Verificando conectividad básica...');
-            try {
-                const testUrl = 'https://www.google.com/favicon.ico';
-                const testResponse = await fetch(testUrl, { mode: 'no-cors' });
-                console.log('✅ Conectividad básica: OK');
-            } catch (error) {
-                console.log('❌ Sin conectividad básica:', error.message);
-                return { error: 'NO_INTERNET', message: 'Sin conexión a internet' };
-            }
-            
-            // Test 2: Verificar acceso a Google Sheets (público)
-            console.log('📊 Test 2: Verificando acceso público al Google Sheet...');
-            const publicUrl = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/edit`;
-            try {
-                const response = await fetch(publicUrl, { 
-                    method: 'HEAD', 
-                    mode: 'no-cors',
-                    credentials: 'omit'
-                });
-                console.log('✅ Google Sheet accesible');
-            } catch (error) {
-                console.log('⚠️ Problema de acceso al Google Sheet:', error.message);
-            }
-            
-            // Test 3: Verificar URLs de exportación específicas
-            console.log('📄 Test 3: Verificando URLs de exportación...');
-            const testUrls = [
-                `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv&gid=0`,
-                `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv`
-            ];
-            
-            for (const url of testUrls) {
-                try {
-                    console.log(`🔗 Probando: ${url.substring(0, 70)}...`);
-                    const response = await fetch(url, {
-                        method: 'HEAD', // Solo headers, sin contenido
-                        mode: 'cors',
-                        credentials: 'omit'
-                    });
-                    console.log(`✅ URL accesible: ${response.status} ${response.statusText}`);
-                    
-                    if (response.ok) {
-                        // Ahora probar GET completo
-                        const fullResponse = await fetch(url);
-                        const content = await fullResponse.text();
-                        console.log(`📊 Contenido obtenido: ${content.length} caracteres`);
-                        
-                        if (content.length > 50 && !content.includes('<!DOCTYPE')) {
-                            console.log('🎉 ¡Esta URL funciona correctamente!');
-                            return { 
-                                success: true, 
-                                workingUrl: url, 
-                                content: content.substring(0, 200) 
-                            };
-                        }
-                    }
-                } catch (error) {
-                    console.log(`❌ Error en URL: ${error.message}`);
-                    
-                    if (error.message.includes('Failed to fetch')) {
-                        console.log('🚨 "Failed to fetch" detectado en esta URL');
-                    }
-                }
-            }
-            
-            // Test 4: Verificar configuraciones del navegador
-            console.log('🔧 Test 4: Verificando configuraciones del navegador...');
-            console.log('   - User Agent:', navigator.userAgent);
-            console.log('   - Online:', navigator.onLine);
-            console.log('   - Cookies habilitadas:', navigator.cookieEnabled);
-            
-            // Test 5: Verificar si hay bloqueadores
-            console.log('🛡️ Test 5: Verificando posibles bloqueos...');
-            if (typeof window.adblockDetected !== 'undefined') {
-                console.log('⚠️ Bloqueador de anuncios detectado');
-            }
-            
-            return { error: 'FETCH_FAILED', message: 'Todas las URLs fallan con "Failed to fetch"' };
-        }
-        async function testSheetConnection() {
-            console.log('🔍 === PRUEBA COMPLETA DE CONEXIÓN ===');
-            console.log('🔑 API Key:', API_KEY);
-            console.log('📊 Sheet ID:', '1AKzRm64pn_1JaL4n0Tx3xupfDdkU91Oc-nN2kf7z4PE');
-            
-            const SHEET_ID = '1AKzRm64pn_1JaL4n0Tx3xupfDdkU91Oc-nN2kf7z4PE';
-            
-            // Prueba 1: API Key con diferentes rangos
-            console.log('📡 === PRUEBA 1: API KEY ===');
-            const ranges = [
-                'RECORD%20MASTER!A:Z', 
-                'RECORD%20MASTER!A:G',
-                'A:Z', 
-                'A1:Z1000',
-                'RECORD%20MASTER!A1:Z1000'
-            ];
-            
-            for (const range of ranges) {
-                try {
-                    const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${range}?key=${API_KEY}`;
-                    console.log(`🔗 Probando: ${url.substring(0, 80)}...`);
-                    
-                    const response = await fetch(url, {
-                        method: 'GET',
-                        headers: {
-                            'Accept': 'application/json',
-                            'Cache-Control': 'no-cache'
-                        }
-                    });
-                    
-                    console.log(`📊 Respuesta ${range}: ${response.status} ${response.statusText}`);
-                    
-                    if (response.ok) {
-                        const data = await response.json();
-                        console.log(`✅ ÉXITO con API Key!`);
-                        console.log(`📊 Filas obtenidas: ${data.values?.length || 0}`);
-                        if (data.values && data.values.length > 0) {
-                            console.log(`📄 Primera fila:`, data.values[0]);
-                            console.log(`📄 Segunda fila:`, data.values[1]);
-                            console.log(`📄 Estructura detectada: ${data.values[0]?.length || 0} columnas`);
-                            return { success: true, method: 'API_KEY', data: data.values, range };
-                        }
-                    } else {
-                        const errorData = await response.json();
-                        console.log(`❌ Error API Key detallado:`, errorData);
-                        
-                        if (response.status === 403) {
-                            console.log('🚨 Error 403: Problema de permisos o referentes');
-                        } else if (response.status === 400) {
-                            console.log('🚨 Error 400: Problema con el rango o ID del sheet');
-                        }
-                    }
-                } catch (error) {
-                    console.log(`❌ Error de conexión API Key en ${range}:`, error.message);
-                }
-            }
-            
-            // Prueba 2: Exportación CSV como fallback
-            console.log('📄 === PRUEBA 2: EXPORTACIÓN CSV ===');
-            const csvUrls = [
-                `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv&gid=0`,
-                `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv`,
-                `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv`,
-                `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv&gid=0&timestamp=${Date.now()}`
-            ];
-            
-            for (const url of csvUrls) {
-                try {
-                    console.log(`🔗 Probando CSV: ${url.substring(0, 80)}...`);
-                    const response = await fetch(url, {
-                        method: 'GET',
-                        headers: {
-                            'Cache-Control': 'no-cache, no-store, must-revalidate'
-                        }
-                    });
-                    
-                    console.log(`📊 Respuesta CSV: ${response.status} ${response.statusText}`);
-                    
-                    if (response.ok) {
-                        const text = await response.text();
-                        console.log(`📝 Longitud del CSV: ${text.length} caracteres`);
-                        console.log(`📄 Primeros 200 caracteres:`, text.substring(0, 200));
-                        
-                        if (text && text.length > 50 && !text.includes('<!DOCTYPE') && text.includes(',')) {
-                            const rows = parseCSV(text);
-                            console.log(`✅ ÉXITO con CSV!`);
-                            console.log(`📊 Filas parseadas: ${rows.length}`);
-                            if (rows.length > 0) {
-                                console.log(`📄 Primera fila CSV:`, rows[0]);
-                                console.log(`📄 Segunda fila CSV:`, rows[1]);
-                                return { success: true, method: 'CSV', data: rows, url };
-                            }
-                        } else {
-                            console.log('⚠️ CSV inválido o vacío');
-                        }
-                    }
-                } catch (error) {
-                    console.log(`❌ Error CSV:`, error.message);
-                }
-            }
-            
-            console.log('❌ === TODAS LAS PRUEBAS FALLARON ===');
-            console.log('🔧 Posibles soluciones:');
-            console.log('   1. Verificar que el Google Sheet sea público');
-            console.log('   2. Revisar restricciones de la API Key en Google Cloud Console');
-            console.log('   3. Verificar que la API de Google Sheets esté habilitada');
-            
-            return { success: false, method: 'NONE', data: null };
-        }
-
-        // Recargar cuando la ventana vuelva al foco
-        window.addEventListener('focus', function() {
-            if (lastUpdateTime && (Date.now() - lastUpdateTime.getTime()) > 60000) {
-                console.log('👁️ Ventana enfocada, recargando datos...');
-                loadSheetData();
-            }
-        });
-
-        // Recargar cuando se restaure la conexión a internet
-        window.addEventListener('online', function() {
-            console.log('🌐 Conexión restaurada, recargando datos...');
-            loadAttempts = 0;
-            loadSheetData();
-        });
-
-        // Mostrar estado offline
-        window.addEventListener('offline', function() {
-            updateStatus('error', '📡 Sin conexión a internet');
-        });
-
-        // Función global para debugging
-        window.debugSheet = testSheetConnection;
-        window.reloadData = loadSheetData;
-        
-        console.log('🛠️ Funciones de debugging disponibles:');
-        console.log('   window.debugSheet() - Prueba completa de conexión');
-        console.log('   window.reloadData() - Recargar datos manualmente');
-        console.log('   window.lastLoadedData - Ver últimos datos cargados');
     </script>
 </body>
 </html>
-                    <div class="sponsor-logo"><img src="https://via.placeholder.com/200x80/FAFAFA/CCCCCC?text=Sponsor+1" alt="Patrocinador 1"></div>
-                    <div class="sponsor-name">Empresa Patrocinadora 1</div>
-                </a>
-                <a href="#" target="_blank" class="sponsor-card">
-                    <div class="sponsor-logo"><img src="https://via.placeholder.com/200x80/FAFAFA/CCCCCC?text=Sponsor+2" alt="Patrocinador 2"></div>
-                    <div class="sponsor-name">Empresa Patrocinadora 2</div>
-                </a>
-                <a href="#" target="_blank" class="sponsor-card">
-                    <div class="sponsor-logo"><img src="https://via.placeholder.com/200x80/FAFAFA/CCCCCC?text=Sponsor+3" alt="Patrocinador 3"></div>
-                    <div class="sponsor-name">Empresa Patrocinadora 3</div>
-                </a>
-                <a href="#" target="_blank" class="sponsor-card">
