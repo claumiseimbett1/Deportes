@@ -893,76 +893,41 @@
             updateStatus('loading', '🔄 Cargando resultados...');
             
             try {
-                let data = null;
+                let dataFemenino = null;
+                let dataMasculino = null;
                 
-                // Intentar con API Key primero
-                if (CONFIG.USE_API_KEY) {
-                    const ranges = [
-                        `${CONFIG.SHEET_NAME}!A:Z`,
-                        `${CONFIG.SHEET_NAME}!A1:Z1000`,
-                        'A:Z',
-                        'A1:Z1000'
-                    ];
-                    
-                    for (const range of ranges) {
-                        try {
-                            const url = `https://sheets.googleapis.com/v4/spreadsheets/${CONFIG.SHEET_ID}/values/${range}?key=${CONFIG.API_KEY}`;
-                            console.log(`🔍 Probando rango: ${range}`);
-                            
-                            const response = await fetch(url, {
-                                method: 'GET',
-                                headers: {
-                                    'Accept': 'application/json',
-                                    'Cache-Control': 'no-cache'
-                                }
-                            });
-                            
-                            if (response.ok) {
-                                const responseData = await response.json();
-                                if (responseData.values && responseData.values.length > 0) {
-                                    data = responseData.values;
-                                    console.log(`✅ Datos encontrados: ${data.length} filas`);
-                                    break;
-                                }
-                            }
-                        } catch (error) {
-                            console.log(`❌ Error en rango ${range}:`, error.message);
-                        }
+                // Cargar datos de la hoja FEMENINO
+                console.log('📊 Cargando hoja FEMENINO...');
+                dataFemenino = await loadSheetByName('FEMENINO');
+                
+                // Cargar datos de la hoja MASCULINO
+                console.log('📊 Cargando hoja MASCULINO...');
+                dataMasculino = await loadSheetByName('MASCULINO');
+                
+                if ((dataFemenino && dataFemenino.length > 0) || (dataMasculino && dataMasculino.length > 0)) {
+                    // Actualizar tabla femenina
+                    if (dataFemenino && dataFemenino.length > 0) {
+                        updateTableContent(resultsTableFem, dataFemenino, 'Nadadora');
+                    } else {
+                        showNoDataMessage(resultsTableFem, 'No hay datos disponibles para categoría femenina');
                     }
-                }
-                
-                // Si no hay datos con API Key, intentar CSV
-                if (!data) {
-                    console.log('📄 Intentando método CSV...');
-                    const csvUrls = [
-                        `https://docs.google.com/spreadsheets/d/${CONFIG.SHEET_ID}/export?format=csv&gid=0`,
-                        `https://docs.google.com/spreadsheets/d/${CONFIG.SHEET_ID}/export?format=csv`
-                    ];
                     
-                    for (const url of csvUrls) {
-                        try {
-                            const response = await fetch(url);
-                            if (response.ok) {
-                                const text = await response.text();
-                                if (text && !text.includes('<!DOCTYPE')) {
-                                    data = parseCSV(text);
-                                    console.log(`✅ CSV parseado: ${data.length} filas`);
-                                    break;
-                                }
-                            }
-                        } catch (error) {
-                            console.log('❌ Error CSV:', error.message);
-                        }
+                    // Actualizar tabla masculina
+                    if (dataMasculino && dataMasculino.length > 0) {
+                        updateTableContent(resultsTableMas, dataMasculino, 'Nadador');
+                    } else {
+                        showNoDataMessage(resultsTableMas, 'No hay datos disponibles para categoría masculina');
                     }
-                }
-                
-                if (data && data.length > 0) {
-                    updateResultsTable(data);
+                    
                     updateLastUpdateTime();
                     updateStatus('success', '✅ Datos cargados');
                     loadAttempts = 0;
+                    
+                    // Remover clase loading
+                    resultsTableFem.classList.remove('loading');
+                    resultsTableMas.classList.remove('loading');
                 } else {
-                    throw new Error('No se pudieron obtener datos');
+                    throw new Error('No se pudieron obtener datos de ninguna hoja');
                 }
                 
             } catch (error) {
@@ -977,121 +942,101 @@
                 }
             }
         }
+        
+        // Función para cargar una hoja específica por nombre
+        async function loadSheetByName(sheetName) {
+            let data = null;
+            
+            // Intentar con API Key primero
+            if (CONFIG.USE_API_KEY) {
+                const ranges = [
+                    `${sheetName}!A:Z`,
+                    `${sheetName}!A1:Z1000`,
+                    `'${sheetName}'!A:Z`,
+                    `'${sheetName}'!A1:Z1000`
+                ];
+                
+                for (const range of ranges) {
+                    try {
+                        const url = `https://sheets.googleapis.com/v4/spreadsheets/${CONFIG.SHEET_ID}/values/${range}?key=${CONFIG.API_KEY}`;
+                        console.log(`🔍 Probando rango: ${range}`);
+                        
+                        const response = await fetch(url, {
+                            method: 'GET',
+                            headers: {
+                                'Accept': 'application/json',
+                                'Cache-Control': 'no-cache'
+                            }
+                        });
+                        
+                        if (response.ok) {
+                            const responseData = await response.json();
+                            if (responseData.values && responseData.values.length > 0) {
+                                data = responseData.values;
+                                console.log(`✅ Datos encontrados en ${sheetName}: ${data.length} filas`);
+                                break;
+                            }
+                        } else {
+                            const errorData = await response.json();
+                            console.log(`❌ Error en ${range}:`, errorData);
+                        }
+                    } catch (error) {
+                        console.log(`❌ Error en rango ${range}:`, error.message);
+                    }
+                }
+            }
+            
+            // Si no hay datos con API Key, intentar CSV con gid específico
+            if (!data) {
+                console.log(`📄 Intentando método CSV para ${sheetName}...`);
+                
+                // Los gid típicos son: 0 para la primera hoja, incrementales para las siguientes
+                // Necesitamos probar diferentes gids
+                const gids = sheetName === 'FEMENINO' ? [0, '0'] : [1, '1', 2, '2'];
+                
+                for (const gid of gids) {
+                    try {
+                        const url = `https://docs.google.com/spreadsheets/d/${CONFIG.SHEET_ID}/export?format=csv&gid=${gid}`;
+                        console.log(`📄 Probando CSV con gid=${gid} para ${sheetName}`);
+                        
+                        const response = await fetch(url);
+                        if (response.ok) {
+                            const text = await response.text();
+                            if (text && !text.includes('<!DOCTYPE')) {
+                                data = parseCSV(text);
+                                console.log(`✅ CSV parseado para ${sheetName}: ${data.length} filas`);
+                                
+                                // Verificar si los datos corresponden a la hoja correcta
+                                // Esto es una aproximación, ya que no podemos saber con certeza sin el nombre de la hoja
+                                if (data.length > 0) {
+                                    break;
+                                }
+                            }
+                        }
+                    } catch (error) {
+                        console.log(`❌ Error CSV gid=${gid}:`, error.message);
+                    }
+                }
+            }
+            
+            return data;
+        }
+        
+        // Función para mostrar mensaje de no datos
+        function showNoDataMessage(table, message) {
+            const tbody = table.querySelector('tbody');
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="7" style="text-align: center; padding: 40px; color: #a5a5a5;">
+                        ${message}
+                    </td>
+                </tr>`;
+        }
 
-        // Función para actualizar la tabla de resultados
+        // Función para actualizar la tabla de resultados (ya no se usa)
         function updateResultsTable(data) {
-            console.log('📊 Datos totales recibidos:', data.length, 'filas');
-            console.log('🔍 Primeras 5 filas:', data.slice(0, 5));
-            
-            // Separar datos por género
-            const dataFemenino = [];
-            const dataMasculino = [];
-            let currentSection = '';
-            let isProcessingData = false;
-            
-            // Identificar secciones y separar datos
-            for (let i = 0; i < data.length; i++) {
-                const row = data[i];
-                if (!row || row.length === 0) continue;
-                
-                // Convertir la fila a string para debugging
-                console.log(`Fila ${i}:`, row);
-                
-                // Detectar sección principal - buscar en toda la fila
-                const rowText = row.join(' ').toUpperCase();
-                
-                if (rowText.includes('FEMENINO') || rowText.includes('FEMENIL') || rowText.includes('MUJERES')) {
-                    currentSection = 'FEMENINO';
-                    isProcessingData = true;
-                    console.log('✅ Sección FEMENINO detectada en fila', i);
-                    continue;
-                } else if (rowText.includes('MASCULINO') || rowText.includes('VARONES') || rowText.includes('HOMBRES')) {
-                    currentSection = 'MASCULINO';
-                    isProcessingData = true;
-                    console.log('✅ Sección MASCULINO detectada en fila', i);
-                    continue;
-                }
-                
-                // Si no hemos encontrado ninguna sección todavía, intentar detectar por contenido
-                if (!currentSection && row.length >= 6) {
-                    // Si parece ser una fila de datos, asumimos que es femenino (primera sección)
-                    currentSection = 'FEMENINO';
-                    isProcessingData = true;
-                }
-                
-                // Si estamos procesando datos, agregar filas según la sección actual
-                if (isProcessingData && currentSection) {
-                    // Verificar si es una fila de encabezados
-                    const firstCell = row[0] ? row[0].toString().toLowerCase() : '';
-                    if (firstCell.includes('pos') || firstCell.includes('nadador') || firstCell.includes('equipo')) {
-                        console.log('📋 Fila de encabezados detectada, saltando...');
-                        continue;
-                    }
-                    
-                    if (currentSection === 'FEMENINO') {
-                        dataFemenino.push(row);
-                    } else if (currentSection === 'MASCULINO') {
-                        dataMasculino.push(row);
-                    }
-                }
-            }
-            
-            console.log('📊 Datos separados:', {
-                femenino: dataFemenino.length,
-                masculino: dataMasculino.length
-            });
-            
-            // Si no se encontraron secciones específicas, intentar dividir por la mitad
-            if (dataFemenino.length === 0 && dataMasculino.length === 0) {
-                console.log('⚠️ No se encontraron marcadores de género, intentando división automática...');
-                
-                // Filtrar solo filas con datos válidos
-                const validData = data.filter(row => 
-                    row && row.length >= 6 && 
-                    row[0] && row[0].toString().trim() !== '' &&
-                    !row[0].toString().toLowerCase().includes('pos') &&
-                    !row[0].toString().toLowerCase().includes('nadador')
-                );
-                
-                // Buscar un separador natural (fila vacía o cambio de patrón)
-                let splitIndex = -1;
-                for (let i = 1; i < validData.length - 1; i++) {
-                    // Buscar una brecha o cambio en los datos
-                    if (!validData[i][1] || validData[i][1].toString().trim() === '') {
-                        splitIndex = i;
-                        break;
-                    }
-                }
-                
-                if (splitIndex === -1) {
-                    // Si no hay separador, dividir por la mitad
-                    splitIndex = Math.floor(validData.length / 2);
-                }
-                
-                // Asignar primera mitad a femenino, segunda a masculino
-                for (let i = 0; i < validData.length; i++) {
-                    if (i < splitIndex) {
-                        dataFemenino.push(validData[i]);
-                    } else {
-                        dataMasculino.push(validData[i]);
-                    }
-                }
-                
-                console.log('📊 División automática:', {
-                    femenino: dataFemenino.length,
-                    masculino: dataMasculino.length
-                });
-            }
-            
-            // Actualizar tabla femenina
-            updateTableContent(resultsTableFem, dataFemenino, 'Nadadora');
-            
-            // Actualizar tabla masculina
-            updateTableContent(resultsTableMas, dataMasculino, 'Nadador');
-            
-            // Remover clase loading
-            resultsTableFem.classList.remove('loading');
-            resultsTableMas.classList.remove('loading');
+            // Esta función ya no se necesita porque cargamos las hojas por separado
+            console.log('⚠️ updateResultsTable llamada pero no debería usarse');
         }
         
         // Función auxiliar para actualizar contenido de tabla
