@@ -680,8 +680,8 @@
 
                 <!-- Pestaña 800M Libre Femenino -->
                 <div id="800m-libre-femenino" class="tab-content active">
-                    <h3>800M Libre Femenino - Resultados Oficiales</h3>
-                    <table class="results-table" id="resultsTable">
+                    <h3>🏊‍♀️ 800M Libre Femenino - Resultados Oficiales</h3>
+                    <table class="results-table" id="resultsTableFem">
                         <thead>
                             <tr>
                                 <th>Pos.</th>
@@ -705,8 +705,8 @@
 
                 <!-- Pestaña 800M Libre Masculino -->
                 <div id="800m-libre-masculino" class="tab-content">
-                    <h3>800M Libre Masculino - Resultados Oficiales</h3>
-                    <table class="results-table" id="resultsTable">
+                    <h3>🏊‍♂️ 800M Libre Masculino - Resultados Oficiales</h3>
+                    <table class="results-table" id="resultsTableMas">
                         <thead>
                             <tr>
                                 <th>Pos.</th>
@@ -815,8 +815,8 @@
         // Elementos DOM
         const statusIndicator = document.getElementById('statusIndicator');
         const lastUpdateElement = document.getElementById('lastUpdateTime');
-        const resultsTable = document.getElementById('resultsTable');
-        const recordsTable = document.getElementById('recordsTable');
+        const resultsTableFem = document.getElementById('resultsTableFem');
+        const resultsTableMas = document.getElementById('resultsTableMas');
 
         // Función para actualizar el indicador de estado
         function updateStatus(type, message) {
@@ -980,39 +980,106 @@
 
         // Función para actualizar la tabla de resultados
         function updateResultsTable(data) {
-            const tbody = resultsTable.querySelector('tbody');
+            // Separar datos por género
+            const dataFemenino = [];
+            const dataMasculino = [];
+            let currentSection = '';
+            
+            // Identificar secciones y separar datos
+            for (let i = 0; i < data.length; i++) {
+                const row = data[i];
+                if (!row || row.length === 0) continue;
+                
+                // Detectar sección principal
+                const firstCell = row[0] ? row[0].toString().toUpperCase() : '';
+                
+                if (firstCell.includes('FEMENINO')) {
+                    currentSection = 'FEMENINO';
+                    continue;
+                } else if (firstCell.includes('MASCULINO')) {
+                    currentSection = 'MASCULINO';
+                    continue;
+                }
+                
+                // Agregar filas según la sección actual
+                if (currentSection === 'FEMENINO') {
+                    dataFemenino.push(row);
+                } else if (currentSection === 'MASCULINO') {
+                    dataMasculino.push(row);
+                }
+            }
+            
+            console.log('📊 Datos separados:', {
+                femenino: dataFemenino.length,
+                masculino: dataMasculino.length
+            });
+            
+            // Actualizar tabla femenina
+            updateTableContent(resultsTableFem, dataFemenino, 'Nadadora');
+            
+            // Actualizar tabla masculina
+            updateTableContent(resultsTableMas, dataMasculino, 'Nadador');
+            
+            // Remover clase loading
+            resultsTableFem.classList.remove('loading');
+            resultsTableMas.classList.remove('loading');
+        }
+        
+        // Función auxiliar para actualizar contenido de tabla
+        function updateTableContent(table, data, swimmerLabel) {
+            const tbody = table.querySelector('tbody');
             if (!tbody) return;
             
             let htmlContent = '';
             let currentCategory = '';
             
-            // Procesar datos
             for (let i = 0; i < data.length; i++) {
                 const row = data[i];
                 if (!row || row.length === 0) continue;
                 
-                // Detectar si es una categoría o un resultado
+                // Si es una fila con solo categoría
                 if (row.length === 1 || (row[0] && !row[1])) {
-                    // Es una categoría
-                    currentCategory = row[0];
-                    htmlContent += `
-                        <tr class="category-header">
-                            <td colspan="7">${currentCategory}</td>
-                        </tr>`;
+                    const categoryText = row[0].toString().trim();
+                    // Verificar que sea una categoría válida
+                    if (categoryText.match(/^(INFANTIL|JUVENIL|MAYORES|MASTER)/i)) {
+                        currentCategory = categoryText;
+                        htmlContent += `
+                            <tr class="category-header">
+                                <td colspan="7">${currentCategory}</td>
+                            </tr>`;
+                    }
                 } else if (row.length >= 6) {
                     // Es un resultado
-                    const [pos, nadadora, equipo, edad, categoria, tiempo, puntos] = row;
+                    const [pos, swimmer, equipo, edad, categoria, tiempo, puntos] = row;
+                    
+                    // Skip si no hay nadador
+                    if (!swimmer || swimmer === '-' || swimmer.toLowerCase().includes('sin participantes')) {
+                        if (swimmer && swimmer.toLowerCase().includes('sin participantes')) {
+                            htmlContent += `
+                                <tr>
+                                    <td data-label="Pos." class="rank" style="text-align: center; color: #a5a5a5;">-</td>
+                                    <td data-label="${swimmerLabel}" style="color: #a5a5a5; font-style: italic;">Sin participantes</td>
+                                    <td data-label="Equipo" style="color: #a5a5a5;">-</td>
+                                    <td data-label="Edad" style="color: #a5a5a5;">-</td>
+                                    <td data-label="Categoría" style="color: #a5a5a5;">${currentCategory}</td>
+                                    <td data-label="Tiempo Final" style="color: #a5a5a5;">-</td>
+                                    <td data-label="Puntos" style="color: #a5a5a5;">-</td>
+                                </tr>`;
+                        }
+                        continue;
+                    }
+                    
                     // Generar medallas para las posiciones
                     let displayPos = pos;
-                    if (pos === '1') displayPos = '🥇 1°';
-                    else if (pos === '2') displayPos = '🥈 2°';
-                    else if (pos === '3') displayPos = '🥉 3°';
-                    else if (pos && pos !== '-') displayPos = `${pos}°`;
+                    if (pos === '1' || pos === 1) displayPos = '🥇 1°';
+                    else if (pos === '2' || pos === 2) displayPos = '🥈 2°';
+                    else if (pos === '3' || pos === 3) displayPos = '🥉 3°';
+                    else if (pos && pos !== '-' && pos !== '') displayPos = `${pos}°`;
                     
                     htmlContent += `
                         <tr>
                             <td data-label="Pos." class="rank">${displayPos || '-'}</td>
-                            <td data-label="Nadadora">${nadadora || '-'}</td>
+                            <td data-label="${swimmerLabel}">${swimmer || '-'}</td>
                             <td data-label="Equipo">${equipo || '-'}</td>
                             <td data-label="Edad">${edad || '-'}</td>
                             <td data-label="Categoría">${categoria || currentCategory}</td>
@@ -1023,13 +1090,13 @@
             }
             
             tbody.innerHTML = htmlContent || '<tr><td colspan="7" style="text-align: center;">No hay datos disponibles</td></tr>';
-            resultsTable.classList.remove('loading');
         }
 
         // Función para mostrar error con fallback
         function showErrorFallback() {
-            const tbody = resultsTable.querySelector('tbody');
-            tbody.innerHTML = `
+            const tbodyFem = resultsTableFem.querySelector('tbody');
+            const tbodyMas = resultsTableMas.querySelector('tbody');
+            const errorHTML = `
                 <tr>
                     <td colspan="7" style="text-align: center; padding: 40px; color: #f44336;">
                         ❌ No se pudieron cargar los datos desde Google Sheets<br>
@@ -1041,6 +1108,8 @@
                         </button>
                     </td>
                 </tr>`;
+            tbodyFem.innerHTML = errorHTML;
+            tbodyMas.innerHTML = errorHTML;
         }
 
         // Función para reintentar carga
@@ -1110,4 +1179,3 @@
     </script>
 </body>
 </html>
-                
