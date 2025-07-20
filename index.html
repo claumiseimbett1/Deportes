@@ -628,8 +628,8 @@
         </div>
         <div class="video-overlay">
             <div class="hero-content">
-                <h1>IV Championship Master</h1>
-                <p class="subtitle">Competencia de Natación Master</p>
+                <h1>IV Championship Master Swimming</h1>
+                <p class="subtitle">Competencia de Natación</p>
             </div>
         </div>
     </section>
@@ -643,47 +643,22 @@
                     <div class="sticker-icon">
                         <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2Z" stroke="#00ADEF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M12 6V12L16 14" stroke="#00ADEF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
                     </div>
-
-                <!-- Pestaña Records Master -->
-                <div id="records-master" class="tab-content">
-                    <h3>🏆 Records de Categoría Master Masculino</h3>
-                    <table class="results-table" id="recordsTable">
-                        <thead>
-                            <tr>
-                                <th>Distancia</th>
-                                <th>Atleta</th>
-                                <th>Equipo</th>
-                                <th>Categoría</th>
-                                <th>Tiempo Record</th>
-                                <th>Fecha</th>
-                                <th>Competencia</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr class="loading-row">
-                                <td colspan="7" style="text-align: center; padding: 40px; color: #a5a5a5;">
-                                    🔄 Cargando datos desde Google Sheets...
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
                     <h3>Categorías</h3>
-                    <p>Competencias para todas las categorías master desde 25+ hasta 80+ años</p>
+                    <p>Competencias para categorías desde infantil B - +12 años hasta master +99 años</p>
                 </div>
                 <div class="info-card">
                     <div class="sticker-icon">
                         <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="3" y="4" width="18" height="18" rx="2" ry="2" stroke="#0b5079" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><line x1="16" y1="2" x2="16" y2="6" stroke="#0b5079" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><line x1="8" y1="2" x2="8" y2="6" stroke="#0b5079" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><line x1="3" y1="10" x2="21" y2="10" stroke="#0b5079" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
                     </div>
                     <h3>Fecha</h3>
-                    <p>Del 15 al 17 de marzo de 2024 en nuestras instalaciones</p>
+                    <p>23 de agosto de 2025 en Piscina de la Villaolimpica en Monteria - Córdoba</p>
                 </div>
                 <div class="info-card">
                     <div class="sticker-icon">
                         <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 8V12L14.5 14.5" stroke="#00ADEF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M20.9998 12C20.9998 16.9706 16.9704 21 11.9998 21C7.02926 21 2.99982 16.9706 2.99982 12C2.99982 7.02944 7.02926 3 11.9998 3C13.8837 3 15.6265 3.58628 17.0615 4.61538" stroke="#00ADEF" stroke-width="2" stroke-linecap="round"/><path d="M18 5.5L21 2.5M21 2.5L18 2.5M21 2.5V5.5" stroke="#00ADEF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
                     </div>
                     <h3>Premios</h3>
-                    <p>Medallas y trofeos para los primeros lugares de cada categoría</p>
+                    <p>Medallas individuales y trofeos de equipo para los primeros lugares de cada categoría</p>
                 </div>
             </div>
         </div>
@@ -699,14 +674,14 @@
                 </div>
                 
                 <div class="tabs">
-                    <button class="tab-button active" onclick="openTab(event, '1500m-libre-fem')">1500M Libre Femenino</button>
-                    <button class="tab-button" onclick="openTab(event, '1500m-libre-mas')">1500M Libre Masculino</button>
+                    <button class="tab-button active" onclick="openTab(event, '800m-libre-femenino')">800M Libre Femenino</button>
+                    <button class="tab-button" onclick="openTab(event, '800m-libre-masculino')">800M Libre Masculino</button>
                 </div>
 
-                <!-- Pestaña 1500M Libre Femenino -->
-                <div id="1500m-libre-fem" class="tab-content active">
-                    <h3>🏊‍♀️ 1500M Libre Femenino - Resultados Oficiales</h3>
-                    <table class="results-table" id="resultsTableFem">
+                <!-- Pestaña 800M Libre Femenino -->
+                <div id="800m-libre-femenino" class="tab-content active">
+                    <h3>800M Libre Femenino - Resultados Oficiales</h3>
+                    <table class="results-table" id="resultsTable">
                         <thead>
                             <tr>
                                 <th>Pos.</th>
@@ -728,10 +703,10 @@
                     </table>
                 </div>
 
-                <!-- Pestaña 1500M Libre Masculino -->
-                <div id="1500m-libre-mas" class="tab-content">
-                    <h3>🏊‍♂️ 1500M Libre Masculino - Resultados Oficiales</h3>
-                    <table class="results-table" id="resultsTableMas">
+                <!-- Pestaña 800M Libre Masculino -->
+                <div id="800m-libre-masculino" class="tab-content">
+                    <h3>800M Libre Masculino - Resultados Oficiales</h3>
+                    <table class="results-table" id="resultsTable">
                         <thead>
                             <tr>
                                 <th>Pos.</th>
@@ -741,31 +716,6 @@
                                 <th>Categoría</th>
                                 <th>Tiempo Final</th>
                                 <th>Puntos</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr class="loading-row">
-                                <td colspan="7" style="text-align: center; padding: 40px; color: #a5a5a5;">
-                                    🔄 Cargando datos desde Google Sheets...
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-
-                <!-- Pestaña Records Master -->
-                <div id="records-master" class="tab-content">
-                    <h3>🏆 Records de Categoría Master Masculino</h3>
-                    <table class="results-table" id="recordsTable">
-                        <thead>
-                            <tr>
-                                <th>Distancia</th>
-                                <th>Atleta</th>
-                                <th>Equipo</th>
-                                <th>Categoría</th>
-                                <th>Tiempo Record</th>
-                                <th>Fecha</th>
-                                <th>Competencia</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -810,7 +760,7 @@
     <section class="cta-section">
         <div class="container">
             <h2>¿Listo para competir?</h2>
-            <p>Únete a los mejores nadadores master en esta emocionante competencia</p>
+            <p>Únete a los mejores nadadores en esta emocionante competencia, en esta IV versión del Championship Master Swimming organizada por los Clubes Deportivos AQUATEN y ELIANASNATACION</p>
             <a href="#" class="cta-button">Más Información</a>
         </div>
     </section>
@@ -821,20 +771,20 @@
             <h2 class="section-title">Contacto</h2>
             <div class="contact-grid">
                 <!-- WhatsApp Card -->
-                <a href="https://wa.me/573001234567" target="_blank" class="contact-card-link">
+                <a href="https://wa.me/573196583574" target="_blank" class="contact-card-link">
                     <div class="sticker-icon">
                         <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M16.75 13.96C16.41 13.79 15.31 13.24 15.08 13.15C14.86 13.06 14.7 13.02 14.54 13.28C14.38 13.55 13.91 14.11 13.75 14.28C13.59 14.45 13.43 14.47 13.16 14.3C12.89 14.13 12.06 13.85 11.07 12.99C10.29 12.3 9.73 11.48 9.59 11.21C9.45 10.94 9.56 10.81 9.7 10.67C9.83 10.53 9.99 10.33 10.13 10.18C10.27 10.03 10.32 9.9 10.42 9.73C10.52 9.56 10.47 9.4 10.39 9.27C10.31 9.14 9.85 7.97 9.66 7.52C9.47 7.07 9.28 7.13 9.14 7.12H8.62C8.42 7.12 8.13 7.19 7.89 7.43C7.65 7.67 6.96 8.31 6.96 9.56C6.96 10.81 7.92 12.01 8.06 12.18C8.2 12.35 9.85 14.8 12.29 15.76C14.73 16.72 14.73 16.34 15.13 16.3C15.53 16.26 16.54 15.68 16.75 15.13C16.96 14.58 16.96 14.12 16.88 13.96H16.75Z" stroke="#0b5079" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M12.04 21.82C17.56 21.82 22 17.38 22 11.86C22 6.34 17.56 1.9 12.04 1.9C6.52 1.9 2.08 6.34 2.08 11.86C2.08 14.13 2.84 16.24 4.12 17.9L2.56 21.34L6.17 19.95C7.73 21.13 9.79 21.82 12.04 21.82Z" stroke="#00ADEF" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
                     </div>
                     <h3>WhatsApp</h3>
-                    <p>+57 300 123 4567</p>
+                    <p>+57 319 658 3574</p>
                 </a>
                 <!-- Instagram Card -->
-                <a href="https://www.instagram.com/tu_usuario" target="_blank" class="contact-card-link">
+                <a href="https://www.instagram.com/aquaten.cd" target="_blank" class="contact-card-link">
                     <div class="sticker-icon">
                         <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="2" y="2" width="20" height="20" rx="5" ry="5" stroke="#00ADEF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M16 11.37C16 13.38 14.21 15 12 15C9.79 15 8 13.38 8 11.37C8 9.36 9.79 7.75 12 7.75C14.21 7.75 16 9.36 16 11.37Z" stroke="#0b5079" stroke-width="2"/><path d="M17.5 6.5H17.51" stroke="#0b5079" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
                     </div>
                     <h3>Instagram</h3>
-                    <p>@AquaTEN_Club</p>
+                    <p>@AquaTEN</p>
                 </a>
             </div>
         </div>
@@ -865,8 +815,8 @@
         // Elementos DOM
         const statusIndicator = document.getElementById('statusIndicator');
         const lastUpdateElement = document.getElementById('lastUpdateTime');
-        const resultsTableFem = document.getElementById('resultsTableFem');
-        const resultsTableMas = document.getElementById('resultsTableMas');
+        const resultsTable = document.getElementById('resultsTable');
+        const recordsTable = document.getElementById('recordsTable');
 
         // Función para actualizar el indicador de estado
         function updateStatus(type, message) {
@@ -1030,101 +980,39 @@
 
         // Función para actualizar la tabla de resultados
         function updateResultsTable(data) {
-            // Separar datos por género
-            const dataFemenino = [];
-            const dataMasculino = [];
-            let currentSection = '';
-            
-            // Identificar secciones y separar datos
-            for (let i = 0; i < data.length; i++) {
-                const row = data[i];
-                if (!row || row.length === 0) continue;
-                
-                // Detectar sección principal
-                const firstCell = row[0] ? row[0].toString().toUpperCase() : '';
-                
-                if (firstCell.includes('FEMENINO')) {
-                    currentSection = 'FEMENINO';
-                    continue;
-                } else if (firstCell.includes('MASCULINO')) {
-                    currentSection = 'MASCULINO';
-                    continue;
-                }
-                
-                // Agregar filas según la sección actual
-                if (currentSection === 'FEMENINO') {
-                    dataFemenino.push(row);
-                } else if (currentSection === 'MASCULINO') {
-                    dataMasculino.push(row);
-                }
-            }
-            
-            // Actualizar tabla femenina
-            updateTableContent(resultsTableFem, dataFemenino, 'Nadadora');
-            
-            // Actualizar tabla masculina
-            updateTableContent(resultsTableMas, dataMasculino, 'Nadador');
-            
-            // Remover clase loading
-            resultsTableFem.classList.remove('loading');
-            resultsTableMas.classList.remove('loading');
-        }
-        
-        // Función auxiliar para actualizar contenido de tabla
-        function updateTableContent(table, data, swimmerLabel) {
-            const tbody = table.querySelector('tbody');
+            const tbody = resultsTable.querySelector('tbody');
             if (!tbody) return;
             
             let htmlContent = '';
             let currentCategory = '';
             
+            // Procesar datos
             for (let i = 0; i < data.length; i++) {
                 const row = data[i];
                 if (!row || row.length === 0) continue;
                 
-                // Si es una fila con solo categoría
+                // Detectar si es una categoría o un resultado
                 if (row.length === 1 || (row[0] && !row[1])) {
-                    const categoryText = row[0].toString().trim();
-                    // Verificar que sea una categoría válida
-                    if (categoryText.match(/^(INFANTIL|JUVENIL|MAYORES|MASTER)/i)) {
-                        currentCategory = categoryText;
-                        htmlContent += `
-                            <tr class="category-header">
-                                <td colspan="7">${currentCategory}</td>
-                            </tr>`;
-                    }
+                    // Es una categoría
+                    currentCategory = row[0];
+                    htmlContent += `
+                        <tr class="category-header">
+                            <td colspan="7">${currentCategory}</td>
+                        </tr>`;
                 } else if (row.length >= 6) {
                     // Es un resultado
-                    const [pos, swimmer, equipo, edad, categoria, tiempo, puntos] = row;
-                    
-                    // Skip si no hay nadador
-                    if (!swimmer || swimmer === '-' || swimmer.toLowerCase().includes('sin participantes')) {
-                        if (swimmer && swimmer.toLowerCase().includes('sin participantes')) {
-                            htmlContent += `
-                                <tr>
-                                    <td data-label="Pos." class="rank" style="text-align: center; color: #a5a5a5;">-</td>
-                                    <td data-label="${swimmerLabel}" style="color: #a5a5a5; font-style: italic;">Sin participantes</td>
-                                    <td data-label="Equipo" style="color: #a5a5a5;">-</td>
-                                    <td data-label="Edad" style="color: #a5a5a5;">-</td>
-                                    <td data-label="Categoría" style="color: #a5a5a5;">${currentCategory}</td>
-                                    <td data-label="Tiempo Final" style="color: #a5a5a5;">-</td>
-                                    <td data-label="Puntos" style="color: #a5a5a5;">-</td>
-                                </tr>`;
-                        }
-                        continue;
-                    }
-                    
+                    const [pos, nadadora, equipo, edad, categoria, tiempo, puntos] = row;
                     // Generar medallas para las posiciones
                     let displayPos = pos;
-                    if (pos === '1' || pos === 1) displayPos = '🥇 1°';
-                    else if (pos === '2' || pos === 2) displayPos = '🥈 2°';
-                    else if (pos === '3' || pos === 3) displayPos = '🥉 3°';
-                    else if (pos && pos !== '-' && pos !== '') displayPos = `${pos}°`;
+                    if (pos === '1') displayPos = '🥇 1°';
+                    else if (pos === '2') displayPos = '🥈 2°';
+                    else if (pos === '3') displayPos = '🥉 3°';
+                    else if (pos && pos !== '-') displayPos = `${pos}°`;
                     
                     htmlContent += `
                         <tr>
                             <td data-label="Pos." class="rank">${displayPos || '-'}</td>
-                            <td data-label="${swimmerLabel}">${swimmer || '-'}</td>
+                            <td data-label="Nadadora">${nadadora || '-'}</td>
                             <td data-label="Equipo">${equipo || '-'}</td>
                             <td data-label="Edad">${edad || '-'}</td>
                             <td data-label="Categoría">${categoria || currentCategory}</td>
@@ -1135,13 +1023,13 @@
             }
             
             tbody.innerHTML = htmlContent || '<tr><td colspan="7" style="text-align: center;">No hay datos disponibles</td></tr>';
+            resultsTable.classList.remove('loading');
         }
 
         // Función para mostrar error con fallback
         function showErrorFallback() {
-            const tbodyFem = resultsTableFem.querySelector('tbody');
-            const tbodyMas = resultsTableMas.querySelector('tbody');
-            const errorHTML = `
+            const tbody = resultsTable.querySelector('tbody');
+            tbody.innerHTML = `
                 <tr>
                     <td colspan="7" style="text-align: center; padding: 40px; color: #f44336;">
                         ❌ No se pudieron cargar los datos desde Google Sheets<br>
@@ -1153,8 +1041,6 @@
                         </button>
                     </td>
                 </tr>`;
-            tbodyFem.innerHTML = errorHTML;
-            tbodyMas.innerHTML = errorHTML;
         }
 
         // Función para reintentar carga
