@@ -1,4 +1,35 @@
-<!DOCTYPE html>
+        // Event listeners
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🚀 Página cargada, iniciando sistema de actualización automática...');
+            console.log('📋 Tu Google Sheet: "RECORD MASTER"');
+            console.log('🕐 Última modificación detectada: hace 1 hora');
+            
+            // Agregar botón de prueba temporal
+            addTestButton();
+            
+            startAutoReload();
+        });
+
+        // Función para agregar botón de prueba (temporal)
+        function addTestButton() {
+            const testButton = document.createElement('button');
+            testButton.innerHTML = '🧪 Probar conexión';
+            testButton.style.cssText = `
+                position: fixed;
+                bottom: 20px;
+                right: 20px;
+                z-index: 9999;
+                padding: 10px 20px;
+                background: #ff9800;
+                color: white;
+                border: none;
+                border-radius: 25px;
+                cursor: pointer;
+                font-weight: 600;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            `;
+            testButton.onclick = function() {
+                console.log('🧪 Iniciando prueba<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
@@ -16,6 +47,27 @@
             background-color: #ffffff;
             color: #0b1039;
             line-height: 1.6;
+        }
+
+        /* Animaciones */
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        @keyframes slideOut {
+            from { transform: translateX(0); opacity: 1; }
+            to { transform: translateX(100%); opacity: 0; }
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        .loading {
+            animation: pulse 2s infinite;
         }
 
         /* Header */
@@ -46,6 +98,35 @@
         .logo-box img {
             height: 100%;
             width: auto;
+        }
+
+        /* Status indicator */
+        .status-indicator {
+            position: fixed;
+            top: 100px;
+            right: 20px;
+            z-index: 9999;
+            padding: 10px 15px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            font-weight: 600;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+        }
+
+        .status-loading {
+            background: #ffa726;
+            color: white;
+        }
+
+        .status-success {
+            background: #4caf50;
+            color: white;
+        }
+
+        .status-error {
+            background: #f44336;
+            color: white;
         }
 
         /* Video Hero Section */
@@ -253,6 +334,19 @@
             font-weight: 600;
         }
 
+        /* Indicador de última actualización */
+        .last-update {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #a5a5a5;
+            font-size: 0.9em;
+        }
+
+        .last-update .time {
+            color: #00ADEF;
+            font-weight: 600;
+        }
+
         /* Tabla de Resultados */
         .results-table {
             width: 100%;
@@ -305,7 +399,7 @@
             text-align: center;
         }
 
-        /* Categoría headers */
+        /* Categoría headers - ESTILO UNIFORME PARA TODAS LAS CATEGORÍAS */
         .category-header {
             background: linear-gradient(135deg, #0b1039 0%, #00ADEF 100%) !important;
             color: #ffffff !important;
@@ -316,6 +410,18 @@
 
         .category-header td {
             border-bottom: 2px solid #00ADEF !important;
+            color: #ffffff !important;
+        }
+
+        /* Loading state para la tabla */
+        .results-table.loading {
+            opacity: 0.7;
+        }
+
+        .loading-row {
+            text-align: center;
+            color: #a5a5a5;
+            font-style: italic;
         }
 
         /* Sponsors Section */
@@ -520,6 +626,14 @@
                 grid-template-columns: 1fr;
                 gap: 25px;
             }
+
+            .status-indicator {
+                position: relative;
+                top: auto;
+                right: auto;
+                margin: 10px auto;
+                display: inline-block;
+            }
         }
     </style>
 </head>
@@ -535,6 +649,11 @@
             </div>
         </nav>
     </header>
+
+    <!-- Status Indicator -->
+    <div id="statusIndicator" class="status-indicator status-loading">
+        🔄 Cargando resultados...
+    </div>
 
     <!-- Video Hero Section -->
     <section class="video-hero">
@@ -586,6 +705,10 @@
         <div class="container">
             <h2 class="section-title">Resultados en Tiempo Real</h2>
             <div class="results-container">
+                <div class="last-update">
+                    Última actualización: <span class="time" id="lastUpdateTime">Cargando...</span>
+                </div>
+                
                 <div class="tabs">
                     <button class="tab-button active" onclick="openTab(event, '1500m-libre')">1500M Libre</button>
                     <button class="tab-button" onclick="openTab(event, 'records-master')">Records Master</button>
@@ -594,7 +717,7 @@
                 <!-- Pestaña 1500M Libre -->
                 <div id="1500m-libre" class="tab-content active">
                     <h3>🏊‍♀️ 1500M Libre Femenino - Resultados Oficiales</h3>
-                    <table class="results-table">
+                    <table class="results-table" id="resultsTable">
                         <thead>
                             <tr>
                                 <th>Pos.</th>
@@ -607,134 +730,10 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr class="category-header">
-                                <td colspan="7">INFANTIL B</td>
-                            </tr>
-                            <tr>
-                                <td data-label="Pos." class="rank">🥇 1°</td>
-                                <td data-label="Nadadora">ANGELES CONDE GUEVARA</td>
-                                <td data-label="Equipo">NNG</td>
-                                <td data-label="Edad">12</td>
-                                <td data-label="Categoría">Infantil B</td>
-                                <td data-label="Tiempo Final" class="time">25:14.84</td>
-                                <td data-label="Puntos" class="points">9</td>
-                            </tr>
-                            <tr class="category-header">
-                                <td colspan="7">JUVENIL A</td>
-                            </tr>
-                            <tr>
-                                <td data-label="Pos." class="rank">🥇 1°</td>
-                                <td data-label="Nadadora">SALOME BERROCAL LOPEZ</td>
-                                <td data-label="Equipo">NNG</td>
-                                <td data-label="Edad">14</td>
-                                <td data-label="Categoría">Juvenil A</td>
-                                <td data-label="Tiempo Final" class="time">25:54.19</td>
-                                <td data-label="Puntos" class="points">9</td>
-                            </tr>
-                            <tr>
-                                <td data-label="Pos." class="rank">🥈 2°</td>
-                                <td data-label="Nadadora">SARAY BERROCAL LOPEZ</td>
-                                <td data-label="Equipo">NNG</td>
-                                <td data-label="Edad">14</td>
-                                <td data-label="Categoría">Juvenil A</td>
-                                <td data-label="Tiempo Final" class="time">25:58.50</td>
-                                <td data-label="Puntos" class="points">7</td>
-                            </tr>
-                            <tr class="category-header">
-                                <td colspan="7">MAYORES</td>
-                            </tr>
-                            <tr>
-                                <td data-label="Pos." class="rank">🥇 1°</td>
-                                <td data-label="Nadadora">MANUELA RODRIGUEZ</td>
-                                <td data-label="Equipo">NNG</td>
-                                <td data-label="Edad">27</td>
-                                <td data-label="Categoría">Mayores</td>
-                                <td data-label="Tiempo Final" class="time">39:06.00</td>
-                                <td data-label="Puntos" class="points">9</td>
-                            </tr>
-                            <tr class="category-header">
-                                <td colspan="7">MASTER A</td>
-                            </tr>
-                            <tr>
-                                <td data-label="Pos." class="rank" style="text-align: center; color: #a5a5a5;">-</td>
-                                <td data-label="Nadadora" style="color: #a5a5a5; font-style: italic;">Sin participantes</td>
-                                <td data-label="Equipo" style="color: #a5a5a5;">-</td>
-                                <td data-label="Edad" style="color: #a5a5a5;">-</td>
-                                <td data-label="Categoría" style="color: #a5a5a5;">Master A</td>
-                                <td data-label="Tiempo Final" style="color: #a5a5a5;">-</td>
-                                <td data-label="Puntos" style="color: #a5a5a5;">-</td>
-                            </tr>
-                            <tr class="category-header">
-                                <td colspan="7">MASTER B</td>
-                            </tr>
-                            <tr>
-                                <td data-label="Pos." class="rank">🥇 1°</td>
-                                <td data-label="Nadadora">TATIANA MONTES</td>
-                                <td data-label="Equipo">NNG</td>
-                                <td data-label="Edad">37</td>
-                                <td data-label="Categoría">Master B</td>
-                                <td data-label="Tiempo Final" class="time">34:10.00</td>
-                                <td data-label="Puntos" class="points">9</td>
-                            </tr>
-                            <tr class="category-header">
-                                <td colspan="7">MASTER C</td>
-                            </tr>
-                            <tr>
-                                <td data-label="Pos." class="rank" style="text-align: center; color: #a5a5a5;">-</td>
-                                <td data-label="Nadadora" style="color: #a5a5a5; font-style: italic;">Sin participantes</td>
-                                <td data-label="Equipo" style="color: #a5a5a5;">-</td>
-                                <td data-label="Edad" style="color: #a5a5a5;">-</td>
-                                <td data-label="Categoría" style="color: #a5a5a5;">Master C</td>
-                                <td data-label="Tiempo Final" style="color: #a5a5a5;">-</td>
-                                <td data-label="Puntos" style="color: #a5a5a5;">-</td>
-                            </tr>
-                            <tr class="category-header">
-                                <td colspan="7">MASTER D</td>
-                            </tr>
-                            <tr>
-                                <td data-label="Pos." class="rank">🥇 1°</td>
-                                <td data-label="Nadadora">Claudia Milena Serpa Imbett</td>
-                                <td data-label="Equipo">MNM</td>
-                                <td data-label="Edad">45</td>
-                                <td data-label="Categoría">Master D</td>
-                                <td data-label="Tiempo Final" class="time">41:09.00</td>
-                                <td data-label="Puntos" class="points">9</td>
-                            </tr>
-                            <tr class="category-header">
-                                <td colspan="7">MASTER E</td>
-                            </tr>
-                            <tr>
-                                <td data-label="Pos." class="rank" style="text-align: center; color: #a5a5a5;">-</td>
-                                <td data-label="Nadadora" style="color: #a5a5a5; font-style: italic;">Sin participantes</td>
-                                <td data-label="Equipo" style="color: #a5a5a5;">-</td>
-                                <td data-label="Edad" style="color: #a5a5a5;">-</td>
-                                <td data-label="Categoría" style="color: #a5a5a5;">Master E</td>
-                                <td data-label="Tiempo Final" style="color: #a5a5a5;">-</td>
-                                <td data-label="Puntos" style="color: #a5a5a5;">-</td>
-                            </tr>
-                            <tr class="category-header">
-                                <td colspan="7">MASTER F</td>
-                            </tr>
-                            <tr>
-                                <td data-label="Pos." class="rank" style="text-align: center; color: #a5a5a5;">-</td>
-                                <td data-label="Nadadora" style="color: #a5a5a5; font-style: italic;">Sin participantes</td>
-                                <td data-label="Equipo" style="color: #a5a5a5;">-</td>
-                                <td data-label="Edad" style="color: #a5a5a5;">-</td>
-                                <td data-label="Categoría" style="color: #a5a5a5;">Master F</td>
-                                <td data-label="Tiempo Final" style="color: #a5a5a5;">-</td>
-                                <td data-label="Puntos" style="color: #a5a5a5;">-</td>
-                            </tr>
-                            <tr class="category-header">
-                                <td colspan="7">MASTER G</td>
-                            </tr>
-                            <tr>
-                                <td data-label="Pos." class="rank" style="text-align: center; color: #a5a5a5;">-</td>
-                                <td data-label="Nadadora" style="color: #a5a5a5; font-style: italic;">Sin participantes</td>
-                                <td data-label="Equipo" style="color: #a5a5a5;">-</td>
-                                <td data-label="Edad" style="color: #a5a5a5;">-</td>
-                                <td data-label="Categoría" style="color: #a5a5a5;">Master G</td>
-                                <td data-label="Tiempo Final" style="color: #a5a5a5;">-</td>
-                                <td data-label="Puntos" style="color: #a5a5a5;">-</td>
+                            <tr class="loading-row">
+                                <td colspan="7" style="text-align: center; padding: 40px; color: #a5a5a5;">
+                                    🔄 Cargando datos desde Google Sheets...
+                                </td>
                             </tr>
                         </tbody>
                     </table>
@@ -822,177 +821,6 @@
                                 <td data-label="Fecha">10/21/2019</td>
                                 <td data-label="Competencia">CAIMAN DE ORO</td>
                             </tr>
-                            <tr class="category-header">
-                                <td colspan="7">100M LIBRE</td>
-                            </tr>
-                            <tr>
-                                <td data-label="Distancia">100m Libre</td>
-                                <td data-label="Atleta">LUIS SEBASTIAN PAEZ</td>
-                                <td data-label="Equipo">NNG</td>
-                                <td data-label="Categoría">Mayores</td>
-                                <td data-label="Tiempo Record" class="time">00:53.87</td>
-                                <td data-label="Fecha">12/4/2020</td>
-                                <td data-label="Competencia">NACIONAL INTERCLUBES</td>
-                            </tr>
-                            <tr>
-                                <td data-label="Distancia">100m Libre</td>
-                                <td data-label="Atleta">Julian arbelaez</td>
-                                <td data-label="Equipo">DELFINES</td>
-                                <td data-label="Categoría">Master A</td>
-                                <td data-label="Tiempo Record" class="time">01:11.63</td>
-                                <td data-label="Fecha">12/13/2020</td>
-                                <td data-label="Competencia">II CHAMPIONSHIP MASTER</td>
-                            </tr>
-                            <tr>
-                                <td data-label="Distancia">100m Libre</td>
-                                <td data-label="Atleta">HERNANDO ALBERTO URREA SERNA</td>
-                                <td data-label="Equipo">DELFINES</td>
-                                <td data-label="Categoría">Master B</td>
-                                <td data-label="Tiempo Record" class="time">01:13.53</td>
-                                <td data-label="Fecha">6/24/2019</td>
-                                <td data-label="Competencia">ALL STAR 2.0</td>
-                            </tr>
-                            <tr>
-                                <td data-label="Distancia">100m Libre</td>
-                                <td data-label="Atleta">DANIEL MONTOYA</td>
-                                <td data-label="Equipo">NNG</td>
-                                <td data-label="Categoría">Master C</td>
-                                <td data-label="Tiempo Record" class="time">01:24.60</td>
-                                <td data-label="Fecha">6/2/2019</td>
-                                <td data-label="Competencia">TORNEO FREE STYLE</td>
-                            </tr>
-                            <tr>
-                                <td data-label="Distancia">100m Libre</td>
-                                <td data-label="Atleta">DANIEL MONTOYA</td>
-                                <td data-label="Equipo">NNG</td>
-                                <td data-label="Categoría">Master D</td>
-                                <td data-label="Tiempo Record" class="time">01:21.25</td>
-                                <td data-label="Fecha">12/13/2020</td>
-                                <td data-label="Competencia">II CHAMPIONSHIP MASTER</td>
-                            </tr>
-                            <tr>
-                                <td data-label="Distancia">100m Libre</td>
-                                <td data-label="Atleta">Libardo Pinzón Vivas</td>
-                                <td data-label="Equipo">MASTER</td>
-                                <td data-label="Categoría">Master E</td>
-                                <td data-label="Tiempo Record" class="time">01:14.46</td>
-                                <td data-label="Fecha">12/2/2019</td>
-                                <td data-label="Competencia">TORNEO CLAUSURA LNC 2023</td>
-                            </tr>
-                            <tr>
-                                <td data-label="Distancia">100m Libre</td>
-                                <td data-label="Atleta">Fernando Suarez</td>
-                                <td data-label="Equipo">NNG</td>
-                                <td data-label="Categoría">Master G</td>
-                                <td data-label="Tiempo Record" class="time">02:37.96</td>
-                                <td data-label="Fecha">12/13/2020</td>
-                                <td data-label="Competencia">II CHAMPIONSHIP MASTER</td>
-                            </tr>
-                            <tr class="category-header">
-                                <td colspan="7">200M LIBRE</td>
-                            </tr>
-                            <tr>
-                                <td data-label="Distancia">200m Libre</td>
-                                <td data-label="Atleta">LUIS SEBASTIAN PAEZ</td>
-                                <td data-label="Equipo">NNG</td>
-                                <td data-label="Categoría">Mayores</td>
-                                <td data-label="Tiempo Record" class="time">02:04.37</td>
-                                <td data-label="Fecha">3/2/2020</td>
-                                <td data-label="Competencia">PERLA DEL SINÚ</td>
-                            </tr>
-                            <tr>
-                                <td data-label="Distancia">200m Libre</td>
-                                <td data-label="Atleta">Julian arbelaez</td>
-                                <td data-label="Equipo">DELFINES</td>
-                                <td data-label="Categoría">Master A</td>
-                                <td data-label="Tiempo Record" class="time">02:51.60</td>
-                                <td data-label="Fecha">12/13/2020</td>
-                                <td data-label="Competencia">II CHAMPIONSHIP MASTER</td>
-                            </tr>
-                            <tr>
-                                <td data-label="Distancia">200m Libre</td>
-                                <td data-label="Atleta">HERNANDO ALBERTO URREA SERNA</td>
-                                <td data-label="Equipo">DELFINES</td>
-                                <td data-label="Categoría">Master B</td>
-                                <td data-label="Tiempo Record" class="time">03:01.94</td>
-                                <td data-label="Fecha">6/24/2019</td>
-                                <td data-label="Competencia">ALL STAR 2.0</td>
-                            </tr>
-                            <tr>
-                                <td data-label="Distancia">200m Libre</td>
-                                <td data-label="Atleta">RAFAEL RIVERO BLANCO</td>
-                                <td data-label="Equipo">NNG</td>
-                                <td data-label="Categoría">Master C</td>
-                                <td data-label="Tiempo Record" class="time">03:32.10</td>
-                                <td data-label="Fecha">4/19/2020</td>
-                                <td data-label="Competencia">CHAMPIONSHIP MASTER</td>
-                            </tr>
-                            <tr>
-                                <td data-label="Distancia">200m Libre</td>
-                                <td data-label="Atleta">DANIEL MONTOYA</td>
-                                <td data-label="Equipo">NNG</td>
-                                <td data-label="Categoría">Master D</td>
-                                <td data-label="Tiempo Record" class="time">03:09.16</td>
-                                <td data-label="Fecha">12/13/2020</td>
-                                <td data-label="Competencia">II CHAMPIONSHIP MASTER</td>
-                            </tr>
-                            <tr>
-                                <td data-label="Distancia">200m Libre</td>
-                                <td data-label="Atleta">Libardo Pinzón Vivas</td>
-                                <td data-label="Equipo">MASTER</td>
-                                <td data-label="Categoría">Master E</td>
-                                <td data-label="Tiempo Record" class="time">02:40.40</td>
-                                <td data-label="Fecha">12/2/2019</td>
-                                <td data-label="Competencia">TORNEO CLAUSURA LNC 2023</td>
-                            </tr>
-                            <tr>
-                                <td data-label="Distancia">200m Libre</td>
-                                <td data-label="Atleta">Fernando Suarez</td>
-                                <td data-label="Equipo">NNG</td>
-                                <td data-label="Categoría">Master G</td>
-                                <td data-label="Tiempo Record" class="time">06:09.00</td>
-                                <td data-label="Fecha">12/13/2020</td>
-                                <td data-label="Competencia">II CHAMPIONSHIP MASTER</td>
-                            </tr>
-                            <tr class="category-header">
-                                <td colspan="7">200M COMBINADO</td>
-                            </tr>
-                            <tr>
-                                <td data-label="Distancia">200m Combinado</td>
-                                <td data-label="Atleta">CAMILO BERRIO BERRIO</td>
-                                <td data-label="Equipo">NNG</td>
-                                <td data-label="Categoría">Mayores</td>
-                                <td data-label="Tiempo Record" class="time">02:42.94</td>
-                                <td data-label="Fecha">4/19/2020</td>
-                                <td data-label="Competencia">CHAMPIONSHIP MASTER</td>
-                            </tr>
-                            <tr>
-                                <td data-label="Distancia">200m Combinado</td>
-                                <td data-label="Atleta">Juan Fernando Arango Meneses</td>
-                                <td data-label="Equipo">MASTER</td>
-                                <td data-label="Categoría">Master A</td>
-                                <td data-label="Tiempo Record" class="time">04:35.50</td>
-                                <td data-label="Fecha">4/19/2020</td>
-                                <td data-label="Competencia">CHAMPIONSHIP MASTER</td>
-                            </tr>
-                            <tr>
-                                <td data-label="Distancia">200m Combinado</td>
-                                <td data-label="Atleta">CHRISTIAN RUBIO VERGARA</td>
-                                <td data-label="Equipo">AQUARIUM</td>
-                                <td data-label="Categoría">Master B</td>
-                                <td data-label="Tiempo Record" class="time">04:13.62</td>
-                                <td data-label="Fecha">4/19/2020</td>
-                                <td data-label="Competencia">CHAMPIONSHIP MASTER</td>
-                            </tr>
-                            <tr>
-                                <td data-label="Distancia">200m Combinado</td>
-                                <td data-label="Atleta">Libardo Pinzón Vivas</td>
-                                <td data-label="Equipo">MASTER</td>
-                                <td data-label="Categoría">Master E</td>
-                                <td data-label="Tiempo Record" class="time">03:23.56</td>
-                                <td data-label="Fecha">4/19/2020</td>
-                                <td data-label="Competencia">CHAMPIONSHIP MASTER</td>
-                            </tr>
                         </tbody>
                     </table>
                 </div>
@@ -1005,14 +833,6 @@
         <div class="container">
             <h2 class="section-title">Nuestros Patrocinadores</h2>
             <div class="sponsors-grid">
-                <a href="#" target="_blank" class="sponsor-card">
-                    <div class="sponsor-logo"><img src="https://via.placeholder.com/200x80/FAFAFA/CCCCCC?text=Sponsor+1" alt="Patrocinador 1"></div>
-                    <div class="sponsor-name">Empresa Patrocinadora 1</div>
-                </a>
-                <a href="#" target="_blank" class="sponsor-card">
-                    <div class="sponsor-logo"><img src="https://via.placeholder.com/200x80/FAFAFA/CCCCCC?text=Sponsor+2" alt="Patrocinador 2"></div>
-                    <div class="sponsor-name">Empresa Patrocinadora 2</div>
-                </a>
                 <a href="#" target="_blank" class="sponsor-card">
                     <div class="sponsor-logo"><img src="https://via.placeholder.com/200x80/FAFAFA/CCCCCC?text=Sponsor+3" alt="Patrocinador 3"></div>
                     <div class="sponsor-name">Empresa Patrocinadora 3</div>
@@ -1068,6 +888,596 @@
     </footer>
 
     <script>
+        // Variables globales
+        let lastUpdateTime = null;
+        let loadAttempts = 0;
+        const MAX_ATTEMPTS = 3;
+
+        // Elementos DOM
+        const statusIndicator = document.getElementById('statusIndicator');
+        const lastUpdateElement = document.getElementById('lastUpdateTime');
+        const resultsTable = document.getElementById('resultsTable');
+
+        // Función para actualizar el indicador de estado
+        function updateStatus(type, message) {
+            statusIndicator.className = `status-indicator status-${type}`;
+            statusIndicator.textContent = message;
+            
+            if (type === 'success' || type === 'error') {
+                setTimeout(() => {
+                    statusIndicator.style.opacity = '0';
+                    setTimeout(() => {
+                        statusIndicator.style.display = 'none';
+                    }, 300);
+                }, 3000);
+            }
+        }
+
+        // Función para actualizar tiempo de última actualización
+        function updateLastUpdateTime() {
+            const now = new Date();
+            const timeString = now.toLocaleTimeString('es-CO', {
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit',
+                timeZone: 'America/Bogota'
+            });
+            lastUpdateElement.textContent = timeString;
+            lastUpdateTime = now;
+        }
+
+        // Parser CSV mejorado y optimizado
+        function parseCSV(csvText) {
+            const rows = [];
+            const lines = csvText.split('\n');
+            
+            for (let line of lines) {
+                if (!line.trim()) continue;
+                
+                const cols = [];
+                let currentCol = '';
+                let inQuotes = false;
+                
+                for (let i = 0; i < line.length; i++) {
+                    const char = line[i];
+                    const nextChar = line[i + 1];
+                    
+                    if (char === '"') {
+                        if (inQuotes && nextChar === '"') {
+                            currentCol += '"';
+                            i++; // Saltar la siguiente comilla
+                        } else {
+                            inQuotes = !inQuotes;
+                        }
+                    } else if (char === ',' && !inQuotes) {
+                        cols.push(currentCol.trim());
+                        currentCol = '';
+                    } else {
+                        currentCol += char;
+                    }
+                }
+                
+                cols.push(currentCol.trim());
+                
+                if (cols.some(cell => cell && cell.trim() !== '')) {
+                    rows.push(cols);
+                }
+            }
+            
+            return rows;
+        }
+
+        // Configuración: Usar API Key habilitada con manejo de CORS
+        const USE_API_KEY = true; // ✅ API Key habilitada
+        const API_KEY = 'AIzaSyDcUEGyS6grOV_p8Z6d9WofiFNMYQBblIk'; // ✅ Tu API Key
+        
+        // Método principal para cargar datos desde Google Sheets
+        async function loadSheetData() {
+            loadAttempts++;
+            updateStatus('loading', '🔄 Cargando resultados...');
+            
+            // Si está deshabilitada la API Key, ir directo a CSV
+            if (!USE_API_KEY) {
+                console.log('📄 Usando solo método CSV (API Key deshabilitada)');
+                await loadSheetDataAlternative();
+                return;
+            }
+            
+            try {
+                const SHEET_ID = '1AKzRm64pn_1JaL4n0Tx3xupfDdkU91Oc-nN2kf7z4PE';
+                
+                // Probar diferentes rangos y nombres de hoja
+                const ranges = [
+                    'RECORD%20MASTER!A:Z',  // Tu hoja principal con más columnas
+                    'RECORD%20MASTER!A:G',  // Tu hoja principal
+                    'RECORD%20MASTER!A1:Z1000', // Rango específico
+                    'A:Z',  // Sin especificar hoja, más columnas
+                    'A1:Z1000' // Rango específico sin hoja
+                ];
+                
+                let data = null;
+                let activeRange = '';
+                
+                console.log('🔑 Intentando con API Key...');
+                
+                // Intentar con API Key primero
+                for (const range of ranges) {
+                    try {
+                        const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${range}?key=${API_KEY}`;
+                        console.log(`🔍 Probando rango con API Key: ${range}`);
+                        
+                        const response = await fetch(url, {
+                            method: 'GET',
+                            headers: {
+                                'Accept': 'application/json',
+                                'Cache-Control': 'no-cache',
+                                'Pragma': 'no-cache'
+                            },
+                            mode: 'cors', // Explícitamente permitir CORS
+                            credentials: 'omit' // No enviar credentials
+                        });
+                        
+                        console.log(`📊 Respuesta API: ${response.status} ${response.statusText}`);
+                        
+                        if (response.ok) {
+                            const responseData = await response.json();
+                            console.log(`📊 Datos recibidos para ${range}:`, responseData);
+                            
+                            if (responseData.values && responseData.values.length > 0) {
+                                data = responseData;
+                                activeRange = range;
+                                console.log(`✅ Datos encontrados en: ${range} (${responseData.values.length} filas)`);
+                                break;
+                            } else {
+                                console.log(`⚠️ Sin datos en rango: ${range}`);
+                            }
+                        } else {
+                            const errorData = await response.json();
+                            console.log(`❌ Error API ${response.status} en ${range}:`, errorData);
+                            
+                            // Si es error 403 de referentes, intentar con CSV
+                            if (response.status === 403) {
+                                console.log('🔄 Error 403 detectado, probando método CSV...');
+                                await loadSheetDataAlternative();
+                                return;
+                            }
+                        }
+                    } catch (rangeError) {
+                        console.log(`❌ Error de conexión en rango ${range}:`, rangeError.message);
+                        console.log('🔄 Failed to fetch detectado, probando método CSV...');
+                        
+                        // Si es el primer rango y falla, ir directo a CSV
+                        if (range === ranges[0]) {
+                            await loadSheetDataAlternative();
+                            return;
+                        }
+                        continue;
+                    }
+                }
+                
+                if (data && data.values && data.values.length > 0) {
+                    updateResultsTable(data.values);
+                    updateLastUpdateTime();
+                    updateStatus('success', '✅ Datos cargados con API Key');
+                    loadAttempts = 0;
+                    console.log(`🎉 ${data.values.length} filas cargadas exitosamente desde: ${activeRange}`);
+                } else {
+                    console.log('⚠️ Sin datos con API Key, probando método CSV...');
+                    await loadSheetDataAlternative();
+                }
+                
+            } catch (error) {
+                console.error('❌ Error general con API Key:', error);
+                console.log('🔄 Fallback a método CSV debido a error general...');
+                await loadSheetDataAlternative();
+            }
+        }
+
+        // Método alternativo usando exportación CSV (Anti Failed to Fetch)
+        async function loadSheetDataAlternative() {
+            try {
+                const SHEET_ID = '1AKzRm64pn_1JaL4n0Tx3xupfDdkU91Oc-nN2kf7z4PE';
+                
+                // URLs optimizadas para evitar CORS y Failed to Fetch
+                const exportUrls = [
+                    // Método 1: Exportación directa (más confiable)
+                    `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv&gid=0`,
+                    `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv`,
+                    
+                    // Método 2: Con parámetros adicionales para evitar cache
+                    `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv&gid=0&timestamp=${Date.now()}`,
+                    `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv&cachebust=${Math.random()}`,
+                    
+                    // Método 3: Google Visualization API (última opción)
+                    `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=RECORD%20MASTER`,
+                ];
+                
+                let csvText = '';
+                let successUrl = '';
+                let lastError = '';
+                
+                console.log('📄 Iniciando método CSV alternativo...');
+                
+                for (const url of exportUrls) {
+                    try {
+                        console.log('🔄 Probando URL CSV:', url.substring(0, 80) + '...');
+                        
+                        // Configuración anti "Failed to fetch"
+                        const fetchConfig = {
+                            method: 'GET',
+                            headers: {
+                                'Cache-Control': 'no-cache, no-store, must-revalidate',
+                                'Pragma': 'no-cache',
+                                'Expires': '0'
+                            },
+                            mode: 'cors',
+                            credentials: 'omit',
+                            // Timeout personalizado
+                            signal: AbortSignal.timeout ? AbortSignal.timeout(10000) : undefined
+                        };
+                        
+                        const response = await fetch(url, fetchConfig);
+                        
+                        console.log(`📊 Respuesta CSV: ${response.status} ${response.statusText}`);
+                        
+                        if (response.ok) {
+                            csvText = await response.text();
+                            console.log('📄 Texto CSV recibido (primeros 300 chars):', csvText.substring(0, 300));
+                            
+                            // Validaciones más estrictas para evitar HTML de error
+                            const isValidCSV = csvText && 
+                                             csvText.trim() !== '' && 
+                                             !csvText.includes('<!DOCTYPE') &&
+                                             !csvText.includes('<html') &&
+                                             !csvText.includes('<HTML') &&
+                                             !csvText.includes('Error') &&
+                                             !csvText.includes('Access denied') &&
+                                             !csvText.includes('Permission denied') &&
+                                             csvText.length > 20 &&
+                                             (csvText.includes(',') || csvText.includes('\n'));
+                            
+                            if (isValidCSV) {
+                                successUrl = url;
+                                console.log('✅ CSV válido obtenido de:', url.substring(0, 60) + '...');
+                                break;
+                            } else {
+                                console.log('⚠️ CSV inválido o contiene errores');
+                                lastError = 'CSV inválido o contiene HTML de error';
+                            }
+                        } else {
+                            lastError = `HTTP ${response.status}: ${response.statusText}`;
+                            console.log('❌ Error HTTP:', lastError);
+                            
+                            // Leer el contenido del error para más información
+                            try {
+                                const errorText = await response.text();
+                                if (errorText.length < 500) {
+                                    console.log('📄 Contenido del error:', errorText);
+                                }
+                            } catch (e) {
+                                console.log('❌ No se pudo leer el contenido del error');
+                            }
+                        }
+                    } catch (urlError) {
+                        lastError = urlError.message;
+                        console.log('❌ Error en URL:', url.substring(0, 60) + '...', urlError.message);
+                        
+                        // Información adicional sobre el tipo de error
+                        if (urlError.name === 'TypeError' && urlError.message.includes('Failed to fetch')) {
+                            console.log('🚨 Error "Failed to fetch" detectado. Posibles causas:');
+                            console.log('   - Problemas de CORS');
+                            console.log('   - Google Sheet no es público');
+                            console.log('   - Problemas de red');
+                            console.log('   - Bloqueador de anuncios activo');
+                        }
+                        continue;
+                    }
+                }
+                
+                if (!csvText || csvText.trim() === '') {
+                    throw new Error(`No se pudo obtener datos válidos de ninguna URL. Último error: ${lastError}`);
+                }
+                
+                const rows = parseCSV(csvText);
+                console.log('📊 Filas parseadas desde CSV:', rows.length);
+                console.log('📄 Primeras 3 filas:', rows.slice(0, 3));
+                
+                if (rows && rows.length > 0) {
+                    updateResultsTable(rows);
+                    updateLastUpdateTime();
+                    updateStatus('success', '✅ Datos cargados (CSV)');
+                    loadAttempts = 0;
+                    console.log(`✅ ${rows.length} filas cargadas exitosamente (método CSV)`);
+                } else {
+                    throw new Error('No se encontraron datos válidos en el CSV parseado');
+                }
+                
+            } catch (error) {
+                console.error('❌ Error cargando datos (método CSV):', error);
+                
+                if (loadAttempts < MAX_ATTEMPTS) {
+                    updateStatus('loading', `🔄 Reintentando... (${loadAttempts}/${MAX_ATTEMPTS})`);
+                    setTimeout(() => loadSheetData(), 5000);
+                } else {
+                    updateStatus('error', '❌ Error cargando datos');
+                    showErrorFallback();
+                }
+            }
+        }
+
+        // Función mejorada para mostrar datos de fallback con diagnóstico
+        function showErrorFallback() {
+            const tbody = document.querySelector('#1500m-libre .results-table tbody');
+            if (!tbody) return;
+            
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="7" style="text-align: center; padding: 40px; color: #f44336;">
+                        ❌ Error: "Failed to fetch"<br>
+                        <small style="color: #666; margin-top: 15px; display: block; line-height: 1.5;">
+                            <strong>Posibles soluciones:</strong><br>
+                            1. Verificar que el Google Sheet sea público<br>
+                            2. Desactivar bloqueador de anuncios temporalmente<br>
+                            3. Verificar conexión a internet<br>
+                            4. Probar en modo incógnito del navegador<br>
+                            5. Verificar configuraciones de CORS del servidor
+                        </small>
+                        <div style="margin-top: 20px;">
+                            <button onclick="retryLoad()" style="margin: 5px; padding: 8px 16px; background: #00ADEF; color: white; border: none; border-radius: 4px; cursor: pointer;">
+                                🔄 Reintentar
+                            </button>
+                            <button onclick="diagnoseFetchError().then(result => console.log('Diagnóstico:', result))" style="margin: 5px; padding: 8px 16px; background: #ff9800; color: white; border: none; border-radius: 4px; cursor: pointer;">
+                                🔍 Diagnosticar
+                            </button>
+                            <button onclick="checkSheetPublic()" style="margin: 5px; padding: 8px 16px; background: #9c27b0; color: white; border: none; border-radius: 4px; cursor: pointer;">
+                                📊 Verificar Sheet
+                            </button>
+                        </div>
+                    </td>
+                </tr>`;
+        }
+
+        // Función para verificar si el Google Sheet es público
+        async function checkSheetPublic() {
+            const SHEET_ID = '1AKzRm64pn_1JaL4n0Tx3xupfDdkU91Oc-nN2kf7z4PE';
+            const publicUrl = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/edit`;
+            
+            console.log('🔍 Verificando si el Google Sheet es público...');
+            console.log('📋 URL del Sheet:', publicUrl);
+            
+            // Abrir en nueva ventana para que el usuario pueda verificar
+            const newWindow = window.open(publicUrl, '_blank');
+            
+            if (newWindow) {
+                console.log('✅ Google Sheet abierto en nueva ventana');
+                console.log('🔧 Verifica que el Sheet sea público:');
+                console.log('   1. Clic en "Compartir" (botón azul)');
+                console.log('   2. Cambiar a "Cualquier persona con el enlace puede ver"');
+                console.log('   3. Asegurarse de que sea "Viewer" (no Editor)');
+                console.log('   4. Guardar cambios');
+                
+                alert('Google Sheet abierto en nueva ventana.\n\nVerifica que sea público:\n1. Clic en "Compartir"\n2. "Cualquier persona con el enlace puede ver"\n3. Rol: "Viewer"\n\nLuego cierra esta ventana y haz clic en "Reintentar"');
+            } else {
+                console.log('❌ No se pudo abrir nueva ventana (bloqueador de pop-ups)');
+                alert('No se pudo abrir automáticamente.\n\nVe manualmente a:\n' + publicUrl + '\n\nY verifica que sea público.');
+            }
+        }
+
+        // Función de prueba específica para tu Google Sheet y API Key;">
+                        ❌ No se pudieron cargar los datos desde Google Sheets<br>
+                        <small style="color: #a5a5a5; margin-top: 10px; display: block;">
+                            Verifica que el Google Sheet sea público o intenta recargar la página
+                        </small>
+                        <button onclick="retryLoad()" style="margin-top: 15px; padding: 10px 20px; background: #00ADEF; color: white; border: none; border-radius: 5px; cursor: pointer;">
+                            🔄 Reintentar
+                        </button>
+                    </td>
+                </tr>`;
+        }
+
+        // Función para reintentar carga manualmente
+        function retryLoad() {
+            loadAttempts = 0;
+            loadSheetData();
+        }
+
+        // Función mejorada para actualizar la tabla de resultados
+        function updateResultsTable(data) {
+            const tbody = document.querySelector('#1500m-libre .results-table tbody');
+            if (!tbody) return;
+            
+            console.log('📊 Procesando', data.length, 'filas de datos');
+            console.log('🔍 Primeras 3 filas:', data.slice(0, 3));
+            
+            let htmlContent = '';
+            let currentCategory = '';
+            let processedRows = 0;
+            
+            // Detectar si la primera fila son headers
+            let startRow = 0;
+            if (data[0] && data[0].length > 0) {
+                const firstCell = data[0][0] ? data[0][0].toString().toLowerCase() : '';
+                if (firstCell.includes('pos') || firstCell.includes('lugar') || 
+                    firstCell.includes('puesto') || firstCell.includes('#') ||
+                    firstCell.includes('rank') || firstCell === '1') {
+                    startRow = 1;
+                    console.log('📋 Headers detectados en fila 1, iniciando desde fila 2');
+                }
+            }
+            
+            // Procesar datos fila por fila
+            for (let i = startRow; i < data.length; i++) {
+                const row = data[i];
+                if (!row || row.length === 0) continue;
+                
+                console.log(`🔍 Procesando fila ${i}:`, row);
+                
+                // Variables para los datos
+                let pos, nadadora, equipo, edad, categoria, tiempo, puntos;
+                
+                // Detectar automáticamente la estructura de datos
+                // Buscar patrones en las columnas
+                for (let j = 0; j < row.length; j++) {
+                    const cell = row[j] ? row[j].toString().trim() : '';
+                    
+                    // Detectar categoría (palabras clave)
+                    if (cell.match(/^(INFANTIL|JUVENIL|MAYORES|MASTER|SENIOR)/i) && !categoria) {
+                        categoria = cell;
+                        console.log(`📂 Categoría detectada en columna ${j}: ${categoria}`);
+                    }
+                    
+                    // Detectar posición (números 1-10 al inicio)
+                    if (cell.match(/^[1-9]$/) && !pos) {
+                        pos = cell;
+                    }
+                    
+                    // Detectar tiempo (formato mm:ss.ss)
+                    if (cell.match(/^\d{1,2}:\d{2}\.\d{2}$/) && !tiempo) {
+                        tiempo = cell;
+                    }
+                    
+                    // Detectar puntos (números > 10)
+                    if (cell.match(/^\d{1,2}$/) && parseInt(cell) > 10 && !puntos) {
+                        puntos = cell;
+                    }
+                    
+                    // Detectar edad (números 10-99)
+                    if (cell.match(/^\d{2}$/) && !edad) {
+                        edad = cell;
+                    }
+                    
+                    // Detectar equipo (siglas 2-4 letras)
+                    if (cell.match(/^[A-Z]{2,4}$/) && !equipo) {
+                        equipo = cell;
+                    }
+                    
+                    // Detectar nadadora (texto largo, nombres)
+                    if (cell.length > 5 && cell.match(/[a-zA-Z\s]+/) && 
+                        !cell.match(/^(INFANTIL|JUVENIL|MAYORES|MASTER)/i) && 
+                        !nadadora) {
+                        nadadora = cell;
+                    }
+                }
+                
+                // Si no encontramos patrones, usar estructura secuencial
+                if (!pos && !nadadora && !categoria) {
+                    if (row.length >= 7) {
+                        [pos, nadadora, equipo, edad, categoria, tiempo, puntos] = row;
+                    } else if (row.length >= 6) {
+                        [pos, nadadora, equipo, categoria, tiempo, puntos] = row;
+                        edad = '-';
+                    } else if (row.length >= 5) {
+                        [pos, nadadora, categoria, tiempo, puntos] = row;
+                        equipo = '-';
+                        edad = '-';
+                    } else if (row.length >= 3) {
+                        [nadadora, categoria, tiempo] = row;
+                        pos = '-';
+                        equipo = '-';
+                        edad = '-';
+                        puntos = '-';
+                    }
+                }
+                
+                // Limpiar y validar datos
+                categoria = categoria ? categoria.toString().trim().toUpperCase() : '';
+                nadadora = nadadora ? nadadora.toString().trim() : '';
+                pos = pos ? pos.toString().trim() : '';
+                
+                console.log(`📝 Datos procesados: pos=${pos}, nadadora=${nadadora}, categoria=${categoria}`);
+                
+                // Skip filas completamente vacías
+                if (!categoria && !nadadora && !pos) continue;
+                
+                // Si es solo una categoría sin nadadora, probablemente es un header de categoría
+                if (categoria && (!nadadora || nadadora === '' || nadadora === '-') && 
+                    categoria.match(/^(INFANTIL|JUVENIL|MAYORES|MASTER)/i)) {
+                    if (categoria !== currentCategory) {
+                        currentCategory = categoria;
+                        htmlContent += `
+                            <tr class="category-header">
+                                <td colspan="7">${categoria}</td>
+                            </tr>`;
+                        console.log(`📂 Header de categoría agregado: ${categoria}`);
+                    }
+                    continue;
+                }
+                
+                // Si cambia la categoría y hay nadadora, agregar header
+                if (categoria && categoria !== currentCategory && categoria !== '' && 
+                    categoria !== '-' && nadadora && nadadora !== '') {
+                    currentCategory = categoria;
+                    htmlContent += `
+                        <tr class="category-header">
+                            <td colspan="7">${categoria}</td>
+                        </tr>`;
+                    console.log(`📂 Nuevo header de categoría: ${categoria}`);
+                }
+                
+                // Agregar fila de resultado si hay nadadora
+                if (nadadora && nadadora !== '' && nadadora !== '-' && 
+                    !nadadora.toLowerCase().includes('sin participantes') &&
+                    !nadadora.toLowerCase().includes('vacío') &&
+                    !nadadora.toLowerCase().includes('vacio') &&
+                    nadadora.length > 2) {
+                    
+                    // Generar medallas/posiciones
+                    let displayPos = '';
+                    if (pos == 1 || pos === '1') displayPos = '🥇 1°';
+                    else if (pos == 2 || pos === '2') displayPos = '🥈 2°';
+                    else if (pos == 3 || pos === '3') displayPos = '🥉 3°';
+                    else if (pos && pos !== '-' && pos !== '') displayPos = `${pos}°`;
+                    else displayPos = '-';
+                    
+                    htmlContent += `
+                        <tr>
+                            <td data-label="Pos." class="rank">${displayPos}</td>
+                            <td data-label="Nadadora">${nadadora}</td>
+                            <td data-label="Equipo">${equipo || '-'}</td>
+                            <td data-label="Edad">${edad || '-'}</td>
+                            <td data-label="Categoría">${categoria || '-'}</td>
+                            <td data-label="Tiempo Final" class="time">${tiempo || '-'}</td>
+                            <td data-label="Puntos" class="points">${puntos || '-'}</td>
+                        </tr>`;
+                    processedRows++;
+                    console.log(`✅ Fila agregada: ${nadadora} - ${categoria}`);
+                }
+            }
+            
+            // Si no se procesó nada, mostrar mensaje
+            if (htmlContent === '') {
+                htmlContent = `
+                    <tr>
+                        <td colspan="7" style="text-align: center; padding: 40px; color: #a5a5a5;">
+                            📝 Datos disponibles pero estructura no reconocida<br>
+                            <small style="display: block; margin-top: 10px; color: #666;">
+                                Total de filas: ${data.length} | Filas con datos: ${data.filter(row => row && row.length > 0).length}
+                            </small>
+                            <button onclick="showRawData()" style="margin-top: 15px; padding: 8px 16px; background: #00ADEF; color: white; border: none; border-radius: 4px; cursor: pointer;">
+                                Ver datos raw
+                            </button>
+                        </td>
+                    </tr>`;
+            }
+            
+            tbody.innerHTML = htmlContent;
+            resultsTable.classList.remove('loading');
+            
+            console.log(`✅ Tabla actualizada: ${processedRows} resultados de ${data.length} filas`);
+            
+            // Guardar datos para debugging
+            window.lastLoadedData = data;
+        }
+
+        // Función para mostrar datos raw (debugging)
+        function showRawData() {
+            if (window.lastLoadedData) {
+                console.log('📊 DATOS RAW COMPLETOS:', window.lastLoadedData);
+                alert(`Datos cargados: ${window.lastLoadedData.length} filas.\nRevisa la consola (F12) para ver los datos completos.`);
+            }
+        }
+
+        // Funciones para tabs
         function openTab(evt, tabName) {
             var i, tabcontent, tabbuttons;
             
@@ -1084,6 +1494,329 @@
             document.getElementById(tabName).classList.add("active");
             evt.currentTarget.classList.add("active");
         }
+
+        // Función para recargar datos automáticamente
+        function startAutoReload() {
+            // Cargar datos inicialmente
+            loadSheetData();
+            
+            // Recargar cada 30 segundos
+            setInterval(() => {
+                console.log('🔄 Recarga automática programada...');
+                loadSheetData();
+            }, 30000);
+        }
+
+        // Event listeners
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🚀 Página cargada, iniciando sistema de actualización automática...');
+            console.log('📋 Tu Google Sheet: "RECORD MASTER"');
+            console.log('🔑 API Key habilitada:', API_KEY);
+            console.log('📊 ID del Sheet:', '1AKzRm64pn_1JaL4n0Tx3xupfDdkU91Oc-nN2kf7z4PE');
+            
+            // Agregar botón de prueba temporal
+            addTestButton();
+            
+            startAutoReload();
+        });
+
+        // Función para agregar botón de prueba (temporal)
+        function addTestButton() {
+            const testButton = document.createElement('button');
+            testButton.innerHTML = '🔑 Probar API Key';
+            testButton.style.cssText = `
+                position: fixed;
+                bottom: 20px;
+                right: 20px;
+                z-index: 9999;
+                padding: 12px 24px;
+                background: linear-gradient(135deg, #4CAF50, #45a049);
+                color: white;
+                border: none;
+                border-radius: 25px;
+                cursor: pointer;
+                font-weight: 600;
+                font-size: 14px;
+                box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
+                transition: all 0.3s ease;
+            `;
+            
+            testButton.onmouseover = function() {
+                this.style.transform = 'translateY(-2px)';
+                this.style.boxShadow = '0 6px 20px rgba(76, 175, 80, 0.4)';
+            };
+            
+            testButton.onmouseout = function() {
+                this.style.transform = 'translateY(0)';
+                this.style.boxShadow = '0 4px 15px rgba(76, 175, 80, 0.3)';
+            };
+            
+            testButton.onclick = function() {
+                console.log('🧪 Iniciando prueba manual con API Key...');
+                testButton.innerHTML = '⏳ Probando...';
+                testButton.style.background = 'linear-gradient(135deg, #ff9800, #f57c00)';
+                
+                loadAttempts = 0;
+                loadSheetData().then(() => {
+                    testButton.innerHTML = '✅ Completado';
+                    testButton.style.background = 'linear-gradient(135deg, #4CAF50, #45a049)';
+                    setTimeout(() => {
+                        testButton.innerHTML = '🔑 Probar API Key';
+                    }, 2000);
+                });
+            };
+            
+            document.body.appendChild(testButton);
+            
+            // Remover botón después de 3 minutos
+            setTimeout(() => {
+                if (testButton.parentNode) {
+                    testButton.style.opacity = '0';
+                    setTimeout(() => {
+                        if (testButton.parentNode) {
+                            testButton.parentNode.removeChild(testButton);
+                        }
+                    }, 300);
+                }
+            }, 180000);
+        }
+
+        // Función de diagnóstico avanzado para "Failed to fetch"
+        async function diagnoseFetchError() {
+            console.log('🔍 === DIAGNÓSTICO COMPLETO DE "FAILED TO FETCH" ===');
+            
+            const SHEET_ID = '1AKzRm64pn_1JaL4n0Tx3xupfDdkU91Oc-nN2kf7z4PE';
+            
+            // Test 1: Verificar conectividad básica
+            console.log('📡 Test 1: Verificando conectividad básica...');
+            try {
+                const testUrl = 'https://www.google.com/favicon.ico';
+                const testResponse = await fetch(testUrl, { mode: 'no-cors' });
+                console.log('✅ Conectividad básica: OK');
+            } catch (error) {
+                console.log('❌ Sin conectividad básica:', error.message);
+                return { error: 'NO_INTERNET', message: 'Sin conexión a internet' };
+            }
+            
+            // Test 2: Verificar acceso a Google Sheets (público)
+            console.log('📊 Test 2: Verificando acceso público al Google Sheet...');
+            const publicUrl = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/edit`;
+            try {
+                const response = await fetch(publicUrl, { 
+                    method: 'HEAD', 
+                    mode: 'no-cors',
+                    credentials: 'omit'
+                });
+                console.log('✅ Google Sheet accesible');
+            } catch (error) {
+                console.log('⚠️ Problema de acceso al Google Sheet:', error.message);
+            }
+            
+            // Test 3: Verificar URLs de exportación específicas
+            console.log('📄 Test 3: Verificando URLs de exportación...');
+            const testUrls = [
+                `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv&gid=0`,
+                `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv`
+            ];
+            
+            for (const url of testUrls) {
+                try {
+                    console.log(`🔗 Probando: ${url.substring(0, 70)}...`);
+                    const response = await fetch(url, {
+                        method: 'HEAD', // Solo headers, sin contenido
+                        mode: 'cors',
+                        credentials: 'omit'
+                    });
+                    console.log(`✅ URL accesible: ${response.status} ${response.statusText}`);
+                    
+                    if (response.ok) {
+                        // Ahora probar GET completo
+                        const fullResponse = await fetch(url);
+                        const content = await fullResponse.text();
+                        console.log(`📊 Contenido obtenido: ${content.length} caracteres`);
+                        
+                        if (content.length > 50 && !content.includes('<!DOCTYPE')) {
+                            console.log('🎉 ¡Esta URL funciona correctamente!');
+                            return { 
+                                success: true, 
+                                workingUrl: url, 
+                                content: content.substring(0, 200) 
+                            };
+                        }
+                    }
+                } catch (error) {
+                    console.log(`❌ Error en URL: ${error.message}`);
+                    
+                    if (error.message.includes('Failed to fetch')) {
+                        console.log('🚨 "Failed to fetch" detectado en esta URL');
+                    }
+                }
+            }
+            
+            // Test 4: Verificar configuraciones del navegador
+            console.log('🔧 Test 4: Verificando configuraciones del navegador...');
+            console.log('   - User Agent:', navigator.userAgent);
+            console.log('   - Online:', navigator.onLine);
+            console.log('   - Cookies habilitadas:', navigator.cookieEnabled);
+            
+            // Test 5: Verificar si hay bloqueadores
+            console.log('🛡️ Test 5: Verificando posibles bloqueos...');
+            if (typeof window.adblockDetected !== 'undefined') {
+                console.log('⚠️ Bloqueador de anuncios detectado');
+            }
+            
+            return { error: 'FETCH_FAILED', message: 'Todas las URLs fallan con "Failed to fetch"' };
+        }
+        async function testSheetConnection() {
+            console.log('🔍 === PRUEBA COMPLETA DE CONEXIÓN ===');
+            console.log('🔑 API Key:', API_KEY);
+            console.log('📊 Sheet ID:', '1AKzRm64pn_1JaL4n0Tx3xupfDdkU91Oc-nN2kf7z4PE');
+            
+            const SHEET_ID = '1AKzRm64pn_1JaL4n0Tx3xupfDdkU91Oc-nN2kf7z4PE';
+            
+            // Prueba 1: API Key con diferentes rangos
+            console.log('📡 === PRUEBA 1: API KEY ===');
+            const ranges = [
+                'RECORD%20MASTER!A:Z', 
+                'RECORD%20MASTER!A:G',
+                'A:Z', 
+                'A1:Z1000',
+                'RECORD%20MASTER!A1:Z1000'
+            ];
+            
+            for (const range of ranges) {
+                try {
+                    const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${range}?key=${API_KEY}`;
+                    console.log(`🔗 Probando: ${url.substring(0, 80)}...`);
+                    
+                    const response = await fetch(url, {
+                        method: 'GET',
+                        headers: {
+                            'Accept': 'application/json',
+                            'Cache-Control': 'no-cache'
+                        }
+                    });
+                    
+                    console.log(`📊 Respuesta ${range}: ${response.status} ${response.statusText}`);
+                    
+                    if (response.ok) {
+                        const data = await response.json();
+                        console.log(`✅ ÉXITO con API Key!`);
+                        console.log(`📊 Filas obtenidas: ${data.values?.length || 0}`);
+                        if (data.values && data.values.length > 0) {
+                            console.log(`📄 Primera fila:`, data.values[0]);
+                            console.log(`📄 Segunda fila:`, data.values[1]);
+                            console.log(`📄 Estructura detectada: ${data.values[0]?.length || 0} columnas`);
+                            return { success: true, method: 'API_KEY', data: data.values, range };
+                        }
+                    } else {
+                        const errorData = await response.json();
+                        console.log(`❌ Error API Key detallado:`, errorData);
+                        
+                        if (response.status === 403) {
+                            console.log('🚨 Error 403: Problema de permisos o referentes');
+                        } else if (response.status === 400) {
+                            console.log('🚨 Error 400: Problema con el rango o ID del sheet');
+                        }
+                    }
+                } catch (error) {
+                    console.log(`❌ Error de conexión API Key en ${range}:`, error.message);
+                }
+            }
+            
+            // Prueba 2: Exportación CSV como fallback
+            console.log('📄 === PRUEBA 2: EXPORTACIÓN CSV ===');
+            const csvUrls = [
+                `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv&gid=0`,
+                `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv`,
+                `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv`,
+                `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv&gid=0&timestamp=${Date.now()}`
+            ];
+            
+            for (const url of csvUrls) {
+                try {
+                    console.log(`🔗 Probando CSV: ${url.substring(0, 80)}...`);
+                    const response = await fetch(url, {
+                        method: 'GET',
+                        headers: {
+                            'Cache-Control': 'no-cache, no-store, must-revalidate'
+                        }
+                    });
+                    
+                    console.log(`📊 Respuesta CSV: ${response.status} ${response.statusText}`);
+                    
+                    if (response.ok) {
+                        const text = await response.text();
+                        console.log(`📝 Longitud del CSV: ${text.length} caracteres`);
+                        console.log(`📄 Primeros 200 caracteres:`, text.substring(0, 200));
+                        
+                        if (text && text.length > 50 && !text.includes('<!DOCTYPE') && text.includes(',')) {
+                            const rows = parseCSV(text);
+                            console.log(`✅ ÉXITO con CSV!`);
+                            console.log(`📊 Filas parseadas: ${rows.length}`);
+                            if (rows.length > 0) {
+                                console.log(`📄 Primera fila CSV:`, rows[0]);
+                                console.log(`📄 Segunda fila CSV:`, rows[1]);
+                                return { success: true, method: 'CSV', data: rows, url };
+                            }
+                        } else {
+                            console.log('⚠️ CSV inválido o vacío');
+                        }
+                    }
+                } catch (error) {
+                    console.log(`❌ Error CSV:`, error.message);
+                }
+            }
+            
+            console.log('❌ === TODAS LAS PRUEBAS FALLARON ===');
+            console.log('🔧 Posibles soluciones:');
+            console.log('   1. Verificar que el Google Sheet sea público');
+            console.log('   2. Revisar restricciones de la API Key en Google Cloud Console');
+            console.log('   3. Verificar que la API de Google Sheets esté habilitada');
+            
+            return { success: false, method: 'NONE', data: null };
+        }
+
+        // Recargar cuando la ventana vuelva al foco
+        window.addEventListener('focus', function() {
+            if (lastUpdateTime && (Date.now() - lastUpdateTime.getTime()) > 60000) {
+                console.log('👁️ Ventana enfocada, recargando datos...');
+                loadSheetData();
+            }
+        });
+
+        // Recargar cuando se restaure la conexión a internet
+        window.addEventListener('online', function() {
+            console.log('🌐 Conexión restaurada, recargando datos...');
+            loadAttempts = 0;
+            loadSheetData();
+        });
+
+        // Mostrar estado offline
+        window.addEventListener('offline', function() {
+            updateStatus('error', '📡 Sin conexión a internet');
+        });
+
+        // Función global para debugging
+        window.debugSheet = testSheetConnection;
+        window.reloadData = loadSheetData;
+        
+        console.log('🛠️ Funciones de debugging disponibles:');
+        console.log('   window.debugSheet() - Prueba completa de conexión');
+        console.log('   window.reloadData() - Recargar datos manualmente');
+        console.log('   window.lastLoadedData - Ver últimos datos cargados');
     </script>
 </body>
 </html>
+                    <div class="sponsor-logo"><img src="https://via.placeholder.com/200x80/FAFAFA/CCCCCC?text=Sponsor+1" alt="Patrocinador 1"></div>
+                    <div class="sponsor-name">Empresa Patrocinadora 1</div>
+                </a>
+                <a href="#" target="_blank" class="sponsor-card">
+                    <div class="sponsor-logo"><img src="https://via.placeholder.com/200x80/FAFAFA/CCCCCC?text=Sponsor+2" alt="Patrocinador 2"></div>
+                    <div class="sponsor-name">Empresa Patrocinadora 2</div>
+                </a>
+                <a href="#" target="_blank" class="sponsor-card">
+                    <div class="sponsor-logo"><img src="https://via.placeholder.com/200x80/FAFAFA/CCCCCC?text=Sponsor+3" alt="Patrocinador 3"></div>
+                    <div class="sponsor-name">Empresa Patrocinadora 3</div>
+                </a>
+                <a href="#" target="_blank" class="sponsor-card">
