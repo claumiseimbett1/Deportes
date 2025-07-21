@@ -990,32 +990,28 @@
             if (!data) {
                 console.log(`📄 Intentando método CSV para ${sheetName}...`);
                 
-                // Los gid típicos son: 0 para la primera hoja, incrementales para las siguientes
-                // Necesitamos probar diferentes gids
-                const gids = sheetName === 'FEMENINO' ? [0, '0'] : [1, '1', 2, '2'];
+                // Usar los gid específicos para cada hoja
+                let gid = '0'; // Por defecto para FEMENINO
                 
-                for (const gid of gids) {
-                    try {
-                        const url = `https://docs.google.com/spreadsheets/d/${CONFIG.SHEET_ID}/export?format=csv&gid=${gid}`;
-                        console.log(`📄 Probando CSV con gid=${gid} para ${sheetName}`);
-                        
-                        const response = await fetch(url);
-                        if (response.ok) {
-                            const text = await response.text();
-                            if (text && !text.includes('<!DOCTYPE')) {
-                                data = parseCSV(text);
-                                console.log(`✅ CSV parseado para ${sheetName}: ${data.length} filas`);
-                                
-                                // Verificar si los datos corresponden a la hoja correcta
-                                // Esto es una aproximación, ya que no podemos saber con certeza sin el nombre de la hoja
-                                if (data.length > 0) {
-                                    break;
-                                }
-                            }
+                if (sheetName === 'MASCULINO') {
+                    gid = '2016301649'; // GID específico para MASCULINO
+                }
+                
+                try {
+                    const url = `https://docs.google.com/spreadsheets/d/${CONFIG.SHEET_ID}/export?format=csv&gid=${gid}`;
+                    console.log(`📄 Cargando CSV de ${sheetName} con gid=${gid}`);
+                    
+                    const response = await fetch(url);
+                    if (response.ok) {
+                        const text = await response.text();
+                        if (text && !text.includes('<!DOCTYPE')) {
+                            data = parseCSV(text);
+                            console.log(`✅ CSV parseado para ${sheetName}: ${data.length} filas`);
+                            console.log(`🔍 Primeras 3 filas de ${sheetName}:`, data.slice(0, 3));
                         }
-                    } catch (error) {
-                        console.log(`❌ Error CSV gid=${gid}:`, error.message);
                     }
+                } catch (error) {
+                    console.log(`❌ Error CSV para ${sheetName}:`, error.message);
                 }
             }
             
