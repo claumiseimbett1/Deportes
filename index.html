@@ -876,6 +876,41 @@
         </div>
     </section>
 
+    <!-- Team Results Section -->
+    <section class="results-section">
+        <div class="container">
+            <h2 class="section-title">Resultados por Equipos</h2>
+            <div class="results-container">
+                <div class="last-update">
+                    Última actualización: <span class="time" id="lastUpdateTimeTeams">Cargando...</span>
+                </div>
+                
+                <h3 style="color: #0b1039; margin-bottom: 30px; text-align: center; font-size: 1.8em; font-weight: 600;">
+                    🏆 Clasificación General por Equipos
+                </h3>
+                
+                <table class="results-table" id="resultsTableTeams">
+                    <thead>
+                        <tr>
+                            <th>Posición</th>
+                            <th>Equipo</th>
+                            <th>Puntos Totales</th>
+                            <th>Puntos Femeninos</th>
+                            <th>Puntos Masculinos</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="loading-row">
+                            <td colspan="5" style="text-align: center; padding: 40px; color: #a5a5a5;">
+                                🔄 Cargando clasificación de equipos...
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
     <!-- Sponsors Section -->
     <section class="sponsors-section">
         <div class="container">
@@ -964,13 +999,17 @@
                 '200m-libre-femenino': ['200M-FEMENINO', '200M FEMENINO', '200M-FEM', '200M FEM', '200 FEM', 'FEMENINO 200M'],
                 '200m-libre-masculino': ['200M-MASCULINO', '200M MASCULINO', '200M-MAS', '200M MAS', '200 MAS', 'MASCULINO 200M'],
                 '4x50m-libre-femenino': ['4X50M-FEMENINO', '4X50M FEMENINO', '4X50M-FEM', '4X50M FEM', '4X50 FEM', 'FEMENINO 4X50M'],
-                '4x50m-libre-masculino': ['4X50M-MASCULINO', '4X50M MASCULINO', '4X50M-MAS', '4X50M MAS', '4X50 MAS', 'MASCULINO 4X50M']
+                '4x50m-libre-masculino': ['4X50M-MASCULINO', '4X50M MASCULINO', '4X50M-MAS', '4X50M MAS', '4X50 MAS', 'MASCULINO 4X50M'],
+                // Hoja de resultados por equipos
+                'equipos': ['EQUIPOS', 'EQUIPO', 'TEAMS', 'CLASIFICACION EQUIPOS', 'RESULTADOS EQUIPOS']
             }
         };
 
         // Elementos DOM
         const statusIndicator = document.getElementById('statusIndicator');
         const lastUpdateElement = document.getElementById('lastUpdateTime');
+        const lastUpdateElementTeams = document.getElementById('lastUpdateTimeTeams');
+        const resultsTableTeams = document.getElementById('resultsTableTeams');
         
         // Mapeo de elementos DOM por competencia
         const COMPETITION_TABLES = {
@@ -981,7 +1020,9 @@
             '200m-libre-femenino': document.getElementById('resultsTable200mFem'),
             '200m-libre-masculino': document.getElementById('resultsTable200mMas'),
             '4x50m-libre-femenino': document.getElementById('resultsTable4x50mFem'),
-            '4x50m-libre-masculino': document.getElementById('resultsTable4x50mMas')
+            '4x50m-libre-masculino': document.getElementById('resultsTable4x50mMas'),
+            // Tabla de equipos
+            'equipos': resultsTableTeams
         };
 
         // Función para actualizar el indicador de estado
@@ -1161,8 +1202,14 @@
                         const data = await loadSheetByGid(gid);
                         
                         if (data && data.length > 0) {
-                            const swimmerLabel = competitionKey.includes('femenino') ? 'Nadadora' : 'Nadador';
-                            updateTableContent(tableElement, data, swimmerLabel);
+                            if (competitionKey === 'equipos') {
+                                // Manejo especial para datos de equipos
+                                updateTeamTableContent(tableElement, data);
+                            } else {
+                                // Manejo normal para competencias individuales
+                                const swimmerLabel = competitionKey.includes('femenino') ? 'Nadadora' : 'Nadador';
+                                updateTableContent(tableElement, data, swimmerLabel);
+                            }
                             tableElement.classList.remove('loading');
                             hasData = true;
                         } else {
@@ -1174,8 +1221,12 @@
                         if (fallbackGid) {
                             const data = await loadSheetByGid(fallbackGid);
                             if (data && data.length > 0) {
-                                const swimmerLabel = competitionKey.includes('femenino') ? 'Nadadora' : 'Nadador';
-                                updateTableContent(tableElement, data, swimmerLabel);
+                                if (competitionKey === 'equipos') {
+                                    updateTeamTableContent(tableElement, data);
+                                } else {
+                                    const swimmerLabel = competitionKey.includes('femenino') ? 'Nadadora' : 'Nadador';
+                                    updateTableContent(tableElement, data, swimmerLabel);
+                                }
                                 tableElement.classList.remove('loading');
                                 hasData = true;
                             } else {
@@ -1417,6 +1468,59 @@
             tbody.innerHTML = htmlContent || '<tr><td colspan="7" style="text-align: center;">No hay datos disponibles</td></tr>';
         }
 
+        // Función auxiliar para actualizar contenido de tabla de equipos
+        function updateTeamTableContent(table, data) {
+            const tbody = table.querySelector('tbody');
+            if (!tbody) return;
+            
+            let htmlContent = '';
+            
+            for (let i = 0; i < data.length; i++) {
+                const row = data[i];
+                if (!row || row.length === 0) continue;
+                
+                // Esperar al menos 3 columnas: LUGAR, EQUIPO, PUNTOS TOTALES
+                if (row.length >= 3) {
+                    const [lugar, equipo, puntosTotales, puntosFemeninos, puntosMasculinos] = row;
+                    
+                    // Skip si no hay equipo válido
+                    if (!equipo || equipo === '-' || equipo.toLowerCase().includes('sin equipos')) {
+                        continue;
+                    }
+                    
+                    // Generar medallas para las posiciones
+                    let displayPos = lugar;
+                    if (lugar === '1' || lugar === 1) displayPos = '🥇 1°';
+                    else if (lugar === '2' || lugar === 2) displayPos = '🥈 2°';
+                    else if (lugar === '3' || lugar === 3) displayPos = '🥉 3°';
+                    else if (lugar && lugar !== '-' && lugar !== '') displayPos = `${lugar}°`;
+                    
+                    htmlContent += `
+                        <tr>
+                            <td data-label="Posición" class="rank">${displayPos || '-'}</td>
+                            <td data-label="Equipo" style="font-weight: 600; color: #0b1039;">${equipo || '-'}</td>
+                            <td data-label="Puntos Totales" class="points" style="font-weight: bold; color: #00ADEF; font-size: 1.1em;">${puntosTotales || '0'}</td>
+                            <td data-label="Puntos Femeninos" class="points" style="color: #e91e63;">${puntosFemeninos || '0'}</td>
+                            <td data-label="Puntos Masculinos" class="points" style="color: #2196f3;">${puntosMasculinos || '0'}</td>
+                        </tr>`;
+                }
+            }
+            
+            tbody.innerHTML = htmlContent || '<tr><td colspan="5" style="text-align: center;">No hay datos de equipos disponibles</td></tr>';
+            
+            // Actualizar el tiempo de última actualización de equipos
+            if (lastUpdateElementTeams) {
+                const now = new Date();
+                const timeString = now.toLocaleTimeString('es-CO', {
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    second: '2-digit',
+                    timeZone: 'America/Bogota'
+                });
+                lastUpdateElementTeams.textContent = timeString;
+            }
+        }
+
         // Función para mostrar error con fallback
         function showErrorFallback() {
             const errorHTML = `
@@ -1436,7 +1540,13 @@
             Object.values(COMPETITION_TABLES).forEach(table => {
                 if (table) {
                     const tbody = table.querySelector('tbody');
-                    if (tbody) tbody.innerHTML = errorHTML;
+                    if (tbody) {
+                        // Ajustar el colspan según el tipo de tabla
+                        const isTeamTable = table.id === 'resultsTableTeams';
+                        const colspan = isTeamTable ? '5' : '7';
+                        const adjustedErrorHTML = errorHTML.replace('colspan="7"', `colspan="${colspan}"`);
+                        tbody.innerHTML = adjustedErrorHTML;
+                    }
                 }
             });
         }
