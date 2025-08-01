@@ -906,14 +906,35 @@
             API_KEY: 'AIzaSyDcUEGyS6grOV_p8Z6d9WofiFNMYQBblIk',
             SHEET_ID: '1AKzRm64pn_1JaL4n0Tx3xupfDdkU91Oc-nN2kf7z4PE',
             SHEET_NAME: 'RECORD MASTER',
-            USE_API_KEY: true
+            USE_API_KEY: true,
+            // Mapeo automático de pestañas - detecta GIDs automáticamente
+            COMPETITION_SHEETS: {
+                '50m-libre-femenino': ['FEMENINO', '50M LIBRE FEMENINO', '50 LIBRE FEM'],
+                '50m-libre-masculino': ['MASCULINO', '50M LIBRE MASCULINO', '50 LIBRE MAS'],
+                '100m-libre-femenino': ['100M LIBRE FEMENINO', '100 LIBRE FEM', '100M FEM'],
+                '100m-libre-masculino': ['100M LIBRE MASCULINO', '100 LIBRE MAS', '100M MAS'],
+                '200m-libre-femenino': ['200M LIBRE FEMENINO', '200 LIBRE FEM', '200M FEM'],
+                '200m-libre-masculino': ['200M LIBRE MASCULINO', '200 LIBRE MAS', '200M MAS'],
+                '4x50m-libre-femenino': ['4X50M LIBRE FEMENINO', '4X50 LIBRE FEM', '4X50M FEM'],
+                '4x50m-libre-masculino': ['4X50M LIBRE MASCULINO', '4X50 LIBRE MAS', '4X50M MAS']
+            }
         };
 
         // Elementos DOM
         const statusIndicator = document.getElementById('statusIndicator');
         const lastUpdateElement = document.getElementById('lastUpdateTime');
-        const resultsTableFem = document.getElementById('resultsTableFem');
-        const resultsTableMas = document.getElementById('resultsTableMas');
+        
+        // Mapeo de elementos DOM por competencia
+        const COMPETITION_TABLES = {
+            '50m-libre-femenino': document.getElementById('resultsTableFem'),
+            '50m-libre-masculino': document.getElementById('resultsTableMas'),
+            '100m-libre-femenino': document.getElementById('resultsTable100mFem'),
+            '100m-libre-masculino': document.getElementById('resultsTable100mMas'),
+            '200m-libre-femenino': document.getElementById('resultsTable200mFem'),
+            '200m-libre-masculino': document.getElementById('resultsTable200mMas'),
+            '4x50m-libre-femenino': document.getElementById('resultsTable4x50mFem'),
+            '4x50m-libre-masculino': document.getElementById('resultsTable4x50mMas')
+        };
 
         // Función para actualizar el indicador de estado
         function updateStatus(type, message) {
@@ -984,47 +1005,104 @@
             return rows;
         }
 
+        // Función para obtener información de todas las pestañas del Google Sheet automáticamente
+        async function getSheetInfo() {
+            try {
+                const url = `https://sheets.googleapis.com/v4/spreadsheets/${CONFIG.SHEET_ID}?key=${CONFIG.API_KEY}`;
+                const response = await fetch(url);
+                if (response.ok) {
+                    const data = await response.json();
+                    return data.sheets.map(sheet => ({
+                        title: sheet.properties.title,
+                        gid: sheet.properties.sheetId
+                    }));
+                }
+            } catch (error) {
+                console.log('⚠️ No se pudo obtener info automática de pestañas:', error.message);
+            }
+            return null;
+        }
+
+        // Función para encontrar el GID de una competencia específica
+        function findSheetGid(sheetInfo, competitionKey) {
+            if (!sheetInfo) return null;
+            
+            const possibleNames = CONFIG.COMPETITION_SHEETS[competitionKey] || [];
+            
+            for (const possibleName of possibleNames) {
+                const sheet = sheetInfo.find(s => 
+                    s.title.toUpperCase().includes(possibleName.toUpperCase()) ||
+                    possibleName.toUpperCase().includes(s.title.toUpperCase()) ||
+                    s.title.toUpperCase() === possibleName.toUpperCase()
+                );
+                if (sheet) {
+                    console.log(`✅ Encontrada pestaña para ${competitionKey}: "${sheet.title}" (GID: ${sheet.gid})`);
+                    return sheet.gid;
+                }
+            }
+            
+            console.log(`⚠️ No se encontró pestaña para ${competitionKey}`);
+            return null;
+        }
+
         // Método principal para cargar datos desde Google Sheets
         async function loadSheetData() {
             loadAttempts++;
             updateStatus('loading', '🔄 Cargando resultados...');
             
             try {
-                let dataFemenino = null;
-                let dataMasculino = null;
+                // Obtener información de las pestañas automáticamente
+                console.log('🔍 Detectando pestañas del Google Sheet...');
+                const sheetInfo = await getSheetInfo();
                 
-                // Cargar datos de la hoja FEMENINO
-                console.log('📊 Cargando hoja FEMENINO...');
-                dataFemenino = await loadSheetByName('FEMENINO');
+                let hasData = false;
                 
-                // Cargar datos de la hoja MASCULINO
-                console.log('📊 Cargando hoja MASCULINO...');
-                dataMasculino = await loadSheetByName('MASCULINO');
-                
-                if ((dataFemenino && dataFemenino.length > 0) || (dataMasculino && dataMasculino.length > 0)) {
-                    // Actualizar tabla femenina
-                    if (dataFemenino && dataFemenino.length > 0) {
-                        updateTableContent(resultsTableFem, dataFemenino, 'Nadadora');
-                    } else {
-                        showNoDataMessage(resultsTableFem, 'No hay datos disponibles para categoría femenina');
-                    }
+                // Cargar cada competencia
+                for (const [competitionKey, tableElement] of Object.entries(COMPETITION_TABLES)) {
+                    if (!tableElement) continue;
                     
-                    // Actualizar tabla masculina
-                    if (dataMasculino && dataMasculino.length > 0) {
-                        updateTableContent(resultsTableMas, dataMasculino, 'Nadador');
-                    } else {
-                        showNoDataMessage(resultsTableMas, 'No hay datos disponibles para categoría masculina');
-                    }
+                    console.log(`📊 Procesando ${competitionKey}...`);
                     
+                    // Buscar el GID para esta competencia
+                    const gid = findSheetGid(sheetInfo, competitionKey);
+                    
+                    if (gid !== null) {
+                        // Cargar datos usando el GID encontrado
+                        const data = await loadSheetByGid(gid);
+                        
+                        if (data && data.length > 0) {
+                            const swimmerLabel = competitionKey.includes('femenino') ? 'Nadadora' : 'Nadador';
+                            updateTableContent(tableElement, data, swimmerLabel);
+                            tableElement.classList.remove('loading');
+                            hasData = true;
+                        } else {
+                            showNoDataMessage(tableElement, `No hay datos para ${competitionKey}`);
+                        }
+                    } else {
+                        // Fallback: usar los GIDs conocidos
+                        const fallbackGid = getFallbackGid(competitionKey);
+                        if (fallbackGid) {
+                            const data = await loadSheetByGid(fallbackGid);
+                            if (data && data.length > 0) {
+                                const swimmerLabel = competitionKey.includes('femenino') ? 'Nadadora' : 'Nadador';
+                                updateTableContent(tableElement, data, swimmerLabel);
+                                tableElement.classList.remove('loading');
+                                hasData = true;
+                            } else {
+                                showNoDataMessage(tableElement, `No hay datos para ${competitionKey}`);
+                            }
+                        } else {
+                            showNoDataMessage(tableElement, `Pestaña no encontrada para ${competitionKey}`);
+                        }
+                    }
+                }
+                
+                if (hasData) {
                     updateLastUpdateTime();
                     updateStatus('success', '✅ Datos cargados');
                     loadAttempts = 0;
-                    
-                    // Remover clase loading
-                    resultsTableFem.classList.remove('loading');
-                    resultsTableMas.classList.remove('loading');
                 } else {
-                    throw new Error('No se pudieron obtener datos de ninguna hoja');
+                    throw new Error('No se pudieron obtener datos de ninguna competencia');
                 }
                 
             } catch (error) {
@@ -1038,6 +1116,43 @@
                     showErrorFallback();
                 }
             }
+        }
+
+        // Función fallback con GIDs conocidos
+        function getFallbackGid(competitionKey) {
+            const fallbackGids = {
+                '50m-libre-femenino': '0',
+                '50m-libre-masculino': '2016301649'
+            };
+            return fallbackGids[competitionKey] || null;
+        }
+
+        // Función para cargar una hoja específica por GID
+        async function loadSheetByGid(gid) {
+            let data = null;
+            
+            console.log(`📄 Cargando datos con GID: ${gid}`);
+            
+            try {
+                const url = `https://docs.google.com/spreadsheets/d/${CONFIG.SHEET_ID}/export?format=csv&gid=${gid}`;
+                console.log(`📄 URL: ${url}`);
+                
+                const response = await fetch(url);
+                if (response.ok) {
+                    const text = await response.text();
+                    if (text && !text.includes('<!DOCTYPE')) {
+                        data = parseCSV(text);
+                        console.log(`✅ CSV parseado con GID ${gid}: ${data.length} filas`);
+                        console.log(`🔍 Primeras 3 filas:`, data.slice(0, 3));
+                    }
+                } else {
+                    console.log(`❌ Error HTTP ${response.status} para GID ${gid}`);
+                }
+            } catch (error) {
+                console.log(`❌ Error cargando GID ${gid}:`, error.message);
+            }
+            
+            return data;
         }
         
         // Función para cargar una hoja específica por nombre
@@ -1201,8 +1316,6 @@
 
         // Función para mostrar error con fallback
         function showErrorFallback() {
-            const tbodyFem = resultsTableFem.querySelector('tbody');
-            const tbodyMas = resultsTableMas.querySelector('tbody');
             const errorHTML = `
                 <tr>
                     <td colspan="7" style="text-align: center; padding: 40px; color: #f44336;">
@@ -1215,8 +1328,14 @@
                         </button>
                     </td>
                 </tr>`;
-            tbodyFem.innerHTML = errorHTML;
-            tbodyMas.innerHTML = errorHTML;
+            
+            // Aplicar error a todas las tablas
+            Object.values(COMPETITION_TABLES).forEach(table => {
+                if (table) {
+                    const tbody = table.querySelector('tbody');
+                    if (tbody) tbody.innerHTML = errorHTML;
+                }
+            });
         }
 
         // Función para reintentar carga
