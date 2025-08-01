@@ -728,6 +728,54 @@
                         </tbody>
                     </table>
                 </div>
+                <!-- Pestaña 100 m Libre Femenino -->
+                <div id="100m-libre-femenino" class="tab-content">
+                    <h3>🏊‍♀️ 100 m Libre Femenino - Resultados Oficiales</h3>
+                    <table class="results-table" id="resultsTable100mFem">
+                        <thead>
+                            <tr>
+                                <th>Pos.</th>
+                                <th>Nadadora</th>
+                                <th>Equipo</th>
+                                <th>Edad</th>
+                                <th>Categoría</th>
+                                <th>Tiempo Final</th>
+                                <th>Puntos</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="loading-row">
+                                <td colspan="7" style="text-align: center; padding: 40px; color: #a5a5a5;">
+                                    🔄 Cargando datos desde Google Sheets...
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <!-- Pestaña 100 m Libre Masculino -->
+                <div id="100m-libre-masculino" class="tab-content">
+                    <h3>🏊‍♂️ 100 m Libre Masculino - Resultados Oficiales</h3>
+                    <table class="results-table" id="resultsTable100mMas">
+                        <thead>
+                            <tr>
+                                <th>Pos.</th>
+                                <th>Nadador</th>
+                                <th>Equipo</th>
+                                <th>Edad</th>
+                                <th>Categoría</th>
+                                <th>Tiempo Final</th>
+                                <th>Puntos</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="loading-row">
+                                <td colspan="7" style="text-align: center; padding: 40px; color: #a5a5a5;">
+                                    🔄 Cargando datos desde Google Sheets...
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
                 <!-- Pestaña 200 m Libre Femenino -->
                 <div id="200m-libre-femenino" class="tab-content">
                     <h3>🏊‍♀️ 200 m Libre Femenino - Resultados Oficiales</h3>
@@ -1025,7 +1073,12 @@
 
         // Función para encontrar el GID de una competencia específica
         function findSheetGid(sheetInfo, competitionKey) {
-            if (!sheetInfo) return null;
+            if (!sheetInfo) return detectedGids[competitionKey] || null;
+            
+            // Si ya tenemos el GID en cache, usarlo
+            if (detectedGids[competitionKey]) {
+                return detectedGids[competitionKey];
+            }
             
             const possibleNames = CONFIG.COMPETITION_SHEETS[competitionKey] || [];
             
@@ -1037,12 +1090,22 @@
                 );
                 if (sheet) {
                     console.log(`✅ Encontrada pestaña para ${competitionKey}: "${sheet.title}" (GID: ${sheet.gid})`);
+                    // Guardar en cache para futuros usos
+                    detectedGids[competitionKey] = sheet.gid;
                     return sheet.gid;
                 }
             }
             
             console.log(`⚠️ No se encontró pestaña para ${competitionKey}`);
             return null;
+        }
+
+        // Función para mostrar los GIDs detectados (para debugging)
+        function logDetectedGids() {
+            console.log('📋 GIDs detectados automáticamente:');
+            Object.entries(detectedGids).forEach(([key, gid]) => {
+                console.log(`  ${key}: ${gid}`);
+            });
         }
 
         // Método principal para cargar datos desde Google Sheets
@@ -1101,6 +1164,9 @@
                     updateLastUpdateTime();
                     updateStatus('success', '✅ Datos cargados');
                     loadAttempts = 0;
+                    
+                    // Mostrar GIDs detectados para referencia
+                    logDetectedGids();
                 } else {
                     throw new Error('No se pudieron obtener datos de ninguna competencia');
                 }
@@ -1118,14 +1184,24 @@
             }
         }
 
-        // Función fallback con GIDs conocidos
+        // Función fallback con GIDs conocidos y auto-detectados
         function getFallbackGid(competitionKey) {
             const fallbackGids = {
                 '50m-libre-femenino': '0',
-                '50m-libre-masculino': '2016301649'
+                '50m-libre-masculino': '2016301649',
+                // Los siguientes se detectarán automáticamente cuando cargue la página
+                '100m-libre-femenino': null,
+                '100m-libre-masculino': null,
+                '200m-libre-femenino': null,
+                '200m-libre-masculino': null,
+                '4x50m-libre-femenino': null,
+                '4x50m-libre-masculino': null
             };
             return fallbackGids[competitionKey] || null;
         }
+
+        // Cache de GIDs detectados automáticamente
+        let detectedGids = {};
 
         // Función para cargar una hoja específica por GID
         async function loadSheetByGid(gid) {
