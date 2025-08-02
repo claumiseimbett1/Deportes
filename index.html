@@ -1228,6 +1228,7 @@
         function updateStatus(type, message) {
             statusIndicator.className = `status-indicator status-${type}`;
             statusIndicator.textContent = message;
+            console.log(`📱 Status: ${type} - ${message}`);
             
             if (type === 'success' || type === 'error') {
                 setTimeout(() => {
@@ -1235,7 +1236,7 @@
                     setTimeout(() => {
                         statusIndicator.style.display = 'none';
                     }, 300);
-                }, 3000);
+                }, 5000); // Aumentado de 3000 a 5000 para ver mejor los mensajes
             }
         }
 
@@ -1447,12 +1448,14 @@
                 
                 if (hasData) {
                     updateLastUpdateTime();
-                    updateStatus('success', '✅ Datos cargados');
+                    updateStatus('success', '✅ Datos cargados correctamente');
                     loadAttempts = 0;
                     
                     // Mostrar GIDs detectados para referencia
                     logDetectedGids();
+                    console.log('🎉 Carga exitosa. Próxima actualización en 30 segundos.');
                 } else {
+                    console.warn('⚠️ No se encontraron datos en ninguna hoja');
                     throw new Error('No se pudieron obtener datos de ninguna competencia');
                 }
                 
@@ -1935,6 +1938,22 @@
             console.log('🚀 Página cargada, iniciando sistema de actualización automática...');
             console.log('📋 Google Sheet ID:', CONFIG.SHEET_ID);
             console.log('🔑 API Key configurada:', CONFIG.API_KEY ? 'Sí' : 'No');
+            console.log('🌐 URL del Sheet:', `https://docs.google.com/spreadsheets/d/${CONFIG.SHEET_ID}/edit`);
+            console.log('⚡ Verificando acceso al Google Sheet...');
+            
+            // Verificar acceso inmediato
+            fetch(`https://docs.google.com/spreadsheets/d/${CONFIG.SHEET_ID}/export?format=csv&gid=0`)
+                .then(response => {
+                    console.log('📡 Respuesta del servidor:', response.status, response.statusText);
+                    if (response.ok) {
+                        console.log('✅ Google Sheet es accesible');
+                    } else {
+                        console.error('❌ Google Sheet no es accesible. Verifica que sea público.');
+                    }
+                })
+                .catch(error => {
+                    console.error('❌ Error de conectividad:', error);
+                });
             
             startAutoReload();
         });
