@@ -1480,20 +1480,33 @@
                         }
                     } else {
                         console.log(`⚠️ No se encontró pestaña para ${competitionKey}`);
-                        console.log(`💡 Nombres buscados:`, config.names);
+                        console.log(`💡 Palabras clave buscadas:`, config.keywords);
+                        console.log(`📋 Pestañas disponibles:`, sheetInfo.map(s => s.title));
+                        
+                        // Mostrar mensaje específico en la tabla
+                        const table = document.getElementById(config.tableId);
+                        if (table) {
+                            table.innerHTML = `<tr><td colspan="4" style="text-align: center; padding: 20px; color: #666;">
+                                No se encontró pestaña para ${competitionKey}<br>
+                                <small>Palabras clave: ${config.keywords.join(', ')}</small>
+                            </td></tr>`;
+                            table.classList.remove('loading');
+                        }
                     }
                 }
                 
-                // Actualizar estado final
+                // Actualizar estado final (siempre completar, aunque solo se carguen algunas pestañas)
                 if (hasData) {
                     updateStatus('success', '✅ Resultados actualizados');
                     lastUpdateTime = new Date();
                     loadAttempts = 0;
                     console.log('🎉 ¡Carga automática completada exitosamente!');
                 } else {
-                    updateStatus('error', '❌ No se pudieron cargar los datos');
-                    console.log('❌ No se pudieron cargar datos de ninguna competencia');
-                    throw new Error('No se pudieron obtener datos de ninguna competencia');
+                    updateStatus('warning', '⚠️ No se encontraron pestañas coincidentes');
+                    lastUpdateTime = new Date();
+                    loadAttempts = 0;
+                    console.log('⚠️ No se pudieron cargar datos - verificar nombres de pestañas');
+                    // No hacer throw para evitar que se quede cargando infinitamente
                 }
                 
             } catch (error) {
