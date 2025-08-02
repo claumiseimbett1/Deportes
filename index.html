@@ -734,6 +734,16 @@
     <div id="statusIndicator" class="status-indicator status-loading">
         🔄 Cargando resultados...
     </div>
+    
+    <!-- Debug Controls (solo visible en desarrollo) -->
+    <div style="position: fixed; top: 150px; right: 20px; z-index: 9998;">
+        <button onclick="retryLoad()" style="padding: 8px 12px; background: #00ADEF; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 12px; margin-bottom: 5px; display: block;">
+            🔄 Recargar Ahora
+        </button>
+        <button onclick="console.clear()" style="padding: 8px 12px; background: #666; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 12px; display: block;">
+            🧹 Limpiar Console
+        </button>
+    </div>
 
     <!-- Video Hero Section -->
     <section class="video-hero">
@@ -1184,12 +1194,12 @@
             COMPETITION_SHEETS: {
                 '50m-libre-femenino': ['FEMENINO', '50M-FEMENINO', '50M FEMENINO', '50M-FEM', '50M FEM', '50 FEM', 'FEM'],
                 '50m-libre-masculino': ['MASCULINO', '50M-MASCULINO', '50M MASCULINO', '50M-MAS', '50M MAS', '50 MAS', 'MAS'],
-                '100m-libre-femenino': ['100M-FEMENINO', '100M FEMENINO', '100M-FEM', '100M FEM', '100 FEM', 'FEMENINO 100M'],
-                '100m-libre-masculino': ['100M-MASCULINO', '100M MASCULINO', '100M-MAS', '100M MAS', '100 MAS', 'MASCULINO 100M'],
-                '200m-libre-femenino': ['200M-FEMENINO', '200M FEMENINO', '200M-FEM', '200M FEM', '200 FEM', 'FEMENINO 200M'],
-                '200m-libre-masculino': ['200M-MASCULINO', '200M MASCULINO', '200M-MAS', '200M MAS', '200 MAS', 'MASCULINO 200M'],
-                '4x50m-libre-femenino': ['4X50M-FEMENINO', '4X50M FEMENINO', '4X50M-FEM', '4X50M FEM', '4X50 FEM', 'FEMENINO 4X50M'],
-                '4x50m-libre-masculino': ['4X50M-MASCULINO', '4X50M MASCULINO', '4X50M-MAS', '4X50M MAS', '4X50 MAS', 'MASCULINO 4X50M'],
+                '100m-libre-femenino': ['100M-FEMENINO', '100M FEMENINO', '100M-FEM', '100M FEM', '100 FEM', 'FEMENINO 100M', '100m-femenino', '100MFEMENINO'],
+                '100m-libre-masculino': ['100M-MASCULINO', '100M MASCULINO', '100M-MAS', '100M MAS', '100 MAS', 'MASCULINO 100M', '100m-masculino', '100MMASCULINO'],
+                '200m-libre-femenino': ['200M-FEMENINO', '200M FEMENINO', '200M-FEM', '200M FEM', '200 FEM', 'FEMENINO 200M', '200m-femenino', '200MFEMENINO'],
+                '200m-libre-masculino': ['200M-MASCULINO', '200M MASCULINO', '200M-MAS', '200M MAS', '200 MAS', 'MASCULINO 200M', '200m-masculino', '200MMASCULINO'],
+                '4x50m-libre-femenino': ['4X50M-FEMENINO', '4X50M FEMENINO', '4X50M-FEM', '4X50M FEM', '4X50 FEM', 'FEMENINO 4X50M', '4x50m-femenino'],
+                '4x50m-libre-masculino': ['4X50M-MASCULINO', '4X50M MASCULINO', '4X50M-MAS', '4X50M MAS', '4X50 MAS', 'MASCULINO 4X50M', '4x50m-masculino'],
                 // Hoja de resultados por equipos
                 'equipos': ['EQUIPOS', 'EQUIPO', 'TEAMS', 'CLASIFICACION EQUIPOS', 'RESULTADOS EQUIPOS'],
                 // Hojas de resultados por género (sección independiente)
@@ -1394,8 +1404,20 @@
                     
                     console.log(`📊 Procesando ${competitionKey}...`);
                     
+                    // Logging especial para 100m-femenino
+                    if (competitionKey === '100m-libre-femenino') {
+                        console.log('🎯 ===== PROCESANDO 100M-FEMENINO =====');
+                        console.log('📋 Hojas disponibles:', sheetInfo ? sheetInfo.map(s => s.title) : 'No disponible');
+                        console.log('🔍 Buscando coincidencias para:', CONFIG.COMPETITION_SHEETS[competitionKey]);
+                    }
+                    
                     // Buscar el GID para esta competencia
                     const gid = findSheetGid(sheetInfo, competitionKey);
+                    
+                    // Logging especial para 100m-femenino
+                    if (competitionKey === '100m-libre-femenino') {
+                        console.log('🆔 GID encontrado para 100m-femenino:', gid);
+                    }
                     
                     if (gid !== null) {
                         // Cargar datos usando el GID encontrado
@@ -1499,21 +1521,32 @@
             
             try {
                 const url = `https://docs.google.com/spreadsheets/d/${CONFIG.SHEET_ID}/export?format=csv&gid=${gid}`;
-                console.log(`📄 URL: ${url}`);
+                console.log(`📄 URL completa: ${url}`);
                 
                 const response = await fetch(url);
+                console.log(`📡 Respuesta HTTP: ${response.status} ${response.statusText}`);
+                
                 if (response.ok) {
                     const text = await response.text();
+                    console.log(`📝 Tamaño del texto recibido: ${text.length} caracteres`);
+                    console.log(`🔍 Primeros 200 caracteres:`, text.substring(0, 200));
+                    
                     if (text && !text.includes('<!DOCTYPE')) {
                         data = parseCSV(text);
                         console.log(`✅ CSV parseado con GID ${gid}: ${data.length} filas`);
-                        console.log(`🔍 Primeras 3 filas:`, data.slice(0, 3));
+                        if (data.length > 0) {
+                            console.log(`🔍 Primera fila (encabezados):`, data[0]);
+                            console.log(`🔍 Segunda fila (primer dato):`, data[1]);
+                            console.log(`🔍 Última fila:`, data[data.length - 1]);
+                        }
+                    } else {
+                        console.warn(`⚠️ Respuesta parece ser HTML en lugar de CSV para GID ${gid}`);
                     }
                 } else {
-                    console.log(`❌ Error HTTP ${response.status} para GID ${gid}`);
+                    console.error(`❌ Error HTTP ${response.status} para GID ${gid}: ${response.statusText}`);
                 }
             } catch (error) {
-                console.log(`❌ Error cargando GID ${gid}:`, error.message);
+                console.error(`❌ Error cargando GID ${gid}:`, error.message);
             }
             
             return data;
