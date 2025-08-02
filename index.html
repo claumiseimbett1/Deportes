@@ -498,6 +498,88 @@
             color: #f0f6ff;
         }
 
+        /* Estilos específicos para tabla de equipos en móvil */
+        @media (max-width: 768px) {
+            /* Tabla de equipos: optimizada para vertical */
+            #resultsTableTeams thead {
+                display: none;
+            }
+
+            #resultsTableTeams tr {
+                display: block;
+                margin-bottom: 20px;
+                border: 2px solid #f0f6ff;
+                border-radius: 12px;
+                background: linear-gradient(135deg, #ffffff 0%, #fafcff 100%);
+                box-shadow: 0 4px 12px rgba(11, 16, 57, 0.08);
+                padding: 15px;
+            }
+
+            #resultsTableTeams td {
+                display: block;
+                text-align: left;
+                padding: 8px 0;
+                border-bottom: none;
+                position: relative;
+            }
+
+            #resultsTableTeams td:before {
+                content: attr(data-label) ": ";
+                font-weight: bold;
+                color: #0b1039;
+                min-width: 120px;
+                display: inline-block;
+            }
+
+            /* Estilos especiales para datos de equipos */
+            #resultsTableTeams .rank {
+                font-size: 1.3em;
+                margin-bottom: 10px;
+                text-align: center;
+                background: #00ADEF;
+                color: white;
+                border-radius: 20px;
+                padding: 8px;
+            }
+
+            #resultsTableTeams .rank:before {
+                content: "";
+            }
+            
+            /* Tabla de género: optimizada para más columnas */
+            #resultsTableMasculinoGeneral thead,
+            #resultsTableFemeninoGeneral thead {
+                display: none;
+            }
+
+            #resultsTableMasculinoGeneral tr,
+            #resultsTableFemeninoGeneral tr {
+                display: block;
+                margin-bottom: 15px;
+                border: 1px solid #f0f6ff;
+                border-radius: 8px;
+                background-color: #ffffff;
+                padding: 10px;
+            }
+
+            #resultsTableMasculinoGeneral td,
+            #resultsTableFemeninoGeneral td {
+                display: block;
+                text-align: left;
+                padding: 5px 0;
+                border-bottom: none;
+            }
+
+            #resultsTableMasculinoGeneral td::before,
+            #resultsTableFemeninoGeneral td::before {
+                content: attr(data-label) ": ";
+                font-weight: bold;
+                color: #0b1039;
+                min-width: 100px;
+                display: inline-block;
+            }
+        }
+
         /* Responsive */
         @media (max-width: 768px) {
             .hero-content h1 {
@@ -664,7 +746,7 @@
     <!-- Results Section -->
     <section class="results-section">
         <div class="container">
-            <h2 class="section-title">Resultados en Tiempo Real</h2>
+            <h2 class="section-title">Resultados por Prueba</h2>
             <div class="results-container">
                 <div class="last-update">
                     Última actualización: <span class="time" id="lastUpdateTime">Cargando...</span>
@@ -876,6 +958,77 @@
         </div>
     </section>
 
+    <!-- Gender Results Section -->
+    <section class="results-section">
+        <div class="container">
+            <h2 class="section-title">Resultados por Género</h2>
+            <div class="results-container">
+                <div class="last-update">
+                    Última actualización: <span class="time" id="lastUpdateTimeGender">Cargando...</span>
+                </div>
+                
+                <div class="tabs">
+                    <button class="tab-button active" onclick="openGenderTab(event, 'masculino-general')">🏊‍♂️ Masculino</button>
+                    <button class="tab-button" onclick="openGenderTab(event, 'femenino-general')">🏊‍♀️ Femenino</button>
+                </div>
+
+                <!-- Pestaña Masculino General -->
+                <div id="masculino-general" class="tab-content active">
+                    <h3>🏊‍♂️ Clasificación General Masculina</h3>
+                    <table class="results-table" id="resultsTableMasculinoGeneral">
+                        <thead>
+                            <tr>
+                                <th>Lugar</th>
+                                <th>Atleta</th>
+                                <th>Equipo</th>
+                                <th>Edad</th>
+                                <th>Categoría</th>
+                                <th>Puntos Totales</th>
+                                <th>P. 200m Libre</th>
+                                <th>P. 50m Libre</th>
+                                <th>P. 100m Libre</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="loading-row">
+                                <td colspan="9" style="text-align: center; padding: 40px; color: #a5a5a5;">
+                                    🔄 Cargando clasificación masculina...
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Pestaña Femenino General -->
+                <div id="femenino-general" class="tab-content">
+                    <h3>🏊‍♀️ Clasificación General Femenina</h3>
+                    <table class="results-table" id="resultsTableFemeninoGeneral">
+                        <thead>
+                            <tr>
+                                <th>Lugar</th>
+                                <th>Atleta</th>
+                                <th>Equipo</th>
+                                <th>Edad</th>
+                                <th>Categoría</th>
+                                <th>Puntos Totales</th>
+                                <th>P. 200m Libre</th>
+                                <th>P. 50m Libre</th>
+                                <th>P. 100m Libre</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="loading-row">
+                                <td colspan="9" style="text-align: center; padding: 40px; color: #a5a5a5;">
+                                    🔄 Cargando clasificación femenina...
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <!-- Team Results Section -->
     <section class="results-section">
         <div class="container">
@@ -1001,7 +1154,10 @@
                 '4x50m-libre-femenino': ['4X50M-FEMENINO', '4X50M FEMENINO', '4X50M-FEM', '4X50M FEM', '4X50 FEM', 'FEMENINO 4X50M'],
                 '4x50m-libre-masculino': ['4X50M-MASCULINO', '4X50M MASCULINO', '4X50M-MAS', '4X50M MAS', '4X50 MAS', 'MASCULINO 4X50M'],
                 // Hoja de resultados por equipos
-                'equipos': ['EQUIPOS', 'EQUIPO', 'TEAMS', 'CLASIFICACION EQUIPOS', 'RESULTADOS EQUIPOS']
+                'equipos': ['EQUIPOS', 'EQUIPO', 'TEAMS', 'CLASIFICACION EQUIPOS', 'RESULTADOS EQUIPOS'],
+                // Hojas de resultados por género
+                'masculino-general': ['MASCULINO GENERAL', 'GENERAL MASCULINO', 'RANKING MASCULINO', 'CLASIFICACION MASCULINO'],
+                'femenino-general': ['FEMENINO GENERAL', 'GENERAL FEMENINO', 'RANKING FEMENINO', 'CLASIFICACION FEMENINO']
             }
         };
 
@@ -1009,7 +1165,10 @@
         const statusIndicator = document.getElementById('statusIndicator');
         const lastUpdateElement = document.getElementById('lastUpdateTime');
         const lastUpdateElementTeams = document.getElementById('lastUpdateTimeTeams');
+        const lastUpdateElementGender = document.getElementById('lastUpdateTimeGender');
         const resultsTableTeams = document.getElementById('resultsTableTeams');
+        const resultsTableMasculinoGeneral = document.getElementById('resultsTableMasculinoGeneral');
+        const resultsTableFemeninoGeneral = document.getElementById('resultsTableFemeninoGeneral');
         
         // Mapeo de elementos DOM por competencia
         const COMPETITION_TABLES = {
@@ -1022,7 +1181,10 @@
             '4x50m-libre-femenino': document.getElementById('resultsTable4x50mFem'),
             '4x50m-libre-masculino': document.getElementById('resultsTable4x50mMas'),
             // Tabla de equipos
-            'equipos': resultsTableTeams
+            'equipos': resultsTableTeams,
+            // Tablas de género
+            'masculino-general': resultsTableMasculinoGeneral,
+            'femenino-general': resultsTableFemeninoGeneral
         };
 
         // Función para actualizar el indicador de estado
@@ -1205,6 +1367,10 @@
                             if (competitionKey === 'equipos') {
                                 // Manejo especial para datos de equipos
                                 updateTeamTableContent(tableElement, data);
+                            } else if (competitionKey.includes('general')) {
+                                // Manejo especial para datos de género
+                                const genderLabel = competitionKey.includes('masculino') ? 'Atleta' : 'Atleta';
+                                updateGenderTableContent(tableElement, data, genderLabel);
                             } else {
                                 // Manejo normal para competencias individuales
                                 const swimmerLabel = competitionKey.includes('femenino') ? 'Nadadora' : 'Nadador';
@@ -1223,6 +1389,9 @@
                             if (data && data.length > 0) {
                                 if (competitionKey === 'equipos') {
                                     updateTeamTableContent(tableElement, data);
+                                } else if (competitionKey.includes('general')) {
+                                    const genderLabel = competitionKey.includes('masculino') ? 'Atleta' : 'Atleta';
+                                    updateGenderTableContent(tableElement, data, genderLabel);
                                 } else {
                                     const swimmerLabel = competitionKey.includes('femenino') ? 'Nadadora' : 'Nadador';
                                     updateTableContent(tableElement, data, swimmerLabel);
@@ -1521,6 +1690,63 @@
             }
         }
 
+        // Función auxiliar para actualizar contenido de tabla de género
+        function updateGenderTableContent(table, data, genderLabel) {
+            const tbody = table.querySelector('tbody');
+            if (!tbody) return;
+            
+            let htmlContent = '';
+            
+            for (let i = 0; i < data.length; i++) {
+                const row = data[i];
+                if (!row || row.length === 0) continue;
+                
+                // Esperar al menos 6 columnas: LUGAR, ATLETA, EQUIPO, EDAD, CATEGORIA, PUNTOS TOTALES
+                if (row.length >= 6) {
+                    const [lugar, atleta, equipo, edad, categoria, puntosTotales, puntos200m, puntos50m, puntos100m] = row;
+                    
+                    // Skip si no hay atleta válido
+                    if (!atleta || atleta === '-' || atleta.toLowerCase().includes('sin atletas')) {
+                        continue;
+                    }
+                    
+                    // Generar medallas para las posiciones
+                    let displayPos = lugar;
+                    if (lugar === '1' || lugar === 1) displayPos = '🥇 1°';
+                    else if (lugar === '2' || lugar === 2) displayPos = '🥈 2°';
+                    else if (lugar === '3' || lugar === 3) displayPos = '🥉 3°';
+                    else if (lugar && lugar !== '-' && lugar !== '') displayPos = `${lugar}°`;
+                    
+                    htmlContent += `
+                        <tr>
+                            <td data-label="Lugar" class="rank">${displayPos || '-'}</td>
+                            <td data-label="Atleta" style="font-weight: 600; color: #0b1039;">${atleta || '-'}</td>
+                            <td data-label="Equipo">${equipo || '-'}</td>
+                            <td data-label="Edad">${edad || '-'}</td>
+                            <td data-label="Categoría">${categoria || '-'}</td>
+                            <td data-label="Puntos Totales" class="points" style="font-weight: bold; color: #00ADEF; font-size: 1.1em;">${puntosTotales || '0'}</td>
+                            <td data-label="P. 200m Libre" class="points" style="color: #4caf50;">${puntos200m || '0'}</td>
+                            <td data-label="P. 50m Libre" class="points" style="color: #ff9800;">${puntos50m || '0'}</td>
+                            <td data-label="P. 100m Libre" class="points" style="color: #9c27b0;">${puntos100m || '0'}</td>
+                        </tr>`;
+                }
+            }
+            
+            tbody.innerHTML = htmlContent || '<tr><td colspan="9" style="text-align: center;">No hay datos de clasificación disponibles</td></tr>';
+            
+            // Actualizar el tiempo de última actualización de género
+            if (lastUpdateElementGender) {
+                const now = new Date();
+                const timeString = now.toLocaleTimeString('es-CO', {
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    second: '2-digit',
+                    timeZone: 'America/Bogota'
+                });
+                lastUpdateElementGender.textContent = timeString;
+            }
+        }
+
         // Función para mostrar error con fallback
         function showErrorFallback() {
             const errorHTML = `
@@ -1569,6 +1795,27 @@
             tabbuttons = document.getElementsByClassName("tab-button");
             for (i = 0; i < tabbuttons.length; i++) {
                 tabbuttons[i].classList.remove("active");
+            }
+            
+            document.getElementById(tabName).classList.add("active");
+            evt.currentTarget.classList.add("active");
+        }
+
+        // Función específica para tabs de género (independiente de las pruebas)
+        function openGenderTab(evt, tabName) {
+            var i, genderTabContent, genderTabButtons;
+            
+            // Solo afectar las tabs de la sección de género
+            const genderSection = evt.currentTarget.closest('.results-section');
+            genderTabContent = genderSection.getElementsByClassName("tab-content");
+            genderTabButtons = genderSection.getElementsByClassName("tab-button");
+            
+            for (i = 0; i < genderTabContent.length; i++) {
+                genderTabContent[i].classList.remove("active");
+            }
+            
+            for (i = 0; i < genderTabButtons.length; i++) {
+                genderTabButtons[i].classList.remove("active");
             }
             
             document.getElementById(tabName).classList.add("active");
