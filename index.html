@@ -743,7 +743,7 @@
         <button onclick="console.clear()" style="padding: 8px 12px; background: #666; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 12px; display: block; margin-bottom: 5px;">
             🧹 Limpiar Console
         </button>
-        <button onclick="testSpecificSheet()" style="padding: 8px 12px; background: #ff9800; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 12px; display: block;">
+        <button onclick="testSpecificSheet()" style="padding: 8px 12px; background: #ff9800; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 12px; display: none;">
             🧪 Test 100M-FEM
         </button>
     </div>
@@ -1389,98 +1389,97 @@
             });
         }
 
-        // Método principal para cargar datos desde Google Sheets
+        // Método principal para cargar datos desde Google Sheets (usando lógica exitosa del test)
         async function loadSheetData() {
             loadAttempts++;
             updateStatus('loading', '🔄 Cargando resultados...');
             
             try {
-                // Obtener información de las pestañas automáticamente
-                console.log('🔍 Detectando pestañas del Google Sheet...');
+                console.log('🔍 Obteniendo lista de pestañas...');
                 const sheetInfo = await getSheetInfo();
+                
+                if (!sheetInfo) {
+                    console.log('❌ No se pudo obtener información de las pestañas');
+                    throw new Error('No se pudo acceder a las pestañas del Google Sheet');
+                }
+                
+                console.log('📋 Pestañas encontradas:');
+                sheetInfo.forEach(sheet => {
+                    console.log(`  - "${sheet.title}" (GID: ${sheet.gid})`);
+                });
                 
                 let hasData = false;
                 
-                // Cargar cada competencia
-                for (const [competitionKey, tableElement] of Object.entries(COMPETITION_TABLES)) {
-                    if (!tableElement) continue;
+                // Definir competencias a buscar con sus posibles nombres (exactos como en el test exitoso)
+                const competitions = {
+                    '100m-libre-femenino': {
+                        names: ['100M-FEMENINO', '100M FEMENINO', '100m-femenino', '100MFEMENINO', '100M-FEM'],
+                        tableId: 'resultsTable100mFem',
+                        genderColumn: 'Nadadora'
+                    },
+                    '100m-libre-masculino': {
+                        names: ['100M-MASCULINO', '100M MASCULINO', '100m-masculino', '100MMASCULINO', '100M-MAS'],
+                        tableId: 'resultsTable100mMas',
+                        genderColumn: 'Nadador'
+                    },
+                    '50m-libre-femenino': {
+                        names: ['50M-FEMENINO', '50M FEMENINO', '50m-femenino', '50MFEMENINO', '50M-FEM'],
+                        tableId: 'resultsTable50mFem',
+                        genderColumn: 'Nadadora'
+                    },
+                    '50m-libre-masculino': {
+                        names: ['50M-MASCULINO', '50M MASCULINO', '50m-masculino', '50MMASCULINO', '50M-MAS'],
+                        tableId: 'resultsTable50mMas',
+                        genderColumn: 'Nadador'
+                    }
+                };
+                
+                // Buscar y cargar cada competencia (misma lógica que testSpecificSheet)
+                for (const [competitionKey, config] of Object.entries(competitions)) {
+                    console.log(`🔍 Buscando coincidencias para ${competitionKey}...`);
                     
-                    console.log(`📊 Procesando ${competitionKey}...`);
-                    
-                    // Logging especial para 100m-femenino
-                    if (competitionKey === '100m-libre-femenino') {
-                        console.log('🎯 ===== PROCESANDO 100M-FEMENINO =====');
-                        console.log('📋 Hojas disponibles:', sheetInfo ? sheetInfo.map(s => s.title) : 'No disponible');
-                        console.log('🔍 Buscando coincidencias para:', CONFIG.COMPETITION_SHEETS[competitionKey]);
+                    let foundSheet = null;
+                    for (const name of config.names) {
+                        foundSheet = sheetInfo.find(s => s.title.toUpperCase().includes(name.toUpperCase()));
+                        if (foundSheet) {
+                            console.log(`✅ Encontrada: "${foundSheet.title}" con GID: ${foundSheet.gid}`);
+                            break;
+                        }
                     }
                     
-                    // Buscar el GID para esta competencia
-                    const gid = findSheetGid(sheetInfo, competitionKey);
-                    
-                    // Logging especial para 100m-femenino
-                    if (competitionKey === '100m-libre-femenino') {
-                        console.log('🆔 GID encontrado para 100m-femenino:', gid);
-                    }
-                    
-                    if (gid !== null) {
-                        // Cargar datos usando el GID encontrado
-                        const data = await loadSheetByGid(gid);
+                    if (foundSheet) {
+                        console.log(`📄 Cargando datos de "${foundSheet.title}" (GID: ${foundSheet.gid})...`);
+                        const data = await loadSheetByGid(foundSheet.gid);
                         
                         if (data && data.length > 0) {
-                            if (competitionKey === 'equipos') {
-                                // Manejo especial para datos de equipos
-                                updateTeamTableContent(tableElement, data);
-                            } else if (competitionKey.includes('general')) {
-                                // Manejo especial para datos de género (resultados generales)
-                                const genderLabel = competitionKey.includes('masculino') ? 'Atleta' : 'Atleta';
-                                updateGenderTableContent(tableElement, data, genderLabel);
-                            } else {
-                                // Manejo normal para competencias individuales
-                                const swimmerLabel = competitionKey.includes('femenino') ? 'Nadadora' : 'Nadador';
-                                updateTableContent(tableElement, data, swimmerLabel);
+                            console.log(`✅ Datos cargados: ${data.length} filas`);
+                            
+                            const table = document.getElementById(config.tableId);
+                            if (table) {
+                                console.log(`🔄 Actualizando tabla ${competitionKey}...`);
+                                updateTableContent(table, data, config.genderColumn);
+                                table.classList.remove('loading');
+                                hasData = true;
+                                console.log(`✅ Tabla ${competitionKey} actualizada`);
                             }
-                            tableElement.classList.remove('loading');
-                            hasData = true;
                         } else {
-                            showNoDataMessage(tableElement, `No hay datos para ${competitionKey}`);
+                            console.log(`❌ No se pudieron cargar datos de "${foundSheet.title}"`);
                         }
                     } else {
-                        // Fallback: usar los GIDs conocidos
-                        const fallbackGid = getFallbackGid(competitionKey);
-                        if (fallbackGid) {
-                            const data = await loadSheetByGid(fallbackGid);
-                            if (data && data.length > 0) {
-                                if (competitionKey === 'equipos') {
-                                    updateTeamTableContent(tableElement, data);
-                                } else if (competitionKey.includes('general')) {
-                                    // Manejo especial para datos de género (resultados generales)
-                                    const genderLabel = competitionKey.includes('masculino') ? 'Atleta' : 'Atleta';
-                                    updateGenderTableContent(tableElement, data, genderLabel);
-                                } else {
-                                    const swimmerLabel = competitionKey.includes('femenino') ? 'Nadadora' : 'Nadador';
-                                    updateTableContent(tableElement, data, swimmerLabel);
-                                }
-                                tableElement.classList.remove('loading');
-                                hasData = true;
-                            } else {
-                                showNoDataMessage(tableElement, `No hay datos para ${competitionKey}`);
-                            }
-                        } else {
-                            showNoDataMessage(tableElement, `Pestaña no encontrada para ${competitionKey}`);
-                        }
+                        console.log(`⚠️ No se encontró pestaña para ${competitionKey}`);
+                        console.log(`💡 Nombres buscados:`, config.names);
                     }
                 }
                 
+                // Actualizar estado final
                 if (hasData) {
-                    updateLastUpdateTime();
-                    updateStatus('success', '✅ Datos cargados correctamente');
+                    updateStatus('success', '✅ Resultados actualizados');
+                    lastUpdateTime = new Date();
                     loadAttempts = 0;
-                    
-                    // Mostrar GIDs detectados para referencia
-                    logDetectedGids();
-                    console.log('🎉 Carga exitosa. Próxima actualización en 30 segundos.');
+                    console.log('🎉 ¡Carga automática completada exitosamente!');
                 } else {
-                    console.warn('⚠️ No se encontraron datos en ninguna hoja');
+                    updateStatus('error', '❌ No se pudieron cargar los datos');
+                    console.log('❌ No se pudieron cargar datos de ninguna competencia');
                     throw new Error('No se pudieron obtener datos de ninguna competencia');
                 }
                 
