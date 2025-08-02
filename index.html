@@ -498,11 +498,16 @@
             color: #f0f6ff;
         }
 
-        /* Enfoque móvil simplificado sin headers - TODO alineado a la izquierda */
+        /* Optimización móvil SOLO para tabla de equipos */
         @media (max-width: 768px) {
-            /* === TABLAS ESPECÍFICAS PARA MÓVIL === */
+            /* === SOLO TABLA DE EQUIPOS - SIN superposición === */
             
-            /* Tabla de Equipos - SIN padding-left, todo alineado a la izquierda */
+            /* Ocultar header de equipos */
+            #resultsTableTeams thead {
+                display: none;
+            }
+            
+            /* Tabla de Equipos - TODO alineado a la izquierda */
             #resultsTableTeams tr {
                 border: 2px solid #e3f2fd;
                 border-radius: 12px;
@@ -535,47 +540,8 @@
                 margin-bottom: 0;
             }
             
-            /* Tablas de Género - SIN padding-left, todo alineado a la izquierda */
-            #resultsTableMasculinoGeneral tr,
-            #resultsTableFemeninoGeneral tr {
-                border: 2px solid #e8f5e8;
-                border-radius: 12px;
-                padding: 18px;
-                margin: 18px 0;
-                display: block;
-                background: #ffffff;
-                box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-            }
-            
-            #resultsTableMasculinoGeneral td,
-            #resultsTableFemeninoGeneral td {
-                border: none;
-                border-bottom: 1px solid #f0f6ff;
-                padding: 6px 0;
-                display: block;
-                text-align: left;
-            }
-            
-            #resultsTableMasculinoGeneral td:before,
-            #resultsTableFemeninoGeneral td:before {
-                content: attr(data-label) ": ";
-                font-weight: bold;
-                color: #0b1039;
-                font-size: 13px;
-                display: inline;
-                margin-right: 5px;
-            }
-            
-            #resultsTableMasculinoGeneral td:last-child,
-            #resultsTableFemeninoGeneral td:last-child {
-                border-bottom: none;
-                margin-bottom: 0;
-            }
-            
-            /* Estilos especiales para posiciones - alineadas a la izquierda */
-            #resultsTableTeams .rank,
-            #resultsTableMasculinoGeneral .rank,
-            #resultsTableFemeninoGeneral .rank {
+            /* Estilos especiales para posición de equipos */
+            #resultsTableTeams .rank {
                 background: #00ADEF !important;
                 color: white !important;
                 padding: 6px 12px !important;
@@ -585,44 +551,34 @@
                 margin: 0 !important;
             }
             
-            /* Estilos para puntos - alineados a la izquierda */
-            #resultsTableTeams .points,
-            #resultsTableMasculinoGeneral .points,
-            #resultsTableFemeninoGeneral .points {
+            /* Estilos para puntos de equipos */
+            #resultsTableTeams .points {
                 font-weight: bold !important;
                 color: #00ADEF !important;
                 display: inline-block !important;
             }
             
-            /* Destacar nombres de atletas y equipos */
-            #resultsTableTeams td[data-label="Equipo"],
-            #resultsTableMasculinoGeneral td[data-label="Atleta"],
-            #resultsTableFemeninoGeneral td[data-label="Atleta"] {
+            /* Destacar nombre de equipo */
+            #resultsTableTeams td[data-label="Equipo"] {
                 font-weight: 600 !important;
                 color: #0b1039 !important;
                 font-size: 15px !important;
             }
         }
 
-        /* Estilos adicionales para pantallas muy pequeñas */
+        /* Estilos adicionales para pantallas muy pequeñas - SOLO equipos */
         @media screen and (max-width: 480px) {
-            #resultsTableTeams tr,
-            #resultsTableMasculinoGeneral tr,
-            #resultsTableFemeninoGeneral tr {
+            #resultsTableTeams tr {
                 padding: 15px !important;
                 margin: 15px 0 !important;
             }
             
-            #resultsTableTeams td,
-            #resultsTableMasculinoGeneral td,
-            #resultsTableFemeninoGeneral td {
+            #resultsTableTeams td {
                 padding: 6px 0 !important;
                 font-size: 14px !important;
             }
             
-            #resultsTableTeams td:before,
-            #resultsTableMasculinoGeneral td:before,
-            #resultsTableFemeninoGeneral td:before {
+            #resultsTableTeams td:before {
                 font-size: 12px !important;
                 font-weight: 600 !important;
             }
@@ -1039,6 +995,19 @@
                 <div id="masculino-general" class="tab-content active">
                     <h3>🏊‍♂️ Clasificación General Masculina</h3>
                     <table class="results-table" id="resultsTableMasculinoGeneral">
+                        <thead>
+                            <tr>
+                                <th>Lugar</th>
+                                <th>Atleta</th>
+                                <th>Equipo</th>
+                                <th>Edad</th>
+                                <th>Categoría</th>
+                                <th>Puntos Totales</th>
+                                <th>P. 200m Libre</th>
+                                <th>P. 50m Libre</th>
+                                <th>P. 100m Libre</th>
+                            </tr>
+                        </thead>
                         <tbody>
                             <tr class="loading-row">
                                 <td colspan="9" style="text-align: center; padding: 40px; color: #a5a5a5;">
@@ -1053,6 +1022,19 @@
                 <div id="femenino-general" class="tab-content">
                     <h3>🏊‍♀️ Clasificación General Femenina</h3>
                     <table class="results-table" id="resultsTableFemeninoGeneral">
+                        <thead>
+                            <tr>
+                                <th>Lugar</th>
+                                <th>Atleta</th>
+                                <th>Equipo</th>
+                                <th>Edad</th>
+                                <th>Categoría</th>
+                                <th>Puntos Totales</th>
+                                <th>P. 200m Libre</th>
+                                <th>P. 50m Libre</th>
+                                <th>P. 100m Libre</th>
+                            </tr>
+                        </thead>
                         <tbody>
                             <tr class="loading-row">
                                 <td colspan="9" style="text-align: center; padding: 40px; color: #a5a5a5;">
