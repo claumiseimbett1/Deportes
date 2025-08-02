@@ -737,14 +737,8 @@
     
     <!-- Debug Controls (solo visible en desarrollo) -->
     <div style="position: fixed; top: 150px; right: 20px; z-index: 9998;">
-        <button onclick="retryLoad()" style="padding: 8px 12px; background: #00ADEF; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 12px; margin-bottom: 5px; display: block;">
-            🔄 Recargar Ahora
-        </button>
-        <button onclick="console.clear()" style="padding: 8px 12px; background: #666; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 12px; display: block; margin-bottom: 5px;">
+        <button onclick="console.clear()" style="padding: 8px 12px; background: #666; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 12px; display: block;">
             🧹 Limpiar Console
-        </button>
-        <button onclick="testSpecificSheet()" style="padding: 8px 12px; background: #ff9800; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 12px; display: none;">
-            🧪 Test 100M-FEM
         </button>
     </div>
 
@@ -1410,41 +1404,60 @@
                 
                 let hasData = false;
                 
-                // Definir competencias a buscar con sus posibles nombres (exactos como en el test exitoso)
+                // Definir competencias a buscar con palabras clave más flexibles
                 const competitions = {
                     '100m-libre-femenino': {
-                        names: ['100M-FEMENINO', '100M FEMENINO', '100m-femenino', '100MFEMENINO', '100M-FEM'],
+                        keywords: ['100', 'FEMENINO', 'FEM'],
                         tableId: 'resultsTable100mFem',
                         genderColumn: 'Nadadora'
                     },
                     '100m-libre-masculino': {
-                        names: ['100M-MASCULINO', '100M MASCULINO', '100m-masculino', '100MMASCULINO', '100M-MAS'],
+                        keywords: ['100', 'MASCULINO', 'MAS'],
                         tableId: 'resultsTable100mMas',
                         genderColumn: 'Nadador'
                     },
                     '50m-libre-femenino': {
-                        names: ['50M-FEMENINO', '50M FEMENINO', '50m-femenino', '50MFEMENINO', '50M-FEM'],
+                        keywords: ['50', 'FEMENINO', 'FEM'],
                         tableId: 'resultsTable50mFem',
                         genderColumn: 'Nadadora'
                     },
                     '50m-libre-masculino': {
-                        names: ['50M-MASCULINO', '50M MASCULINO', '50m-masculino', '50MMASCULINO', '50M-MAS'],
+                        keywords: ['50', 'MASCULINO', 'MAS'],
                         tableId: 'resultsTable50mMas',
                         genderColumn: 'Nadador'
                     }
                 };
                 
-                // Buscar y cargar cada competencia (misma lógica que testSpecificSheet)
+                // Buscar y cargar cada competencia con lógica de palabras clave
                 for (const [competitionKey, config] of Object.entries(competitions)) {
                     console.log(`🔍 Buscando coincidencias para ${competitionKey}...`);
+                    console.log(`🎯 Palabras clave: ${config.keywords.join(', ')}`);
                     
                     let foundSheet = null;
-                    for (const name of config.names) {
-                        foundSheet = sheetInfo.find(s => s.title.toUpperCase().includes(name.toUpperCase()));
-                        if (foundSheet) {
-                            console.log(`✅ Encontrada: "${foundSheet.title}" con GID: ${foundSheet.gid}`);
-                            break;
+                    // Buscar pestaña que contenga todas las palabras clave
+                    foundSheet = sheetInfo.find(sheet => {
+                        const title = sheet.title.toUpperCase();
+                        const hasAllKeywords = config.keywords.every(keyword => 
+                            title.includes(keyword.toUpperCase())
+                        );
+                        if (hasAllKeywords) {
+                            console.log(`✅ Coincidencia encontrada: "${sheet.title}" contiene todas las palabras clave`);
                         }
+                        return hasAllKeywords;
+                    });
+                    
+                    // Si no encuentra con todas las palabras, buscar con al menos 2 palabras clave
+                    if (!foundSheet && config.keywords.length >= 2) {
+                        foundSheet = sheetInfo.find(sheet => {
+                            const title = sheet.title.toUpperCase();
+                            const matchCount = config.keywords.filter(keyword => 
+                                title.includes(keyword.toUpperCase())
+                            ).length;
+                            if (matchCount >= 2) {
+                                console.log(`✅ Coincidencia parcial: "${sheet.title}" contiene ${matchCount} palabras clave`);
+                            }
+                            return matchCount >= 2;
+                        });
                     }
                     
                     if (foundSheet) {
