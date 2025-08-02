@@ -571,18 +571,37 @@
         /* Estilos adicionales para pantallas muy pequeñas - SOLO equipos */
         @media screen and (max-width: 480px) {
             #resultsTableTeams tr {
-                padding: 15px !important;
-                margin: 15px 0 !important;
+                padding: 8px !important;
+                margin: 8px 0 !important;
             }
             
             #resultsTableTeams td {
-                padding: 6px 0 !important;
-                font-size: 14px !important;
+                padding: 4px 0 !important;
+                font-size: 13px !important;
+                min-height: 28px !important;
             }
             
             #resultsTableTeams td:before {
-                font-size: 12px !important;
+                font-size: 10px !important;
                 font-weight: 600 !important;
+            }
+            
+            /* Reducir espacios generales en todas las tablas móviles */
+            .results-table tr {
+                margin-bottom: 6px !important;
+                padding: 6px !important;
+            }
+            
+            .results-table td {
+                padding-top: 12px !important;
+                padding-bottom: 3px !important;
+                min-height: 25px !important;
+                font-size: 13px !important;
+            }
+            
+            .results-table td:before {
+                font-size: 10px !important;
+                top: 2px !important;
             }
         }
 
@@ -649,40 +668,37 @@
 
             .results-table tr {
                 display: block;
-                margin-bottom: 15px;
+                margin-bottom: 10px;
                 border: 1px solid #f0f6ff;
-                border-radius: 8px;
+                border-radius: 6px;
                 background-color: #ffffff;
             }
 
             .results-table td {
                 display: block;
                 text-align: right;
-                padding-left: 50%;
+                padding-left: 45%;
                 position: relative;
+                padding-top: 18px !important;
+                padding-bottom: 6px !important;
+                min-height: 35px;
             }
 
             .results-table td::before {
                 content: attr(data-label);
                 position: absolute;
-                left: 10px;
+                left: 8px;
                 font-weight: bold;
                 text-align: left;
                 color: #0b1039;
             }
-
-            /* Evitar superposición en las tablas regulares también */
-            .results-table td {
-                padding-top: 30px !important;
-                min-height: 50px;
-            }
             
             /* Asegurar que las tablas regulares también funcionen */
             .results-table td:before {
-                top: 5px !important;
-                left: 10px !important;
+                top: 3px !important;
+                left: 8px !important;
                 position: absolute !important;
-                font-size: 12px !important;
+                font-size: 11px !important;
                 color: #666 !important;
             }
 
