@@ -498,85 +498,167 @@
             color: #f0f6ff;
         }
 
-        /* Estilos específicos para tabla de equipos en móvil */
+        /* Estilos específicos optimizados para móvil */
         @media (max-width: 768px) {
-            /* Tabla de equipos: optimizada para vertical */
+            /* === TABLA DE EQUIPOS === */
             #resultsTableTeams thead {
-                display: none;
+                display: none !important;
+            }
+
+            #resultsTableTeams tbody {
+                display: block;
             }
 
             #resultsTableTeams tr {
                 display: block;
-                margin-bottom: 20px;
-                border: 2px solid #f0f6ff;
-                border-radius: 12px;
-                background: linear-gradient(135deg, #ffffff 0%, #fafcff 100%);
-                box-shadow: 0 4px 12px rgba(11, 16, 57, 0.08);
-                padding: 15px;
+                margin-bottom: 25px;
+                border: 2px solid #e3f2fd;
+                border-radius: 15px;
+                background: linear-gradient(135deg, #ffffff 0%, #f8fffe 100%);
+                box-shadow: 0 6px 20px rgba(11, 16, 57, 0.1);
+                padding: 20px;
+                position: relative;
+            }
+
+            #resultsTableTeams tr:nth-child(odd) {
+                background: linear-gradient(135deg, #fafcff 0%, #ffffff 100%);
             }
 
             #resultsTableTeams td {
                 display: block;
                 text-align: left;
-                padding: 8px 0;
-                border-bottom: none;
+                padding: 12px 0;
+                border-bottom: 1px solid #f0f6ff;
                 position: relative;
+                padding-left: 0;
+                margin: 0;
+            }
+
+            #resultsTableTeams td:last-child {
+                border-bottom: none;
             }
 
             #resultsTableTeams td:before {
-                content: attr(data-label) ": ";
-                font-weight: bold;
+                content: attr(data-label);
+                font-weight: 700;
                 color: #0b1039;
-                min-width: 120px;
-                display: inline-block;
+                display: block;
+                margin-bottom: 5px;
+                font-size: 0.9em;
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
             }
 
-            /* Estilos especiales para datos de equipos */
+            /* Posición destacada */
             #resultsTableTeams .rank {
-                font-size: 1.3em;
-                margin-bottom: 10px;
+                font-size: 1.8em;
+                margin-bottom: 15px;
                 text-align: center;
-                background: #00ADEF;
+                background: linear-gradient(135deg, #00ADEF 0%, #0288d1 100%);
                 color: white;
-                border-radius: 20px;
-                padding: 8px;
+                border-radius: 25px;
+                padding: 12px;
+                box-shadow: 0 4px 12px rgba(0, 173, 239, 0.3);
             }
 
             #resultsTableTeams .rank:before {
-                content: "";
+                display: none;
             }
-            
-            /* Tabla de género: optimizada para más columnas */
+
+            /* === TABLAS DE GÉNERO === */
             #resultsTableMasculinoGeneral thead,
             #resultsTableFemeninoGeneral thead {
-                display: none;
+                display: none !important;
+            }
+
+            #resultsTableMasculinoGeneral tbody,
+            #resultsTableFemeninoGeneral tbody {
+                display: block;
             }
 
             #resultsTableMasculinoGeneral tr,
             #resultsTableFemeninoGeneral tr {
                 display: block;
-                margin-bottom: 15px;
-                border: 1px solid #f0f6ff;
-                border-radius: 8px;
-                background-color: #ffffff;
-                padding: 10px;
+                margin-bottom: 20px;
+                border: 2px solid #e8f5e8;
+                border-radius: 12px;
+                background: linear-gradient(135deg, #ffffff 0%, #fafffe 100%);
+                box-shadow: 0 4px 15px rgba(11, 16, 57, 0.08);
+                padding: 18px;
+                position: relative;
+            }
+
+            #resultsTableMasculinoGeneral tr:nth-child(odd),
+            #resultsTableFemeninoGeneral tr:nth-child(odd) {
+                background: linear-gradient(135deg, #f9fcff 0%, #ffffff 100%);
+                border-color: #e3f2fd;
             }
 
             #resultsTableMasculinoGeneral td,
             #resultsTableFemeninoGeneral td {
                 display: block;
                 text-align: left;
-                padding: 5px 0;
+                padding: 10px 0;
+                border-bottom: 1px solid rgba(11, 16, 57, 0.1);
+                position: relative;
+                padding-left: 0;
+                margin: 0;
+            }
+
+            #resultsTableMasculinoGeneral td:last-child,
+            #resultsTableFemeninoGeneral td:last-child {
                 border-bottom: none;
             }
 
             #resultsTableMasculinoGeneral td::before,
             #resultsTableFemeninoGeneral td::before {
-                content: attr(data-label) ": ";
-                font-weight: bold;
+                content: attr(data-label);
+                font-weight: 700;
                 color: #0b1039;
-                min-width: 100px;
-                display: inline-block;
+                display: block;
+                margin-bottom: 6px;
+                font-size: 0.85em;
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
+            }
+
+            /* Estilos especiales para atleta principal */
+            #resultsTableMasculinoGeneral td[data-label="Atleta"],
+            #resultsTableFemeninoGeneral td[data-label="Atleta"] {
+                background: rgba(0, 173, 239, 0.05);
+                border-radius: 8px;
+                padding: 12px 10px;
+                margin: 5px 0;
+                font-size: 1.1em;
+            }
+
+            /* Posición en género */
+            #resultsTableMasculinoGeneral .rank,
+            #resultsTableFemeninoGeneral .rank {
+                font-size: 1.6em;
+                margin-bottom: 12px;
+                text-align: center;
+                background: linear-gradient(135deg, #4caf50 0%, #388e3c 100%);
+                color: white;
+                border-radius: 20px;
+                padding: 10px;
+                box-shadow: 0 3px 10px rgba(76, 175, 80, 0.3);
+            }
+
+            #resultsTableMasculinoGeneral .rank:before,
+            #resultsTableFemeninoGeneral .rank:before {
+                display: none;
+            }
+
+            /* Puntos destacados */
+            #resultsTableMasculinoGeneral .points,
+            #resultsTableFemeninoGeneral .points {
+                font-weight: bold;
+                font-size: 1.1em;
+                background: rgba(0, 173, 239, 0.1);
+                border-radius: 6px;
+                padding: 8px 10px;
+                margin: 2px 0;
             }
         }
 
@@ -663,6 +745,11 @@
                 font-weight: bold;
                 text-align: left;
                 color: #0b1039;
+            }
+
+            /* Evitar superposición en las tablas regulares también */
+            .results-table td {
+                padding-top: 25px;
             }
 
             .cards-grid, .contact-grid {
