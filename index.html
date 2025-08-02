@@ -743,7 +743,7 @@
         <button onclick="console.clear()" style="padding: 8px 12px; background: #666; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 12px; display: block; margin-bottom: 5px;">
             🧹 Limpiar Console
         </button>
-        <button onclick="testSpecificSheet()" style="padding: 8px 12px; background: #ff9800; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 12px; display: none;">
+        <button onclick="testSpecificSheet()" style="padding: 8px 12px; background: #ff9800; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 12px; display: block;">
             🧪 Test 100M-FEM
         </button>
     </div>
@@ -2023,14 +2023,19 @@
 
         // Función para recargar datos automáticamente
         function startAutoReload() {
+            console.log('🚀 Iniciando sistema de recarga automática...');
+            
             // Cargar datos inicialmente
             loadSheetData();
             
-            // Recargar cada 30 segundos
+            // Recargar cada 10 segundos (más frecuente para detectar cambios)
             setInterval(() => {
-                console.log('🔄 Recarga automática...');
+                console.log('🔄 Recarga automática cada 10 segundos...');
+                loadAttempts = 0; // Reset attempts counter
                 loadSheetData();
-            }, 30000);
+            }, 10000);
+            
+            console.log('✅ Sistema de recarga automática configurado (cada 10 segundos)');
         }
 
         // Event listeners
@@ -2047,15 +2052,19 @@
                     console.log('📡 Respuesta del servidor:', response.status, response.statusText);
                     if (response.ok) {
                         console.log('✅ Google Sheet es accesible');
+                        console.log('🎯 Iniciando sistema de recarga automática...');
+                        startAutoReload();
                     } else {
                         console.error('❌ Google Sheet no es accesible. Verifica que sea público.');
+                        console.log('⚠️ Intentando iniciar sistema de recarga de todas formas...');
+                        startAutoReload();
                     }
                 })
                 .catch(error => {
                     console.error('❌ Error de conectividad:', error);
+                    console.log('⚠️ Intentando iniciar sistema de recarga de todas formas...');
+                    startAutoReload();
                 });
-            
-            startAutoReload();
         });
 
         // Recargar cuando la ventana vuelva al foco
