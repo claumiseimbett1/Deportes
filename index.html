@@ -1741,17 +1741,43 @@
             if (!tbody) return;
             
             let htmlContent = '';
+            let currentCategory = '';
             
             for (let i = 0; i < data.length; i++) {
                 const row = data[i];
                 if (!row || row.length === 0) continue;
                 
-                // Esperar al menos 6 columnas: LUGAR, ATLETA, EQUIPO, EDAD, CATEGORIA, PUNTOS TOTALES
-                if (row.length >= 6) {
+                // Si es una fila con solo categoría (similar a updateTableContent)
+                if (row.length === 1 || (row[0] && !row[1])) {
+                    const categoryText = row[0].toString().trim();
+                    // Verificar que sea una categoría válida
+                    if (categoryText.match(/^(INFANTIL|JUVENIL|MAYORES|MASTER)/i)) {
+                        currentCategory = categoryText;
+                        htmlContent += `
+                            <tr class="category-header">
+                                <td colspan="9">${currentCategory}</td>
+                            </tr>`;
+                    }
+                } else if (row.length >= 6) {
+                    // Es un resultado - Esperar al menos 6 columnas: LUGAR, ATLETA, EQUIPO, EDAD, CATEGORIA, PUNTOS TOTALES
                     const [lugar, atleta, equipo, edad, categoria, puntosTotales, puntos200m, puntos50m, puntos100m] = row;
                     
                     // Skip si no hay atleta válido
                     if (!atleta || atleta === '-' || atleta.toLowerCase().includes('sin atletas')) {
+                        if (atleta && atleta.toLowerCase().includes('sin atletas')) {
+                            htmlContent += `
+                                <tr>
+                                    <td data-label="Lugar" class="rank" style="text-align: center; color: #a5a5a5;">-</td>
+                                    <td data-label="Atleta" style="color: #a5a5a5; font-style: italic;">Sin atletas</td>
+                                    <td data-label="Equipo" style="color: #a5a5a5;">-</td>
+                                    <td data-label="Edad" style="color: #a5a5a5;">-</td>
+                                    <td data-label="Categoría" style="color: #a5a5a5;">${currentCategory || categoria}</td>
+                                    <td data-label="Puntos Totales" style="color: #a5a5a5;">-</td>
+                                    <td data-label="P. 200m Libre" style="color: #a5a5a5;">-</td>
+                                    <td data-label="P. 50m Libre" style="color: #a5a5a5;">-</td>
+                                    <td data-label="P. 100m Libre" style="color: #a5a5a5;">-</td>
+                                </tr>`;
+                        }
                         continue;
                     }
                     
@@ -1768,7 +1794,7 @@
                             <td data-label="Atleta" style="font-weight: 600; color: #0b1039;">${atleta || '-'}</td>
                             <td data-label="Equipo">${equipo || '-'}</td>
                             <td data-label="Edad">${edad || '-'}</td>
-                            <td data-label="Categoría">${categoria || '-'}</td>
+                            <td data-label="Categoría">${categoria || currentCategory}</td>
                             <td data-label="Puntos Totales" class="points" style="font-weight: bold; color: #00ADEF; font-size: 1.1em;">${puntosTotales || '0'}</td>
                             <td data-label="P. 200m Libre" class="points" style="color: #4caf50;">${puntos200m || '0'}</td>
                             <td data-label="P. 50m Libre" class="points" style="color: #ff9800;">${puntos50m || '0'}</td>
