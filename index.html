@@ -746,7 +746,7 @@
     <!-- Results Section -->
     <section class="results-section">
         <div class="container">
-            <h2 class="section-title">Resultados por Prueba</h2>
+            <h2 class="section-title">Resultados por Pruebas</h2>
             <div class="results-container">
                 <div class="last-update">
                     Última actualización: <span class="time" id="lastUpdateTime">Cargando...</span>
@@ -1155,9 +1155,9 @@
                 '4x50m-libre-masculino': ['4X50M-MASCULINO', '4X50M MASCULINO', '4X50M-MAS', '4X50M MAS', '4X50 MAS', 'MASCULINO 4X50M'],
                 // Hoja de resultados por equipos
                 'equipos': ['EQUIPOS', 'EQUIPO', 'TEAMS', 'CLASIFICACION EQUIPOS', 'RESULTADOS EQUIPOS'],
-                // Hojas de resultados por género
-                'masculino-general': ['MASCULINO GENERAL', 'GENERAL MASCULINO', 'RANKING MASCULINO', 'CLASIFICACION MASCULINO'],
-                'femenino-general': ['FEMENINO GENERAL', 'GENERAL FEMENINO', 'RANKING FEMENINO', 'CLASIFICACION FEMENINO']
+                // Hojas de resultados por género (sección independiente)
+                'masculino-general': ['RESULTADOS-MASCULINO', 'RESULTADOS MASCULINO', 'RANKING MASCULINO', 'CLASIFICACION MASCULINO'],
+                'femenino-general': ['RESULTADOS-FEMENINO', 'RESULTADOS FEMENINO', 'RANKING FEMENINO', 'CLASIFICACION FEMENINO']
             }
         };
 
@@ -1368,7 +1368,7 @@
                                 // Manejo especial para datos de equipos
                                 updateTeamTableContent(tableElement, data);
                             } else if (competitionKey.includes('general')) {
-                                // Manejo especial para datos de género
+                                // Manejo especial para datos de género (resultados generales)
                                 const genderLabel = competitionKey.includes('masculino') ? 'Atleta' : 'Atleta';
                                 updateGenderTableContent(tableElement, data, genderLabel);
                             } else {
@@ -1390,6 +1390,7 @@
                                 if (competitionKey === 'equipos') {
                                     updateTeamTableContent(tableElement, data);
                                 } else if (competitionKey.includes('general')) {
+                                    // Manejo especial para datos de género (resultados generales)
                                     const genderLabel = competitionKey.includes('masculino') ? 'Atleta' : 'Atleta';
                                     updateGenderTableContent(tableElement, data, genderLabel);
                                 } else {
