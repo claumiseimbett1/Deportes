@@ -740,8 +740,11 @@
         <button onclick="retryLoad()" style="padding: 8px 12px; background: #00ADEF; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 12px; margin-bottom: 5px; display: block;">
             🔄 Recargar Ahora
         </button>
-        <button onclick="console.clear()" style="padding: 8px 12px; background: #666; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 12px; display: block;">
+        <button onclick="console.clear()" style="padding: 8px 12px; background: #666; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 12px; display: block; margin-bottom: 5px;">
             🧹 Limpiar Console
+        </button>
+        <button onclick="testSpecificSheet()" style="padding: 8px 12px; background: #ff9800; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 12px; display: block;">
+            🧪 Test 100M-FEM
         </button>
     </div>
 
@@ -1913,6 +1916,70 @@
         function retryLoad() {
             loadAttempts = 0;
             loadSheetData();
+        }
+
+        // Función de test específica para 100M-FEMENINO
+        async function testSpecificSheet() {
+            console.log('🧪 ===== TEST ESPECÍFICO 100M-FEMENINO =====');
+            
+            try {
+                // 1. Obtener información de todas las pestañas
+                console.log('📋 Obteniendo lista de pestañas...');
+                const sheetInfo = await getSheetInfo();
+                
+                if (sheetInfo) {
+                    console.log('📋 Pestañas encontradas:');
+                    sheetInfo.forEach(sheet => {
+                        console.log(`  - "${sheet.title}" (GID: ${sheet.gid})`);
+                    });
+                    
+                    // 2. Buscar coincidencias para 100m-femenino
+                    console.log('🔍 Buscando coincidencias para 100M-FEMENINO...');
+                    const possibleNames = ['100M-FEMENINO', '100M FEMENINO', '100m-femenino', '100MFEMENINO', '100M-FEM'];
+                    
+                    let foundSheet = null;
+                    for (const name of possibleNames) {
+                        foundSheet = sheetInfo.find(s => s.title.toUpperCase().includes(name.toUpperCase()));
+                        if (foundSheet) {
+                            console.log(`✅ Encontrada: "${foundSheet.title}" con GID: ${foundSheet.gid}`);
+                            break;
+                        }
+                    }
+                    
+                    if (!foundSheet) {
+                        console.log('❌ No se encontró ninguna pestaña que coincida con 100M-FEMENINO');
+                        console.log('💡 Pestañas disponibles:', sheetInfo.map(s => s.title));
+                        return;
+                    }
+                    
+                    // 3. Cargar datos específicos de esa pestaña
+                    console.log(`📄 Cargando datos de "${foundSheet.title}" (GID: ${foundSheet.gid})...`);
+                    const data = await loadSheetByGid(foundSheet.gid);
+                    
+                    if (data && data.length > 0) {
+                        console.log(`✅ Datos cargados: ${data.length} filas`);
+                        console.log('📊 TODOS LOS DATOS:');
+                        data.forEach((row, index) => {
+                            console.log(`  Fila ${index + 1}:`, row);
+                        });
+                        
+                        // 4. Actualizar específicamente la tabla 100m femenino
+                        const table100mFem = document.getElementById('resultsTable100mFem');
+                        if (table100mFem) {
+                            console.log('🔄 Actualizando tabla 100m femenino...');
+                            updateTableContent(table100mFem, data, 'Nadadora');
+                            console.log('✅ Tabla actualizada');
+                        }
+                    } else {
+                        console.log('❌ No se pudieron cargar datos de la pestaña');
+                    }
+                } else {
+                    console.log('❌ No se pudo obtener información de las pestañas');
+                }
+                
+            } catch (error) {
+                console.error('❌ Error en test específico:', error);
+            }
         }
 
         // Funciones para tabs
