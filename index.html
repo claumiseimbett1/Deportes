@@ -1189,19 +1189,21 @@
             USE_API_KEY: true,
             // Mapeo automático de pestañas - detecta GIDs automáticamente
             COMPETITION_SHEETS: {
-                '50m-libre-femenino': ['FEMENINO', '50M-FEMENINO', '50M FEMENINO', '50M-FEM', '50M FEM', '50 FEM', 'FEM'],
-                '50m-libre-masculino': ['MASCULINO', '50M-MASCULINO', '50M MASCULINO', '50M-MAS', '50M MAS', '50 MAS', 'MAS'],
-                '100m-libre-femenino': ['100M-FEMENINO', '100M FEMENINO', '100M-FEM', '100M FEM', '100 FEM', 'FEMENINO 100M', '100m-femenino', '100MFEMENINO'],
-                '100m-libre-masculino': ['100M-MASCULINO', '100M MASCULINO', '100M-MAS', '100M MAS', '100 MAS', 'MASCULINO 100M', '100m-masculino', '100MMASCULINO'],
-                '200m-libre-femenino': ['200M-FEMENINO', '200M FEMENINO', '200M-FEM', '200M FEM', '200 FEM', 'FEMENINO 200M', '200m-femenino', '200MFEMENINO'],
-                '200m-libre-masculino': ['200M-MASCULINO', '200M MASCULINO', '200M-MAS', '200M MAS', '200 MAS', 'MASCULINO 200M', '200m-masculino', '200MMASCULINO'],
-                '4x50m-libre-femenino': ['4X50M-FEMENINO', '4X50M FEMENINO', '4X50M-FEM', '4X50M FEM', '4X50 FEM', 'FEMENINO 4X50M', '4x50m-femenino'],
-                '4x50m-libre-masculino': ['4X50M-MASCULINO', '4X50M MASCULINO', '4X50M-MAS', '4X50M MAS', '4X50 MAS', 'MASCULINO 4X50M', '4x50m-masculino'],
-                // Hoja de resultados por equipos
-                'equipos': ['EQUIPOS', 'EQUIPO', 'TEAMS', 'CLASIFICACION EQUIPOS', 'RESULTADOS EQUIPOS'],
-                // Hojas de resultados por género (sección independiente)
-                'masculino-general': ['RESULTADOS-MASCULINO', 'RESULTADOS MASCULINO', 'RANKING MASCULINO', 'CLASIFICACION MASCULINO'],
-                'femenino-general': ['RESULTADOS-FEMENINO', 'RESULTADOS FEMENINO', 'RANKING FEMENINO', 'CLASIFICACION FEMENINO']
+                // Primera sesión: Resultados por prueba
+                'resultados-por-prueba-femenino': ['FEMENINO', 'FEM'],
+                '50m-libre-femenino': ['50M-FEMENINO', '50M FEMENINO', '50M-FEM', '50M FEM', '50 FEM'],
+                '50m-libre-masculino': ['50M-MASCULINO', '50M MASCULINO', '50M-MAS', '50M MAS', '50 MAS'],
+                '100m-libre-femenino': ['100M-FEMENINO', '100M FEMENINO', '100M-FEM', '100M FEM', '100 FEM', 'FEMENINO 100M'],
+                '100m-libre-masculino': ['100M-MASCULINO', '100M MASCULINO', '100M-MAS', '100M MAS', '100 MAS', 'MASCULINO 100M'],
+                '200m-libre-femenino': ['200M-FEMENINO', '200M FEMENINO', '200M-FEM', '200M FEM', '200 FEM', 'FEMENINO 200M'],
+                '200m-libre-masculino': ['200M-MASCULINO', '200M MASCULINO', '200M-MAS', '200M MAS', '200 MAS', 'MASCULINO 200M'],
+                '4x50m-libre-femenino': ['4X50M-FEMENINO', '4X50M FEMENINO', '4X50M-FEM', '4X50M FEM', '4X50 FEM', 'FEMENINO 4X50M'],
+                '4x50m-libre-masculino': ['4X50M-MASCULINO', '4X50M MASCULINO', '4X50M-MAS', '4X50M MAS', '4X50 MAS', 'MASCULINO 4X50M'],
+                // Segunda sesión: Resultado por género
+                'resultados-femenino': ['RESULTADOS-FEMENINO', 'RESULTADOS FEMENINO', 'RESULTADOS FEM'],
+                'resultados-masculino': ['RESULTADOS-MASCULINO', 'RESULTADOS MASCULINO', 'RESULTADOS MAS'],
+                // Tercera sesión: Resultado por equipo
+                'resultados-equipo': ['EQUIPO', 'EQUIPOS', 'TEAM', 'TEAMS', 'CLASIFICACION EQUIPOS', 'RESULTADOS EQUIPOS']
             }
         };
 
@@ -1216,6 +1218,8 @@
         
         // Mapeo de elementos DOM por competencia
         const COMPETITION_TABLES = {
+            // Primera sesión: Resultados por prueba
+            'resultados-por-prueba-femenino': document.getElementById('resultsTableFem'),
             '50m-libre-femenino': document.getElementById('resultsTableFem'),
             '50m-libre-masculino': document.getElementById('resultsTableMas'),
             '100m-libre-femenino': document.getElementById('resultsTable100mFem'),
@@ -1224,9 +1228,13 @@
             '200m-libre-masculino': document.getElementById('resultsTable200mMas'),
             '4x50m-libre-femenino': document.getElementById('resultsTable4x50mFem'),
             '4x50m-libre-masculino': document.getElementById('resultsTable4x50mMas'),
-            // Tabla de equipos
+            // Segunda sesión: Resultado por género
+            'resultados-femenino': resultsTableFemeninoGeneral,
+            'resultados-masculino': resultsTableMasculinoGeneral,
+            // Tercera sesión: Resultado por equipo
+            'resultados-equipo': resultsTableTeams,
+            // Compatibilidad con nombres antiguos
             'equipos': resultsTableTeams,
-            // Tablas de género
             'masculino-general': resultsTableMasculinoGeneral,
             'femenino-general': resultsTableFemeninoGeneral
         };
@@ -1406,57 +1414,146 @@
                 
                 // Definir competencias a buscar con palabras clave más flexibles
                 const competitions = {
-                    '100m-libre-femenino': {
-                        keywords: ['100', 'FEMENINO', 'FEM'],
-                        tableId: 'resultsTable100mFem',
+                    // Resultados por prueba FEMENINO - mapea a la primera tabla que aparece
+                    'resultados-por-prueba-femenino': {
+                        keywords: ['FEMENINO'],
+                        alternativeNames: ['FEMENINO', 'FEM'],
+                        tableId: 'resultsTableFem',
                         genderColumn: 'Nadadora'
                     },
-                    '100m-libre-masculino': {
-                        keywords: ['100', 'MASCULINO', 'MAS'],
-                        tableId: 'resultsTable100mMas',
-                        genderColumn: 'Nadador'
-                    },
+                    // 50M Femenino y Masculino
                     '50m-libre-femenino': {
-                        keywords: ['50', 'FEMENINO', 'FEM'],
+                        keywords: ['50M', 'FEMENINO'],
+                        alternativeNames: ['50M-FEMENINO', '50M FEMENINO', '50M-FEM', '50M FEM'],
                         tableId: 'resultsTable50mFem',
                         genderColumn: 'Nadadora'
                     },
                     '50m-libre-masculino': {
-                        keywords: ['50', 'MASCULINO', 'MAS'],
+                        keywords: ['50M', 'MASCULINO'],
+                        alternativeNames: ['50M-MASCULINO', '50M MASCULINO', '50M-MAS', '50M MAS'],
                         tableId: 'resultsTable50mMas',
                         genderColumn: 'Nadador'
+                    },
+                    // 100M Femenino y Masculino
+                    '100m-libre-femenino': {
+                        keywords: ['100M', 'FEMENINO'],
+                        alternativeNames: ['100M-FEMENINO', '100M FEMENINO', '100M-FEM', '100M FEM'],
+                        tableId: 'resultsTable100mFem',
+                        genderColumn: 'Nadadora'
+                    },
+                    '100m-libre-masculino': {
+                        keywords: ['100M', 'MASCULINO'],
+                        alternativeNames: ['100M-MASCULINO', '100M MASCULINO', '100M-MAS', '100M MAS'],
+                        tableId: 'resultsTable100mMas',
+                        genderColumn: 'Nadador'
+                    },
+                    // 200M Femenino y Masculino
+                    '200m-libre-femenino': {
+                        keywords: ['200M', 'FEMENINO'],
+                        alternativeNames: ['200M-FEMENINO', '200M FEMENINO', '200M-FEM', '200M FEM'],
+                        tableId: 'resultsTable200mFem',
+                        genderColumn: 'Nadadora'
+                    },
+                    '200m-libre-masculino': {
+                        keywords: ['200M', 'MASCULINO'],
+                        alternativeNames: ['200M-MASCULINO', '200M MASCULINO', '200M-MAS', '200M MAS'],
+                        tableId: 'resultsTable200mMas',
+                        genderColumn: 'Nadador'
+                    },
+                    // 4X50M Femenino y Masculino
+                    '4x50m-libre-femenino': {
+                        keywords: ['4X50M', 'FEMENINO'],
+                        alternativeNames: ['4X50M-FEMENINO', '4X50M FEMENINO', '4X50M-FEM', '4X50M FEM'],
+                        tableId: 'resultsTable4x50mFem',
+                        genderColumn: 'Nadadora'
+                    },
+                    '4x50m-libre-masculino': {
+                        keywords: ['4X50M', 'MASCULINO'],
+                        alternativeNames: ['4X50M-MASCULINO', '4X50M MASCULINO', '4X50M-MAS', '4X50M MAS'],
+                        tableId: 'resultsTable4x50mMas',
+                        genderColumn: 'Nadador'
+                    },
+                    // Resultados por género
+                    'resultados-femenino': {
+                        keywords: ['RESULTADOS', 'FEMENINO'],
+                        alternativeNames: ['RESULTADOS-FEMENINO', 'RESULTADOS FEMENINO'],
+                        tableId: 'resultsTableFemeninoGeneral',
+                        genderColumn: 'Nadadora'
+                    },
+                    'resultados-masculino': {
+                        keywords: ['RESULTADOS', 'MASCULINO'],
+                        alternativeNames: ['RESULTADOS-MASCULINO', 'RESULTADOS MASCULINO'],
+                        tableId: 'resultsTableMasculinoGeneral',
+                        genderColumn: 'Nadador'
+                    },
+                    // Resultados por equipo
+                    'resultados-equipo': {
+                        keywords: ['EQUIPO'],
+                        alternativeNames: ['EQUIPO', 'EQUIPOS'],
+                        tableId: 'resultsTableTeams',
+                        genderColumn: 'Equipo'
                     }
                 };
                 
-                // Buscar y cargar cada competencia con lógica de palabras clave
+                // Buscar y cargar cada competencia con lógica de búsqueda inteligente
                 for (const [competitionKey, config] of Object.entries(competitions)) {
                     console.log(`🔍 Buscando coincidencias para ${competitionKey}...`);
                     console.log(`🎯 Palabras clave: ${config.keywords.join(', ')}`);
+                    console.log(`🔍 Nombres alternativos: ${config.alternativeNames.join(', ')}`);
                     
                     let foundSheet = null;
-                    // Buscar pestaña que contenga todas las palabras clave
+                    
+                    // 1. Primera búsqueda: coincidencia exacta con nombres alternativos
                     foundSheet = sheetInfo.find(sheet => {
-                        const title = sheet.title.toUpperCase();
-                        const hasAllKeywords = config.keywords.every(keyword => 
-                            title.includes(keyword.toUpperCase())
+                        const title = sheet.title.toUpperCase().trim();
+                        const exactMatch = config.alternativeNames.some(altName => 
+                            title === altName.toUpperCase().trim()
                         );
-                        if (hasAllKeywords) {
-                            console.log(`✅ Coincidencia encontrada: "${sheet.title}" contiene todas las palabras clave`);
+                        if (exactMatch) {
+                            console.log(`✅ Coincidencia exacta encontrada: "${sheet.title}"`);
                         }
-                        return hasAllKeywords;
+                        return exactMatch;
                     });
                     
-                    // Si no encuentra con todas las palabras, buscar con al menos 2 palabras clave
-                    if (!foundSheet && config.keywords.length >= 2) {
+                    // 2. Segunda búsqueda: pestaña que contenga todas las palabras clave
+                    if (!foundSheet) {
                         foundSheet = sheetInfo.find(sheet => {
                             const title = sheet.title.toUpperCase();
-                            const matchCount = config.keywords.filter(keyword => 
+                            const hasAllKeywords = config.keywords.every(keyword => 
                                 title.includes(keyword.toUpperCase())
-                            ).length;
-                            if (matchCount >= 2) {
-                                console.log(`✅ Coincidencia parcial: "${sheet.title}" contiene ${matchCount} palabras clave`);
+                            );
+                            if (hasAllKeywords) {
+                                console.log(`✅ Coincidencia por palabras clave: "${sheet.title}" contiene todas las palabras clave`);
                             }
-                            return matchCount >= 2;
+                            return hasAllKeywords;
+                        });
+                    }
+                    
+                    // 3. Tercera búsqueda: coincidencia parcial con nombres alternativos
+                    if (!foundSheet) {
+                        foundSheet = sheetInfo.find(sheet => {
+                            const title = sheet.title.toUpperCase();
+                            const partialMatch = config.alternativeNames.some(altName => 
+                                title.includes(altName.toUpperCase()) || altName.toUpperCase().includes(title)
+                            );
+                            if (partialMatch) {
+                                console.log(`✅ Coincidencia parcial encontrada: "${sheet.title}"`);
+                            }
+                            return partialMatch;
+                        });
+                    }
+                    
+                    // 4. Cuarta búsqueda: al menos una palabra clave para casos especiales
+                    if (!foundSheet && config.keywords.length === 1) {
+                        foundSheet = sheetInfo.find(sheet => {
+                            const title = sheet.title.toUpperCase();
+                            const hasKeyword = config.keywords.some(keyword => 
+                                title.includes(keyword.toUpperCase())
+                            );
+                            if (hasKeyword) {
+                                console.log(`✅ Coincidencia simple encontrada: "${sheet.title}" contiene palabra clave`);
+                            }
+                            return hasKeyword;
                         });
                     }
                     
