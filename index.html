@@ -735,12 +735,6 @@
         🔄 Cargando resultados...
     </div>
     
-    <!-- Debug Controls (solo visible en desarrollo) -->
-    <div style="position: fixed; top: 150px; right: 20px; z-index: 9998;">
-        <button onclick="console.clear()" style="padding: 8px 12px; background: #666; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 12px; display: block;">
-            🧹 Limpiar Console
-        </button>
-    </div>
 
     <!-- Video Hero Section -->
     <section class="video-hero">
@@ -1848,8 +1842,25 @@
                                 <td data-label="P. 200m Libre" class="points">${puntos200m || '-'}</td>
                             </tr>`;
                     } else {
-                        // Para tablas de pruebas individuales
-                        const [pos, swimmer, equipo, edad, categoria, tiempo, puntos] = row;
+                        // Para tablas de pruebas individuales - manejo más robusto de columnas
+                        let pos, swimmer, equipo, edad, categoria, tiempo, puntos;
+                        
+                        if (row.length >= 7) {
+                            [pos, swimmer, equipo, edad, categoria, tiempo, puntos] = row;
+                        } else if (row.length === 6) {
+                            // Posible formato sin puntos o sin alguna columna
+                            [pos, swimmer, equipo, edad, tiempo, puntos] = row;
+                            categoria = currentCategory;
+                        } else {
+                            // Formato mínimo
+                            pos = row[0];
+                            swimmer = row[1];
+                            equipo = row[2] || '-';
+                            edad = row[3] || '-';
+                            categoria = row[4] || currentCategory;
+                            tiempo = row[5] || '-';
+                            puntos = row[6] || '-';
+                        }
                         
                         // Skip si no hay nadador
                         if (!swimmer || swimmer === '-' || swimmer.toLowerCase().includes('sin participantes')) {
@@ -2206,14 +2217,14 @@
             // Cargar datos inicialmente
             loadSheetData();
             
-            // Recargar cada 60 segundos (optimizado para no saturar la API)
+            // Recargar cada 3 minutos (optimizado para no saturar la API)
             setInterval(() => {
-                console.log('🔄 Recarga automática cada 60 segundos...');
+                console.log('🔄 Recarga automática cada 3 minutos...');
                 loadAttempts = 0; // Reset attempts counter
                 loadSheetData();
-            }, 60000);
+            }, 180000);
             
-            console.log('✅ Sistema de recarga automática configurado (cada 60 segundos)');
+            console.log('✅ Sistema de recarga automática configurado (cada 3 minutos)');
         }
 
         // Event listeners
