@@ -1597,6 +1597,19 @@
                 if (hasData) {
                     updateStatus('success', '✅ Resultados actualizados');
                     updateLastUpdateTime();
+                    
+                    // Actualizar también tiempo de género si se cargaron tablas de género
+                    if (lastUpdateElementGender) {
+                        const now = new Date();
+                        const timeString = now.toLocaleTimeString('es-CO', {
+                            hour: '2-digit',
+                            minute: '2-digit',
+                            second: '2-digit',
+                            timeZone: 'America/Bogota'
+                        });
+                        lastUpdateElementGender.textContent = timeString;
+                    }
+                    
                     loadAttempts = 0;
                     console.log('🎉 ¡Carga automática completada exitosamente!');
                 } else {
