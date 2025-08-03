@@ -1567,7 +1567,14 @@
                             const table = document.getElementById(config.tableId);
                             if (table) {
                                 console.log(`🔄 Actualizando tabla ${competitionKey}...`);
-                                updateTableContent(table, data, config.genderColumn);
+                                
+                                // Usar función específica para tabla de equipos
+                                if (competitionKey === 'resultados-equipo' || config.tableId === 'resultsTableTeams') {
+                                    updateTeamTableContent(table, data);
+                                } else {
+                                    updateTableContent(table, data, config.genderColumn);
+                                }
+                                
                                 table.classList.remove('loading');
                                 hasData = true;
                                 console.log(`✅ Tabla ${competitionKey} actualizada`);
@@ -1777,6 +1784,10 @@
             let htmlContent = '';
             let currentCategory = '';
             
+            // Detectar si es tabla de género (tiene más columnas)
+            const isGenderTable = table.id.includes('General') || table.id.includes('resultados');
+            const colspan = isGenderTable ? "9" : "7";
+            
             for (let i = 1; i < data.length; i++) {
                 const row = data[i];
                 if (!row || row.length === 0) continue;
@@ -1789,51 +1800,96 @@
                         currentCategory = categoryText;
                         htmlContent += `
                             <tr class="category-header">
-                                <td colspan="7">${currentCategory}</td>
+                                <td colspan="${colspan}">${currentCategory}</td>
                             </tr>`;
                     }
                 } else if (row.length >= 6) {
                     // Es un resultado
-                    const [pos, swimmer, equipo, edad, categoria, tiempo, puntos] = row;
-                    
-                    // Skip si no hay nadador
-                    if (!swimmer || swimmer === '-' || swimmer.toLowerCase().includes('sin participantes')) {
-                        if (swimmer && swimmer.toLowerCase().includes('sin participantes')) {
-                            htmlContent += `
-                                <tr>
-                                    <td data-label="Pos." class="rank" style="text-align: center; color: #a5a5a5;">-</td>
-                                    <td data-label="${swimmerLabel}" style="color: #a5a5a5; font-style: italic;">Sin participantes</td>
-                                    <td data-label="Equipo" style="color: #a5a5a5;">-</td>
-                                    <td data-label="Edad" style="color: #a5a5a5;">-</td>
-                                    <td data-label="Categoría" style="color: #a5a5a5;">${currentCategory}</td>
-                                    <td data-label="Tiempo Final" style="color: #a5a5a5;">-</td>
-                                    <td data-label="Puntos" style="color: #a5a5a5;">-</td>
-                                </tr>`;
+                    if (isGenderTable) {
+                        // Para tablas de género con más columnas
+                        const [pos, swimmer, equipo, edad, categoria, puntosTotal, puntos50m, puntos100m, puntos200m] = row;
+                        
+                        // Skip si no hay nadador
+                        if (!swimmer || swimmer === '-' || swimmer.toLowerCase().includes('sin participantes')) {
+                            if (swimmer && swimmer.toLowerCase().includes('sin participantes')) {
+                                htmlContent += `
+                                    <tr>
+                                        <td data-label="Pos." class="rank" style="text-align: center; color: #a5a5a5;">-</td>
+                                        <td data-label="${swimmerLabel}" style="color: #a5a5a5; font-style: italic;">Sin participantes</td>
+                                        <td data-label="Equipo" style="color: #a5a5a5;">-</td>
+                                        <td data-label="Edad" style="color: #a5a5a5;">-</td>
+                                        <td data-label="Categoría" style="color: #a5a5a5;">${currentCategory}</td>
+                                        <td data-label="Puntos Totales" style="color: #a5a5a5;">-</td>
+                                        <td data-label="P. 50m Libre" style="color: #a5a5a5;">-</td>
+                                        <td data-label="P. 100m Libre" style="color: #a5a5a5;">-</td>
+                                        <td data-label="P. 200m Libre" style="color: #a5a5a5;">-</td>
+                                    </tr>`;
+                            }
+                            continue;
                         }
-                        continue;
+                        
+                        // Generar medallas para las posiciones
+                        let displayPos = pos;
+                        if (pos === '1' || pos === 1) displayPos = '🥇 1°';
+                        else if (pos === '2' || pos === 2) displayPos = '🥈 2°';
+                        else if (pos === '3' || pos === 3) displayPos = '🥉 3°';
+                        else if (pos && pos !== '-' && pos !== '') displayPos = `${pos}°`;
+                        
+                        htmlContent += `
+                            <tr>
+                                <td data-label="Pos." class="rank">${displayPos || '-'}</td>
+                                <td data-label="${swimmerLabel}">${swimmer || '-'}</td>
+                                <td data-label="Equipo">${equipo || '-'}</td>
+                                <td data-label="Edad">${edad || '-'}</td>
+                                <td data-label="Categoría">${categoria || currentCategory}</td>
+                                <td data-label="Puntos Totales" class="points">${puntosTotal || '-'}</td>
+                                <td data-label="P. 50m Libre" class="points">${puntos50m || '-'}</td>
+                                <td data-label="P. 100m Libre" class="points">${puntos100m || '-'}</td>
+                                <td data-label="P. 200m Libre" class="points">${puntos200m || '-'}</td>
+                            </tr>`;
+                    } else {
+                        // Para tablas de pruebas individuales
+                        const [pos, swimmer, equipo, edad, categoria, tiempo, puntos] = row;
+                        
+                        // Skip si no hay nadador
+                        if (!swimmer || swimmer === '-' || swimmer.toLowerCase().includes('sin participantes')) {
+                            if (swimmer && swimmer.toLowerCase().includes('sin participantes')) {
+                                htmlContent += `
+                                    <tr>
+                                        <td data-label="Pos." class="rank" style="text-align: center; color: #a5a5a5;">-</td>
+                                        <td data-label="${swimmerLabel}" style="color: #a5a5a5; font-style: italic;">Sin participantes</td>
+                                        <td data-label="Equipo" style="color: #a5a5a5;">-</td>
+                                        <td data-label="Edad" style="color: #a5a5a5;">-</td>
+                                        <td data-label="Categoría" style="color: #a5a5a5;">${currentCategory}</td>
+                                        <td data-label="Tiempo Final" style="color: #a5a5a5;">-</td>
+                                        <td data-label="Puntos" style="color: #a5a5a5;">-</td>
+                                    </tr>`;
+                            }
+                            continue;
+                        }
+                        
+                        // Generar medallas para las posiciones
+                        let displayPos = pos;
+                        if (pos === '1' || pos === 1) displayPos = '🥇 1°';
+                        else if (pos === '2' || pos === 2) displayPos = '🥈 2°';
+                        else if (pos === '3' || pos === 3) displayPos = '🥉 3°';
+                        else if (pos && pos !== '-' && pos !== '') displayPos = `${pos}°`;
+                        
+                        htmlContent += `
+                            <tr>
+                                <td data-label="Pos." class="rank">${displayPos || '-'}</td>
+                                <td data-label="${swimmerLabel}">${swimmer || '-'}</td>
+                                <td data-label="Equipo">${equipo || '-'}</td>
+                                <td data-label="Edad">${edad || '-'}</td>
+                                <td data-label="Categoría">${categoria || currentCategory}</td>
+                                <td data-label="Tiempo Final" class="time">${tiempo || '-'}</td>
+                                <td data-label="Puntos" class="points">${puntos || '-'}</td>
+                            </tr>`;
                     }
-                    
-                    // Generar medallas para las posiciones
-                    let displayPos = pos;
-                    if (pos === '1' || pos === 1) displayPos = '🥇 1°';
-                    else if (pos === '2' || pos === 2) displayPos = '🥈 2°';
-                    else if (pos === '3' || pos === 3) displayPos = '🥉 3°';
-                    else if (pos && pos !== '-' && pos !== '') displayPos = `${pos}°`;
-                    
-                    htmlContent += `
-                        <tr>
-                            <td data-label="Pos." class="rank">${displayPos || '-'}</td>
-                            <td data-label="${swimmerLabel}">${swimmer || '-'}</td>
-                            <td data-label="Equipo">${equipo || '-'}</td>
-                            <td data-label="Edad">${edad || '-'}</td>
-                            <td data-label="Categoría">${categoria || currentCategory}</td>
-                            <td data-label="Tiempo Final" class="time">${tiempo || '-'}</td>
-                            <td data-label="Puntos" class="points">${puntos || '-'}</td>
-                        </tr>`;
                 }
             }
             
-            tbody.innerHTML = htmlContent || '<tr><td colspan="7" style="text-align: center;">No hay datos disponibles</td></tr>';
+            tbody.innerHTML = htmlContent || `<tr><td colspan="${colspan}" style="text-align: center;">No hay datos disponibles</td></tr>`;
         }
 
         // Función auxiliar para actualizar contenido de tabla de equipos
@@ -2150,14 +2206,14 @@
             // Cargar datos inicialmente
             loadSheetData();
             
-            // Recargar cada 10 segundos (más frecuente para detectar cambios)
+            // Recargar cada 60 segundos (optimizado para no saturar la API)
             setInterval(() => {
-                console.log('🔄 Recarga automática cada 10 segundos...');
+                console.log('🔄 Recarga automática cada 60 segundos...');
                 loadAttempts = 0; // Reset attempts counter
                 loadSheetData();
-            }, 30000);
+            }, 60000);
             
-            console.log('✅ Sistema de recarga automática configurado (cada 10 segundos)');
+            console.log('✅ Sistema de recarga automática configurado (cada 60 segundos)');
         }
 
         // Event listeners
