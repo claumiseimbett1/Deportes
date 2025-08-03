@@ -883,6 +883,238 @@
                 display: inline-block;
             }
         }
+
+        /* Share Button Styles */
+        .share-cell {
+            text-align: center !important;
+            padding: 8px !important;
+        }
+
+        .share-btn {
+            background: linear-gradient(135deg, #1e88e5, #00adef);
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 5px rgba(30, 136, 229, 0.3);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 35px;
+            height: 35px;
+        }
+
+        .share-btn:hover {
+            background: linear-gradient(135deg, #1976d2, #0099cc);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(30, 136, 229, 0.4);
+        }
+
+        .share-btn:active {
+            transform: translateY(0px);
+        }
+
+        /* Share Modal Styles */
+        .share-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 10000;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .share-modal-content {
+            background: white;
+            border-radius: 15px;
+            padding: 0;
+            max-width: 400px;
+            width: 90%;
+            max-height: 90vh;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            animation: slideUp 0.3s ease;
+        }
+
+        .share-modal-header {
+            background: linear-gradient(135deg, #1e88e5, #00adef);
+            color: white;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .share-modal-header h3 {
+            margin: 0;
+            font-size: 1.2rem;
+        }
+
+        .close-modal {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            padding: 0;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: background 0.3s ease;
+        }
+
+        .close-modal:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .share-options {
+            padding: 25px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .share-option {
+            display: flex;
+            align-items: center;
+            padding: 15px 20px;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            background: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 16px;
+            font-weight: 500;
+            text-decoration: none;
+            color: #333;
+        }
+
+        .share-option:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .share-option.whatsapp {
+            border-color: #25d366;
+            color: #25d366;
+        }
+
+        .share-option.whatsapp:hover {
+            background: #25d366;
+            color: white;
+        }
+
+        .share-option.instagram {
+            border-color: #e4405f;
+            color: #e4405f;
+        }
+
+        .share-option.instagram:hover {
+            background: #e4405f;
+            color: white;
+        }
+
+        .share-icon {
+            margin-right: 12px;
+            font-size: 20px;
+        }
+
+        /* Clipboard Notification */
+        .clipboard-notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: linear-gradient(135deg, #4caf50, #45a049);
+            color: white;
+            padding: 15px 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
+            z-index: 10001;
+            transform: translateX(400px);
+            transition: transform 0.3s ease;
+            max-width: 300px;
+        }
+
+        .clipboard-notification.show {
+            transform: translateX(0);
+        }
+
+        .notification-content {
+            text-align: center;
+            font-weight: 500;
+        }
+
+        .notification-content small {
+            opacity: 0.9;
+            font-size: 0.9em;
+        }
+
+        /* Responsive adjustments for share button */
+        @media (max-width: 768px) {
+            .share-btn {
+                width: 30px;
+                height: 30px;
+                font-size: 14px;
+                padding: 6px;
+            }
+
+            .share-modal-content {
+                width: 95%;
+                margin: 20px;
+            }
+
+            .share-modal-header {
+                padding: 15px;
+            }
+
+            .share-modal-header h3 {
+                font-size: 1.1rem;
+            }
+
+            .share-options {
+                padding: 20px;
+            }
+
+            .share-option {
+                padding: 12px 15px;
+                font-size: 15px;
+            }
+
+            .clipboard-notification {
+                right: 10px;
+                top: 10px;
+                max-width: 280px;
+                padding: 12px 16px;
+            }
+        }
+
+        /* Animation keyframes */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideUp {
+            from { 
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to { 
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
     </style>
 </head>
 <body>
@@ -1011,11 +1243,12 @@
                                 <th>Categoría</th>
                                 <th>Tiempo Final</th>
                                 <th>Puntos</th>
+                                <th>Compartir</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr class="loading-row">
-                                <td colspan="7" style="text-align: center; padding: 40px; color: #a5a5a5;">
+                                <td colspan="8" style="text-align: center; padding: 40px; color: #a5a5a5;">
                                     🔄 Cargando datos desde Google Sheets...
                                 </td>
                             </tr>
@@ -1035,11 +1268,12 @@
                                 <th>Categoría</th>
                                 <th>Tiempo Final</th>
                                 <th>Puntos</th>
+                                <th>Compartir</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr class="loading-row">
-                                <td colspan="7" style="text-align: center; padding: 40px; color: #a5a5a5;">
+                                <td colspan="8" style="text-align: center; padding: 40px; color: #a5a5a5;">
                                     🔄 Cargando datos desde Google Sheets...
                                 </td>
                             </tr>
@@ -1059,11 +1293,12 @@
                                 <th>Categoría</th>
                                 <th>Tiempo Final</th>
                                 <th>Puntos</th>
+                                <th>Compartir</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr class="loading-row">
-                                <td colspan="7" style="text-align: center; padding: 40px; color: #a5a5a5;">
+                                <td colspan="8" style="text-align: center; padding: 40px; color: #a5a5a5;">
                                     🔄 Cargando datos desde Google Sheets...
                                 </td>
                             </tr>
@@ -1083,11 +1318,12 @@
                                 <th>Categoría</th>
                                 <th>Tiempo Final</th>
                                 <th>Puntos</th>
+                                <th>Compartir</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr class="loading-row">
-                                <td colspan="7" style="text-align: center; padding: 40px; color: #a5a5a5;">
+                                <td colspan="8" style="text-align: center; padding: 40px; color: #a5a5a5;">
                                     🔄 Cargando datos desde Google Sheets...
                                 </td>
                             </tr>
@@ -1107,11 +1343,12 @@
                                 <th>Categoría</th>
                                 <th>Tiempo Final</th>
                                 <th>Puntos</th>
+                                <th>Compartir</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr class="loading-row">
-                                <td colspan="7" style="text-align: center; padding: 40px; color: #a5a5a5;">
+                                <td colspan="8" style="text-align: center; padding: 40px; color: #a5a5a5;">
                                     🔄 Cargando datos desde Google Sheets...
                                 </td>
                             </tr>
@@ -1131,11 +1368,12 @@
                                 <th>Categoría</th>
                                 <th>Tiempo Final</th>
                                 <th>Puntos</th>
+                                <th>Compartir</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr class="loading-row">
-                                <td colspan="7" style="text-align: center; padding: 40px; color: #a5a5a5;">
+                                <td colspan="8" style="text-align: center; padding: 40px; color: #a5a5a5;">
                                     🔄 Cargando datos desde Google Sheets...
                                 </td>
                             </tr>
@@ -1155,11 +1393,12 @@
                                 <th>Categoría</th>
                                 <th>Tiempo Final</th>
                                 <th>Puntos</th>
+                                <th>Compartir</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr class="loading-row">
-                                <td colspan="7" style="text-align: center; padding: 40px; color: #a5a5a5;">
+                                <td colspan="8" style="text-align: center; padding: 40px; color: #a5a5a5;">
                                     🔄 Cargando datos desde Google Sheets...
                                 </td>
                             </tr>
@@ -1179,11 +1418,12 @@
                                 <th>Categoría</th>
                                 <th>Tiempo Final</th>
                                 <th>Puntos</th>
+                                <th>Compartir</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr class="loading-row">
-                                <td colspan="7" style="text-align: center; padding: 40px; color: #a5a5a5;">
+                                <td colspan="8" style="text-align: center; padding: 40px; color: #a5a5a5;">
                                     🔄 Cargando datos desde Google Sheets...
                                 </td>
                             </tr>
@@ -1234,6 +1474,7 @@
                                 <th>P. 200m Libre</th>
                                 <th>P. 50m Libre</th>
                                 <th>P. 100m Libre</th>
+                                <th>Compartir</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -1261,6 +1502,7 @@
                                 <th>P. 200m Libre</th>
                                 <th>P. 50m Libre</th>
                                 <th>P. 100m Libre</th>
+                                <th>Compartir</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -1297,11 +1539,12 @@
                             <th>Puntos Totales</th>
                             <th>Puntos Femeninos</th>
                             <th>Puntos Masculinos</th>
+                            <th>Compartir</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr class="loading-row">
-                            <td colspan="5" style="text-align: center; padding: 40px; color: #a5a5a5;">
+                            <td colspan="6" style="text-align: center; padding: 40px; color: #a5a5a5;">
                                 🔄 Cargando clasificación de equipos...
                             </td>
                         </tr>
@@ -1793,7 +2036,7 @@
                         // Mostrar mensaje específico en la tabla
                         const table = document.getElementById(config.tableId);
                         if (table) {
-                            table.innerHTML = `<tr><td colspan="4" style="text-align: center; padding: 20px; color: #666;">
+                            table.innerHTML = `<tr><td colspan="8" style="text-align: center; padding: 20px; color: #666;">
                                 No se encontró pestaña para ${competitionKey}<br>
                                 <small>Palabras clave: ${config.keywords.join(', ')}</small>
                             </td></tr>`;
@@ -2002,7 +2245,7 @@
             
             // Detectar si es tabla de género (tiene más columnas)
             const isGenderTable = table.id.includes('General') || table.id.includes('resultados');
-            const colspan = isGenderTable ? "9" : "7";
+            const colspan = isGenderTable ? "10" : "8";
             
             for (let i = 1; i < data.length; i++) {
                 const row = data[i];
@@ -2039,6 +2282,7 @@
                                         <td data-label="P. 50m Libre" style="color: #a5a5a5;">-</td>
                                         <td data-label="P. 100m Libre" style="color: #a5a5a5;">-</td>
                                         <td data-label="P. 200m Libre" style="color: #a5a5a5;">-</td>
+                                        <td data-label="Compartir" style="color: #a5a5a5;">-</td>
                                     </tr>`;
                             }
                             continue;
@@ -2062,6 +2306,11 @@
                                 <td data-label="P. 50m Libre" class="points">${puntos50m || '-'}</td>
                                 <td data-label="P. 100m Libre" class="points">${puntos100m || '-'}</td>
                                 <td data-label="P. 200m Libre" class="points">${puntos200m || '-'}</td>
+                                <td data-label="Compartir" class="share-cell">
+                                    <button class="share-btn" onclick="showShareOptions('${(swimmer || '').replace(/'/g, '\\\'')
+                                    }', '${pos || ''}', 'N/A', '${(categoria || currentCategory || '').replace(/'/g, '\\\'')
+                                    }')">📱</button>
+                                </td>
                             </tr>`;
                     } else {
                         // Para tablas de pruebas individuales - manejo más robusto de columnas
@@ -2096,6 +2345,7 @@
                                         <td data-label="Categoría" style="color: #a5a5a5;">${currentCategory}</td>
                                         <td data-label="Tiempo Final" style="color: #a5a5a5;">-</td>
                                         <td data-label="Puntos" style="color: #a5a5a5;">-</td>
+                                        <td data-label="Compartir" style="color: #a5a5a5;">-</td>
                                     </tr>`;
                             }
                             continue;
@@ -2117,6 +2367,12 @@
                                 <td data-label="Categoría">${categoria || currentCategory}</td>
                                 <td data-label="Tiempo Final" class="time">${tiempo || '-'}</td>
                                 <td data-label="Puntos" class="points">${puntos || '-'}</td>
+                                <td data-label="Compartir" class="share-cell">
+                                    <button class="share-btn" onclick="showShareOptions('${(swimmer || '').replace(/'/g, '\\\'')
+                                    }', '${pos || ''}', '${(tiempo || '').replace(/'/g, '\\\'')
+                                    }', '${(categoria || currentCategory || '').replace(/'/g, '\\\'')
+                                    }')">📱</button>
+                                </td>
                             </tr>`;
                     }
                 }
@@ -2161,6 +2417,10 @@
                             <td data-label="Puntos Totales" class="points" style="font-weight: bold; color: #00ADEF; font-size: 1.1em;">${puntosTotales || '0'}</td>
                             <td data-label="Puntos Femeninos" class="points" style="color: #e91e63;">${puntosFemeninos || '0'}</td>
                             <td data-label="Puntos Masculinos" class="points" style="color: #2196f3;">${puntosMasculinos || '0'}</td>
+                            <td data-label="Compartir" class="share-cell">
+                                <button class="share-btn" onclick="showShareOptions('${(equipo || '').replace(/'/g, '\\\'')
+                                }', '${lugar || ''}', 'N/A', 'Clasificación por Equipos')">📱</button>
+                            </td>
                         </tr>`;
                     
                     // Contenido para versión móvil
@@ -2186,7 +2446,7 @@
                 }
             }
             
-            tbody.innerHTML = htmlContent || '<tr><td colspan="5" style="text-align: center;">No hay datos de equipos disponibles</td></tr>';
+            tbody.innerHTML = htmlContent || '<tr><td colspan="6" style="text-align: center;">No hay datos de equipos disponibles</td></tr>';
             
             // Crear o actualizar contenedor móvil
             let mobileContainer = table.parentElement.querySelector('.mobile-teams-container');
@@ -2315,7 +2575,7 @@
                     if (tbody) {
                         // Ajustar el colspan según el tipo de tabla
                         const isTeamTable = table.id === 'resultsTableTeams';
-                        const colspan = isTeamTable ? '5' : '7';
+                        const colspan = isTeamTable ? '6' : '8';
                         const adjustedErrorHTML = errorHTML.replace('colspan="7"', `colspan="${colspan}"`);
                         tbody.innerHTML = adjustedErrorHTML;
                     }
@@ -2677,6 +2937,159 @@
                     infoElement.textContent = `Se encontraron ${found} resultado${found !== 1 ? 's' : ''} de ${total} total${total !== 1 ? 'es' : ''}`;
                 }
             }
+        }
+
+        // Compartir funcionalidad
+        function showShareOptions(swimmer, position, time, category) {
+            // Limpiar datos para evitar problemas de formato
+            swimmer = swimmer.replace(/['"]/g, '');
+            category = category.replace(/['"]/g, '');
+            time = time.replace(/['"]/g, '');
+            
+            // Determinar la prueba actual basado en el tab activo
+            const activeTab = document.querySelector('.tab-button.active');
+            let prueba = 'Natación';
+            if (activeTab) {
+                const tabText = activeTab.textContent;
+                if (tabText.includes('50m')) prueba = '50m Libre';
+                else if (tabText.includes('100m')) prueba = '100m Libre';
+                else if (tabText.includes('200m')) prueba = '200m Libre';
+                else if (tabText.includes('4x50m')) prueba = '4x50m Libre';
+                else if (tabText.includes('Masculino General')) prueba = 'Clasificación General Masculina';
+                else if (tabText.includes('Femenino General')) prueba = 'Clasificación General Femenina';
+                else if (tabText.includes('Equipos')) prueba = 'Clasificación por Equipos';
+            }
+            
+            const shareModal = document.createElement('div');
+            shareModal.className = 'share-modal';
+            shareModal.innerHTML = `
+                <div class="share-modal-content">
+                    <div class="share-modal-header">
+                        <h3>🏊‍♂️ Compartir Resultado</h3>
+                        <button class="close-modal" onclick="closeShareModal()">&times;</button>
+                    </div>
+                    <div class="share-options">
+                        <button class="share-option whatsapp" onclick="shareToWhatsApp('${swimmer}', '${position}', '${time}', '${prueba}')">
+                            <span class="share-icon">💬</span>
+                            WhatsApp
+                        </button>
+                        <button class="share-option instagram" onclick="shareToInstagram('${swimmer}', '${position}', '${time}', '${prueba}')">
+                            <span class="share-icon">📷</span>
+                            Instagram Stories
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(shareModal);
+            
+            // Cerrar modal al hacer clic fuera de él
+            shareModal.addEventListener('click', function(e) {
+                if (e.target === shareModal) {
+                    closeShareModal();
+                }
+            });
+        }
+
+        function closeShareModal() {
+            const modal = document.querySelector('.share-modal');
+            if (modal) {
+                modal.remove();
+            }
+        }
+
+        function shareToWhatsApp(swimmer, position, time, prueba) {
+            let message;
+            if (time && time !== 'N/A' && time !== '-') {
+                // Para nadadores individuales con tiempo
+                message = `🏊‍♂️ ${swimmer} terminó en posición ${position} con tiempo ${time} en ${prueba} - IV Championship Master AquaTEN! 🏆 
+
+Ver más resultados: https://ivchampionship.netlify.app`;
+            } else {
+                // Para equipos o clasificación general
+                if (prueba.includes('Equipos')) {
+                    message = `🏊‍♂️ El equipo ${swimmer} obtuvo el lugar ${position} en la ${prueba} - IV Championship Master AquaTEN! 🏆 
+
+Ver más resultados: https://ivchampionship.netlify.app`;
+                } else {
+                    message = `🏊‍♂️ ${swimmer} obtuvo la posición ${position} en ${prueba} - IV Championship Master AquaTEN! 🏆 
+
+Ver más resultados: https://ivchampionship.netlify.app`;
+                }
+            }
+            
+            const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(message)}`;
+            window.open(whatsappUrl, '_blank');
+            closeShareModal();
+        }
+
+        function shareToInstagram(swimmer, position, time, prueba) {
+            let message;
+            if (time && time !== 'N/A' && time !== '-') {
+                // Para nadadores individuales con tiempo
+                message = `🏊‍♂️ ${swimmer} terminó en posición ${position} con tiempo ${time} en ${prueba} - IV Championship Master AquaTEN! 🏆 
+
+#NataciónMaster #AquaTEN #Championship2024 #Swimming
+
+Ver resultados completos: https://ivchampionship.netlify.app`;
+            } else {
+                // Para equipos o clasificación general
+                if (prueba.includes('Equipos')) {
+                    message = `🏊‍♂️ El equipo ${swimmer} obtuvo el lugar ${position} en la ${prueba} - IV Championship Master AquaTEN! 🏆 
+
+#NataciónMaster #AquaTEN #Championship2024 #Swimming #Equipos
+
+Ver resultados completos: https://ivchampionship.netlify.app`;
+                } else {
+                    message = `🏊‍♂️ ${swimmer} obtuvo la posición ${position} en ${prueba} - IV Championship Master AquaTEN! 🏆 
+
+#NataciónMaster #AquaTEN #Championship2024 #Swimming
+
+Ver resultados completos: https://ivchampionship.netlify.app`;
+                }
+            }
+            
+            // Copiar al clipboard
+            navigator.clipboard.writeText(message).then(function() {
+                // Mostrar mensaje de confirmación
+                showClipboardMessage();
+            }).catch(function(err) {
+                console.error('Error al copiar al portapapeles: ', err);
+                // Fallback para navegadores que no soportan clipboard API
+                const textArea = document.createElement('textarea');
+                textArea.value = message;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                showClipboardMessage();
+            });
+            
+            closeShareModal();
+        }
+
+        function showClipboardMessage() {
+            const notification = document.createElement('div');
+            notification.className = 'clipboard-notification';
+            notification.innerHTML = `
+                <div class="notification-content">
+                    ✅ Texto copiado al portapapeles
+                    <br><small>Ahora puedes pegarlo en Instagram Stories</small>
+                </div>
+            `;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.classList.add('show');
+            }, 100);
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+                setTimeout(() => {
+                    notification.remove();
+                }, 300);
+            }, 3000);
         }
     </script>
 </body>
