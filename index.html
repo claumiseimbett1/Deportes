@@ -1131,7 +1131,7 @@
     <section class="cta-section">
         <div class="container">
             <h2>¿Listo para competir?</h2>
-            <p>Únete a los mejores nadadores en esta emocionante competencia, en esta IV versión del Championship Master Swimming organizada por los Clubes Deportivos AQUATEN y ELIANASNATACION</p>
+            <p>Únete a los mejores nadadores en esta emocionante competencia, en esta IV versión del Championship Master Swimming organizada por los Clubes Deportivos AQUATEN y ELYANASNATACION</p>
             <a href="#" class="cta-button">Más Información</a>
         </div>
     </section>
@@ -1596,12 +1596,12 @@
                 // Actualizar estado final (siempre completar, aunque solo se carguen algunas pestañas)
                 if (hasData) {
                     updateStatus('success', '✅ Resultados actualizados');
-                    lastUpdateTime = new Date();
+                    updateLastUpdateTime();
                     loadAttempts = 0;
                     console.log('🎉 ¡Carga automática completada exitosamente!');
                 } else {
                     updateStatus('warning', '⚠️ No se encontraron pestañas coincidentes');
-                    lastUpdateTime = new Date();
+                    updateLastUpdateTime();
                     loadAttempts = 0;
                     console.log('⚠️ No se pudieron cargar datos - verificar nombres de pestañas');
                     // No hacer throw para evitar que se quede cargando infinitamente
