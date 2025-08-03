@@ -125,6 +125,74 @@
             transform: rotate(45deg) translate(-5px, -6px);
         }
 
+        /* Search Box Styles */
+        .search-container {
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .search-box {
+            display: inline-flex;
+            align-items: center;
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 25px;
+            padding: 8px 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            max-width: 400px;
+            width: 100%;
+        }
+
+        .search-box:focus-within {
+            border-color: #00ADEF;
+            box-shadow: 0 4px 15px rgba(0, 173, 239, 0.2);
+        }
+
+        .search-input {
+            border: none;
+            outline: none;
+            padding: 8px 12px;
+            font-size: 16px;
+            width: 100%;
+            background: transparent;
+        }
+
+        .search-input::placeholder {
+            color: #999;
+        }
+
+        .search-icon {
+            color: #666;
+            margin-right: 8px;
+        }
+
+        .clear-search {
+            background: none;
+            border: none;
+            color: #666;
+            cursor: pointer;
+            padding: 4px;
+            border-radius: 50%;
+            transition: background-color 0.3s ease;
+        }
+
+        .clear-search:hover {
+            background-color: #f0f0f0;
+        }
+
+        .search-results-info {
+            text-align: center;
+            margin: 10px 0;
+            color: #666;
+            font-size: 14px;
+        }
+
+        .highlight-search {
+            background-color: #ffeb3b;
+            font-weight: bold;
+        }
+
         /* Status indicator */
         .status-indicator {
             position: fixed;
@@ -904,6 +972,17 @@
     <section class="results-section" id="resultados">
         <div class="container">
             <h2 class="section-title">Resultados por Pruebas</h2>
+            
+            <!-- Search Container for Pruebas -->
+            <div class="search-container">
+                <div class="search-box">
+                    <span class="search-icon">🔍</span>
+                    <input type="text" class="search-input" id="searchPruebas" placeholder="Buscar participante por nombre...">
+                    <button class="clear-search" onclick="clearSearch('searchPruebas')" style="display: none;">✕</button>
+                </div>
+                <div class="search-results-info" id="searchResultsPruebas"></div>
+            </div>
+            
             <div class="results-container">
                 <div class="last-update">
                     Última actualización: <span class="time" id="lastUpdateTime">Cargando...</span>
@@ -1119,6 +1198,17 @@
     <section class="results-section">
         <div class="container">
             <h2 class="section-title">Resultados por Género</h2>
+            
+            <!-- Search Container for Gender -->
+            <div class="search-container">
+                <div class="search-box">
+                    <span class="search-icon">🔍</span>
+                    <input type="text" class="search-input" id="searchGender" placeholder="Buscar participante por nombre...">
+                    <button class="clear-search" onclick="clearSearch('searchGender')" style="display: none;">✕</button>
+                </div>
+                <div class="search-results-info" id="searchResultsGender"></div>
+            </div>
+            
             <div class="results-container">
                 <div class="last-update">
                     Última actualización: <span class="time" id="lastUpdateTimeGender">Cargando...</span>
@@ -2442,7 +2532,152 @@
             if (mobileToggle) {
                 mobileToggle.addEventListener('click', toggleMobileMenu);
             }
+            
+            // Initialize search functionality
+            initializeSearch();
         });
+
+        // Search Functionality
+        function initializeSearch() {
+            // Search for Pruebas section
+            const searchPruebas = document.getElementById('searchPruebas');
+            if (searchPruebas) {
+                searchPruebas.addEventListener('input', function() {
+                    performSearch(this.value, 'pruebas');
+                    toggleClearButton('searchPruebas');
+                });
+            }
+
+            // Search for Gender section
+            const searchGender = document.getElementById('searchGender');
+            if (searchGender) {
+                searchGender.addEventListener('input', function() {
+                    performSearch(this.value, 'gender');
+                    toggleClearButton('searchGender');
+                });
+            }
+        }
+
+        function toggleClearButton(inputId) {
+            const input = document.getElementById(inputId);
+            const clearBtn = input.nextElementSibling;
+            if (input.value.length > 0) {
+                clearBtn.style.display = 'block';
+            } else {
+                clearBtn.style.display = 'none';
+            }
+        }
+
+        function clearSearch(inputId) {
+            const input = document.getElementById(inputId);
+            input.value = '';
+            toggleClearButton(inputId);
+            
+            // Clear search based on section
+            if (inputId === 'searchPruebas') {
+                performSearch('', 'pruebas');
+            } else if (inputId === 'searchGender') {
+                performSearch('', 'gender');
+            }
+        }
+
+        function performSearch(searchTerm, section) {
+            const normalizedTerm = searchTerm.toLowerCase().trim();
+            let foundResults = 0;
+            let totalResults = 0;
+            
+            if (section === 'pruebas') {
+                // Search in all pruebas tables
+                const tables = ['resultsTableFem', 'resultsTableMas', 'resultsTable100mFem', 'resultsTable100mMas', 
+                               'resultsTable200mFem', 'resultsTable200mMas', 'resultsTable4x50mFem', 'resultsTable4x50mMas'];
+                
+                tables.forEach(tableId => {
+                    const table = document.getElementById(tableId);
+                    if (table) {
+                        const result = searchInTable(table, normalizedTerm);
+                        foundResults += result.found;
+                        totalResults += result.total;
+                    }
+                });
+                
+                updateSearchInfo('searchResultsPruebas', foundResults, totalResults, searchTerm);
+                
+            } else if (section === 'gender') {
+                // Search in gender tables
+                const tables = ['resultsTableMasculinoGeneral', 'resultsTableFemeninoGeneral'];
+                
+                tables.forEach(tableId => {
+                    const table = document.getElementById(tableId);
+                    if (table) {
+                        const result = searchInTable(table, normalizedTerm);
+                        foundResults += result.found;
+                        totalResults += result.total;
+                    }
+                });
+                
+                updateSearchInfo('searchResultsGender', foundResults, totalResults, searchTerm);
+            }
+        }
+
+        function searchInTable(table, searchTerm) {
+            const rows = table.getElementsByTagName('tr');
+            let foundResults = 0;
+            let totalResults = 0;
+            
+            for (let i = 0; i < rows.length; i++) {
+                const row = rows[i];
+                
+                // Skip header rows
+                if (row.classList.contains('category-header') || i === 0) {
+                    continue;
+                }
+                
+                const cells = row.getElementsByTagName('td');
+                if (cells.length === 0) continue;
+                
+                totalResults++;
+                let rowContainsSearch = false;
+                
+                // Search in name column (usually first or second column)
+                for (let j = 0; j < Math.min(cells.length, 3); j++) {
+                    const cellText = cells[j].textContent.toLowerCase();
+                    
+                    // Remove previous highlights
+                    cells[j].innerHTML = cells[j].textContent;
+                    
+                    if (searchTerm && cellText.includes(searchTerm)) {
+                        rowContainsSearch = true;
+                        // Highlight the search term
+                        const originalText = cells[j].textContent;
+                        const regex = new RegExp(`(${searchTerm})`, 'gi');
+                        cells[j].innerHTML = originalText.replace(regex, '<span class="highlight-search">$1</span>');
+                    }
+                }
+                
+                // Show/hide row based on search
+                if (searchTerm === '' || rowContainsSearch) {
+                    row.style.display = '';
+                    if (rowContainsSearch) foundResults++;
+                } else {
+                    row.style.display = 'none';
+                }
+            }
+            
+            return { found: foundResults, total: totalResults };
+        }
+
+        function updateSearchInfo(infoElementId, found, total, searchTerm) {
+            const infoElement = document.getElementById(infoElementId);
+            if (infoElement) {
+                if (searchTerm === '') {
+                    infoElement.textContent = '';
+                } else if (found === 0) {
+                    infoElement.textContent = `No se encontraron resultados para "${searchTerm}"`;
+                } else {
+                    infoElement.textContent = `Se encontraron ${found} resultado${found !== 1 ? 's' : ''} de ${total} total${total !== 1 ? 'es' : ''}`;
+                }
+            }
+        }
     </script>
 </body>
 </html>
