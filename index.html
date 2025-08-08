@@ -3303,8 +3303,16 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
                 
                 // Primero obtener información de todas las hojas disponibles
                 const sheetInfo = await getSheetInfo();
-                console.log('📋 Total de hojas disponibles:', sheetInfo.sheets.length);
-                console.log('📋 Hojas:', sheetInfo.sheets.map((s, i) => `${i}: ${s.properties.title} (GID: ${s.properties.sheetId})`));
+                
+                // Validar que se obtuvieron los datos del sheet
+                if (!sheetInfo || !Array.isArray(sheetInfo)) {
+                    console.error('❌ No se pudo obtener información de las hojas');
+                    console.error('📄 SheetInfo recibido:', sheetInfo);
+                    throw new Error('No se pudo acceder a la información de las hojas del Google Sheet');
+                }
+                
+                console.log('📋 Total de hojas disponibles:', sheetInfo.length);
+                console.log('📋 Hojas:', sheetInfo.map((s, i) => `${i}: ${s.title} (GID: ${s.gid})`));
                 
                 const allData = {
                     eventos: [],
@@ -3315,31 +3323,31 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
                 
                 // Cargar primeras 8 hojas (eventos)
                 console.log('🏊‍♀️ Cargando hojas de eventos (0-7)...');
-                for (let i = 0; i < Math.min(8, sheetInfo.sheets.length); i++) {
-                    const sheet = sheetInfo.sheets[i];
-                    console.log(`📄 Cargando evento ${i + 1}: ${sheet.properties.title}`);
+                for (let i = 0; i < Math.min(8, sheetInfo.length); i++) {
+                    const sheet = sheetInfo[i];
+                    console.log(`📄 Cargando evento ${i + 1}: ${sheet.title}`);
                     
                     try {
-                        const data = await loadSheetByGid(sheet.properties.sheetId);
+                        const data = await loadSheetByGid(sheet.gid);
                         if (data && data.length > 0) {
-                            console.log(`✅ ${sheet.properties.title}: ${data.length} filas`);
+                            console.log(`✅ ${sheet.title}: ${data.length} filas`);
                             allData.eventos.push({
-                                name: sheet.properties.title,
+                                name: sheet.title,
                                 data: data
                             });
                         }
                     } catch (error) {
-                        console.warn(`⚠️ Error cargando ${sheet.properties.title}:`, error);
+                        console.warn(`⚠️ Error cargando ${sheet.title}:`, error);
                     }
                 }
                 
                 // Cargar siguiente 2 hojas (género) - posiciones 8 y 9
                 console.log('👥 Cargando hojas de género (8-9)...');
-                if (sheetInfo.sheets.length > 8) {
-                    const maleSheet = sheetInfo.sheets[8];
-                    console.log(`📄 Cargando masculino: ${maleSheet.properties.title}`);
+                if (sheetInfo.length > 8) {
+                    const maleSheet = sheetInfo[8];
+                    console.log(`📄 Cargando masculino: ${maleSheet.title}`);
                     try {
-                        const maleData = await loadSheetByGid(maleSheet.properties.sheetId);
+                        const maleData = await loadSheetByGid(maleSheet.gid);
                         if (maleData && maleData.length > 0) {
                             console.log(`✅ Masculino: ${maleData.length} filas`);
                             allData.masculino = maleData;
@@ -3349,11 +3357,11 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
                     }
                 }
                 
-                if (sheetInfo.sheets.length > 9) {
-                    const femaleSheet = sheetInfo.sheets[9];
-                    console.log(`📄 Cargando femenino: ${femaleSheet.properties.title}`);
+                if (sheetInfo.length > 9) {
+                    const femaleSheet = sheetInfo[9];
+                    console.log(`📄 Cargando femenino: ${femaleSheet.title}`);
                     try {
-                        const femaleData = await loadSheetByGid(femaleSheet.properties.sheetId);
+                        const femaleData = await loadSheetByGid(femaleSheet.gid);
                         if (femaleData && femaleData.length > 0) {
                             console.log(`✅ Femenino: ${femaleData.length} filas`);
                             allData.femenino = femaleData;
@@ -3365,11 +3373,11 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
                 
                 // Cargar última hoja (equipos)
                 console.log('🏆 Cargando hoja de equipos (última)...');
-                if (sheetInfo.sheets.length > 10) {
-                    const teamSheet = sheetInfo.sheets[sheetInfo.sheets.length - 1];
-                    console.log(`📄 Cargando equipos: ${teamSheet.properties.title}`);
+                if (sheetInfo.length > 10) {
+                    const teamSheet = sheetInfo[sheetInfo.length - 1];
+                    console.log(`📄 Cargando equipos: ${teamSheet.title}`);
                     try {
-                        const teamData = await loadSheetByGid(teamSheet.properties.sheetId);
+                        const teamData = await loadSheetByGid(teamSheet.gid);
                         if (teamData && teamData.length > 0) {
                             console.log(`✅ Equipos: ${teamData.length} filas`);
                             allData.equipos = teamData;
@@ -3390,6 +3398,26 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
                 
             } catch (error) {
                 console.error('❌ Error cargando datos del Google Sheet:', error);
+                
+                // Como fallback, intentar cargar la primera hoja disponible
+                console.log('🔄 Intentando fallback con la primera hoja...');
+                try {
+                    const fallbackData = await loadSheetByGid(0);
+                    if (fallbackData && fallbackData.length > 0) {
+                        console.log('✅ Fallback exitoso:', fallbackData.length, 'filas');
+                        // Organizar todos los datos en eventos como último recurso
+                        return {
+                            eventos: [{ name: 'Resultados Generales', data: fallbackData }],
+                            masculino: [],
+                            femenino: [],
+                            equipos: []
+                        };
+                    }
+                } catch (fallbackError) {
+                    console.error('❌ Fallback también falló:', fallbackError);
+                }
+                
+                // Si todo falla, devolver estructura vacía
                 return {
                     eventos: [],
                     masculino: [],
