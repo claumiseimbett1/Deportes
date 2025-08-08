@@ -3154,13 +3154,16 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
                 const script = document.createElement('script');
                 script.src = 'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
                 script.onload = () => {
-                    if (window.jsPDF) {
-                        resolve();
-                    } else {
-                        reject(new Error('jsPDF no se pudo cargar'));
-                    }
+                    // Esperar un poco para que jsPDF se inicialice completamente
+                    setTimeout(() => {
+                        if (window.jsPDF) {
+                            resolve();
+                        } else {
+                            reject(new Error('jsPDF no se pudo cargar correctamente'));
+                        }
+                    }, 100);
                 };
-                script.onerror = () => reject(new Error('Error cargando jsPDF'));
+                script.onerror = () => reject(new Error('Error cargando jsPDF desde CDN'));
                 document.head.appendChild(script);
             });
         }
@@ -3171,12 +3174,20 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
             const downloadBtn = document.getElementById('downloadPdfBtn');
             
             statusDiv.style.display = 'block';
+            statusDiv.innerHTML = '<p style="color: #0b1039; font-weight: 500;"><span style="font-size: 1.2em;">⏳</span> Cargando librería PDF...</p>';
             downloadBtn.disabled = true;
             downloadBtn.style.opacity = '0.6';
             
             try {
                 // Cargar jsPDF si no está disponible
                 await loadjsPDF();
+                
+                statusDiv.innerHTML = '<p style="color: #0b1039; font-weight: 500;"><span style="font-size: 1.2em;">⏳</span> Generando PDF...</p>';
+                
+                // Verificar que jsPDF se cargó correctamente
+                if (!window.jsPDF) {
+                    throw new Error('jsPDF no está disponible');
+                }
                 
                 const pdf = new window.jsPDF();
                 let yPosition = 20;
@@ -3217,10 +3228,19 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
                 
             } catch (error) {
                 console.error('Error generando PDF:', error);
-                statusDiv.innerHTML = '<p style="color: red;">❌ Error generando PDF. Inténtalo de nuevo.</p>';
+                let errorMessage = 'Error desconocido';
+                if (error.message.includes('jsPDF')) {
+                    errorMessage = 'Error cargando la librería PDF. Verifica tu conexión a internet.';
+                } else if (error.message.includes('network')) {
+                    errorMessage = 'Error de conexión. Verifica tu internet.';
+                } else {
+                    errorMessage = error.message || 'Error procesando los datos para el PDF';
+                }
+                
+                statusDiv.innerHTML = `<p style="color: red;">❌ ${errorMessage}<br><small>Revisa la consola para más detalles.</small></p>`;
                 setTimeout(() => {
                     statusDiv.style.display = 'none';
-                }, 3000);
+                }, 5000);
             } finally {
                 downloadBtn.disabled = false;
                 downloadBtn.style.opacity = '1';
@@ -3230,20 +3250,21 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
         async function addEventResultsToPDF(pdf, startY) {
             let yPosition = startY;
             
-            // Título de sección
-            pdf.setFont("helvetica", "bold");
-            pdf.setFontSize(14);
-            pdf.setTextColor(11, 16, 57);
-            pdf.text("RESULTADOS POR PRUEBAS", 20, yPosition);
-            yPosition += 15;
-            
-            // Obtener datos de cada prueba
-            const events = ['50mlibre', '100mlibre', '200mlibre', '4x50mlibrefemenino', '4x50mlibremascullino'];
-            const eventNames = ['50m Libre', '100m Libre', '200m Libre', '4x50m Libre Femenino', '4x50m Libre Masculino'];
-            
-            for (let i = 0; i < events.length; i++) {
-                const tableId = `resultsTable${events[i]}`;
-                const table = document.getElementById(tableId);
+            try {
+                // Título de sección
+                pdf.setFont("helvetica", "bold");
+                pdf.setFontSize(14);
+                pdf.setTextColor(11, 16, 57);
+                pdf.text("RESULTADOS POR PRUEBAS", 20, yPosition);
+                yPosition += 15;
+                
+                // Obtener datos de cada prueba
+                const events = ['50mlibre', '100mlibre', '200mlibre', '4x50mlibrefemenino', '4x50mlibremascullino'];
+                const eventNames = ['50m Libre', '100m Libre', '200m Libre', '4x50m Libre Femenino', '4x50m Libre Masculino'];
+                
+                for (let i = 0; i < events.length; i++) {
+                    const tableId = `resultsTable${events[i]}`;
+                    const table = document.getElementById(tableId);
                 
                 if (table) {
                     // Nueva página si no es el primer evento y no hay espacio
@@ -3296,6 +3317,13 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
                     
                     yPosition += 10; // Espacio entre eventos
                 }
+            }
+            } catch (error) {
+                console.error('Error en addEventResultsToPDF:', error);
+                pdf.setFont("helvetica", "normal");
+                pdf.setFontSize(10);
+                pdf.text("Error cargando resultados por pruebas", 20, yPosition);
+                throw error;
             }
         }
         
@@ -3487,11 +3515,75 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
             pdf.text("Documento generado automáticamente desde https://ivchampionship.netlify.app", 105, yPosition, { align: "center" });
         }
         
+        // Función de respaldo para generar un PDF simple
+        async function downloadSimplePDF() {
+            const statusDiv = document.getElementById('pdfStatus');
+            const downloadBtn = document.getElementById('downloadPdfBtn');
+            
+            try {
+                await loadjsPDF();
+                
+                const pdf = new window.jsPDF();
+                
+                // Título simple
+                pdf.setFont("helvetica", "bold");
+                pdf.setFontSize(16);
+                pdf.text("IV CHAMPIONSHIP MASTER AQUATEN - RESULTADOS", 20, 30);
+                
+                pdf.setFontSize(12);
+                pdf.text("Reporte generado el " + new Date().toLocaleDateString('es-ES'), 20, 45);
+                
+                // Mensaje simple
+                pdf.setFont("helvetica", "normal");
+                pdf.setFontSize(10);
+                pdf.text("Para obtener los resultados completos, visita:", 20, 70);
+                pdf.text("https://ivchampionship.netlify.app", 20, 80);
+                
+                // Información básica de eventos
+                pdf.setFont("helvetica", "bold");
+                pdf.text("EVENTOS DEL CAMPEONATO:", 20, 100);
+                
+                pdf.setFont("helvetica", "normal");
+                const events = [
+                    "• 50m Libre",
+                    "• 100m Libre", 
+                    "• 200m Libre",
+                    "• 4x50m Libre Femenino",
+                    "• 4x50m Libre Masculino"
+                ];
+                
+                events.forEach((event, index) => {
+                    pdf.text(event, 25, 115 + (index * 10));
+                });
+                
+                pdf.save("Resultados_IV_Championship_Simple.pdf");
+                statusDiv.style.display = 'none';
+                
+            } catch (error) {
+                console.error('Error en PDF simple:', error);
+                statusDiv.innerHTML = '<p style="color: red;">❌ Error generando PDF. Problema con la librería.</p>';
+                setTimeout(() => {
+                    statusDiv.style.display = 'none';
+                }, 3000);
+            } finally {
+                downloadBtn.disabled = false;
+                downloadBtn.style.opacity = '1';
+            }
+        }
+
         // Agregar event listener al botón
         document.addEventListener('DOMContentLoaded', function() {
             const downloadBtn = document.getElementById('downloadPdfBtn');
             if (downloadBtn) {
-                downloadBtn.addEventListener('click', downloadResultsPDF);
+                // Intentar primero el PDF completo, si falla usar el simple
+                downloadBtn.addEventListener('click', async function() {
+                    try {
+                        await downloadResultsPDF();
+                    } catch (error) {
+                        console.log('PDF completo falló, intentando versión simple...');
+                        await downloadSimplePDF();
+                    }
+                });
             }
         });
     </script>
