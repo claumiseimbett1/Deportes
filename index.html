@@ -3143,6 +3143,28 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
             }, 3000);
         }
 
+        // Función para cargar jsPDF dinámicamente
+        function loadjsPDF() {
+            return new Promise((resolve, reject) => {
+                if (window.jsPDF) {
+                    resolve();
+                    return;
+                }
+                
+                const script = document.createElement('script');
+                script.src = 'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
+                script.onload = () => {
+                    if (window.jsPDF) {
+                        resolve();
+                    } else {
+                        reject(new Error('jsPDF no se pudo cargar'));
+                    }
+                };
+                script.onerror = () => reject(new Error('Error cargando jsPDF'));
+                document.head.appendChild(script);
+            });
+        }
+
         // Función para descargar PDF con todos los resultados
         async function downloadResultsPDF() {
             const statusDiv = document.getElementById('pdfStatus');
@@ -3153,10 +3175,10 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
             downloadBtn.style.opacity = '0.6';
             
             try {
-                // Importar jsPDF dinámicamente
-                const { jsPDF } = await import('https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.es.min.js');
+                // Cargar jsPDF si no está disponible
+                await loadjsPDF();
                 
-                const pdf = new jsPDF();
+                const pdf = new window.jsPDF();
                 let yPosition = 20;
                 
                 // Configurar fuentes y colores
