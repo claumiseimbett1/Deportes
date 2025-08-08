@@ -3195,6 +3195,7 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
                 
                 // Obtener datos frescos directamente del Google Sheet
                 const allSheetData = await getAllSheetData();
+                console.log('📊 Datos obtenidos para PDF:', Object.keys(allSheetData));
                 
                 statusDiv.innerHTML = '<p style="color: #0b1039; font-weight: 500;"><span style="font-size: 1.2em;">⏳</span> Generando PDF...</p>';
                 
@@ -3285,18 +3286,19 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
         function getDataFromHTMLTables() {
             const allData = {};
             
+            // Mapear todas las posibles variantes de nombres de hojas
             const eventTables = [
-                { id: 'resultsTableFem', name: '50M-FEMENINO' },
-                { id: 'resultsTableMas', name: '50M-MASCULINO' },
-                { id: 'resultsTable100mFem', name: '100M-FEMENINO' },
-                { id: 'resultsTable100mMas', name: '100M-MASCULINO' },
-                { id: 'resultsTable200mFem', name: '200M-FEMENINO' },
-                { id: 'resultsTable200mMas', name: '200M-MASCULINO' },
-                { id: 'resultsTable4x50mFem', name: '4X50M-FEMENINO' },
-                { id: 'resultsTable4x50mMas', name: '4X50M-MASCULINO' }
+                { id: 'resultsTableFem', names: ['50M-FEMENINO', 'FEMENINO', '50M FEM'] },
+                { id: 'resultsTableMas', names: ['50M-MASCULINO', 'MASCULINO', '50M MAS'] },
+                { id: 'resultsTable100mFem', names: ['100M-FEMENINO', '100M FEM'] },
+                { id: 'resultsTable100mMas', names: ['100M-MASCULINO', '100M MAS'] },
+                { id: 'resultsTable200mFem', names: ['200M-FEMENINO', '200M FEM'] },
+                { id: 'resultsTable200mMas', names: ['200M-MASCULINO', '200M MAS'] },
+                { id: 'resultsTable4x50mFem', names: ['4X50M-FEMENINO', '4X50M FEM'] },
+                { id: 'resultsTable4x50mMas', names: ['4X50M-MASCULINO', '4X50M MAS'] }
             ];
             
-            eventTables.forEach(({ id, name }) => {
+            eventTables.forEach(({ id, names }) => {
                 const table = document.getElementById(id);
                 if (table) {
                     const data = [];
@@ -3314,15 +3316,22 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
                         }
                     });
                     if (data.length > 0) {
-                        allData[name] = data;
+                        // Usar todos los nombres posibles para esta tabla
+                        names.forEach(name => {
+                            allData[name] = data;
+                        });
                     }
                 }
             });
             
-            // Agregar datos por género
-            ['resultsTableMasculinoGeneral', 'resultsTableFemeninoGeneral'].forEach((id, index) => {
+            // Agregar datos por género con múltiples nombres
+            const genderTables = [
+                { id: 'resultsTableMasculinoGeneral', names: ['RESULTADOS-MASCULINO', 'RESULTADOS MASCULINO', 'MASCULINO'] },
+                { id: 'resultsTableFemeninoGeneral', names: ['RESULTADOS-FEMENINO', 'RESULTADOS FEMENINO', 'FEMENINO'] }
+            ];
+            
+            genderTables.forEach(({ id, names }) => {
                 const table = document.getElementById(id);
-                const name = index === 0 ? 'RESULTADOS-MASCULINO' : 'RESULTADOS-FEMENINO';
                 if (table) {
                     const data = [];
                     const rows = table.querySelectorAll('tbody tr:not(.loading-row)');
@@ -3338,12 +3347,15 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
                         }
                     });
                     if (data.length > 0) {
-                        allData[name] = data;
+                        // Usar todos los nombres posibles
+                        names.forEach(name => {
+                            allData[name] = data;
+                        });
                     }
                 }
             });
             
-            // Agregar datos por equipo
+            // Agregar datos por equipo con múltiples nombres
             const teamsTable = document.getElementById('resultsTableTeams');
             if (teamsTable) {
                 const data = [];
@@ -3359,7 +3371,11 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
                     }
                 });
                 if (data.length > 0) {
-                    allData['EQUIPOS'] = data;
+                    // Usar todos los nombres posibles para equipos
+                    const teamNames = ['EQUIPOS', 'EQUIPO', 'TEAMS', 'CLASIFICACION EQUIPOS'];
+                    teamNames.forEach(name => {
+                        allData[name] = data;
+                    });
                 }
             }
             
@@ -3377,19 +3393,26 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
             pdf.text("RESULTADOS POR PRUEBAS", 20, yPosition);
             yPosition += 20;
             
-            const eventNames = {
-                '50M-FEMENINO': '🏊‍♀️ 50m Libre Femenino',
-                '50M-MASCULINO': '🏊‍♂️ 50m Libre Masculino',
-                '100M-FEMENINO': '🏊‍♀️ 100m Libre Femenino',
-                '100M-MASCULINO': '🏊‍♂️ 100m Libre Masculino',
-                '200M-FEMENINO': '🏊‍♀️ 200m Libre Femenino',
-                '200M-MASCULINO': '🏊‍♂️ 200m Libre Masculino',
-                '4X50M-FEMENINO': '🏊‍♀️ 4x50m Libre Femenino',
-                '4X50M-MASCULINO': '🏊‍♂️ 4x50m Libre Masculino'
-            };
+            const eventConfigs = [
+                { keys: ['50M-FEMENINO', 'FEMENINO', '50M FEM'], title: '50m Libre Femenino' },
+                { keys: ['50M-MASCULINO', 'MASCULINO', '50M MAS'], title: '50m Libre Masculino' },
+                { keys: ['100M-FEMENINO', '100M FEM'], title: '100m Libre Femenino' },
+                { keys: ['100M-MASCULINO', '100M MAS'], title: '100m Libre Masculino' },
+                { keys: ['200M-FEMENINO', '200M FEM'], title: '200m Libre Femenino' },
+                { keys: ['200M-MASCULINO', '200M MAS'], title: '200m Libre Masculino' },
+                { keys: ['4X50M-FEMENINO', '4X50M FEM'], title: '4x50m Libre Femenino' },
+                { keys: ['4X50M-MASCULINO', '4X50M MAS'], title: '4x50m Libre Masculino' }
+            ];
             
-            for (const [eventKey, eventTitle] of Object.entries(eventNames)) {
-                const eventData = allSheetData[eventKey] || [];
+            for (const eventConfig of eventConfigs) {
+                let eventData = [];
+                // Buscar datos con cualquiera de las claves posibles
+                for (const key of eventConfig.keys) {
+                    if (allSheetData[key] && allSheetData[key].length > 0) {
+                        eventData = allSheetData[key];
+                        break;
+                    }
+                }
                 
                 if (eventData.length > 0) {
                     // Verificar espacio en la página
@@ -3402,7 +3425,7 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
                     pdf.setFont("helvetica", "bold");
                     pdf.setFontSize(12);
                     pdf.setTextColor(11, 16, 57);
-                    pdf.text(eventTitle, 20, yPosition);
+                    pdf.text(eventConfig.title, 20, yPosition);
                     yPosition += 10;
                     
                     // Dibujar caja para los resultados
@@ -3488,12 +3511,19 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
             yPosition += 20;
             
             const genderSections = [
-                { key: 'RESULTADOS-MASCULINO', title: '🏊‍♂️ CLASIFICACIÓN GENERAL MASCULINA' },
-                { key: 'RESULTADOS-FEMENINO', title: '🏊‍♀️ CLASIFICACIÓN GENERAL FEMENINA' }
+                { keys: ['RESULTADOS-MASCULINO', 'RESULTADOS MASCULINO', 'MASCULINO'], title: 'CLASIFICACIÓN GENERAL MASCULINA' },
+                { keys: ['RESULTADOS-FEMENINO', 'RESULTADOS FEMENINO', 'FEMENINO'], title: 'CLASIFICACIÓN GENERAL FEMENINA' }
             ];
             
             for (const section of genderSections) {
-                const data = allSheetData[section.key] || [];
+                let data = [];
+                // Buscar datos con cualquiera de las claves posibles
+                for (const key of section.keys) {
+                    if (allSheetData[key] && allSheetData[key].length > 0) {
+                        data = allSheetData[key];
+                        break;
+                    }
+                }
                 
                 if (data.length > 0) {
                     // Verificar espacio en la página
@@ -3579,7 +3609,15 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
             pdf.text("CLASIFICACIÓN GENERAL POR EQUIPOS", 20, yPosition);
             yPosition += 20;
             
-            const teamsData = allSheetData['EQUIPOS'] || [];
+            // Buscar datos de equipos con cualquiera de las claves posibles
+            let teamsData = [];
+            const teamKeys = ['EQUIPOS', 'EQUIPO', 'TEAMS', 'CLASIFICACION EQUIPOS'];
+            for (const key of teamKeys) {
+                if (allSheetData[key] && allSheetData[key].length > 0) {
+                    teamsData = allSheetData[key];
+                    break;
+                }
+            }
             
             if (teamsData.length > 0) {
                 // Dibujar caja
