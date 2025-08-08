@@ -3186,12 +3186,17 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
                 // Cargar jsPDF si no está disponible
                 await loadjsPDF();
                 
-                statusDiv.innerHTML = '<p style="color: #0b1039; font-weight: 500;"><span style="font-size: 1.2em;">⏳</span> Generando PDF...</p>';
+                statusDiv.innerHTML = '<p style="color: #0b1039; font-weight: 500;"><span style="font-size: 1.2em;">⏳</span> Obteniendo datos frescos...</p>';
                 
                 // Verificar que jsPDF se cargó correctamente
                 if (!window.jsPDF) {
                     throw new Error('jsPDF no está disponible');
                 }
+                
+                // Obtener datos frescos directamente del Google Sheet
+                const allSheetData = await getAllSheetData();
+                
+                statusDiv.innerHTML = '<p style="color: #0b1039; font-weight: 500;"><span style="font-size: 1.2em;">⏳</span> Generando PDF...</p>';
                 
                 const pdf = new window.jsPDF();
                 let yPosition = 20;
@@ -3207,21 +3212,21 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
                 
                 pdf.setFontSize(12);
                 pdf.setTextColor(102, 102, 102);
-                pdf.text("Reporte generado el " + new Date().toLocaleDateString('es-ES'), 105, yPosition, { align: "center" });
+                pdf.text("Reporte generado el " + new Date().toLocaleDateString('es-ES') + " a las " + new Date().toLocaleTimeString('es-ES'), 105, yPosition, { align: "center" });
                 yPosition += 20;
                 
                 // RESULTADOS POR PRUEBAS
-                await addEventResultsToPDF(pdf, yPosition);
+                yPosition = await addEventResultsBoxesToPDF(pdf, yPosition, allSheetData);
                 
                 // Nueva página para resultados por género
                 pdf.addPage();
                 yPosition = 20;
-                await addGenderResultsToPDF(pdf, yPosition);
+                yPosition = await addGenderResultsBoxesToPDF(pdf, yPosition, allSheetData);
                 
                 // Nueva página para resultados por equipos
                 pdf.addPage();
                 yPosition = 20;
-                await addTeamResultsToPDF(pdf, yPosition);
+                await addTeamResultsBoxesToPDF(pdf, yPosition, allSheetData);
                 
                 // Guardar el PDF
                 const fileName = `Resultados_IV_Championship_${new Date().toISOString().split('T')[0]}.pdf`;
@@ -3248,6 +3253,393 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
             } finally {
                 downloadBtn.disabled = false;
                 downloadBtn.style.opacity = '1';
+            }
+        }
+
+        // Función para obtener todos los datos del Google Sheet
+        async function getAllSheetData() {
+            try {
+                const sheetInfo = await getSheetInfo();
+                const allData = {};
+                
+                for (const sheet of sheetInfo.sheets) {
+                    try {
+                        const data = await loadCompetitionData(sheet.properties.sheetId, sheet.properties.title);
+                        if (data && data.length > 0) {
+                            allData[sheet.properties.title] = data;
+                        }
+                    } catch (error) {
+                        console.warn(`Error cargando datos de ${sheet.properties.title}:`, error);
+                    }
+                }
+                
+                return allData;
+            } catch (error) {
+                console.error('Error obteniendo datos del Sheet:', error);
+                // Como fallback, usar los datos actuales de las tablas HTML
+                return getDataFromHTMLTables();
+            }
+        }
+
+        // Función de respaldo para leer desde las tablas HTML
+        function getDataFromHTMLTables() {
+            const allData = {};
+            
+            const eventTables = [
+                { id: 'resultsTableFem', name: '50M-FEMENINO' },
+                { id: 'resultsTableMas', name: '50M-MASCULINO' },
+                { id: 'resultsTable100mFem', name: '100M-FEMENINO' },
+                { id: 'resultsTable100mMas', name: '100M-MASCULINO' },
+                { id: 'resultsTable200mFem', name: '200M-FEMENINO' },
+                { id: 'resultsTable200mMas', name: '200M-MASCULINO' },
+                { id: 'resultsTable4x50mFem', name: '4X50M-FEMENINO' },
+                { id: 'resultsTable4x50mMas', name: '4X50M-MASCULINO' }
+            ];
+            
+            eventTables.forEach(({ id, name }) => {
+                const table = document.getElementById(id);
+                if (table) {
+                    const data = [];
+                    const rows = table.querySelectorAll('tbody tr:not(.loading-row)');
+                    rows.forEach(row => {
+                        const cells = row.querySelectorAll('td');
+                        if (cells.length >= 4) {
+                            data.push({
+                                position: cells[0].textContent.trim(),
+                                athlete: cells[1].textContent.trim(),
+                                team: cells[2].textContent.trim(),
+                                time: cells[3].textContent.trim(),
+                                points: cells[4] ? cells[4].textContent.trim() : ''
+                            });
+                        }
+                    });
+                    if (data.length > 0) {
+                        allData[name] = data;
+                    }
+                }
+            });
+            
+            // Agregar datos por género
+            ['resultsTableMasculinoGeneral', 'resultsTableFemeninoGeneral'].forEach((id, index) => {
+                const table = document.getElementById(id);
+                const name = index === 0 ? 'RESULTADOS-MASCULINO' : 'RESULTADOS-FEMENINO';
+                if (table) {
+                    const data = [];
+                    const rows = table.querySelectorAll('tbody tr:not(.loading-row)');
+                    rows.forEach(row => {
+                        const cells = row.querySelectorAll('td');
+                        if (cells.length >= 4) {
+                            data.push({
+                                position: cells[0].textContent.trim(),
+                                athlete: cells[1].textContent.trim(),
+                                team: cells[2].textContent.trim(),
+                                points: cells[3].textContent.trim()
+                            });
+                        }
+                    });
+                    if (data.length > 0) {
+                        allData[name] = data;
+                    }
+                }
+            });
+            
+            // Agregar datos por equipo
+            const teamsTable = document.getElementById('resultsTableTeams');
+            if (teamsTable) {
+                const data = [];
+                const rows = teamsTable.querySelectorAll('tbody tr:not(.loading-row)');
+                rows.forEach(row => {
+                    const cells = row.querySelectorAll('td');
+                    if (cells.length >= 3) {
+                        data.push({
+                            position: cells[0].textContent.trim(),
+                            team: cells[1].textContent.trim(),
+                            points: cells[2].textContent.trim()
+                        });
+                    }
+                });
+                if (data.length > 0) {
+                    allData['EQUIPOS'] = data;
+                }
+            }
+            
+            return allData;
+        }
+
+        // Nueva función para agregar resultados por prueba con formato de cajas
+        async function addEventResultsBoxesToPDF(pdf, startY, allSheetData) {
+            let yPosition = startY;
+            
+            // Título de sección
+            pdf.setFont("helvetica", "bold");
+            pdf.setFontSize(16);
+            pdf.setTextColor(11, 16, 57);
+            pdf.text("RESULTADOS POR PRUEBAS", 20, yPosition);
+            yPosition += 20;
+            
+            const eventNames = {
+                '50M-FEMENINO': '🏊‍♀️ 50m Libre Femenino',
+                '50M-MASCULINO': '🏊‍♂️ 50m Libre Masculino',
+                '100M-FEMENINO': '🏊‍♀️ 100m Libre Femenino',
+                '100M-MASCULINO': '🏊‍♂️ 100m Libre Masculino',
+                '200M-FEMENINO': '🏊‍♀️ 200m Libre Femenino',
+                '200M-MASCULINO': '🏊‍♂️ 200m Libre Masculino',
+                '4X50M-FEMENINO': '🏊‍♀️ 4x50m Libre Femenino',
+                '4X50M-MASCULINO': '🏊‍♂️ 4x50m Libre Masculino'
+            };
+            
+            for (const [eventKey, eventTitle] of Object.entries(eventNames)) {
+                const eventData = allSheetData[eventKey] || [];
+                
+                if (eventData.length > 0) {
+                    // Verificar espacio en la página
+                    if (yPosition > 220) {
+                        pdf.addPage();
+                        yPosition = 20;
+                    }
+                    
+                    // Título del evento
+                    pdf.setFont("helvetica", "bold");
+                    pdf.setFontSize(12);
+                    pdf.setTextColor(11, 16, 57);
+                    pdf.text(eventTitle, 20, yPosition);
+                    yPosition += 10;
+                    
+                    // Dibujar caja para los resultados
+                    const boxX = 20;
+                    const boxWidth = 170;
+                    const headerHeight = 8;
+                    const rowHeight = 6;
+                    const totalRows = Math.min(eventData.length, 10); // Mostrar top 10
+                    const boxHeight = headerHeight + (totalRows * rowHeight) + 2;
+                    
+                    // Caja principal
+                    pdf.setDrawColor(11, 16, 57);
+                    pdf.setLineWidth(0.5);
+                    pdf.rect(boxX, yPosition, boxWidth, boxHeight);
+                    
+                    // Header
+                    pdf.setFillColor(11, 16, 57);
+                    pdf.rect(boxX, yPosition, boxWidth, headerHeight, 'F');
+                    
+                    // Texto del header
+                    pdf.setFont("helvetica", "bold");
+                    pdf.setFontSize(8);
+                    pdf.setTextColor(255, 255, 255);
+                    pdf.text("POS", boxX + 2, yPosition + 5.5);
+                    pdf.text("ATLETA", boxX + 15, yPosition + 5.5);
+                    pdf.text("EQUIPO", boxX + 80, yPosition + 5.5);
+                    pdf.text("TIEMPO", boxX + 120, yPosition + 5.5);
+                    if (eventData[0].points) {
+                        pdf.text("PUNTOS", boxX + 150, yPosition + 5.5);
+                    }
+                    
+                    yPosition += headerHeight;
+                    
+                    // Datos
+                    pdf.setFont("helvetica", "normal");
+                    pdf.setFontSize(7);
+                    pdf.setTextColor(0, 0, 0);
+                    
+                    eventData.slice(0, 10).forEach((row, index) => {
+                        const rowY = yPosition + (index * rowHeight);
+                        
+                        // Alternar color de fondo
+                        if (index % 2 === 0) {
+                            pdf.setFillColor(245, 245, 245);
+                            pdf.rect(boxX, rowY, boxWidth, rowHeight, 'F');
+                        }
+                        
+                        // Líneas separadoras verticales
+                        pdf.setDrawColor(200, 200, 200);
+                        pdf.line(boxX + 12, yPosition, boxX + 12, yPosition + (totalRows * rowHeight));
+                        pdf.line(boxX + 75, yPosition, boxX + 75, yPosition + (totalRows * rowHeight));
+                        pdf.line(boxX + 115, yPosition, boxX + 115, yPosition + (totalRows * rowHeight));
+                        if (row.points) {
+                            pdf.line(boxX + 145, yPosition, boxX + 145, yPosition + (totalRows * rowHeight));
+                        }
+                        
+                        // Texto
+                        pdf.text(row.position || (index + 1).toString(), boxX + 2, rowY + 4);
+                        pdf.text((row.athlete || '').substring(0, 25), boxX + 15, rowY + 4);
+                        pdf.text((row.team || '').substring(0, 15), boxX + 77, rowY + 4);
+                        pdf.text(row.time || '', boxX + 117, rowY + 4);
+                        if (row.points) {
+                            pdf.text(row.points, boxX + 147, rowY + 4);
+                        }
+                    });
+                    
+                    yPosition += (totalRows * rowHeight) + 15;
+                }
+            }
+            
+            return yPosition;
+        }
+
+        // Nueva función para agregar resultados por género con formato de cajas
+        async function addGenderResultsBoxesToPDF(pdf, startY, allSheetData) {
+            let yPosition = startY;
+            
+            // Título de sección
+            pdf.setFont("helvetica", "bold");
+            pdf.setFontSize(16);
+            pdf.setTextColor(11, 16, 57);
+            pdf.text("RESULTADOS POR GÉNERO", 20, yPosition);
+            yPosition += 20;
+            
+            const genderSections = [
+                { key: 'RESULTADOS-MASCULINO', title: '🏊‍♂️ CLASIFICACIÓN GENERAL MASCULINA' },
+                { key: 'RESULTADOS-FEMENINO', title: '🏊‍♀️ CLASIFICACIÓN GENERAL FEMENINA' }
+            ];
+            
+            for (const section of genderSections) {
+                const data = allSheetData[section.key] || [];
+                
+                if (data.length > 0) {
+                    // Verificar espacio en la página
+                    if (yPosition > 160) {
+                        pdf.addPage();
+                        yPosition = 20;
+                    }
+                    
+                    // Título de la sección
+                    pdf.setFont("helvetica", "bold");
+                    pdf.setFontSize(12);
+                    pdf.setTextColor(11, 16, 57);
+                    pdf.text(section.title, 20, yPosition);
+                    yPosition += 10;
+                    
+                    // Dibujar caja
+                    const boxX = 20;
+                    const boxWidth = 170;
+                    const headerHeight = 8;
+                    const rowHeight = 6;
+                    const totalRows = Math.min(data.length, 15);
+                    const boxHeight = headerHeight + (totalRows * rowHeight) + 2;
+                    
+                    // Caja principal
+                    pdf.setDrawColor(11, 16, 57);
+                    pdf.setLineWidth(0.5);
+                    pdf.rect(boxX, yPosition, boxWidth, boxHeight);
+                    
+                    // Header
+                    pdf.setFillColor(11, 16, 57);
+                    pdf.rect(boxX, yPosition, boxWidth, headerHeight, 'F');
+                    
+                    pdf.setFont("helvetica", "bold");
+                    pdf.setFontSize(8);
+                    pdf.setTextColor(255, 255, 255);
+                    pdf.text("POS", boxX + 2, yPosition + 5.5);
+                    pdf.text("ATLETA", boxX + 15, yPosition + 5.5);
+                    pdf.text("EQUIPO", boxX + 100, yPosition + 5.5);
+                    pdf.text("PUNTOS", boxX + 140, yPosition + 5.5);
+                    
+                    yPosition += headerHeight;
+                    
+                    // Datos
+                    pdf.setFont("helvetica", "normal");
+                    pdf.setFontSize(7);
+                    pdf.setTextColor(0, 0, 0);
+                    
+                    data.slice(0, 15).forEach((row, index) => {
+                        const rowY = yPosition + (index * rowHeight);
+                        
+                        if (index % 2 === 0) {
+                            pdf.setFillColor(245, 245, 245);
+                            pdf.rect(boxX, rowY, boxWidth, rowHeight, 'F');
+                        }
+                        
+                        // Líneas separadoras
+                        pdf.setDrawColor(200, 200, 200);
+                        pdf.line(boxX + 12, yPosition, boxX + 12, yPosition + (totalRows * rowHeight));
+                        pdf.line(boxX + 95, yPosition, boxX + 95, yPosition + (totalRows * rowHeight));
+                        pdf.line(boxX + 135, yPosition, boxX + 135, yPosition + (totalRows * rowHeight));
+                        
+                        pdf.text(row.position || (index + 1).toString(), boxX + 2, rowY + 4);
+                        pdf.text((row.athlete || '').substring(0, 30), boxX + 15, rowY + 4);
+                        pdf.text((row.team || '').substring(0, 15), boxX + 97, rowY + 4);
+                        pdf.text(row.points || '', boxX + 137, rowY + 4);
+                    });
+                    
+                    yPosition += (totalRows * rowHeight) + 15;
+                }
+            }
+            
+            return yPosition;
+        }
+
+        // Nueva función para agregar resultados por equipos con formato de cajas
+        async function addTeamResultsBoxesToPDF(pdf, startY, allSheetData) {
+            let yPosition = startY;
+            
+            // Título de sección
+            pdf.setFont("helvetica", "bold");
+            pdf.setFontSize(16);
+            pdf.setTextColor(11, 16, 57);
+            pdf.text("CLASIFICACIÓN GENERAL POR EQUIPOS", 20, yPosition);
+            yPosition += 20;
+            
+            const teamsData = allSheetData['EQUIPOS'] || [];
+            
+            if (teamsData.length > 0) {
+                // Dibujar caja
+                const boxX = 20;
+                const boxWidth = 170;
+                const headerHeight = 8;
+                const rowHeight = 7;
+                const totalRows = teamsData.length;
+                const boxHeight = headerHeight + (totalRows * rowHeight) + 2;
+                
+                // Caja principal
+                pdf.setDrawColor(11, 16, 57);
+                pdf.setLineWidth(0.5);
+                pdf.rect(boxX, yPosition, boxWidth, boxHeight);
+                
+                // Header
+                pdf.setFillColor(11, 16, 57);
+                pdf.rect(boxX, yPosition, boxWidth, headerHeight, 'F');
+                
+                pdf.setFont("helvetica", "bold");
+                pdf.setFontSize(9);
+                pdf.setTextColor(255, 255, 255);
+                pdf.text("POSICIÓN", boxX + 5, yPosition + 5.5);
+                pdf.text("EQUIPO", boxX + 40, yPosition + 5.5);
+                pdf.text("PUNTOS TOTALES", boxX + 130, yPosition + 5.5);
+                
+                yPosition += headerHeight;
+                
+                // Datos
+                pdf.setFont("helvetica", "normal");
+                pdf.setFontSize(8);
+                pdf.setTextColor(0, 0, 0);
+                
+                teamsData.forEach((row, index) => {
+                    const rowY = yPosition + (index * rowHeight);
+                    
+                    // Color especial para los primeros 3 lugares
+                    if (index < 3) {
+                        const colors = [
+                            [255, 215, 0],  // Oro
+                            [192, 192, 192], // Plata
+                            [205, 127, 50]   // Bronce
+                        ];
+                        pdf.setFillColor(...colors[index]);
+                        pdf.rect(boxX, rowY, boxWidth, rowHeight, 'F');
+                        pdf.setTextColor(0, 0, 0);
+                    } else if (index % 2 === 0) {
+                        pdf.setFillColor(245, 245, 245);
+                        pdf.rect(boxX, rowY, boxWidth, rowHeight, 'F');
+                    }
+                    
+                    // Líneas separadoras
+                    pdf.setDrawColor(200, 200, 200);
+                    pdf.line(boxX + 35, yPosition, boxX + 35, yPosition + (totalRows * rowHeight));
+                    pdf.line(boxX + 125, yPosition, boxX + 125, yPosition + (totalRows * rowHeight));
+                    
+                    pdf.text(row.position || (index + 1).toString(), boxX + 5, rowY + 5);
+                    pdf.text((row.team || '').substring(0, 35), boxX + 40, rowY + 5);
+                    pdf.text(row.points || '', boxX + 135, rowY + 5);
+                });
             }
         }
         
