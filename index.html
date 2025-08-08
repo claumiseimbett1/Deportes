@@ -3629,15 +3629,17 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
                     pdf.text(evento.name, 20, yPosition);
                     yPosition += 12;
                     
-                    // Crear tabla profesional
+                    // Crear tabla profesional - Columnas A-G para eventos
                     const tableData = evento.data.map((row, index) => {
-                        // Mapear columnas del CSV (pos, athlete, team, tiempo/edad, categoria, puntos)
-                        const [pos, athlete, team, timeOrAge, category, points] = row;
+                        // Mapear columnas A-G: A=Pos, B=Atleta, C=Equipo, D=Edad, E=Categoría, F=Tiempo, G=Puntos
+                        const [pos, athlete, team, age, category, time, points] = row;
                         return {
                             position: pos || (index + 1).toString(),
                             athlete: athlete || '',
                             team: team || '',
-                            time: formatTime(timeOrAge) || '',
+                            age: age || '',
+                            category: category || '',
+                            time: formatTime(time) || '',
                             points: points || ''
                         };
                     });
@@ -3666,35 +3668,65 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
             const maxRows = Math.min(data.length, 20); // Mostrar máximo 20 resultados
             const boxHeight = headerHeight + (maxRows * rowHeight);
             
-            // Marco principal
-            pdf.setDrawColor(11, 16, 57);
-            pdf.setLineWidth(1);
+            // Colores temáticos por tipo
+            let headerColor, accentColor;
+            if (type === 'event') {
+                headerColor = [11, 16, 57];    // Azul corporativo
+                accentColor = [25, 118, 210];  // Azul más claro
+            } else if (type === 'gender') {
+                headerColor = [76, 175, 80];   // Verde
+                accentColor = [129, 199, 132]; // Verde claro
+            } else if (type === 'team') {
+                headerColor = [255, 152, 0];   // Naranja
+                accentColor = [255, 183, 77];  // Naranja claro
+            }
+            
+            // Marco principal con color temático
+            pdf.setDrawColor(...headerColor);
+            pdf.setLineWidth(1.5);
             pdf.rect(boxX, yPosition, boxWidth, boxHeight);
             
-            // Header con fondo azul
-            pdf.setFillColor(11, 16, 57);
+            // Header con gradiente
+            pdf.setFillColor(...headerColor);
             pdf.rect(boxX, yPosition, boxWidth, headerHeight, 'F');
+            
+            // Línea decorativa en el header
+            pdf.setDrawColor(...accentColor);
+            pdf.setLineWidth(2);
+            pdf.line(boxX, yPosition + headerHeight - 1, boxX + boxWidth, yPosition + headerHeight - 1);
             
             // Configurar headers según el tipo
             pdf.setFont("helvetica", "bold");
-            pdf.setFontSize(9);
+            pdf.setFontSize(8);
             pdf.setTextColor(255, 255, 255);
             
             if (type === 'event') {
-                pdf.text("POS", boxX + 3, yPosition + 7);
-                pdf.text("ATLETA", boxX + 18, yPosition + 7);
-                pdf.text("EQUIPO", boxX + 80, yPosition + 7);
-                pdf.text("TIEMPO", boxX + 120, yPosition + 7);
-                pdf.text("PUNTOS", boxX + 150, yPosition + 7);
+                // Headers para eventos A-G: Pos, Atleta, Equipo, Edad, Categoría, Tiempo, Puntos
+                pdf.text("POS", boxX + 2, yPosition + 7);
+                pdf.text("ATLETA", boxX + 15, yPosition + 7);
+                pdf.text("EQUIPO", boxX + 55, yPosition + 7);
+                pdf.text("EDAD", boxX + 85, yPosition + 7);
+                pdf.text("CAT", boxX + 105, yPosition + 7);
+                pdf.text("TIEMPO", boxX + 125, yPosition + 7);
+                pdf.text("PTS", boxX + 155, yPosition + 7);
             } else if (type === 'gender') {
-                pdf.text("POS", boxX + 3, yPosition + 7);
-                pdf.text("ATLETA", boxX + 18, yPosition + 7);
-                pdf.text("EQUIPO", boxX + 100, yPosition + 7);
-                pdf.text("PUNTOS", boxX + 145, yPosition + 7);
+                // Headers para género A-I: Pos, Atleta, Equipo, Edad, Categoría, Pts Totales, Pts 200m, Pts 50m, Pts 100m
+                pdf.text("POS", boxX + 2, yPosition + 7);
+                pdf.text("ATLETA", boxX + 15, yPosition + 7);
+                pdf.text("EQUIPO", boxX + 50, yPosition + 7);
+                pdf.text("EDAD", boxX + 75, yPosition + 7);
+                pdf.text("CAT", boxX + 90, yPosition + 7);
+                pdf.text("TOT", boxX + 105, yPosition + 7);
+                pdf.text("200", boxX + 120, yPosition + 7);
+                pdf.text("50", boxX + 135, yPosition + 7);
+                pdf.text("100", boxX + 150, yPosition + 7);
             } else if (type === 'team') {
+                // Headers para equipos A-E: Pos, Equipo, Pts Totales, Pts Femeninos, Pts Masculinos
                 pdf.text("POS", boxX + 3, yPosition + 7);
-                pdf.text("EQUIPO", boxX + 25, yPosition + 7);
-                pdf.text("PUNTOS TOTALES", boxX + 120, yPosition + 7);
+                pdf.text("EQUIPO", boxX + 20, yPosition + 7);
+                pdf.text("TOTAL", boxX + 90, yPosition + 7);
+                pdf.text("FEM", boxX + 120, yPosition + 7);
+                pdf.text("MAS", boxX + 145, yPosition + 7);
             }
             
             yPosition += headerHeight;
@@ -3707,21 +3739,39 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
             data.slice(0, maxRows).forEach((row, index) => {
                 const rowY = yPosition + (index * rowHeight);
                 
-                // Fondo alternado
+                // Fondo alternado con colores temáticos
                 if (index % 2 === 0) {
-                    pdf.setFillColor(248, 249, 250);
+                    if (type === 'event') {
+                        pdf.setFillColor(240, 248, 255); // Azul muy claro
+                    } else if (type === 'gender') {
+                        pdf.setFillColor(240, 255, 240); // Verde muy claro
+                    } else if (type === 'team') {
+                        pdf.setFillColor(255, 248, 225); // Naranja muy claro
+                    }
                     pdf.rect(boxX, rowY, boxWidth, rowHeight, 'F');
                 }
                 
-                // Destacar podio para equipos
+                // Destacar podio para equipos con efectos especiales
                 if (type === 'team' && index < 3) {
-                    const colors = [
+                    const podiumColors = [
                         [255, 215, 0],   // Oro
                         [192, 192, 192], // Plata
                         [205, 127, 50]   // Bronce
                     ];
-                    pdf.setFillColor(...colors[index]);
+                    pdf.setFillColor(...podiumColors[index]);
                     pdf.rect(boxX, rowY, boxWidth, rowHeight, 'F');
+                    
+                    // Borde especial para podio
+                    pdf.setDrawColor(...podiumColors[index]);
+                    pdf.setLineWidth(1);
+                    pdf.rect(boxX, rowY, boxWidth, rowHeight);
+                }
+                
+                // Destacar primeros 3 lugares en eventos y género
+                if ((type === 'event' || type === 'gender') && index < 3) {
+                    pdf.setDrawColor(...accentColor);
+                    pdf.setLineWidth(1.5);
+                    pdf.rect(boxX, rowY, boxWidth, rowHeight);
                 }
                 
                 // Líneas separadoras verticales
@@ -3729,37 +3779,58 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
                 pdf.setLineWidth(0.3);
                 
                 if (type === 'event') {
-                    pdf.line(boxX + 15, yPosition, boxX + 15, yPosition + (maxRows * rowHeight));
-                    pdf.line(boxX + 75, yPosition, boxX + 75, yPosition + (maxRows * rowHeight));
-                    pdf.line(boxX + 115, yPosition, boxX + 115, yPosition + (maxRows * rowHeight));
-                    pdf.line(boxX + 145, yPosition, boxX + 145, yPosition + (maxRows * rowHeight));
+                    // Líneas separadoras para eventos
+                    pdf.line(boxX + 12, yPosition, boxX + 12, yPosition + (maxRows * rowHeight));
+                    pdf.line(boxX + 52, yPosition, boxX + 52, yPosition + (maxRows * rowHeight));
+                    pdf.line(boxX + 82, yPosition, boxX + 82, yPosition + (maxRows * rowHeight));
+                    pdf.line(boxX + 102, yPosition, boxX + 102, yPosition + (maxRows * rowHeight));
+                    pdf.line(boxX + 122, yPosition, boxX + 122, yPosition + (maxRows * rowHeight));
+                    pdf.line(boxX + 152, yPosition, boxX + 152, yPosition + (maxRows * rowHeight));
                     
-                    // Texto para eventos
-                    pdf.text(row.position, boxX + 5, rowY + 5.5);
-                    pdf.text((row.athlete || '').substring(0, 22), boxX + 18, rowY + 5.5);
-                    pdf.text((row.team || '').substring(0, 12), boxX + 77, rowY + 5.5);
-                    pdf.text(row.time || '', boxX + 117, rowY + 5.5);
-                    pdf.text(row.points || '', boxX + 147, rowY + 5.5);
+                    // Texto para eventos A-G
+                    pdf.text(row.position, boxX + 2, rowY + 5.5);
+                    pdf.text((row.athlete || '').substring(0, 18), boxX + 14, rowY + 5.5);
+                    pdf.text((row.team || '').substring(0, 12), boxX + 54, rowY + 5.5);
+                    pdf.text(row.age || '', boxX + 84, rowY + 5.5);
+                    pdf.text((row.category || '').substring(0, 8), boxX + 104, rowY + 5.5);
+                    pdf.text(row.time || '', boxX + 124, rowY + 5.5);
+                    pdf.text(row.points || '', boxX + 154, rowY + 5.5);
                     
                 } else if (type === 'gender') {
-                    pdf.line(boxX + 15, yPosition, boxX + 15, yPosition + (maxRows * rowHeight));
-                    pdf.line(boxX + 95, yPosition, boxX + 95, yPosition + (maxRows * rowHeight));
-                    pdf.line(boxX + 140, yPosition, boxX + 140, yPosition + (maxRows * rowHeight));
+                    // Líneas separadoras para género
+                    pdf.line(boxX + 12, yPosition, boxX + 12, yPosition + (maxRows * rowHeight));
+                    pdf.line(boxX + 47, yPosition, boxX + 47, yPosition + (maxRows * rowHeight));
+                    pdf.line(boxX + 72, yPosition, boxX + 72, yPosition + (maxRows * rowHeight));
+                    pdf.line(boxX + 87, yPosition, boxX + 87, yPosition + (maxRows * rowHeight));
+                    pdf.line(boxX + 102, yPosition, boxX + 102, yPosition + (maxRows * rowHeight));
+                    pdf.line(boxX + 117, yPosition, boxX + 117, yPosition + (maxRows * rowHeight));
+                    pdf.line(boxX + 132, yPosition, boxX + 132, yPosition + (maxRows * rowHeight));
+                    pdf.line(boxX + 147, yPosition, boxX + 147, yPosition + (maxRows * rowHeight));
                     
-                    // Texto para género
-                    pdf.text(row.position, boxX + 5, rowY + 5.5);
-                    pdf.text((row.athlete || '').substring(0, 25), boxX + 18, rowY + 5.5);
-                    pdf.text((row.team || '').substring(0, 15), boxX + 97, rowY + 5.5);
-                    pdf.text(row.points || '', boxX + 142, rowY + 5.5);
+                    // Texto para género A-I
+                    pdf.text(row.position, boxX + 2, rowY + 5.5);
+                    pdf.text((row.athlete || '').substring(0, 15), boxX + 14, rowY + 5.5);
+                    pdf.text((row.team || '').substring(0, 10), boxX + 49, rowY + 5.5);
+                    pdf.text(row.age || '', boxX + 74, rowY + 5.5);
+                    pdf.text((row.category || '').substring(0, 6), boxX + 89, rowY + 5.5);
+                    pdf.text(row.totalPoints || '', boxX + 104, rowY + 5.5);
+                    pdf.text(row.points200m || '', boxX + 119, rowY + 5.5);
+                    pdf.text(row.points50m || '', boxX + 134, rowY + 5.5);
+                    pdf.text(row.points100m || '', boxX + 149, rowY + 5.5);
                     
                 } else if (type === 'team') {
-                    pdf.line(boxX + 20, yPosition, boxX + 20, yPosition + (maxRows * rowHeight));
-                    pdf.line(boxX + 115, yPosition, boxX + 115, yPosition + (maxRows * rowHeight));
+                    // Líneas separadoras para equipos
+                    pdf.line(boxX + 17, yPosition, boxX + 17, yPosition + (maxRows * rowHeight));
+                    pdf.line(boxX + 87, yPosition, boxX + 87, yPosition + (maxRows * rowHeight));
+                    pdf.line(boxX + 117, yPosition, boxX + 117, yPosition + (maxRows * rowHeight));
+                    pdf.line(boxX + 142, yPosition, boxX + 142, yPosition + (maxRows * rowHeight));
                     
-                    // Texto para equipos
-                    pdf.text(row.position, boxX + 5, rowY + 5.5);
-                    pdf.text((row.team || '').substring(0, 30), boxX + 25, rowY + 5.5);
-                    pdf.text(row.points || '', boxX + 125, rowY + 5.5);
+                    // Texto para equipos A-E
+                    pdf.text(row.position, boxX + 3, rowY + 5.5);
+                    pdf.text((row.team || '').substring(0, 25), boxX + 19, rowY + 5.5);
+                    pdf.text(row.totalPoints || '', boxX + 89, rowY + 5.5);
+                    pdf.text(row.femalePoints || '', boxX + 119, rowY + 5.5);
+                    pdf.text(row.malePoints || '', boxX + 144, rowY + 5.5);
                 }
             });
             
@@ -3786,12 +3857,18 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
                 yPosition += 12;
                 
                 const tableData = allSheetData.masculino.map((row, index) => {
-                    const [pos, athlete, team, age, category, points] = row;
+                    // Mapear columnas A-I: A=Pos, B=Atleta, C=Equipo, D=Edad, E=Categoría, F=Pts Totales, G=Pts 200m, H=Pts 50m, I=Pts 100m
+                    const [pos, athlete, team, age, category, totalPoints, points200m, points50m, points100m] = row;
                     return {
                         position: pos || (index + 1).toString(),
                         athlete: athlete || '',
                         team: team || '',
-                        points: points || ''
+                        age: age || '',
+                        category: category || '',
+                        totalPoints: totalPoints || '',
+                        points200m: points200m || '',
+                        points50m: points50m || '',
+                        points100m: points100m || ''
                     };
                 });
                 
@@ -3814,12 +3891,18 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
                 yPosition += 12;
                 
                 const tableData = allSheetData.femenino.map((row, index) => {
-                    const [pos, athlete, team, age, category, points] = row;
+                    // Mapear columnas A-I: A=Pos, B=Atleta, C=Equipo, D=Edad, E=Categoría, F=Pts Totales, G=Pts 200m, H=Pts 50m, I=Pts 100m
+                    const [pos, athlete, team, age, category, totalPoints, points200m, points50m, points100m] = row;
                     return {
                         position: pos || (index + 1).toString(),
                         athlete: athlete || '',
                         team: team || '',
-                        points: points || ''
+                        age: age || '',
+                        category: category || '',
+                        totalPoints: totalPoints || '',
+                        points200m: points200m || '',
+                        points50m: points50m || '',
+                        points100m: points100m || ''
                     };
                 });
                 
@@ -3841,13 +3924,16 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
             yPosition += 20;
             
             if (allSheetData.equipos.length > 0) {
-                // Crear tabla con todos los equipos
+                // Crear tabla con todos los equipos - Columnas A-E
                 const tableData = allSheetData.equipos.map((row, index) => {
-                    const [pos, team, points] = row;
+                    // Mapear columnas A-E: A=Pos, B=Equipo, C=Pts Totales, D=Pts Femeninos, E=Pts Masculinos
+                    const [pos, team, totalPoints, femalePoints, malePoints] = row;
                     return {
                         position: pos || (index + 1).toString(),
                         team: team || '',
-                        points: points || ''
+                        totalPoints: totalPoints || '',
+                        femalePoints: femalePoints || '',
+                        malePoints: malePoints || ''
                     };
                 });
                 
