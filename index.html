@@ -3262,12 +3262,20 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
                 pdf.text("RESULTADOS POR PRUEBAS", 20, yPosition);
                 yPosition += 15;
                 
-                // Obtener datos de cada prueba
-                const events = ['50mlibre', '100mlibre', '200mlibre', '4x50mlibrefemenino', '4x50mlibremascullino'];
-                const eventNames = ['50m Libre', '100m Libre', '200m Libre', '4x50m Libre Femenino', '4x50m Libre Masculino'];
+                // Obtener datos de cada prueba con sus IDs correctos
+                const eventTables = [
+                    { id: 'resultsTableFem', name: '50m Libre Femenino' },
+                    { id: 'resultsTableMas', name: '50m Libre Masculino' },
+                    { id: 'resultsTable100mFem', name: '100m Libre Femenino' },
+                    { id: 'resultsTable100mMas', name: '100m Libre Masculino' },
+                    { id: 'resultsTable200mFem', name: '200m Libre Femenino' },
+                    { id: 'resultsTable200mMas', name: '200m Libre Masculino' },
+                    { id: 'resultsTable4x50mFem', name: '4x50m Libre Femenino' },
+                    { id: 'resultsTable4x50mMas', name: '4x50m Libre Masculino' }
+                ];
                 
-                for (let i = 0; i < events.length; i++) {
-                    const tableId = `resultsTable${events[i]}`;
+                for (let i = 0; i < eventTables.length; i++) {
+                    const { id: tableId, name: eventName } = eventTables[i];
                     const table = document.getElementById(tableId);
                 
                 if (table) {
@@ -3279,7 +3287,7 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
                     
                     pdf.setFont("helvetica", "bold");
                     pdf.setFontSize(12);
-                    pdf.text(eventNames[i], 20, yPosition);
+                    pdf.text(eventName, 20, yPosition);
                     yPosition += 10;
                     
                     // Obtener TODOS los resultados
