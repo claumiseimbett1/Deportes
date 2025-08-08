@@ -3296,40 +3296,45 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
             }
         }
 
-        // Función para cargar solo la hoja RESULTADOS
+        // Función para cargar solo la hoja RESULTADOS usando la función existente
         async function getAllSheetData() {
             try {
                 console.log('🔍 Cargando directamente la hoja RESULTADOS...');
                 
-                // Usar GID 0 que normalmente es la primera hoja (RESULTADOS)
-                const url = `https://docs.google.com/spreadsheets/d/${CONFIG.SHEET_ID}/export?format=csv&gid=0`;
-                console.log('🔗 URL:', url);
+                // Primero obtener información de todas las hojas disponibles
+                const sheetInfo = await getSheetInfo();
+                console.log('📋 Hojas disponibles:', sheetInfo.sheets.map(s => `${s.properties.title} (GID: ${s.properties.sheetId})`));
                 
-                const response = await fetch(url);
+                // Buscar la hoja RESULTADOS
+                let resultadosSheet = sheetInfo.sheets.find(s => 
+                    s.properties.title.toUpperCase().includes('RESULTADOS') ||
+                    s.properties.title.toUpperCase().includes('RESULTADO')
+                );
                 
-                if (!response.ok) {
-                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                if (!resultadosSheet) {
+                    // Si no encuentra RESULTADOS, usar la primera hoja
+                    resultadosSheet = sheetInfo.sheets[0];
+                    console.log('⚠️ No se encontró hoja RESULTADOS, usando primera hoja:', resultadosSheet.properties.title);
                 }
                 
-                const csvText = await response.text();
-                console.log('📄 CSV obtenido, tamaño:', csvText.length);
-                console.log('📄 Primeras líneas:', csvText.split('\n').slice(0, 5));
+                console.log('🎯 Cargando hoja:', resultadosSheet.properties.title, 'GID:', resultadosSheet.properties.sheetId);
                 
-                // Parsear el CSV
-                const rows = csvText.split('\n')
-                    .map(line => line.split(',').map(cell => cell.trim().replace(/"/g, '')))
-                    .filter(row => row.length > 3 && row[0] && row[1]);
+                // Usar la función existente que ya funciona
+                const data = await loadSheetByGid(resultadosSheet.properties.sheetId);
                 
-                console.log('📊 Total de filas procesadas:', rows.length);
-                
-                // La hoja RESULTADOS contiene todos los datos mezclados
-                // Vamos a organizarlos por secciones
-                const allData = {
-                    'TODOS_LOS_RESULTADOS': rows
-                };
-                
-                console.log('✅ Datos cargados exitosamente');
-                return allData;
+                if (data && data.length > 0) {
+                    console.log('✅ Datos cargados exitosamente:', data.length, 'filas');
+                    console.log('📄 Primeras 3 filas:', data.slice(0, 3));
+                    
+                    const allData = {
+                        'TODOS_LOS_RESULTADOS': data
+                    };
+                    
+                    return allData;
+                } else {
+                    console.error('❌ No se pudieron cargar los datos de la hoja');
+                    return {};
+                }
                 
             } catch (error) {
                 console.error('❌ Error cargando RESULTADOS:', error);
