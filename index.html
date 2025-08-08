@@ -3146,7 +3146,7 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
         // Función para cargar jsPDF dinámicamente
         function loadjsPDF() {
             return new Promise((resolve, reject) => {
-                if (window.jsPDF) {
+                if (window.jsPDF || (window.jspdf && window.jspdf.jsPDF)) {
                     resolve();
                     return;
                 }
@@ -3157,6 +3157,10 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
                     // Esperar un poco para que jsPDF se inicialice completamente
                     setTimeout(() => {
                         if (window.jsPDF) {
+                            resolve();
+                        } else if (window.jspdf && window.jspdf.jsPDF) {
+                            // Para la versión UMD moderna, asignar jsPDF al window global
+                            window.jsPDF = window.jspdf.jsPDF;
                             resolve();
                         } else {
                             reject(new Error('jsPDF no se pudo cargar correctamente'));
