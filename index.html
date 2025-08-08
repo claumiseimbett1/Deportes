@@ -1565,6 +1565,46 @@
         </div>
     </section>
 
+    <!-- Download Results Section -->
+    <section class="results-section" style="background: #f8f9fa; border-top: 3px solid #0b1039;">
+        <div class="container">
+            <h2 class="section-title" style="color: #0b1039;">📄 Descargar Resultados</h2>
+            <div class="download-container" style="text-align: center; padding: 40px 20px;">
+                <div class="download-info" style="margin-bottom: 30px;">
+                    <p style="font-size: 1.2em; color: #666; max-width: 600px; margin: 0 auto;">
+                        Descarga un reporte completo en PDF con todos los resultados del evento, 
+                        incluyendo clasificaciones por pruebas, género y equipos.
+                    </p>
+                </div>
+                <button id="downloadPdfBtn" class="download-btn" style="
+                    background: linear-gradient(135deg, #0b1039, #1a2470);
+                    color: white;
+                    border: none;
+                    padding: 15px 40px;
+                    font-size: 1.1em;
+                    font-weight: 600;
+                    border-radius: 50px;
+                    cursor: pointer;
+                    transition: all 0.3s ease;
+                    box-shadow: 0 5px 20px rgba(11, 16, 57, 0.3);
+                    display: inline-flex;
+                    align-items: center;
+                    gap: 10px;
+                " onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 8px 25px rgba(11, 16, 57, 0.4)'" 
+                   onmouseout="this.style.transform='translateY(0px)'; this.style.boxShadow='0 5px 20px rgba(11, 16, 57, 0.3)'">
+                    <span style="font-size: 1.2em;">📋</span>
+                    Descargar Resultados PDF
+                </button>
+                
+                <div id="pdfStatus" style="margin-top: 20px; display: none;">
+                    <p style="color: #0b1039; font-weight: 500;">
+                        <span style="font-size: 1.2em;">⏳</span> Generando PDF...
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <!-- Sponsors Section -->
     <section class="sponsors-section" id="patrocinadores">
         <div class="container">
@@ -3102,6 +3142,336 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
                 }, 300);
             }, 3000);
         }
+
+        // Función para descargar PDF con todos los resultados
+        async function downloadResultsPDF() {
+            const statusDiv = document.getElementById('pdfStatus');
+            const downloadBtn = document.getElementById('downloadPdfBtn');
+            
+            statusDiv.style.display = 'block';
+            downloadBtn.disabled = true;
+            downloadBtn.style.opacity = '0.6';
+            
+            try {
+                // Importar jsPDF dinámicamente
+                const { jsPDF } = await import('https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.es.min.js');
+                
+                const pdf = new jsPDF();
+                let yPosition = 20;
+                
+                // Configurar fuentes y colores
+                pdf.setFont("helvetica", "bold");
+                pdf.setFontSize(18);
+                pdf.setTextColor(11, 16, 57); // Color azul del sitio
+                
+                // Título principal
+                pdf.text("IV CHAMPIONSHIP MASTER AQUATEN - RESULTADOS OFICIALES", 105, yPosition, { align: "center" });
+                yPosition += 15;
+                
+                pdf.setFontSize(12);
+                pdf.setTextColor(102, 102, 102);
+                pdf.text("Reporte generado el " + new Date().toLocaleDateString('es-ES'), 105, yPosition, { align: "center" });
+                yPosition += 20;
+                
+                // RESULTADOS POR PRUEBAS
+                await addEventResultsToPDF(pdf, yPosition);
+                
+                // Nueva página para resultados por género
+                pdf.addPage();
+                yPosition = 20;
+                await addGenderResultsToPDF(pdf, yPosition);
+                
+                // Nueva página para resultados por equipos
+                pdf.addPage();
+                yPosition = 20;
+                await addTeamResultsToPDF(pdf, yPosition);
+                
+                // Guardar el PDF
+                const fileName = `Resultados_IV_Championship_${new Date().toISOString().split('T')[0]}.pdf`;
+                pdf.save(fileName);
+                
+                // Ocultar status
+                statusDiv.style.display = 'none';
+                
+            } catch (error) {
+                console.error('Error generando PDF:', error);
+                statusDiv.innerHTML = '<p style="color: red;">❌ Error generando PDF. Inténtalo de nuevo.</p>';
+                setTimeout(() => {
+                    statusDiv.style.display = 'none';
+                }, 3000);
+            } finally {
+                downloadBtn.disabled = false;
+                downloadBtn.style.opacity = '1';
+            }
+        }
+        
+        async function addEventResultsToPDF(pdf, startY) {
+            let yPosition = startY;
+            
+            // Título de sección
+            pdf.setFont("helvetica", "bold");
+            pdf.setFontSize(14);
+            pdf.setTextColor(11, 16, 57);
+            pdf.text("RESULTADOS POR PRUEBAS", 20, yPosition);
+            yPosition += 15;
+            
+            // Obtener datos de cada prueba
+            const events = ['50mlibre', '100mlibre', '200mlibre', '4x50mlibrefemenino', '4x50mlibremascullino'];
+            const eventNames = ['50m Libre', '100m Libre', '200m Libre', '4x50m Libre Femenino', '4x50m Libre Masculino'];
+            
+            for (let i = 0; i < events.length; i++) {
+                const tableId = `resultsTable${events[i]}`;
+                const table = document.getElementById(tableId);
+                
+                if (table) {
+                    // Nueva página si no es el primer evento y no hay espacio
+                    if (i > 0 && yPosition > 200) {
+                        pdf.addPage();
+                        yPosition = 20;
+                    }
+                    
+                    pdf.setFont("helvetica", "bold");
+                    pdf.setFontSize(12);
+                    pdf.text(eventNames[i], 20, yPosition);
+                    yPosition += 10;
+                    
+                    // Obtener TODOS los resultados
+                    const rows = table.querySelectorAll('tbody tr:not(.loading-row)');
+                    const allResults = Array.from(rows);
+                    
+                    pdf.setFont("helvetica", "normal");
+                    pdf.setFontSize(8);
+                    
+                    allResults.forEach((row, index) => {
+                        const cells = row.querySelectorAll('td');
+                        if (cells.length > 3) {
+                            // Verificar si necesitamos nueva página
+                            if (yPosition > 270) {
+                                pdf.addPage();
+                                yPosition = 20;
+                                
+                                // Repetir título del evento en nueva página
+                                pdf.setFont("helvetica", "bold");
+                                pdf.setFontSize(12);
+                                pdf.text(`${eventNames[i]} (continuación)`, 20, yPosition);
+                                yPosition += 10;
+                                pdf.setFont("helvetica", "normal");
+                                pdf.setFontSize(8);
+                            }
+                            
+                            const pos = cells[0]?.textContent?.trim() || (index + 1);
+                            const name = cells[1]?.textContent?.trim() || 'N/A';
+                            const team = cells[2]?.textContent?.trim() || 'N/A';
+                            const age = cells[3]?.textContent?.trim() || 'N/A';
+                            const category = cells[4]?.textContent?.trim() || 'N/A';
+                            const time = cells[5]?.textContent?.trim() || 'N/A';
+                            const points = cells[6]?.textContent?.trim() || 'N/A';
+                            
+                            pdf.text(`${pos}. ${name} (${team}) - ${age} años - ${category} - ${time} - ${points} pts`, 25, yPosition);
+                            yPosition += 4;
+                        }
+                    });
+                    
+                    yPosition += 10; // Espacio entre eventos
+                }
+            }
+        }
+        
+        async function addGenderResultsToPDF(pdf, startY) {
+            let yPosition = startY;
+            
+            // Título de sección
+            pdf.setFont("helvetica", "bold");
+            pdf.setFontSize(14);
+            pdf.setTextColor(11, 16, 57);
+            pdf.text("RESULTADOS POR GÉNERO", 20, yPosition);
+            yPosition += 15;
+            
+            // Resultados Masculinos
+            const maleTable = document.getElementById('resultsTableMasculinoGeneral');
+            if (maleTable) {
+                pdf.setFont("helvetica", "bold");
+                pdf.setFontSize(12);
+                pdf.text("CLASIFICACIÓN GENERAL MASCULINA", 20, yPosition);
+                yPosition += 10;
+                
+                const maleRows = maleTable.querySelectorAll('tbody tr:not(.loading-row)');
+                const allMaleResults = Array.from(maleRows); // TODOS los resultados masculinos
+                
+                pdf.setFont("helvetica", "normal");
+                pdf.setFontSize(8);
+                
+                allMaleResults.forEach((row, index) => {
+                    const cells = row.querySelectorAll('td');
+                    if (cells.length > 5) {
+                        // Verificar si necesitamos nueva página
+                        if (yPosition > 270) {
+                            pdf.addPage();
+                            yPosition = 20;
+                            
+                            // Repetir título en nueva página
+                            pdf.setFont("helvetica", "bold");
+                            pdf.setFontSize(12);
+                            pdf.text("CLASIFICACIÓN GENERAL MASCULINA (continuación)", 20, yPosition);
+                            yPosition += 10;
+                            pdf.setFont("helvetica", "normal");
+                            pdf.setFontSize(8);
+                        }
+                        
+                        const pos = cells[0]?.textContent?.trim() || (index + 1);
+                        const name = cells[1]?.textContent?.trim() || 'N/A';
+                        const team = cells[2]?.textContent?.trim() || 'N/A';
+                        const age = cells[3]?.textContent?.trim() || 'N/A';
+                        const category = cells[4]?.textContent?.trim() || 'N/A';
+                        const totalPoints = cells[5]?.textContent?.trim() || '0';
+                        const points200 = cells[6]?.textContent?.trim() || '0';
+                        const points50 = cells[7]?.textContent?.trim() || '0';
+                        const points100 = cells[8]?.textContent?.trim() || '0';
+                        
+                        pdf.text(`${pos}. ${name} (${team}) - ${age} años - ${category}`, 25, yPosition);
+                        yPosition += 4;
+                        pdf.text(`   Total: ${totalPoints} pts (200m: ${points200}, 50m: ${points50}, 100m: ${points100})`, 25, yPosition);
+                        yPosition += 6;
+                    }
+                });
+            }
+            
+            yPosition += 15;
+            
+            // Verificar espacio para sección femenina
+            if (yPosition > 200) {
+                pdf.addPage();
+                yPosition = 20;
+            }
+            
+            // Resultados Femeninos
+            const femaleTable = document.getElementById('resultsTableFemeninoGeneral');
+            if (femaleTable) {
+                pdf.setFont("helvetica", "bold");
+                pdf.setFontSize(12);
+                pdf.text("CLASIFICACIÓN GENERAL FEMENINA", 20, yPosition);
+                yPosition += 10;
+                
+                const femaleRows = femaleTable.querySelectorAll('tbody tr:not(.loading-row)');
+                const allFemaleResults = Array.from(femaleRows); // TODOS los resultados femeninos
+                
+                pdf.setFont("helvetica", "normal");
+                pdf.setFontSize(8);
+                
+                allFemaleResults.forEach((row, index) => {
+                    const cells = row.querySelectorAll('td');
+                    if (cells.length > 5) {
+                        // Verificar si necesitamos nueva página
+                        if (yPosition > 270) {
+                            pdf.addPage();
+                            yPosition = 20;
+                            
+                            // Repetir título en nueva página
+                            pdf.setFont("helvetica", "bold");
+                            pdf.setFontSize(12);
+                            pdf.text("CLASIFICACIÓN GENERAL FEMENINA (continuación)", 20, yPosition);
+                            yPosition += 10;
+                            pdf.setFont("helvetica", "normal");
+                            pdf.setFontSize(8);
+                        }
+                        
+                        const pos = cells[0]?.textContent?.trim() || (index + 1);
+                        const name = cells[1]?.textContent?.trim() || 'N/A';
+                        const team = cells[2]?.textContent?.trim() || 'N/A';
+                        const age = cells[3]?.textContent?.trim() || 'N/A';
+                        const category = cells[4]?.textContent?.trim() || 'N/A';
+                        const totalPoints = cells[5]?.textContent?.trim() || '0';
+                        const points200 = cells[6]?.textContent?.trim() || '0';
+                        const points50 = cells[7]?.textContent?.trim() || '0';
+                        const points100 = cells[8]?.textContent?.trim() || '0';
+                        
+                        pdf.text(`${pos}. ${name} (${team}) - ${age} años - ${category}`, 25, yPosition);
+                        yPosition += 4;
+                        pdf.text(`   Total: ${totalPoints} pts (200m: ${points200}, 50m: ${points50}, 100m: ${points100})`, 25, yPosition);
+                        yPosition += 6;
+                    }
+                });
+            }
+        }
+        
+        async function addTeamResultsToPDF(pdf, startY) {
+            let yPosition = startY;
+            
+            // Título de sección
+            pdf.setFont("helvetica", "bold");
+            pdf.setFontSize(14);
+            pdf.setTextColor(11, 16, 57);
+            pdf.text("CLASIFICACIÓN GENERAL POR EQUIPOS", 20, yPosition);
+            yPosition += 15;
+            
+            const teamsTable = document.getElementById('resultsTableTeams');
+            if (teamsTable) {
+                const teamRows = teamsTable.querySelectorAll('tbody tr:not(.loading-row)');
+                const allTeamResults = Array.from(teamRows); // TODOS los equipos
+                
+                pdf.setFont("helvetica", "normal");
+                pdf.setFontSize(9);
+                
+                allTeamResults.forEach((row, index) => {
+                    const cells = row.querySelectorAll('td');
+                    if (cells.length > 2) {
+                        // Verificar si necesitamos nueva página
+                        if (yPosition > 250) {
+                            pdf.addPage();
+                            yPosition = 20;
+                            
+                            // Repetir título en nueva página
+                            pdf.setFont("helvetica", "bold");
+                            pdf.setFontSize(14);
+                            pdf.setTextColor(11, 16, 57);
+                            pdf.text("CLASIFICACIÓN GENERAL POR EQUIPOS (continuación)", 20, yPosition);
+                            yPosition += 15;
+                            pdf.setFont("helvetica", "normal");
+                            pdf.setFontSize(9);
+                        }
+                        
+                        const pos = cells[0]?.textContent?.trim() || (index + 1);
+                        const team = cells[1]?.textContent?.trim() || 'N/A';
+                        const totalPoints = cells[2]?.textContent?.trim() || '0';
+                        const femalePoints = cells[3]?.textContent?.trim() || '0';
+                        const malePoints = cells[4]?.textContent?.trim() || '0';
+                        
+                        pdf.setFont("helvetica", "bold");
+                        pdf.text(`${pos}. ${team}`, 25, yPosition);
+                        yPosition += 5;
+                        
+                        pdf.setFont("helvetica", "normal");
+                        pdf.text(`   Puntos Totales: ${totalPoints}`, 25, yPosition);
+                        yPosition += 4;
+                        pdf.text(`   Puntos Femeninos: ${femalePoints}`, 25, yPosition);
+                        yPosition += 4;
+                        pdf.text(`   Puntos Masculinos: ${malePoints}`, 25, yPosition);
+                        yPosition += 8; // Espacio entre equipos
+                    }
+                });
+            }
+            
+            // Pie de página
+            if (yPosition > 250) {
+                pdf.addPage();
+                yPosition = 280;
+            } else {
+                yPosition = 280;
+            }
+            
+            pdf.setFont("helvetica", "italic");
+            pdf.setFontSize(8);
+            pdf.setTextColor(128, 128, 128);
+            pdf.text("Documento generado automáticamente desde https://ivchampionship.netlify.app", 105, yPosition, { align: "center" });
+        }
+        
+        // Agregar event listener al botón
+        document.addEventListener('DOMContentLoaded', function() {
+            const downloadBtn = document.getElementById('downloadPdfBtn');
+            if (downloadBtn) {
+                downloadBtn.addEventListener('click', downloadResultsPDF);
+            }
+        });
     </script>
 </body>
 </html>
