@@ -3296,49 +3296,106 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
             }
         }
 
-        // Función para cargar solo la hoja RESULTADOS usando la función existente
+        // Función para cargar todas las hojas por posición
         async function getAllSheetData() {
             try {
-                console.log('🔍 Cargando directamente la hoja RESULTADOS...');
+                console.log('🔍 Cargando hojas del Google Sheet por posición...');
                 
                 // Primero obtener información de todas las hojas disponibles
                 const sheetInfo = await getSheetInfo();
-                console.log('📋 Hojas disponibles:', sheetInfo.sheets.map(s => `${s.properties.title} (GID: ${s.properties.sheetId})`));
+                console.log('📋 Total de hojas disponibles:', sheetInfo.sheets.length);
+                console.log('📋 Hojas:', sheetInfo.sheets.map((s, i) => `${i}: ${s.properties.title} (GID: ${s.properties.sheetId})`));
                 
-                // Buscar la hoja RESULTADOS
-                let resultadosSheet = sheetInfo.sheets.find(s => 
-                    s.properties.title.toUpperCase().includes('RESULTADOS') ||
-                    s.properties.title.toUpperCase().includes('RESULTADO')
-                );
+                const allData = {
+                    eventos: [],
+                    masculino: [],
+                    femenino: [],
+                    equipos: []
+                };
                 
-                if (!resultadosSheet) {
-                    // Si no encuentra RESULTADOS, usar la primera hoja
-                    resultadosSheet = sheetInfo.sheets[0];
-                    console.log('⚠️ No se encontró hoja RESULTADOS, usando primera hoja:', resultadosSheet.properties.title);
+                // Cargar primeras 8 hojas (eventos)
+                console.log('🏊‍♀️ Cargando hojas de eventos (0-7)...');
+                for (let i = 0; i < Math.min(8, sheetInfo.sheets.length); i++) {
+                    const sheet = sheetInfo.sheets[i];
+                    console.log(`📄 Cargando evento ${i + 1}: ${sheet.properties.title}`);
+                    
+                    try {
+                        const data = await loadSheetByGid(sheet.properties.sheetId);
+                        if (data && data.length > 0) {
+                            console.log(`✅ ${sheet.properties.title}: ${data.length} filas`);
+                            allData.eventos.push({
+                                name: sheet.properties.title,
+                                data: data
+                            });
+                        }
+                    } catch (error) {
+                        console.warn(`⚠️ Error cargando ${sheet.properties.title}:`, error);
+                    }
                 }
                 
-                console.log('🎯 Cargando hoja:', resultadosSheet.properties.title, 'GID:', resultadosSheet.properties.sheetId);
-                
-                // Usar la función existente que ya funciona
-                const data = await loadSheetByGid(resultadosSheet.properties.sheetId);
-                
-                if (data && data.length > 0) {
-                    console.log('✅ Datos cargados exitosamente:', data.length, 'filas');
-                    console.log('📄 Primeras 3 filas:', data.slice(0, 3));
-                    
-                    const allData = {
-                        'TODOS_LOS_RESULTADOS': data
-                    };
-                    
-                    return allData;
-                } else {
-                    console.error('❌ No se pudieron cargar los datos de la hoja');
-                    return {};
+                // Cargar siguiente 2 hojas (género) - posiciones 8 y 9
+                console.log('👥 Cargando hojas de género (8-9)...');
+                if (sheetInfo.sheets.length > 8) {
+                    const maleSheet = sheetInfo.sheets[8];
+                    console.log(`📄 Cargando masculino: ${maleSheet.properties.title}`);
+                    try {
+                        const maleData = await loadSheetByGid(maleSheet.properties.sheetId);
+                        if (maleData && maleData.length > 0) {
+                            console.log(`✅ Masculino: ${maleData.length} filas`);
+                            allData.masculino = maleData;
+                        }
+                    } catch (error) {
+                        console.warn(`⚠️ Error cargando masculino:`, error);
+                    }
                 }
+                
+                if (sheetInfo.sheets.length > 9) {
+                    const femaleSheet = sheetInfo.sheets[9];
+                    console.log(`📄 Cargando femenino: ${femaleSheet.properties.title}`);
+                    try {
+                        const femaleData = await loadSheetByGid(femaleSheet.properties.sheetId);
+                        if (femaleData && femaleData.length > 0) {
+                            console.log(`✅ Femenino: ${femaleData.length} filas`);
+                            allData.femenino = femaleData;
+                        }
+                    } catch (error) {
+                        console.warn(`⚠️ Error cargando femenino:`, error);
+                    }
+                }
+                
+                // Cargar última hoja (equipos)
+                console.log('🏆 Cargando hoja de equipos (última)...');
+                if (sheetInfo.sheets.length > 10) {
+                    const teamSheet = sheetInfo.sheets[sheetInfo.sheets.length - 1];
+                    console.log(`📄 Cargando equipos: ${teamSheet.properties.title}`);
+                    try {
+                        const teamData = await loadSheetByGid(teamSheet.properties.sheetId);
+                        if (teamData && teamData.length > 0) {
+                            console.log(`✅ Equipos: ${teamData.length} filas`);
+                            allData.equipos = teamData;
+                        }
+                    } catch (error) {
+                        console.warn(`⚠️ Error cargando equipos:`, error);
+                    }
+                }
+                
+                console.log('📊 Resumen final:', {
+                    eventos: allData.eventos.length,
+                    masculino: allData.masculino.length,
+                    femenino: allData.femenino.length,
+                    equipos: allData.equipos.length
+                });
+                
+                return allData;
                 
             } catch (error) {
-                console.error('❌ Error cargando RESULTADOS:', error);
-                return {};
+                console.error('❌ Error cargando datos del Google Sheet:', error);
+                return {
+                    eventos: [],
+                    masculino: [],
+                    femenino: [],
+                    equipos: []
+                };
             }
         }
 
@@ -3527,23 +3584,39 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
             pdf.text("RESULTADOS POR PRUEBAS", 20, yPosition);
             yPosition += 20;
             
-            const allRows = allSheetData['TODOS_LOS_RESULTADOS'] || [];
-            const sections = parseResultadosData(allRows);
+            const eventos = allSheetData.eventos || [];
             
-            if (sections.eventos.length > 0) {
-                // Crear tabla con todos los eventos
-                const tableData = sections.eventos.map((row, index) => {
-                    const [pos, athlete, team, time, points] = row;
-                    return {
-                        position: pos || (index + 1).toString(),
-                        athlete: athlete || '',
-                        team: team || '',
-                        time: formatTime(time) || '',
-                        points: points || ''
-                    };
-                });
-                
-                yPosition = drawProfessionalTable(pdf, tableData, yPosition, 'event');
+            if (eventos.length > 0) {
+                for (const evento of eventos) {
+                    // Verificar espacio en la página
+                    if (yPosition > 200) {
+                        pdf.addPage();
+                        yPosition = 30;
+                    }
+                    
+                    // Título del evento
+                    pdf.setFont("helvetica", "bold");
+                    pdf.setFontSize(12);
+                    pdf.setTextColor(11, 16, 57);
+                    pdf.text(evento.name, 20, yPosition);
+                    yPosition += 12;
+                    
+                    // Crear tabla profesional
+                    const tableData = evento.data.map((row, index) => {
+                        // Mapear columnas del CSV (pos, athlete, team, tiempo/edad, categoria, puntos)
+                        const [pos, athlete, team, timeOrAge, category, points] = row;
+                        return {
+                            position: pos || (index + 1).toString(),
+                            athlete: athlete || '',
+                            team: team || '',
+                            time: formatTime(timeOrAge) || '',
+                            points: points || ''
+                        };
+                    });
+                    
+                    yPosition = drawProfessionalTable(pdf, tableData, yPosition, 'event');
+                    yPosition += 10;
+                }
             } else {
                 pdf.setFont("helvetica", "normal");
                 pdf.setFontSize(10);
@@ -3676,19 +3749,16 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
             pdf.text("RESULTADOS POR GÉNERO", 20, yPosition);
             yPosition += 20;
             
-            const allRows = allSheetData['TODOS_LOS_RESULTADOS'] || [];
-            const sections = parseResultadosData(allRows);
-            
             // Resultados Masculinos
-            if (sections.masculino.length > 0) {
+            if (allSheetData.masculino.length > 0) {
                 pdf.setFont("helvetica", "bold");
                 pdf.setFontSize(12);
                 pdf.setTextColor(11, 16, 57);
                 pdf.text("CLASIFICACIÓN GENERAL MASCULINA", 20, yPosition);
                 yPosition += 12;
                 
-                const tableData = sections.masculino.map((row, index) => {
-                    const [pos, athlete, team, points] = row;
+                const tableData = allSheetData.masculino.map((row, index) => {
+                    const [pos, athlete, team, age, category, points] = row;
                     return {
                         position: pos || (index + 1).toString(),
                         athlete: athlete || '',
@@ -3708,15 +3778,15 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
             }
             
             // Resultados Femeninos
-            if (sections.femenino.length > 0) {
+            if (allSheetData.femenino.length > 0) {
                 pdf.setFont("helvetica", "bold");
                 pdf.setFontSize(12);
                 pdf.setTextColor(11, 16, 57);
                 pdf.text("CLASIFICACIÓN GENERAL FEMENINA", 20, yPosition);
                 yPosition += 12;
                 
-                const tableData = sections.femenino.map((row, index) => {
-                    const [pos, athlete, team, points] = row;
+                const tableData = allSheetData.femenino.map((row, index) => {
+                    const [pos, athlete, team, age, category, points] = row;
                     return {
                         position: pos || (index + 1).toString(),
                         athlete: athlete || '',
@@ -3742,12 +3812,9 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
             pdf.text("CLASIFICACIÓN GENERAL POR EQUIPOS", 20, yPosition);
             yPosition += 20;
             
-            const allRows = allSheetData['TODOS_LOS_RESULTADOS'] || [];
-            const sections = parseResultadosData(allRows);
-            
-            if (sections.equipos.length > 0) {
+            if (allSheetData.equipos.length > 0) {
                 // Crear tabla con todos los equipos
-                const tableData = sections.equipos.map((row, index) => {
+                const tableData = allSheetData.equipos.map((row, index) => {
                     const [pos, team, points] = row;
                     return {
                         position: pos || (index + 1).toString(),
