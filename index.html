@@ -3329,11 +3329,15 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
                     
                     try {
                         const data = await loadSheetByGid(sheet.gid);
-                        if (data && data.length > 0) {
-                            console.log(`✅ ${sheet.title}: ${data.length} filas`);
+                        if (data && data.length > 1) { // Asegurarse de que hay más que solo headers
+                            // Saltear la primera fila (headers) y tomar todo lo demás
+                            const dataRows = data.slice(1).filter(row => 
+                                row && row.length > 0 && row.some(cell => cell && cell.trim() !== '')
+                            );
+                            console.log(`✅ ${sheet.title}: ${dataRows.length} filas de datos (salteando headers)`);
                             allData.eventos.push({
                                 name: sheet.title,
-                                data: data
+                                data: dataRows
                             });
                         }
                     } catch (error) {
@@ -3348,9 +3352,13 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
                     console.log(`📄 Cargando masculino: ${maleSheet.title}`);
                     try {
                         const maleData = await loadSheetByGid(maleSheet.gid);
-                        if (maleData && maleData.length > 0) {
-                            console.log(`✅ Masculino: ${maleData.length} filas`);
-                            allData.masculino = maleData;
+                        if (maleData && maleData.length > 1) {
+                            // Saltear headers y filtrar filas vacías
+                            const dataRows = maleData.slice(1).filter(row => 
+                                row && row.length > 0 && row.some(cell => cell && cell.trim() !== '')
+                            );
+                            console.log(`✅ Masculino: ${dataRows.length} filas de datos`);
+                            allData.masculino = dataRows;
                         }
                     } catch (error) {
                         console.warn(`⚠️ Error cargando masculino:`, error);
@@ -3362,9 +3370,13 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
                     console.log(`📄 Cargando femenino: ${femaleSheet.title}`);
                     try {
                         const femaleData = await loadSheetByGid(femaleSheet.gid);
-                        if (femaleData && femaleData.length > 0) {
-                            console.log(`✅ Femenino: ${femaleData.length} filas`);
-                            allData.femenino = femaleData;
+                        if (femaleData && femaleData.length > 1) {
+                            // Saltear headers y filtrar filas vacías
+                            const dataRows = femaleData.slice(1).filter(row => 
+                                row && row.length > 0 && row.some(cell => cell && cell.trim() !== '')
+                            );
+                            console.log(`✅ Femenino: ${dataRows.length} filas de datos`);
+                            allData.femenino = dataRows;
                         }
                     } catch (error) {
                         console.warn(`⚠️ Error cargando femenino:`, error);
@@ -3378,9 +3390,13 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
                     console.log(`📄 Cargando equipos: ${teamSheet.title}`);
                     try {
                         const teamData = await loadSheetByGid(teamSheet.gid);
-                        if (teamData && teamData.length > 0) {
-                            console.log(`✅ Equipos: ${teamData.length} filas`);
-                            allData.equipos = teamData;
+                        if (teamData && teamData.length > 1) {
+                            // Saltear headers y filtrar filas vacías
+                            const dataRows = teamData.slice(1).filter(row => 
+                                row && row.length > 0 && row.some(cell => cell && cell.trim() !== '')
+                            );
+                            console.log(`✅ Equipos: ${dataRows.length} filas de datos`);
+                            allData.equipos = dataRows;
                         }
                     } catch (error) {
                         console.warn(`⚠️ Error cargando equipos:`, error);
