@@ -4,7 +4,32 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>IV Championship Master - AquaTEN</title>
+    <meta name="description" content="IV Championship Master AquaTEN - Competencia de natación master con resultados en tiempo real, diplomas descargables y clasificaciones por categorías.">
+    <meta name="keywords" content="natación, championship, master, AquaTEN, competencia, resultados">
+    <meta name="theme-color" content="#0b1039">
+    
+    <!-- Performance optimizations -->
+    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" as="script">
+    <link rel="dns-prefetch" href="//docs.google.com">
+    <link rel="dns-prefetch" href="//sheets.googleapis.com">
     <style>
+        /* CSS Variables for consistency and easy maintenance */
+        :root {
+            --primary-color: #0b1039;
+            --secondary-color: #00ADEF;
+            --background-light: #f0f6ff;
+            --background-gradient: linear-gradient(135deg, #0b1039, #00adef);
+            --text-gray: #a5a5a5;
+            --text-white: #ffffff;
+            --border-radius: 15px;
+            --border-radius-small: 8px;
+            --border-radius-large: 25px;
+            --box-shadow: 0 5px 25px rgba(11, 16, 57, 0.08);
+            --box-shadow-hover: 0 10px 30px rgba(11, 16, 57, 0.1);
+            --font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            --transition: all 0.3s ease;
+        }
+
         * {
             margin: 0;
             padding: 0;
@@ -12,9 +37,9 @@
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-            background-color: #ffffff;
-            color: #0b1039;
+            font-family: var(--font-family);
+            background-color: var(--text-white);
+            color: var(--primary-color);
             line-height: 1.6;
         }
 
@@ -36,8 +61,8 @@
 
         /* Header */
         .header {
-            background-color: #ffffff;
-            box-shadow: 0 2px 15px rgba(11, 16, 57, 0.1);
+            background-color: var(--text-white);
+            box-shadow: var(--box-shadow);
             position: fixed;
             width: 100%;
             top: 0;
@@ -80,18 +105,18 @@
 
         .nav-links li a {
             text-decoration: none;
-            color: #0b1039;
+            color: var(--primary-color);
             font-weight: 500;
             font-size: 16px;
             padding: 8px 16px;
             border-radius: 20px;
-            transition: all 0.3s ease;
+            transition: var(--transition);
             position: relative;
         }
 
         .nav-links li a:hover {
-            background-color: #00ADEF;
-            color: white;
+            background-color: var(--secondary-color);
+            color: var(--text-white);
             transform: translateY(-2px);
         }
 
@@ -107,7 +132,7 @@
         .mobile-menu-toggle span {
             width: 25px;
             height: 3px;
-            background-color: #0b1039;
+            background-color: var(--primary-color);
             margin: 3px 0;
             transition: 0.3s;
             border-radius: 2px;
@@ -136,16 +161,16 @@
             align-items: center;
             background: white;
             border: 2px solid #e0e0e0;
-            border-radius: 25px;
+            border-radius: var(--border-radius-large);
             padding: 8px 20px;
             box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            transition: all 0.3s ease;
+            transition: var(--transition);
             max-width: 400px;
             width: 100%;
         }
 
         .search-box:focus-within {
-            border-color: #00ADEF;
+            border-color: var(--secondary-color);
             box-shadow: 0 4px 15px rgba(0, 173, 239, 0.2);
         }
 
@@ -204,7 +229,7 @@
             font-size: 0.9em;
             font-weight: 600;
             box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-            transition: all 0.3s ease;
+            transition: var(--transition);
         }
 
         .status-loading {
@@ -237,11 +262,11 @@
         @media (max-width: 768px) {
             .quote-item p {
                 font-size: 1rem !important;
-                color: #0b1039 !important;
+                color: var(--primary-color) !important;
             }
             .quote-item span {
                 font-size: 0.8rem !important;
-                color: #00ADEF !important;
+                color: var(--secondary-color) !important;
             }
         }
 
@@ -253,7 +278,7 @@
             height: 70vh;
             min-height: 500px;
             overflow: hidden;
-            background-color: #0b1039;
+            background-color: var(--primary-color);
         }
 
         .video-container {
@@ -317,7 +342,7 @@
         .section-title {
             text-align: center;
             font-size: 2.8em;
-            color: #0b1039;
+            color: var(--primary-color);
             margin-bottom: 60px;
             font-weight: 700;
         }
@@ -345,7 +370,7 @@
             padding: 50px 30px;
             text-align: center;
             box-shadow: 0 5px 25px rgba(11, 16, 57, 0.08);
-            transition: all 0.3s ease;
+            transition: var(--transition);
             text-decoration: none;
             color: inherit;
         }
@@ -353,7 +378,7 @@
         .info-card:hover, .contact-card-link:hover {
             transform: translateY(-8px);
             box-shadow: 0 15px 40px rgba(11, 16, 57, 0.15);
-            border-color: #00ADEF;
+            border-color: var(--secondary-color);
         }
 
         /* Iconos SVG minimalistas */
@@ -372,14 +397,14 @@
         }
 
         .info-card h3, .contact-card-link h3 {
-            color: #0b1039;
+            color: var(--primary-color);
             font-size: 1.8em;
             margin-bottom: 15px;
             font-weight: 600;
         }
 
         .info-card p, .contact-card-link p {
-            color: #a5a5a5;
+            color: var(--text-gray);
             font-size: 1.1em;
             line-height: 1.8;
         }
@@ -413,22 +438,22 @@
             background-color: transparent;
             border: none;
             border-bottom: 3px solid transparent;
-            color: #0b1039;
+            color: var(--primary-color);
             font-size: 1.1em;
-            transition: all 0.3s ease;
+            transition: var(--transition);
             margin: 0 10px;
             border-radius: 10px 10px 0 0;
             font-weight: 500;
         }
 
         .tab-button:hover {
-            color: #00ADEF;
+            color: var(--secondary-color);
             background-color: rgba(0, 173, 239, 0.05);
         }
 
         .tab-button.active {
-            color: #00ADEF;
-            border-bottom: 3px solid #00ADEF;
+            color: var(--secondary-color);
+            border-bottom: 3px solid var(--secondary-color);
             background-color: #f0f6ff;
             font-weight: 600;
         }
@@ -443,7 +468,7 @@
         }
 
         .tab-content h3 {
-            color: #0b1039;
+            color: var(--primary-color);
             margin-bottom: 30px;
             text-align: center;
             font-size: 1.8em;
@@ -454,12 +479,12 @@
         .last-update {
             text-align: center;
             margin-bottom: 20px;
-            color: #a5a5a5;
+            color: var(--text-gray);
             font-size: 0.9em;
         }
 
         .last-update .time {
-            color: #00ADEF;
+            color: var(--secondary-color);
             font-weight: 600;
         }
 
@@ -469,7 +494,7 @@
             border-collapse: collapse;
             margin-top: 20px;
             background-color: #ffffff;
-            border-radius: 15px;
+            border-radius: var(--border-radius);
             overflow: hidden;
             box-shadow: 0 5px 25px rgba(11, 16, 57, 0.08);
         }
@@ -481,7 +506,7 @@
         }
 
         .results-table th {
-            background-color: #0b1039;
+            background-color: var(--primary-color);
             color: #ffffff;
             font-weight: 600;
             font-size: 1em;
@@ -498,27 +523,27 @@
 
         .results-table .rank {
             font-weight: bold;
-            color: #0b1039;
+            color: var(--primary-color);
             text-align: center;
         }
 
         .results-table .time {
             font-family: 'Courier New', Courier, monospace;
             font-weight: bold;
-            color: #0b1039;
+            color: var(--primary-color);
             text-align: center;
         }
 
         .results-table .points {
             font-weight: bold;
-            color: #00ADEF;
+            color: var(--secondary-color);
             text-align: center;
         }
 
         /* === CORRECCIÓN APLICADA AQUÍ === */
         /* Se combinaron las reglas y se aplicó el fondo directamente a las celdas (td) */
         .category-header td {
-            background: linear-gradient(135deg, #0b1039 0%, #00ADEF 100%) !important;
+            background: var(--background-gradient) !important;
             color: #ffffff !important;
             text-align: center;
             font-size: 1.1em;
@@ -533,7 +558,7 @@
 
         .loading-row {
             text-align: center;
-            color: #a5a5a5;
+            color: var(--text-gray);
             font-style: italic;
         }
 
@@ -556,7 +581,7 @@
             border-radius: 20px;
             padding: 40px;
             text-align: center;
-            transition: all 0.3s ease;
+            transition: var(--transition);
             cursor: pointer;
             text-decoration: none;
             display: block;
@@ -565,7 +590,7 @@
         .sponsor-card:hover {
             transform: translateY(-5px);
             box-shadow: 0 10px 30px rgba(11, 16, 57, 0.15);
-            border-color: #00ADEF;
+            border-color: var(--secondary-color);
         }
 
         .sponsor-logo {
@@ -590,7 +615,7 @@
 
         .sponsor-name {
             font-size: 1.2em;
-            color: #0b1039;
+            color: var(--primary-color);
             font-weight: 600;
         }
 
@@ -627,7 +652,7 @@
             text-decoration: none;
             font-weight: 600;
             font-size: 1.2em;
-            transition: all 0.3s ease;
+            transition: var(--transition);
             box-shadow: 0 5px 20px rgba(0, 173, 239, 0.3);
         }
 
@@ -639,7 +664,7 @@
 
         /* Footer */
         .footer {
-            background-color: #0b1039;
+            background-color: var(--primary-color);
             color: #ffffff;
             padding: 50px 20px;
             text-align: center;
@@ -690,7 +715,7 @@
         .mobile-team-card .team-name {
             font-size: 18px;
             font-weight: bold;
-            color: #0b1039;
+            color: var(--primary-color);
             margin-bottom: 10px;
         }
         
@@ -704,7 +729,7 @@
         .mobile-team-card .team-points div {
             background: #f8f9fa;
             padding: 8px;
-            border-radius: 8px;
+            border-radius: var(--border-radius-small);
             text-align: center;
         }
         
@@ -717,7 +742,7 @@
         .mobile-team-card .team-points .value {
             font-size: 16px;
             font-weight: bold;
-            color: #00ADEF;
+            color: var(--secondary-color);
         }
 
         /* Estilos adicionales para pantallas muy pequeñas - SOLO equipos */
@@ -840,7 +865,7 @@
                 width: 100%;
                 text-align: center;
                 margin: 5px 0;
-                border-radius: 8px;
+                border-radius: var(--border-radius-small);
             }
 
             .tab-button.active {
@@ -881,7 +906,7 @@
                 left: 8px;
                 font-weight: bold;
                 text-align: left;
-                color: #0b1039;
+                color: var(--primary-color);
             }
             
             /* Asegurar que las tablas regulares también funcionen */
@@ -921,7 +946,7 @@
             border-radius: 50%;
             cursor: pointer;
             font-size: 16px;
-            transition: all 0.3s ease;
+            transition: var(--transition);
             box-shadow: 0 2px 5px rgba(30, 136, 229, 0.3);
             display: inline-flex;
             align-items: center;
@@ -952,7 +977,7 @@
             border-radius: 50%;
             cursor: pointer;
             font-size: 16px;
-            transition: all 0.3s ease;
+            transition: var(--transition);
             display: inline-flex;
             align-items: center;
             justify-content: center;
@@ -1007,7 +1032,7 @@
 
         .share-modal-content {
             background: white;
-            border-radius: 15px;
+            border-radius: var(--border-radius);
             padding: 0;
             max-width: 400px;
             width: 90%;
@@ -1066,7 +1091,7 @@
             border-radius: 12px;
             background: white;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: var(--transition);
             font-size: 16px;
             font-weight: 500;
             text-decoration: none;
@@ -1454,7 +1479,7 @@
                                     font-weight: bold;
                                     font-size: 1rem;
                                     cursor: pointer;
-                                    transition: all 0.3s ease;
+                                    transition: var(--transition);
                                     box-shadow: 0 4px 15px rgba(30, 136, 229, 0.3);
                                 " onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 20px rgba(30, 136, 229, 0.4)'" onmouseout="this.style.transform='translateY(0px)'; this.style.boxShadow='0 4px 15px rgba(30, 136, 229, 0.3)'">
                                     <span style="margin-right: 8px;">📄</span>
@@ -1469,7 +1494,7 @@
                                     font-weight: bold;
                                     font-size: 1rem;
                                     cursor: pointer;
-                                    transition: all 0.3s ease;
+                                    transition: var(--transition);
                                     box-shadow: 0 4px 15px rgba(11, 16, 57, 0.3);
                                 " onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 20px rgba(11, 16, 57, 0.4)'" onmouseout="this.style.transform='translateY(0px)'; this.style.boxShadow='0 4px 15px rgba(11, 16, 57, 0.3)'">
                                     <span style="margin-right: 8px;">⬇️</span>
@@ -1521,11 +1546,11 @@
                                     color: white;
                                     border: none;
                                     padding: 8px 20px;
-                                    border-radius: 25px;
+                                    border-radius: var(--border-radius-large);
                                     font-weight: bold;
                                     font-size: 0.9rem;
                                     cursor: pointer;
-                                    transition: all 0.3s ease;
+                                    transition: var(--transition);
                                     box-shadow: 0 3px 10px rgba(108, 117, 125, 0.3);
                                 " onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 5px 15px rgba(108, 117, 125, 0.4)'" onmouseout="this.style.transform='translateY(0px)'; this.style.boxShadow='0 3px 10px rgba(108, 117, 125, 0.3)'">
                                     <span style="margin-right: 6px;">📄</span>
@@ -1929,7 +1954,7 @@
                     font-weight: 600;
                     border-radius: 50px;
                     cursor: pointer;
-                    transition: all 0.3s ease;
+                    transition: var(--transition);
                     box-shadow: 0 5px 20px rgba(11, 16, 57, 0.3);
                     display: inline-flex;
                     align-items: center;
@@ -2503,114 +2528,121 @@
         let detectedGids = {};
 
         // Función para cargar una hoja específica por GID
-        async function loadSheetByGid(gid) {
+        // Optimized unified sheet loader
+        async function loadSheet({gid, name, range = 'A:J', useApiKey = CONFIG.USE_API_KEY}) {
             let data = null;
-            
-            console.log(`📄 Cargando datos con GID: ${gid}`);
+            const identifier = gid || name;
+            console.log(`📄 Cargando datos: ${identifier}`);
             
             try {
-                const url = `https://docs.google.com/spreadsheets/d/${CONFIG.SHEET_ID}/export?format=csv&gid=${gid}&range=A:J`;
-                console.log(`📄 URL completa: ${url}`);
-                
-                const response = await fetch(url);
-                console.log(`📡 Respuesta HTTP: ${response.status} ${response.statusText}`);
-                
-                if (response.ok) {
-                    const text = await response.text();
-                    console.log(`📝 Tamaño del texto recibido: ${text.length} caracteres`);
-                    console.log(`🔍 Primeros 200 caracteres:`, text.substring(0, 200));
-                    
-                    if (text && !text.includes('<!DOCTYPE')) {
-                        data = parseCSV(text);
-                        console.log(`✅ CSV parseado con GID ${gid}: ${data.length} filas`);
-                        if (data.length > 0) {
-                            console.log(`🔍 Primera fila (encabezados):`, data[0]);
-                            console.log(`🔍 Segunda fila (primer dato):`, data[1]);
-                            console.log(`🔍 Última fila:`, data[data.length - 1]);
-                        }
-                    } else {
-                        console.warn(`⚠️ Respuesta parece ser HTML en lugar de CSV para GID ${gid}`);
-                    }
-                } else {
-                    console.error(`❌ Error HTTP ${response.status} para GID ${gid}: ${response.statusText}`);
+                if (gid) {
+                    // Load by GID (CSV method)
+                    const url = `https://docs.google.com/spreadsheets/d/${CONFIG.SHEET_ID}/export?format=csv&gid=${gid}&range=${range}`;
+                    data = await fetchCSVData(url, gid);
+                } else if (name && useApiKey) {
+                    // Load by sheet name (API method)
+                    data = await fetchAPIData(name, range);
                 }
+                
+                if (data && data.length > 0) {
+                    console.log(`✅ Datos cargados para ${identifier}: ${data.length} filas`);
+                    logDataSample(data);
+                }
+                
+                return data;
             } catch (error) {
-                console.error(`❌ Error cargando GID ${gid}:`, error.message);
+                console.error(`❌ Error cargando ${identifier}:`, error.message);
+                return null;
             }
-            
-            return data;
         }
-        
-        // Función para cargar una hoja específica por nombre
-        async function loadSheetByName(sheetName) {
-            let data = null;
+
+        // Helper function for CSV data fetching
+        async function fetchCSVData(url, identifier) {
+            console.log(`📄 URL CSV: ${url}`);
+            const response = await fetch(url);
+            console.log(`📡 Respuesta HTTP: ${response.status} ${response.statusText}`);
             
-            // Intentar con API Key primero
-            if (CONFIG.USE_API_KEY) {
-                const ranges = [
-                    `${sheetName}!A:Z`,
-                    `${sheetName}!A1:Z1000`,
-                    `'${sheetName}'!A:Z`,
-                    `'${sheetName}'!A1:Z1000`
-                ];
-                
-                for (const range of ranges) {
-                    try {
-                        const url = `https://sheets.googleapis.com/v4/spreadsheets/${CONFIG.SHEET_ID}/values/${range}?key=${CONFIG.API_KEY}`;
-                        console.log(`🔍 Probando rango: ${range}`);
-                        
-                        const response = await fetch(url, {
-                            method: 'GET',
-                            headers: {
-                                'Accept': 'application/json',
-                                'Cache-Control': 'no-cache'
-                            }
-                        });
-                        
-                        if (response.ok) {
-                            const responseData = await response.json();
-                            if (responseData.values && responseData.values.length > 0) {
-                                data = responseData.values;
-                                console.log(`✅ Datos encontrados en ${sheetName}: ${data.length} filas`);
-                                break;
-                            }
-                        } else {
-                            const errorData = await response.json();
-                            console.log(`❌ Error en ${range}:`, errorData);
-                        }
-                    } catch (error) {
-                        console.log(`❌ Error en rango ${range}:`, error.message);
-                    }
-                }
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
             }
             
-            // Si no hay datos con API Key, intentar CSV con gid específico
-            if (!data) {
-                console.log(`📄 Intentando método CSV para ${sheetName}...`);
-                
-                // Usar los gid específicos para cada hoja
-                let gid = '0'; // Por defecto para FEMENINO
-                
-                if (sheetName === 'MASCULINO') {
-                    gid = '2016301649'; // GID específico para MASCULINO
-                }
-                
+            const text = await response.text();
+            console.log(`📝 Tamaño del texto: ${text.length} caracteres`);
+            
+            if (text && !text.includes('<!DOCTYPE')) {
+                return parseCSV(text);
+            } else {
+                console.warn(`⚠️ Respuesta HTML en lugar de CSV para ${identifier}`);
+                return null;
+            }
+        }
+
+        // Helper function for API data fetching
+        async function fetchAPIData(sheetName, range) {
+            const ranges = [
+                `${sheetName}!${range}`,
+                `${sheetName}!A1:Z1000`,
+                `'${sheetName}'!${range}`,
+                `'${sheetName}'!A1:Z1000`
+            ];
+            
+            for (const apiRange of ranges) {
                 try {
-                    const url = `https://docs.google.com/spreadsheets/d/${CONFIG.SHEET_ID}/export?format=csv&gid=${gid}&range=A:J`;
-                    console.log(`📄 Cargando CSV de ${sheetName} con gid=${gid}`);
+                    const url = `https://sheets.googleapis.com/v4/spreadsheets/${CONFIG.SHEET_ID}/values/${apiRange}?key=${CONFIG.API_KEY}`;
+                    console.log(`🔍 Probando rango: ${apiRange}`);
                     
-                    const response = await fetch(url);
+                    const response = await fetch(url, {
+                        method: 'GET',
+                        headers: {
+                            'Accept': 'application/json',
+                            'Cache-Control': 'no-cache'
+                        }
+                    });
+                    
                     if (response.ok) {
-                        const text = await response.text();
-                        if (text && !text.includes('<!DOCTYPE')) {
-                            data = parseCSV(text);
-                            console.log(`✅ CSV parseado para ${sheetName}: ${data.length} filas`);
-                            console.log(`🔍 Primeras 3 filas de ${sheetName}:`, data.slice(0, 3));
+                        const responseData = await response.json();
+                        if (responseData.values && responseData.values.length > 0) {
+                            console.log(`✅ Datos encontrados: ${responseData.values.length} filas`);
+                            return responseData.values;
                         }
                     }
                 } catch (error) {
-                    console.log(`❌ Error CSV para ${sheetName}:`, error.message);
+                    console.log(`❌ Error en rango ${apiRange}:`, error.message);
                 }
+            }
+            return null;
+        }
+
+        // Helper function to log data samples
+        function logDataSample(data) {
+            if (data.length > 0) {
+                console.log(`🔍 Primera fila (encabezados):`, data[0]);
+                if (data.length > 1) console.log(`🔍 Segunda fila:`, data[1]);
+                console.log(`🔍 Última fila:`, data[data.length - 1]);
+            }
+        }
+
+        // Legacy function wrappers for backwards compatibility
+        async function loadSheetByGid(gid) {
+            return await loadSheet({gid});
+        }
+        
+        async function loadSheetByName(sheetName) {
+            // Use the optimized unified loader with fallback GID logic
+            let gid = null;
+            
+            // Map sheet names to specific GIDs for CSV fallback
+            if (sheetName === 'MASCULINO') {
+                gid = '2016301649';
+            } else if (sheetName === 'FEMENINO') {
+                gid = '0';
+            }
+            
+            // Try API method first, then fallback to CSV with GID
+            let data = await loadSheet({name: sheetName});
+            if (!data && gid) {
+                console.log(`📄 Fallback: Intentando CSV para ${sheetName} con GID ${gid}`);
+                data = await loadSheet({gid});
             }
             
             return data;
@@ -2633,150 +2665,88 @@
             console.log('⚠️ updateResultsTable llamada pero no debería usarse');
         }
         
-        // Función auxiliar para actualizar contenido de tabla
-        function updateTableContent(table, data, swimmerLabel) {
-            const tbody = table.querySelector('tbody');
-            if (!tbody) return;
-            
-            let htmlContent = '';
-            let currentCategory = '';
-            
-            // Detectar si es tabla de género (tiene más columnas)
-            const isGenderTable = table.id.includes('General') || table.id.includes('resultados');
-            const colspan = isGenderTable ? "10" : "8";
-            
-            for (let i = 1; i < data.length; i++) {
-                const row = data[i];
-                if (!row || row.length === 0) continue;
-                
-                // Si es una fila con solo categoría
-                if (row.length === 1 || (row[0] && !row[1])) {
-                    const categoryText = row[0].toString().trim();
-                    // Verificar que sea una categoría válida
-                    if (categoryText.match(/^(INFANTIL|JUVENIL|MAYORES|MASTER)/i)) {
-                        currentCategory = categoryText;
-                        htmlContent += `
-                            <tr class="category-header">
-                                <td colspan="${colspan}">${currentCategory}</td>
-                            </tr>`;
-                    }
-                } else if (row.length >= 6) {
-                    // Es un resultado
-                    if (isGenderTable) {
-                        // Para tablas de género con más columnas
-                        const [pos, swimmer, equipo, edad, categoria, puntosTotal, puntos50m, puntos100m, puntos200m] = row;
-                        
-                        // Skip si no hay nadador
-                        if (!swimmer || swimmer === '-' || swimmer.toLowerCase().includes('sin participantes')) {
-                            if (swimmer && swimmer.toLowerCase().includes('sin participantes')) {
-                                htmlContent += `
-                                    <tr>
-                                        <td data-label="Pos." class="rank" style="text-align: center; color: #a5a5a5;">-</td>
-                                        <td data-label="${swimmerLabel}" style="color: #a5a5a5; font-style: italic;">Sin participantes</td>
-                                        <td data-label="Equipo" style="color: #a5a5a5;">-</td>
-                                        <td data-label="Edad" style="color: #a5a5a5;">-</td>
-                                        <td data-label="Categoría" style="color: #a5a5a5;">${currentCategory}</td>
-                                        <td data-label="Puntos Totales" style="color: #a5a5a5;">-</td>
-                                        <td data-label="P. 50m Libre" style="color: #a5a5a5;">-</td>
-                                        <td data-label="P. 100m Libre" style="color: #a5a5a5;">-</td>
-                                        <td data-label="P. 200m Libre" style="color: #a5a5a5;">-</td>
-                                        <td data-label="Compartir" style="color: #a5a5a5;">-</td>
-                                    </tr>`;
-                            }
-                            continue;
-                        }
-                        
-                        // Generar medallas para las posiciones
-                        let displayPos = pos;
-                        if (pos === '1' || pos === 1) displayPos = '🥇 1°';
-                        else if (pos === '2' || pos === 2) displayPos = '🥈 2°';
-                        else if (pos === '3' || pos === 3) displayPos = '🥉 3°';
-                        else if (pos && pos !== '-' && pos !== '') displayPos = `${pos}°`;
-                        
-                        htmlContent += `
-                            <tr>
-                                <td data-label="Pos." class="rank">${displayPos || '-'}</td>
-                                <td data-label="${swimmerLabel}">${swimmer || '-'}</td>
-                                <td data-label="Equipo">${equipo || '-'}</td>
-                                <td data-label="Edad">${edad || '-'}</td>
-                                <td data-label="Categoría">${categoria || currentCategory}</td>
-                                <td data-label="Puntos Totales" class="points">${puntosTotal || '-'}</td>
-                                <td data-label="P. 50m Libre" class="points">${puntos50m || '-'}</td>
-                                <td data-label="P. 100m Libre" class="points">${puntos100m || '-'}</td>
-                                <td data-label="P. 200m Libre" class="points">${puntos200m || '-'}</td>
-                                <td data-label="Compartir" class="share-cell">
-                                    <button class="share-btn" onclick="showShareOptions('${(swimmer || '').replace(/'/g, '\\\'')
-                                    }', '${pos || ''}', 'N/A', '${(categoria || currentCategory || '').replace(/'/g, '\\\'')
-                                    }')">📱</button>
-                                </td>
-                            </tr>`;
-                    } else {
-                        // Para tablas de pruebas individuales - manejo más robusto de columnas
-                        let pos, swimmer, equipo, edad, categoria, tiempo, puntos;
-                        
-                        if (row.length >= 7) {
-                            [pos, swimmer, equipo, edad, categoria, tiempo, puntos] = row;
-                        } else if (row.length === 6) {
-                            // Posible formato sin puntos o sin alguna columna
-                            [pos, swimmer, equipo, edad, tiempo, puntos] = row;
-                            categoria = currentCategory;
-                        } else {
-                            // Formato mínimo
-                            pos = row[0];
-                            swimmer = row[1];
-                            equipo = row[2] || '-';
-                            edad = row[3] || '-';
-                            categoria = row[4] || currentCategory;
-                            tiempo = row[5] || '-';
-                            puntos = row[6] || '-';
-                        }
-                        
-                        // Skip si no hay nadador
-                        if (!swimmer || swimmer === '-' || swimmer.toLowerCase().includes('sin participantes')) {
-                            if (swimmer && swimmer.toLowerCase().includes('sin participantes')) {
-                                htmlContent += `
-                                    <tr>
-                                        <td data-label="Pos." class="rank" style="text-align: center; color: #a5a5a5;">-</td>
-                                        <td data-label="${swimmerLabel}" style="color: #a5a5a5; font-style: italic;">Sin participantes</td>
-                                        <td data-label="Equipo" style="color: #a5a5a5;">-</td>
-                                        <td data-label="Edad" style="color: #a5a5a5;">-</td>
-                                        <td data-label="Categoría" style="color: #a5a5a5;">${currentCategory}</td>
-                                        <td data-label="Tiempo Final" style="color: #a5a5a5;">-</td>
-                                        <td data-label="Puntos" style="color: #a5a5a5;">-</td>
-                                        <td data-label="Compartir" style="color: #a5a5a5;">-</td>
-                                    </tr>`;
-                            }
-                            continue;
-                        }
-                        
-                        // Generar medallas para las posiciones
-                        let displayPos = pos;
-                        if (pos === '1' || pos === 1) displayPos = '🥇 1°';
-                        else if (pos === '2' || pos === 2) displayPos = '🥈 2°';
-                        else if (pos === '3' || pos === 3) displayPos = '🥉 3°';
-                        else if (pos && pos !== '-' && pos !== '') displayPos = `${pos}°`;
-                        
-                        htmlContent += `
-                            <tr>
-                                <td data-label="Pos." class="rank">${displayPos || '-'}</td>
-                                <td data-label="${swimmerLabel}">${swimmer || '-'}</td>
-                                <td data-label="Equipo">${equipo || '-'}</td>
-                                <td data-label="Edad">${edad || '-'}</td>
-                                <td data-label="Categoría">${categoria || currentCategory}</td>
-                                <td data-label="Tiempo Final" class="time">${tiempo || '-'}</td>
-                                <td data-label="Puntos" class="points">${puntos || '-'}</td>
-                                <td data-label="Compartir" class="share-cell">
-                                    <button class="share-btn" onclick="showShareOptions('${(swimmer || '').replace(/'/g, '\\\'')
-                                    }', '${pos || ''}', '${(tiempo || '').replace(/'/g, '\\\'')
-                                    }', '${(categoria || currentCategory || '').replace(/'/g, '\\\'')
-                                    }')">📱</button>
-                                </td>
-                            </tr>`;
-                    }
-                }
+        // Base class for table renderers - Optimized approach
+        class TableRenderer {
+            constructor(table, config = {}) {
+                this.table = table;
+                this.tbody = table.querySelector('tbody');
+                this.config = {
+                    colspan: '8',
+                    hasGenderColumn: false,
+                    hasDiplomaColumn: false,
+                    ...config
+                };
             }
             
-            tbody.innerHTML = htmlContent || `<tr><td colspan="${colspan}" style="text-align: center;">No hay datos disponibles</td></tr>`;
+            render(data) {
+                if (!this.tbody || !data || data.length === 0) return;
+                
+                let htmlContent = '';
+                let currentCategory = '';
+                
+                for (let i = 1; i < data.length; i++) {
+                    const row = data[i];
+                    if (!row || row.length === 0) continue;
+                    
+                    if (this.isCategoryRow(row)) {
+                        currentCategory = row[0].toString().trim();
+                        htmlContent += this.renderCategoryRow(currentCategory);
+                    } else if (this.isDataRow(row)) {
+                        htmlContent += this.renderDataRow(row, i);
+                    }
+                }
+                
+                this.tbody.innerHTML = htmlContent || this.getNoDataMessage();
+            }
+            
+            isCategoryRow(row) {
+                return (row.length === 1 || (row[0] && !row[1])) && 
+                       row[0].toString().trim().match(/^(INFANTIL|JUVENIL|MAYORES|MASTER)/i);
+            }
+            
+            isDataRow(row) {
+                return row.length >= 6;
+            }
+            
+            renderCategoryRow(category) {
+                return `<tr class="category-header">
+                    <td colspan="${this.config.colspan}">${category}</td>
+                </tr>`;
+            }
+            
+            renderDataRow(row, index) {
+                // To be overridden by specific table types
+                return '';
+            }
+            
+            getNoDataMessage() {
+                return `<tr><td colspan="${this.config.colspan}" style="text-align: center; padding: 40px; color: var(--text-gray);">No hay datos disponibles</td></tr>`;
+            }
+        }
+        
+        // Specific renderer for general tables
+        class GeneralTableRenderer extends TableRenderer {
+            renderDataRow(row, index) {
+                const [nombre, equipo, edad, categoria, puntos, p200, p50, p100] = row;
+                
+                return `<tr>
+                    <td><strong>${nombre || ''}</strong></td>
+                    <td>${equipo || ''}</td>
+                    <td>${edad || ''}</td>
+                    <td><span class="category-badge">${categoria || ''}</span></td>
+                    <td><strong style="color: var(--secondary-color);">${puntos || ''}</strong></td>
+                    <td>${p200 || ''}</td>
+                    <td>${p50 || ''}</td>
+                    <td>${p100 || ''}</td>
+                    <td><button onclick="shareResult('${nombre}', '${puntos}', '${categoria}')" class="share-btn">📤</button></td>
+                </tr>`;
+            }
+        }
+        
+        // Optimized legacy function wrapper
+        function updateTableContent(table, data, swimmerLabel) {
+            const renderer = new GeneralTableRenderer(table);
+            renderer.render(data);
         }
 
         // Función auxiliar para actualizar contenido de tabla de equipos
@@ -5232,7 +5202,7 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
                 transform: translate(-50%, -50%);
                 background: white;
                 border: 2px solid #0b1039;
-                border-radius: 15px;
+                border-radius: var(--border-radius);
                 padding: 30px;
                 box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
                 z-index: 10000;
@@ -5252,7 +5222,7 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
                     color: white;
                     border: none;
                     padding: 10px 20px;
-                    border-radius: 25px;
+                    border-radius: var(--border-radius-large);
                     cursor: pointer;
                     font-weight: bold;
                 ">Entendido</button>
@@ -5358,7 +5328,7 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
                 transform: translate(-50%, -50%);
                 background: white;
                 border: 2px solid #6c757d;
-                border-radius: 15px;
+                border-radius: var(--border-radius);
                 padding: 25px;
                 box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
                 z-index: 10000;
