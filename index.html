@@ -2377,9 +2377,11 @@
                             if (table) {
                                 console.log(`🔄 Actualizando tabla ${competitionKey}...`);
                                 
-                                // Usar función específica para tabla de equipos
+                                // Usar función específica para cada tipo de tabla
                                 if (competitionKey === 'resultados-equipo' || config.tableId === 'resultsTableTeams') {
                                     updateTeamTableContent(table, data);
+                                } else if (competitionKey === 'resultados-masculino' || competitionKey === 'resultados-femenino') {
+                                    updateGenderTableContent(table, data, config.genderColumn);
                                 } else {
                                     updateTableContent(table, data, config.genderColumn);
                                 }
