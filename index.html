@@ -975,15 +975,17 @@
         }
 
         .diploma-btn.disabled {
-            background: #e0e0e0;
-            color: #9e9e9e;
+            background: #ffcdd2;
+            color: #d32f2f;
             cursor: not-allowed;
-            box-shadow: none;
+            box-shadow: 0 2px 5px rgba(211, 47, 47, 0.2);
+            opacity: 0.7;
         }
 
         .diploma-btn.disabled:hover {
             transform: none;
-            background: #e0e0e0;
+            background: #ffcdd2;
+            opacity: 0.8;
         }
 
         /* Share Modal Styles */
@@ -1905,40 +1907,6 @@
                     Descargar Resultados PDF
                 </button>
 
-                <!-- Temporary Test Button for Diploma -->
-                <button onclick="downloadDiploma('Test Swimmer', '1', 'Test Team', 'MASTER 25-29')" style="
-                    background: linear-gradient(135deg, #4caf50, #45a049);
-                    color: white;
-                    border: none;
-                    padding: 15px 25px;
-                    border-radius: 10px;
-                    font-size: 1.1em;
-                    font-weight: 600;
-                    cursor: pointer;
-                    transition: all 0.3s ease;
-                    box-shadow: 0 5px 20px rgba(76, 175, 80, 0.3);
-                    display: inline-flex;
-                    align-items: center;
-                    gap: 10px;
-                    margin-left: 15px;
-                " onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 8px 25px rgba(76, 175, 80, 0.4)'" 
-                   onmouseout="this.style.transform='translateY(0px)'; this.style.boxShadow='0 5px 20px rgba(76, 175, 80, 0.3)'">
-                    <span style="font-size: 1.2em;">🎓</span>
-                    Test Diploma PDF
-                </button>
-
-                <!-- Toggle para activar/desactivar diplomas temporalmente -->
-                <button id="toggleDiplomas" onclick="toggleAllDiplomas()" style="
-                    background: linear-gradient(135deg, #ff9800, #f57c00);
-                    color: white;
-                    border: none;
-                    padding: 10px 20px;
-                    border-radius: 8px;
-                    font-size: 0.9em;
-                    font-weight: 600;
-                    cursor: pointer;
-                    margin-left: 10px;
-                ">🔧 Activar Todos los Diplomas</button>
                 
                 <div id="pdfStatus" style="margin-top: 20px; display: none;">
                     <p style="color: #0b1039; font-weight: 500;">
@@ -2892,8 +2860,10 @@
                     // Es un resultado - Esperar al menos 6 columnas: LUGAR, ATLETA, EQUIPO, EDAD, CATEGORIA, PUNTOS TOTALES
                     const [lugar, atleta, equipo, edad, categoria, puntosTotales, puntos200m, puntos50m, puntos100m, diplomaStatus] = row;
                     
-                    // Debug: verificar datos de diploma
-                    console.log(`🎓 Debug Diploma - Atleta: ${atleta}, Columna J (índice 9): "${diplomaStatus}", Longitud total fila: ${row.length}`);
+                    // Debug: verificar datos de diploma (reducido)
+                    if (atleta && atleta !== 'Sin atletas') {
+                        console.log(`🎓 ${atleta}: Columna J="${row[9] || 'VACÍA'}" (${row[9] === 'SI' ? 'HABILITADO' : 'DESHABILITADO'})`);
+                    }
                     
                     // Skip si no hay atleta válido
                     if (!atleta || atleta === '-' || atleta.toLowerCase().includes('sin atletas')) {
@@ -2923,15 +2893,9 @@
                     else if (lugar === '3' || lugar === 3) displayPos = '🥉 3°';
                     else if (lugar && lugar !== '-' && lugar !== '') displayPos = `${lugar}°`;
                     
-                    // Determine if diploma download should be enabled
-                    // Try different possible positions for diploma status column
-                    let finalDiplomaStatus = diplomaStatus;
-                    if (!finalDiplomaStatus && row.length > 9) {
-                        // Check if column J is at a different index
-                        finalDiplomaStatus = row[9] || row[10] || row[11];
-                    }
+                    // Determine if diploma download should be enabled - Column J is at index 9
+                    const finalDiplomaStatus = row[9] || diplomaStatus || '';
                     
-                    console.log(`🎓 Final diploma status for ${atleta}: "${finalDiplomaStatus}"`);
                     const isDiplomaEnabled = finalDiplomaStatus && finalDiplomaStatus.toString().toUpperCase().trim() === 'SI';
                     const diplomaButtonClass = isDiplomaEnabled ? 'diploma-btn enabled' : 'diploma-btn disabled';
                     const diplomaButtonClick = isDiplomaEnabled ? `downloadDiploma('${(atleta || '').replace(/'/g, '\\\'')
@@ -2956,7 +2920,7 @@
                                 }')">📱</button>
                             </td>
                             <td data-label="Diploma" class="diploma-cell">
-                                <button class="${diplomaButtonClass}" ${isDiplomaEnabled ? `onclick="${diplomaButtonClick}"` : 'disabled'} title="${isDiplomaEnabled ? 'Descargar diploma' : 'Diploma no disponible'}" data-status="${finalDiplomaStatus || 'N/A'}">
+                                <button class="${diplomaButtonClass}" ${isDiplomaEnabled ? `onclick="${diplomaButtonClick}"` : ''} ${!isDiplomaEnabled ? 'disabled' : ''} title="${isDiplomaEnabled ? 'Descargar diploma' : 'Diploma no disponible'}" data-status="${finalDiplomaStatus || 'N/A'}">
                                     🎓
                                 </button>
                             </td>
@@ -3695,57 +3659,6 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
             }
         }
 
-        // Función temporal para activar/desactivar todos los diplomas
-        function toggleAllDiplomas() {
-            const allDiplomaButtons = document.querySelectorAll('.diploma-btn');
-            const toggleBtn = document.getElementById('toggleDiplomas');
-            const isCurrentlyActivated = toggleBtn.textContent.includes('Desactivar');
-            
-            allDiplomaButtons.forEach(button => {
-                if (isCurrentlyActivated) {
-                    // Desactivar
-                    button.className = 'diploma-btn disabled';
-                    button.disabled = true;
-                    button.removeAttribute('onclick');
-                    button.title = 'Diploma no disponible';
-                } else {
-                    // Activar
-                    button.className = 'diploma-btn enabled';
-                    button.disabled = false;
-                    // Extraer datos del botón para crear la función onclick
-                    const row = button.closest('tr');
-                    if (row) {
-                        const cells = row.querySelectorAll('td');
-                        if (cells.length >= 4) {
-                            const atleta = cells[1].textContent.trim();
-                            const lugar = cells[0].textContent.replace(/[🥇🥈🥉°]/g, '').trim();
-                            const equipo = cells[2].textContent.trim();
-                            const categoria = cells[4].textContent.trim();
-                            
-                            const cleanAtleta = atleta.replace(/'/g, "\\'");
-                            const cleanEquipo = equipo.replace(/'/g, "\\'");
-                            const cleanCategoria = categoria.replace(/'/g, "\\'");
-                            
-                            button.onclick = function() {
-                                downloadDiploma(cleanAtleta, lugar, cleanEquipo, cleanCategoria);
-                            };
-                            button.title = 'Descargar diploma';
-                        }
-                    }
-                }
-            });
-            
-            // Actualizar texto del botón
-            if (isCurrentlyActivated) {
-                toggleBtn.textContent = '🔧 Activar Todos los Diplomas';
-                toggleBtn.style.background = 'linear-gradient(135deg, #ff9800, #f57c00)';
-            } else {
-                toggleBtn.textContent = '🔧 Desactivar Todos los Diplomas';
-                toggleBtn.style.background = 'linear-gradient(135deg, #f44336, #d32f2f)';
-            }
-            
-            console.log(`🎓 Diplomas ${isCurrentlyActivated ? 'desactivados' : 'activados'}: ${allDiplomaButtons.length} botones afectados`);
-        }
 
         // Función para cargar jsPDF dinámicamente
         function loadjsPDF() {
