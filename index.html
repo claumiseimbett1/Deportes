@@ -2738,7 +2738,7 @@
                     <td>${p200 || ''}</td>
                     <td>${p50 || ''}</td>
                     <td>${p100 || ''}</td>
-                    <td><button onclick="shareResult('${nombre}', '${puntos}', '${categoria}')" class="share-btn">📤</button></td>
+                    <td><button onclick="shareResult('${nombre}', '${puntos}', 'N/A', '${categoria}')" class="share-btn">📤</button></td>
                 </tr>`;
             }
         }
@@ -2786,8 +2786,7 @@
                             <td data-label="Puntos Femeninos" class="points" style="color: #e91e63;">${puntosFemeninos || '0'}</td>
                             <td data-label="Puntos Masculinos" class="points" style="color: #2196f3;">${puntosMasculinos || '0'}</td>
                             <td data-label="Compartir" class="share-cell">
-                                <button class="share-btn" onclick="showShareOptions('${(equipo || '').replace(/'/g, '\\\'')
-                                }', '${lugar || ''}', 'N/A', 'Clasificación por Equipos')">📱</button>
+                                <button class="share-btn" onclick="shareResult('${equipo || ''}', '${lugar || ''}', 'N/A', 'Clasificación por Equipos')">📱</button>
                             </td>
                         </tr>`;
                     
@@ -2920,9 +2919,7 @@
                             <td data-label="P. 50m Libre" class="points" style="color: #ff9800;">${puntos50m || '0'}</td>
                             <td data-label="P. 100m Libre" class="points" style="color: #9c27b0;">${puntos100m || '0'}</td>
                             <td data-label="Compartir" class="share-cell">
-                                <button class="share-btn" onclick="showShareOptions('${(atleta || '').replace(/'/g, '\\\'')
-                                }', '${lugar || ''}', 'N/A', '${(categoria || currentCategory || '').replace(/'/g, '\\\'')
-                                }')">📱</button>
+                                <button class="share-btn" onclick="shareResult('${atleta || ''}', '${lugar || ''}', 'N/A', '${categoria || currentCategory || ''}')">📱</button>
                             </td>
                             <td data-label="Diploma" class="diploma-cell">
                                 <button class="${diplomaButtonClass}" ${isDiplomaEnabled ? `onclick="${diplomaButtonClick}"` : ''} ${!isDiplomaEnabled ? 'disabled' : ''} title="${isDiplomaEnabled ? 'Descargar diploma' : 'Diploma no disponible'}" data-status="${finalDiplomaStatus || 'N/A'}">
@@ -3339,12 +3336,18 @@
             }
         }
 
+        // Función simplificada para compartir resultados
+        function shareResult(swimmer, position, time, category) {
+            showShareOptions(swimmer, position, time, category);
+        }
+
         // Compartir funcionalidad
         function showShareOptions(swimmer, position, time, category) {
-            // Limpiar datos para evitar problemas de formato
-            swimmer = swimmer.replace(/['"]/g, '');
-            category = category.replace(/['"]/g, '');
-            time = time.replace(/['"]/g, '');
+            // Limpiar y sanitizar datos de entrada
+            swimmer = (swimmer || '').toString().replace(/['"\\]/g, '').trim();
+            position = (position || '').toString().trim();
+            time = (time || '').toString().replace(/['"\\]/g, '').trim();
+            category = (category || '').toString().replace(/['"\\]/g, '').trim();
             
             // Determinar la prueba actual basado en el tab activo o la sección actual
             const activeTab = document.querySelector('.tab-button.active');
@@ -3432,30 +3435,35 @@
         }
 
         function shareToWhatsApp(swimmer, position, time, prueba) {
-            // Convertir nombres de prueba a abreviaciones más cortas
-            const pruebaAbrev = prueba.replace('50m Libre', '50L')
-                                    .replace('100m Libre', '100L')
-                                    .replace('200m Libre', '200L')
-                                    .replace('4x50m Libre', '4x50L')
-                                    .replace(' Femenino', '')
-                                    .replace(' Masculino', '');
+            // Limpiar y preparar datos
+            const cleanSwimmer = swimmer.replace(/[^\w\s]/g, '').trim();
+            const cleanPrueba = prueba.replace(/[^\w\s]/g, '').trim();
             
             let message;
             if (time && time !== 'N/A' && time !== '-') {
                 // Para nadadores individuales con tiempo
-                message = `🏊‍♂️ ${swimmer}: ¡Felicitaciones por haber obtenido la posición No- ${position} con un tiempo de ${time} en ${pruebaAbrev} en el - IV Championship Master Swimming - 23-08-2025! 🏆 
+                message = `🏊‍♂️ *${cleanSwimmer}*
+                
+¡Felicitaciones por obtener la posición *${position}* con tiempo de *${time}* en ${cleanPrueba}!
 
-Ver más resultados: https://ivchampionship.netlify.app`;
+🏆 *IV Championship Master Swimming* - 2024
+🏊‍♀️ Ver más resultados: https://ivchampionship.netlify.app`;
             } else {
                 // Para equipos o clasificación general
                 if (prueba.includes('Equipos')) {
-                    message = `¡🏊‍♂️ Felicitaciones al equipo ${swimmer} por haber obtenido la posición No- ${position} en el - IV Championship Master Swimming - 23-08-2025! 🏆 
+                    message = `🏆 *Equipo ${cleanSwimmer}*
 
-Ver más resultados: https://ivchampionship.netlify.app`;
+¡Felicitaciones por obtener la posición *${position}* en la clasificación por equipos!
+
+🏊‍♂️ *IV Championship Master Swimming* - 2024
+🏊‍♀️ Ver más resultados: https://ivchampionship.netlify.app`;
                 } else {
-                    message = `🏊‍♂️ ${swimmer}: ¡Felicitaciones por haber obtenido la posición No- ${position} en ${pruebaAbrev} en el - IV Championship Master Swimming - 23-08-2025! 🏆 
+                    message = `🏊‍♂️ *${cleanSwimmer}*
 
-Ver más resultados: https://ivchampionship.netlify.app`;
+¡Felicitaciones por obtener la posición *${position}* en ${cleanPrueba}!
+
+🏆 *IV Championship Master Swimming* - 2024
+🏊‍♀️ Ver más resultados: https://ivchampionship.netlify.app`;
                 }
             }
             
@@ -3465,80 +3473,137 @@ Ver más resultados: https://ivchampionship.netlify.app`;
         }
 
         function shareToInstagram(swimmer, position, time, prueba) {
-            // Convertir nombres de prueba a abreviaciones más cortas
-            const pruebaAbrev = prueba.replace('50m Libre', '50L')
-                                    .replace('100m Libre', '100L')
-                                    .replace('200m Libre', '200L')
-                                    .replace('4x50m Libre', '4x50L')
-                                    .replace(' Femenino', '')
-                                    .replace(' Masculino', '');
+            // Limpiar y preparar datos
+            const cleanSwimmer = swimmer.replace(/[^\w\s]/g, '').trim();
+            const cleanPrueba = prueba.replace(/[^\w\s]/g, '').trim();
             
             let message;
             if (time && time !== 'N/A' && time !== '-') {
                 // Para nadadores individuales con tiempo
-                message = `🏊‍♂️ ${swimmer}: ¡Felicitaciones por haber obtenido la posición No- ${position} con un tiempo de ${time} en ${pruebaAbrev} en el - IV Championship Master Swimming - 23-08-2025! 🏆 
+                message = `🏊‍♂️ ${cleanSwimmer}
 
-#Natación #AquaTEN #Elyanasnatacion #Championship2025 #Swimming
+¡Posición ${position} con tiempo ${time} en ${cleanPrueba}!
 
-Ver resultados completos: https://ivchampionship.netlify.app`;
+🏆 IV Championship Master Swimming 2024
+
+#Natación #AquaTEN #Championship2024 #Swimming #MasterSwimming #Colombia
+
+🏊‍♀️ Resultados: https://ivchampionship.netlify.app`;
             } else {
                 // Para equipos o clasificación general
                 if (prueba.includes('Equipos')) {
-                    message = `🏊‍♂️ Felicitaciones al equipo ${swimmer} por haber obtenido la posición No- ${position} en el - IV Championship Master Swimming - 23-08-2025! 🏆 
-#NataciónMaster #AquaTEN #Championship2025 #Swimming #Equipos
+                    message = `🏆 Equipo ${cleanSwimmer}
 
-Ver resultados completos: https://ivchampionship.netlify.app`;
+¡Posición ${position} en clasificación por equipos!
+
+🏊‍♂️ IV Championship Master Swimming 2024
+
+#Natación #AquaTEN #Championship2024 #TeamWork #MasterSwimming #Colombia
+
+🏊‍♀️ Resultados: https://ivchampionship.netlify.app`;
                 } else {
-                    message = `🏊‍♂️ ${swimmer}: ¡Felicitaciones por haber obtenido la posición No- ${position} en ${pruebaAbrev} en el - IV Championship Master Swimming - 23-08-2025! 🏆 
+                    message = `🏊‍♂️ ${cleanSwimmer}
 
-#Natación #AquaTEN #Elyanasnatacion #Championship2025 #Swimming
+¡Posición ${position} en ${cleanPrueba}!
 
-Ver resultados completos: https://ivchampionship.netlify.app`;
+🏆 IV Championship Master Swimming 2024
+
+#Natación #AquaTEN #Championship2024 #Swimming #MasterSwimming #Colombia
+
+🏊‍♀️ Resultados: https://ivchampionship.netlify.app`;
                 }
             }
             
-            // Copiar al clipboard
-            navigator.clipboard.writeText(message).then(function() {
-                // Mostrar mensaje de confirmación
-                showClipboardMessage();
-            }).catch(function(err) {
-                console.error('Error al copiar al portapapeles: ', err);
-                // Fallback para navegadores que no soportan clipboard API
-                const textArea = document.createElement('textarea');
-                textArea.value = message;
-                document.body.appendChild(textArea);
-                textArea.select();
-                document.execCommand('copy');
-                document.body.removeChild(textArea);
-                showClipboardMessage();
-            });
+            // Copiar al portapapeles y mostrar instrucciones
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(message).then(() => {
+                    showInstagramInstructions();
+                }).catch(() => {
+                    fallbackCopyToClipboard(message);
+                    showInstagramInstructions();
+                });
+            } else {
+                fallbackCopyToClipboard(message);
+                showInstagramInstructions();
+            }
             
             closeShareModal();
         }
 
-        function showClipboardMessage() {
-            const notification = document.createElement('div');
-            notification.className = 'clipboard-notification';
-            notification.innerHTML = `
-                <div class="notification-content">
-                    ✅ Texto copiado al portapapeles
-                    <br><small>Ahora puedes pegarlo en Instagram Stories</small>
+        // Función auxiliar para copiar al portapapeles (fallback)
+        function fallbackCopyToClipboard(text) {
+            const textArea = document.createElement('textarea');
+            textArea.value = text;
+            textArea.style.position = 'fixed';
+            textArea.style.left = '-999999px';
+            textArea.style.top = '-999999px';
+            document.body.appendChild(textArea);
+            textArea.focus();
+            textArea.select();
+            
+            try {
+                document.execCommand('copy');
+            } catch (err) {
+                console.error('Error copying text: ', err);
+            }
+            
+            document.body.removeChild(textArea);
+        }
+
+        // Mostrar instrucciones para Instagram
+        function showInstagramInstructions() {
+            const instructionModal = document.createElement('div');
+            instructionModal.className = 'share-modal';
+            instructionModal.innerHTML = `
+                <div class="share-modal-content" style="text-align: center; max-width: 400px;">
+                    <div class="share-modal-header">
+                        <h3 style="color: var(--secondary-color);">📱 Instagram Stories</h3>
+                        <button class="close-modal" onclick="closeInstagramInstructions()">&times;</button>
+                    </div>
+                    <div style="padding: 20px;">
+                        <div style="font-size: 3rem; margin-bottom: 15px;">📋✅</div>
+                        <p style="font-size: 1.1rem; margin-bottom: 15px; color: var(--primary-color);">
+                            <strong>¡Texto copiado al portapapeles!</strong>
+                        </p>
+                        <div style="background: var(--background-light); padding: 15px; border-radius: var(--border-radius); margin: 15px 0; text-align: left;">
+                            <p style="margin: 5px 0;"><strong>📱 Paso 1:</strong> Abre Instagram en tu móvil</p>
+                            <p style="margin: 5px 0;"><strong>📷 Paso 2:</strong> Ve a Stories</p>
+                            <p style="margin: 5px 0;"><strong>✍️ Paso 3:</strong> Pega el texto copiado</p>
+                            <p style="margin: 5px 0;"><strong>🚀 Paso 4:</strong> ¡Comparte tu resultado!</p>
+                        </div>
+                        <button onclick="closeInstagramInstructions()" style="
+                            background: var(--secondary-color); 
+                            color: white; 
+                            border: none; 
+                            padding: 12px 25px; 
+                            border-radius: var(--border-radius-large);
+                            font-weight: 600;
+                            cursor: pointer;
+                            transition: var(--transition);
+                        " onmouseover="this.style.background='#0090c7'" onmouseout="this.style.background='var(--secondary-color)'">
+                            Entendido 👍
+                        </button>
+                    </div>
                 </div>
             `;
             
-            document.body.appendChild(notification);
+            document.body.appendChild(instructionModal);
             
-            setTimeout(() => {
-                notification.classList.add('show');
-            }, 100);
-            
-            setTimeout(() => {
-                notification.classList.remove('show');
-                setTimeout(() => {
-                    notification.remove();
-                }, 300);
-            }, 3000);
+            // Cerrar modal al hacer clic fuera
+            instructionModal.addEventListener('click', function(e) {
+                if (e.target === instructionModal) {
+                    closeInstagramInstructions();
+                }
+            });
         }
+
+        function closeInstagramInstructions() {
+            const modal = document.querySelector('.share-modal');
+            if (modal) {
+                modal.remove();
+            }
+        }
+
 
         // Diploma download functionality
         async function downloadDiploma(swimmer, position, team, category) {
