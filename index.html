@@ -1926,6 +1926,19 @@
                     <span style="font-size: 1.2em;">🎓</span>
                     Test Diploma PDF
                 </button>
+
+                <!-- Toggle para activar/desactivar diplomas temporalmente -->
+                <button id="toggleDiplomas" onclick="toggleAllDiplomas()" style="
+                    background: linear-gradient(135deg, #ff9800, #f57c00);
+                    color: white;
+                    border: none;
+                    padding: 10px 20px;
+                    border-radius: 8px;
+                    font-size: 0.9em;
+                    font-weight: 600;
+                    cursor: pointer;
+                    margin-left: 10px;
+                ">🔧 Activar Todos los Diplomas</button>
                 
                 <div id="pdfStatus" style="margin-top: 20px; display: none;">
                     <p style="color: #0b1039; font-weight: 500;">
@@ -2493,7 +2506,7 @@
             console.log(`📄 Cargando datos con GID: ${gid}`);
             
             try {
-                const url = `https://docs.google.com/spreadsheets/d/${CONFIG.SHEET_ID}/export?format=csv&gid=${gid}`;
+                const url = `https://docs.google.com/spreadsheets/d/${CONFIG.SHEET_ID}/export?format=csv&gid=${gid}&range=A:J`;
                 console.log(`📄 URL completa: ${url}`);
                 
                 const response = await fetch(url);
@@ -2580,7 +2593,7 @@
                 }
                 
                 try {
-                    const url = `https://docs.google.com/spreadsheets/d/${CONFIG.SHEET_ID}/export?format=csv&gid=${gid}`;
+                    const url = `https://docs.google.com/spreadsheets/d/${CONFIG.SHEET_ID}/export?format=csv&gid=${gid}&range=A:J`;
                     console.log(`📄 Cargando CSV de ${sheetName} con gid=${gid}`);
                     
                     const response = await fetch(url);
@@ -3044,7 +3057,12 @@
                         console.log(`✅ Datos cargados: ${data.length} filas`);
                         console.log('📊 TODOS LOS DATOS:');
                         data.forEach((row, index) => {
-                            console.log(`  Fila ${index + 1}:`, row);
+                            if (index === 0) {
+                                console.log(`  🏷️ ENCABEZADOS (Fila ${index + 1}):`, row);
+                                console.log(`  🎯 Columna J (índice 9): "${row[9] || 'NO ENCONTRADA'}"`);
+                            } else {
+                                console.log(`  Fila ${index + 1}:`, row);
+                            }
                         });
                         
                         // 4. Actualizar específicamente la tabla 100m femenino
@@ -3131,7 +3149,7 @@
             console.log('⚡ Verificando acceso al Google Sheet...');
             
             // Verificar acceso inmediato
-            fetch(`https://docs.google.com/spreadsheets/d/${CONFIG.SHEET_ID}/export?format=csv&gid=0`)
+            fetch(`https://docs.google.com/spreadsheets/d/${CONFIG.SHEET_ID}/export?format=csv&gid=0&range=A:J`)
                 .then(response => {
                     console.log('📡 Respuesta del servidor:', response.status, response.statusText);
                     if (response.ok) {
@@ -3677,6 +3695,58 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
             }
         }
 
+        // Función temporal para activar/desactivar todos los diplomas
+        function toggleAllDiplomas() {
+            const allDiplomaButtons = document.querySelectorAll('.diploma-btn');
+            const toggleBtn = document.getElementById('toggleDiplomas');
+            const isCurrentlyActivated = toggleBtn.textContent.includes('Desactivar');
+            
+            allDiplomaButtons.forEach(button => {
+                if (isCurrentlyActivated) {
+                    // Desactivar
+                    button.className = 'diploma-btn disabled';
+                    button.disabled = true;
+                    button.removeAttribute('onclick');
+                    button.title = 'Diploma no disponible';
+                } else {
+                    // Activar
+                    button.className = 'diploma-btn enabled';
+                    button.disabled = false;
+                    // Extraer datos del botón para crear la función onclick
+                    const row = button.closest('tr');
+                    if (row) {
+                        const cells = row.querySelectorAll('td');
+                        if (cells.length >= 4) {
+                            const atleta = cells[1].textContent.trim();
+                            const lugar = cells[0].textContent.replace(/[🥇🥈🥉°]/g, '').trim();
+                            const equipo = cells[2].textContent.trim();
+                            const categoria = cells[4].textContent.trim();
+                            
+                            const cleanAtleta = atleta.replace(/'/g, "\\'");
+                            const cleanEquipo = equipo.replace(/'/g, "\\'");
+                            const cleanCategoria = categoria.replace(/'/g, "\\'");
+                            
+                            button.onclick = function() {
+                                downloadDiploma(cleanAtleta, lugar, cleanEquipo, cleanCategoria);
+                            };
+                            button.title = 'Descargar diploma';
+                        }
+                    }
+                }
+            });
+            
+            // Actualizar texto del botón
+            if (isCurrentlyActivated) {
+                toggleBtn.textContent = '🔧 Activar Todos los Diplomas';
+                toggleBtn.style.background = 'linear-gradient(135deg, #ff9800, #f57c00)';
+            } else {
+                toggleBtn.textContent = '🔧 Desactivar Todos los Diplomas';
+                toggleBtn.style.background = 'linear-gradient(135deg, #f44336, #d32f2f)';
+            }
+            
+            console.log(`🎓 Diplomas ${isCurrentlyActivated ? 'desactivados' : 'activados'}: ${allDiplomaButtons.length} botones afectados`);
+        }
+
         // Función para cargar jsPDF dinámicamente
         function loadjsPDF() {
             return new Promise((resolve, reject) => {
@@ -3796,7 +3866,7 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
         // Función para cargar datos directamente del Google Sheet
         async function loadDirectSheetData(gid, sheetName) {
             try {
-                const url = `https://docs.google.com/spreadsheets/d/${CONFIG.SHEET_ID}/export?format=csv&gid=${gid}`;
+                const url = `https://docs.google.com/spreadsheets/d/${CONFIG.SHEET_ID}/export?format=csv&gid=${gid}&range=A:J`;
                 const response = await fetch(url);
                 
                 if (!response.ok) {
