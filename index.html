@@ -1130,6 +1130,7 @@
                 <ul class="nav-links">
                     <li><a href="#inicio" onclick="scrollToSection('video-hero')">Inicio</a></li>
                     <li><a href="#informacion" onclick="scrollToSection('info-section')">Información</a></li>
+                    <li><a href="#terminos" onclick="scrollToSection('terms-section')">Términos</a></li>
                     <li><a href="#resultados" onclick="scrollToSection('results-section')">Resultados</a></li>
                     <li><a href="#patrocinadores" onclick="scrollToSection('sponsors-section')">Patrocinadores</a></li>
                     <li><a href="#contacto" onclick="scrollToSection('contact-section')">Contacto</a></li>
@@ -1195,6 +1196,61 @@
                     </div>
                     <h3>Premios</h3>
                     <p>Medallas individuales y trofeos de equipo para los primeros lugares de cada categoría</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Terms and Conditions Section -->
+    <section class="terms-section" id="terminos" style="background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%); padding: 80px 0; border-top: 3px solid #0b1039;">
+        <div class="container">
+            <h2 class="section-title" style="color: #0b1039; margin-bottom: 40px;">📋 Documentos de la Convocatoria</h2>
+            
+            <div style="max-width: 800px; margin: 0 auto;">
+                <div style="background: white; border-radius: 20px; padding: 40px; box-shadow: 0 10px 30px rgba(11, 16, 57, 0.1); border: 2px solid #e3f2fd;">
+                    
+                    <!-- Terms and Conditions Card -->
+                    <div style="display: flex; align-items: center; gap: 30px; margin-bottom: 30px;">
+                        <div style="background: linear-gradient(135deg, #0b1039, #00ADEF); width: 80px; height: 80px; border-radius: 20px; display: flex; align-items: center; justify-content: center; font-size: 2.5rem; color: white; flex-shrink: 0;">
+                            📄
+                        </div>
+                        <div style="flex: 1;">
+                            <h3 style="color: #0b1039; margin: 0 0 10px 0; font-size: 1.8rem; font-weight: bold;">Términos y Condiciones</h3>
+                            <p style="color: #666; margin: 0 0 15px 0; line-height: 1.6; font-size: 1.1rem;">
+                                Descarga el documento oficial con todos los términos, condiciones y reglamentos de la convocatoria del IV Championship Master Swimming.
+                            </p>
+                            <div style="display: flex; gap: 15px; align-items: center; flex-wrap: wrap;">
+                                <button onclick="downloadTermsAndConditions()" style="
+                                    background: linear-gradient(135deg, #1e88e5, #00adef);
+                                    color: white;
+                                    border: none;
+                                    padding: 12px 30px;
+                                    border-radius: 50px;
+                                    font-weight: bold;
+                                    font-size: 1rem;
+                                    cursor: pointer;
+                                    transition: all 0.3s ease;
+                                    box-shadow: 0 4px 15px rgba(30, 136, 229, 0.3);
+                                " onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 20px rgba(30, 136, 229, 0.4)'" onmouseout="this.style.transform='translateY(0px)'; this.style.boxShadow='0 4px 15px rgba(30, 136, 229, 0.3)'">
+                                    <span style="margin-right: 8px;">⬇️</span>
+                                    Descargar PDF
+                                </button>
+                                <span style="color: #999; font-size: 0.9rem;">
+                                    📄 Documento PDF • Actualizado: Agosto 2025
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Additional Info -->
+                    <div style="background: #f0f8ff; padding: 25px; border-radius: 15px; border-left: 5px solid #1e88e5;">
+                        <h4 style="color: #0b1039; margin: 0 0 15px 0; font-size: 1.3rem;">ℹ️ Información Importante</h4>
+                        <ul style="color: #666; margin: 0; padding-left: 20px; line-height: 1.8;">
+                            <li>Es <strong>obligatorio</strong> leer y aceptar los términos antes de la participación</li>
+                            <li>El documento incluye reglamentos técnicos, normas de seguridad y políticas del evento</li>
+                            <li>Para dudas o consultas, contacta al equipo organizador a través de nuestros canales oficiales</li>
+                        </ul>
+                    </div>
                 </div>
             </div>
         </div>
@@ -3250,9 +3306,6 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
                 const pdf = new window.jsPDF();
                 let yPosition = 20;
                 
-                // Agregar logo en la primera página
-                addCompetitionLogo(pdf);
-                
                 // Configurar fuentes y colores
                 pdf.setFont("helvetica", "bold");
                 pdf.setFontSize(18);
@@ -4492,6 +4545,172 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
                 });
             }
         });
+
+        // Función para descargar términos y condiciones
+        function downloadTermsAndConditions() {
+            // Mostrar mensaje de preparación
+            const button = event.target.closest('button');
+            const originalText = button.innerHTML;
+            
+            button.innerHTML = '<span style="margin-right: 8px;">⏳</span>Preparando descarga...';
+            button.disabled = true;
+            
+            try {
+                // Crear un enlace de descarga (placeholder - aquí deberías poner la URL real del documento)
+                // Por ahora usaremos un PDF de ejemplo generado dinámicamente
+                generateTermsPDF();
+                
+                // Restaurar el botón después de un momento
+                setTimeout(() => {
+                    button.innerHTML = originalText;
+                    button.disabled = false;
+                }, 2000);
+                
+            } catch (error) {
+                console.error('Error al descargar términos:', error);
+                button.innerHTML = '<span style="margin-right: 8px;">❌</span>Error al descargar';
+                
+                setTimeout(() => {
+                    button.innerHTML = originalText;
+                    button.disabled = false;
+                }, 3000);
+            }
+        }
+
+        // Función para generar PDF de términos y condiciones
+        async function generateTermsPDF() {
+            try {
+                // Cargar jsPDF si no está disponible
+                await loadjsPDF();
+                
+                const pdf = new window.jsPDF();
+                
+                // Configurar el documento
+                pdf.setFont("helvetica", "bold");
+                pdf.setFontSize(18);
+                pdf.setTextColor(11, 16, 57);
+                
+                // Título
+                pdf.text("TÉRMINOS Y CONDICIONES", 105, 30, { align: "center" });
+                pdf.text("IV Championship Master Swimming", 105, 45, { align: "center" });
+                
+                // Línea decorativa
+                pdf.setDrawColor(11, 16, 57);
+                pdf.setLineWidth(2);
+                pdf.line(20, 55, 190, 55);
+                
+                // Contenido
+                pdf.setFont("helvetica", "normal");
+                pdf.setFontSize(12);
+                pdf.setTextColor(0, 0, 0);
+                
+                let yPos = 75;
+                const lineHeight = 8;
+                const maxWidth = 170;
+                
+                const sections = [
+                    {
+                        title: "1. INFORMACIÓN GENERAL",
+                        content: [
+                            "• Evento: IV Championship Master Swimming 2025",
+                            "• Fecha: 23 de Agosto de 2025",
+                            "• Organizado por: AquaTEN y Elyanas Natación",
+                            "• Modalidad: Competencia de natación master"
+                        ]
+                    },
+                    {
+                        title: "2. PRUEBAS Y CATEGORÍAS",
+                        content: [
+                            "• 50m Libre (Femenino y Masculino)",
+                            "• 100m Libre (Femenino y Masculino)", 
+                            "• 200m Libre (Femenino y Masculino)",
+                            "• 4x50m Libre (Femenino y Masculino)",
+                            "• Clasificación general por género y equipos"
+                        ]
+                    },
+                    {
+                        title: "3. REQUISITOS DE PARTICIPACIÓN",
+                        content: [
+                            "• Edad mínima requerida según categoría master",
+                            "• Certificado médico vigente",
+                            "• Inscripción completa y pago realizado",
+                            "• Aceptación de términos y condiciones"
+                        ]
+                    },
+                    {
+                        title: "4. NORMAS Y REGLAMENTOS",
+                        content: [
+                            "• Cumplimiento de normas FINA/World Aquatics",
+                            "• Uso obligatorio de gorro y gafas",
+                            "• Presentarse 30 minutos antes de la prueba",
+                            "• Respeto a decisiones de jueces y cronometristas"
+                        ]
+                    },
+                    {
+                        title: "5. RESPONSABILIDADES",
+                        content: [
+                            "• Cada participante es responsable de su seguridad",
+                            "• Seguro médico individual requerido",
+                            "• Liberación de responsabilidad civil",
+                            "• Uso de imagen para promoción del evento"
+                        ]
+                    }
+                ];
+
+                sections.forEach(section => {
+                    // Verificar espacio en la página
+                    if (yPos > 250) {
+                        pdf.addPage();
+                        yPos = 30;
+                    }
+
+                    // Título de sección
+                    pdf.setFont("helvetica", "bold");
+                    pdf.setFontSize(14);
+                    pdf.setTextColor(11, 16, 57);
+                    pdf.text(section.title, 20, yPos);
+                    yPos += 15;
+
+                    // Contenido de sección
+                    pdf.setFont("helvetica", "normal");
+                    pdf.setFontSize(11);
+                    pdf.setTextColor(0, 0, 0);
+                    
+                    section.content.forEach(item => {
+                        if (yPos > 270) {
+                            pdf.addPage();
+                            yPos = 30;
+                        }
+                        pdf.text(item, 25, yPos);
+                        yPos += lineHeight;
+                    });
+                    
+                    yPos += 10; // Espacio entre secciones
+                });
+
+                // Pie de página
+                if (yPos > 240) {
+                    pdf.addPage();
+                    yPos = 30;
+                }
+                
+                yPos = 280;
+                pdf.setFont("helvetica", "italic");
+                pdf.setFontSize(9);
+                pdf.setTextColor(128, 128, 128);
+                pdf.text("Documento generado el " + new Date().toLocaleDateString('es-ES'), 105, yPos, { align: "center" });
+                pdf.text("IV Championship Master Swimming - AquaTEN © 2025", 105, yPos + 10, { align: "center" });
+
+                // Descargar el PDF
+                pdf.save("Terminos_y_Condiciones_IV_Championship_2025.pdf");
+                
+                console.log("✅ Términos y condiciones descargados exitosamente");
+                
+            } catch (error) {
+                console.error("❌ Error generando términos y condiciones:", error);
+                throw error;
+            }
+        }
     </script>
 </body>
 </html>
