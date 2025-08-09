@@ -2727,27 +2727,49 @@
         // Specific renderer for general tables
         class GeneralTableRenderer extends TableRenderer {
             renderDataRow(row, index) {
-                const [pos, nombre, equipo, edad, categoria, puntos, p200, p50, p100] = row;
-                
-                return `<tr>
-                    <td class="rank">${pos || index}</td>
-                    <td><strong>${nombre || ''}</strong></td>
-                    <td>${equipo || ''}</td>
-                    <td>${edad || ''}</td>
-                    <td><span class="category-badge">${categoria || ''}</span></td>
-                    <td><strong style="color: var(--secondary-color);">${puntos || ''}</strong></td>
-                    <td>${p200 || ''}</td>
-                    <td>${p50 || ''}</td>
-                    <td>${p100 || ''}</td>
-                    <td><button onclick="shareResult('${nombre}', '${pos || index}', 'N/A', '${categoria}')" class="share-btn">📱</button></td>
-                </tr>`;
+                // Detectar el tipo de tabla por el número de columnas o el contenido
+                if (row.length >= 9) {
+                    // Tabla de clasificación general (10 columnas)
+                    const [pos, nombre, equipo, edad, categoria, puntos, p200, p50, p100] = row;
+                    
+                    return `<tr>
+                        <td class="rank">${pos || index}</td>
+                        <td><strong>${nombre || ''}</strong></td>
+                        <td>${equipo || ''}</td>
+                        <td>${edad || ''}</td>
+                        <td><span class="category-badge">${categoria || ''}</span></td>
+                        <td><strong style="color: var(--secondary-color);">${puntos || ''}</strong></td>
+                        <td>${p200 || ''}</td>
+                        <td>${p50 || ''}</td>
+                        <td>${p100 || ''}</td>
+                        <td><button onclick="shareResult('${nombre}', '${pos || index}', 'N/A', '${categoria}')" class="share-btn">📱</button></td>
+                    </tr>`;
+                } else {
+                    // Tabla de prueba individual (8 columnas)
+                    const [pos, nombre, equipo, edad, categoria, tiempo, puntos] = row;
+                    
+                    return `<tr>
+                        <td class="rank">${pos || index}</td>
+                        <td><strong>${nombre || ''}</strong></td>
+                        <td>${equipo || ''}</td>
+                        <td>${edad || ''}</td>
+                        <td><span class="category-badge">${categoria || ''}</span></td>
+                        <td class="time">${tiempo || ''}</td>
+                        <td><strong style="color: var(--secondary-color);">${puntos || ''}</strong></td>
+                        <td><button onclick="shareResult('${nombre}', '${pos || index}', '${tiempo}', '${categoria}')" class="share-btn">📱</button></td>
+                    </tr>`;
+                }
             }
         }
         
         // Optimized legacy function wrapper
         function updateTableContent(table, data, swimmerLabel) {
+            // Detectar el tipo de tabla para ajustar el colspan
+            const headers = table.querySelectorAll('thead th');
+            const colspan = headers.length.toString();
+            
             const renderer = new GeneralTableRenderer(table, {
-                colspan: '10'
+                colspan: colspan
             });
             renderer.render(data);
         }
