@@ -3847,24 +3847,47 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
             const headerColor = [11, 16, 57];    // Azul corporativo
             const accentColor = [25, 118, 210];  // Azul más claro
             
-            // Marco principal con color temático
-            pdf.setDrawColor(...headerColor);
-            pdf.setLineWidth(1.5);
-            pdf.rect(boxX, yPosition, boxWidth, boxHeight);
-            
-            // Header con gradiente
-            pdf.setFillColor(...headerColor);
-            pdf.rect(boxX, yPosition, boxWidth, headerHeight, 'F');
-            
-            // Línea decorativa en el header
-            pdf.setDrawColor(...accentColor);
-            pdf.setLineWidth(2);
-            pdf.line(boxX, yPosition + headerHeight - 1, boxX + boxWidth, yPosition + headerHeight - 1);
+            // Marco principal discreto para equipos, más prominente para otros tipos
+            if (type === 'team') {
+                // Marco discreto estilo Excel para equipos
+                pdf.setDrawColor(180, 180, 180);
+                pdf.setLineWidth(0.5);
+                pdf.rect(boxX, yPosition, boxWidth, boxHeight);
+                
+                // Header simplificado para equipos
+                pdf.setFillColor(248, 249, 250); // Gris muy claro
+                pdf.rect(boxX, yPosition, boxWidth, headerHeight, 'F');
+                
+                // Línea sutil debajo del header
+                pdf.setDrawColor(200, 200, 200);
+                pdf.setLineWidth(0.3);
+                pdf.line(boxX, yPosition + headerHeight, boxX + boxWidth, yPosition + headerHeight);
+            } else {
+                // Marco principal con color temático para eventos y género
+                pdf.setDrawColor(...headerColor);
+                pdf.setLineWidth(1.5);
+                pdf.rect(boxX, yPosition, boxWidth, boxHeight);
+                
+                // Header con gradiente
+                pdf.setFillColor(...headerColor);
+                pdf.rect(boxX, yPosition, boxWidth, headerHeight, 'F');
+                
+                // Línea decorativa en el header
+                pdf.setDrawColor(...accentColor);
+                pdf.setLineWidth(2);
+                pdf.line(boxX, yPosition + headerHeight - 1, boxX + boxWidth, yPosition + headerHeight - 1);
+            }
             
             // Configurar headers según el tipo
             pdf.setFont("helvetica", "bold");
             pdf.setFontSize(8);
-            pdf.setTextColor(255, 255, 255);
+            
+            // Color de texto del header
+            if (type === 'team') {
+                pdf.setTextColor(...headerColor); // Azul corporativo para equipos
+            } else {
+                pdf.setTextColor(255, 255, 255); // Blanco para eventos y género
+            }
             
             if (type === 'event') {
                 // Headers para eventos A-G: Pos, Atleta, Equipo, Edad, Categoría, Tiempo, Puntos
@@ -3911,19 +3934,20 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
                     pdf.rect(boxX, rowY, boxWidth, rowHeight, 'F');
                 }
                 
-                // Destacar podio para equipos con efectos especiales
+                // Destacar podio para equipos con colores corporativos discretos
                 if (type === 'team' && index < 3) {
-                    const podiumColors = [
-                        [255, 215, 0],   // Oro
-                        [192, 192, 192], // Plata
-                        [205, 127, 50]   // Bronce
+                    // Usar variaciones sutiles del color corporativo
+                    const podiumShades = [
+                        [240, 248, 255], // Azul muy claro para 1er lugar
+                        [248, 250, 252], // Gris muy claro para 2do lugar  
+                        [250, 250, 250]  // Blanco roto para 3er lugar
                     ];
-                    pdf.setFillColor(...podiumColors[index]);
+                    pdf.setFillColor(...podiumShades[index]);
                     pdf.rect(boxX, rowY, boxWidth, rowHeight, 'F');
                     
-                    // Borde especial para podio
-                    pdf.setDrawColor(...podiumColors[index]);
-                    pdf.setLineWidth(1);
+                    // Borde discreto con color corporativo
+                    pdf.setDrawColor(...headerColor);
+                    pdf.setLineWidth(0.5);
                     pdf.rect(boxX, rowY, boxWidth, rowHeight);
                 }
                 
@@ -3979,13 +4003,25 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
                     pdf.text(row.points100m || '', boxX + 149, rowY + 5.5);
                     
                 } else if (type === 'team') {
-                    // Líneas separadoras para equipos
+                    // Líneas separadoras discretas estilo Excel para equipos
+                    pdf.setDrawColor(220, 220, 220); // Gris muy claro
+                    pdf.setLineWidth(0.2);
+                    
+                    // Solo líneas verticales principales para separar secciones
                     pdf.line(boxX + 17, yPosition, boxX + 17, yPosition + (maxRows * rowHeight));
                     pdf.line(boxX + 87, yPosition, boxX + 87, yPosition + (maxRows * rowHeight));
                     pdf.line(boxX + 117, yPosition, boxX + 117, yPosition + (maxRows * rowHeight));
                     pdf.line(boxX + 142, yPosition, boxX + 142, yPosition + (maxRows * rowHeight));
                     
+                    // Línea horizontal discreta entre filas
+                    if (index < maxRows - 1) {
+                        pdf.setDrawColor(240, 240, 240); // Gris aún más claro
+                        pdf.setLineWidth(0.1);
+                        pdf.line(boxX, rowY + rowHeight, boxX + boxWidth, rowY + rowHeight);
+                    }
+                    
                     // Texto para equipos A-E
+                    pdf.setTextColor(0, 0, 0);
                     pdf.text(row.position, boxX + 3, rowY + 5.5);
                     pdf.text((row.team || '').substring(0, 25), boxX + 19, rowY + 5.5);
                     pdf.text(row.totalPoints || '', boxX + 89, rowY + 5.5);
