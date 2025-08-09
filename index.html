@@ -2997,19 +2997,52 @@
             category = category.replace(/['"]/g, '');
             time = time.replace(/['"]/g, '');
             
-            // Determinar la prueba actual basado en el tab activo
+            // Determinar la prueba actual basado en el tab activo o la sección actual
             const activeTab = document.querySelector('.tab-button.active');
+            const activeTabContent = document.querySelector('.tab-content.active');
             let prueba = 'Natación';
+            
+            // Primero intentar detectar por tab activo
             if (activeTab) {
-                const tabText = activeTab.textContent;
-                if (tabText.includes('50m')) prueba = '50m Libre';
-                else if (tabText.includes('100m')) prueba = '100m Libre';
-                else if (tabText.includes('200m')) prueba = '200m Libre';
-                else if (tabText.includes('4x50m')) prueba = '4x50m Libre';
-                else if (tabText.includes('Masculino General')) prueba = 'Clasificación General Masculina';
-                else if (tabText.includes('Femenino General')) prueba = 'Clasificación General Femenina';
-                else if (tabText.includes('Equipos')) prueba = 'Clasificación por Equipos';
+                const tabText = activeTab.textContent.toLowerCase();
+                console.log('Tab activo detectado:', tabText);
+                
+                if (tabText.includes('4x50') && tabText.includes('libre')) {
+                    prueba = tabText.includes('femenino') ? '4x50m Libre Femenino' : '4x50m Libre Masculino';
+                } else if (tabText.includes('200') && tabText.includes('libre')) {
+                    prueba = tabText.includes('femenino') ? '200m Libre Femenino' : '200m Libre Masculino';
+                } else if (tabText.includes('100') && tabText.includes('libre')) {
+                    prueba = tabText.includes('femenino') ? '100m Libre Femenino' : '100m Libre Masculino';
+                } else if (tabText.includes('50') && tabText.includes('libre')) {
+                    prueba = tabText.includes('femenino') ? '50m Libre Femenino' : '50m Libre Masculino';
+                } else if (tabText.includes('masculino general')) {
+                    prueba = 'Clasificación General Masculina';
+                } else if (tabText.includes('femenino general')) {
+                    prueba = 'Clasificación General Femenina';
+                } else if (tabText.includes('equipos')) {
+                    prueba = 'Clasificación por Equipos';
+                }
             }
+            
+            // Si no se detectó por tab, intentar por contenido activo (ID)
+            if (prueba === 'Natación' && activeTabContent) {
+                const contentId = activeTabContent.id;
+                console.log('Contenido activo detectado:', contentId);
+                
+                if (contentId.includes('50m-libre-femenino')) prueba = '50m Libre Femenino';
+                else if (contentId.includes('50m-libre-masculino')) prueba = '50m Libre Masculino';
+                else if (contentId.includes('100m-libre-femenino')) prueba = '100m Libre Femenino';
+                else if (contentId.includes('100m-libre-masculino')) prueba = '100m Libre Masculino';
+                else if (contentId.includes('200m-libre-femenino')) prueba = '200m Libre Femenino';
+                else if (contentId.includes('200m-libre-masculino')) prueba = '200m Libre Masculino';
+                else if (contentId.includes('4x50m-libre-femenino')) prueba = '4x50m Libre Femenino';
+                else if (contentId.includes('4x50m-libre-masculino')) prueba = '4x50m Libre Masculino';
+                else if (contentId.includes('masculino-general')) prueba = 'Clasificación General Masculina';
+                else if (contentId.includes('femenino-general')) prueba = 'Clasificación General Femenina';
+                else if (contentId.includes('equipos')) prueba = 'Clasificación por Equipos';
+            }
+            
+            console.log('Prueba detectada:', prueba);
             
             const shareModal = document.createElement('div');
             shareModal.className = 'share-modal';
@@ -3050,10 +3083,18 @@
         }
 
         function shareToWhatsApp(swimmer, position, time, prueba) {
+            // Convertir nombres de prueba a abreviaciones más cortas
+            const pruebaAbrev = prueba.replace('50m Libre', '50L')
+                                    .replace('100m Libre', '100L')
+                                    .replace('200m Libre', '200L')
+                                    .replace('4x50m Libre', '4x50L')
+                                    .replace(' Femenino', '')
+                                    .replace(' Masculino', '');
+            
             let message;
             if (time && time !== 'N/A' && time !== '-') {
                 // Para nadadores individuales con tiempo
-                message = `🏊‍♂️ ${swimmer}: ¡Felicitaciones por haber obtenido la posición No- ${position} con un tiempo de ${time} en la ${prueba} en el - IV Championship Master Swimming - 23-08-2025! 🏆 
+                message = `🏊‍♂️ ${swimmer}: ¡Felicitaciones por haber obtenido la posición No- ${position} con un tiempo de ${time} en ${pruebaAbrev} en el - IV Championship Master Swimming - 23-08-2025! 🏆 
 
 Ver más resultados: https://ivchampionship.netlify.app`;
             } else {
@@ -3063,7 +3104,7 @@ Ver más resultados: https://ivchampionship.netlify.app`;
 
 Ver más resultados: https://ivchampionship.netlify.app`;
                 } else {
-                    message = `🏊‍♂️ ${swimmer}: ¡Felicitaciones por haber obtenido la posición No- ${position} en la ${prueba} en el - IV Championship Master Swimming - 23-08-2025! 🏆 
+                    message = `🏊‍♂️ ${swimmer}: ¡Felicitaciones por haber obtenido la posición No- ${position} en ${pruebaAbrev} en el - IV Championship Master Swimming - 23-08-2025! 🏆 
 
 Ver más resultados: https://ivchampionship.netlify.app`;
                 }
@@ -3075,10 +3116,18 @@ Ver más resultados: https://ivchampionship.netlify.app`;
         }
 
         function shareToInstagram(swimmer, position, time, prueba) {
+            // Convertir nombres de prueba a abreviaciones más cortas
+            const pruebaAbrev = prueba.replace('50m Libre', '50L')
+                                    .replace('100m Libre', '100L')
+                                    .replace('200m Libre', '200L')
+                                    .replace('4x50m Libre', '4x50L')
+                                    .replace(' Femenino', '')
+                                    .replace(' Masculino', '');
+            
             let message;
             if (time && time !== 'N/A' && time !== '-') {
                 // Para nadadores individuales con tiempo
-                message = `🏊‍♂️ ${swimmer}: ¡Felicitaciones por haber obtenido la posición No- ${position} con un tiempo de ${time} en la ${prueba} en el - IV Championship Master Swimming - 23-08-2025! 🏆 
+                message = `🏊‍♂️ ${swimmer}: ¡Felicitaciones por haber obtenido la posición No- ${position} con un tiempo de ${time} en ${pruebaAbrev} en el - IV Championship Master Swimming - 23-08-2025! 🏆 
 
 #Natación #AquaTEN #Elyanasnatacion #Championship2025 #Swimming
 
@@ -3091,7 +3140,7 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
 
 Ver resultados completos: https://ivchampionship.netlify.app`;
                 } else {
-                    message = `🏊‍♂️ ${swimmer}: ¡Felicitaciones por haber obtenido la posición No- ${position} en la ${prueba} en el - IV Championship Master Swimming - 23-08-2025! 🏆 
+                    message = `🏊‍♂️ ${swimmer}: ¡Felicitaciones por haber obtenido la posición No- ${position} en ${pruebaAbrev} en el - IV Championship Master Swimming - 23-08-2025! 🏆 
 
 #Natación #AquaTEN #Elyanasnatacion #Championship2025 #Swimming
 
