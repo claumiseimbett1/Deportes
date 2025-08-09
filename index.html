@@ -3053,17 +3053,17 @@
             let message;
             if (time && time !== 'N/A' && time !== '-') {
                 // Para nadadores individuales con tiempo
-                message = `🏊‍♂️ ${swimmer}: ¡Felicitaciones por haber obtenido la posición No- ${position} con un tiempo de ${time} en la ${prueba} con un puntaje de ${puntos} en el - IV Championship Master Swimming - 23-08-2025! 🏆 
+                message = `🏊‍♂️ ${swimmer}: ¡Felicitaciones por haber obtenido la posición No- ${position} con un tiempo de ${time} en la ${prueba} en el - IV Championship Master Swimming - 23-08-2025! 🏆 
 
 Ver más resultados: https://ivchampionship.netlify.app`;
             } else {
                 // Para equipos o clasificación general
                 if (prueba.includes('Equipos')) {
-                    message = `¡🏊‍♂️ Felicitaciones al equipo ${equipo} por haber obtenido la posición No- ${position} en el - IV Championship Master Swimming - 23-08-2025! 🏆 
+                    message = `¡🏊‍♂️ Felicitaciones al equipo ${swimmer} por haber obtenido la posición No- ${position} en el - IV Championship Master Swimming - 23-08-2025! 🏆 
 
 Ver más resultados: https://ivchampionship.netlify.app`;
                 } else {
-                    message = `🏊‍♂️ ${swimmer}: ¡Felicitaciones por haber obtenido la posición No- ${position} en la ${categoria} con un puntaje de ${puntosTotales} en el - IV Championship Master Swimming - 23-08-2025! 🏆 
+                    message = `🏊‍♂️ ${swimmer}: ¡Felicitaciones por haber obtenido la posición No- ${position} en la ${prueba} en el - IV Championship Master Swimming - 23-08-2025! 🏆 
 
 Ver más resultados: https://ivchampionship.netlify.app`;
                 }
@@ -3078,7 +3078,7 @@ Ver más resultados: https://ivchampionship.netlify.app`;
             let message;
             if (time && time !== 'N/A' && time !== '-') {
                 // Para nadadores individuales con tiempo
-                message = `🏊‍♂️ ${swimmer}: ¡Felicitaciones por haber obtenido la posición No- ${position} con un tiempo de ${time} en la ${prueba} con un puntaje de ${puntos} en el - IV Championship Master Swimming - 23-08-2025! 🏆 
+                message = `🏊‍♂️ ${swimmer}: ¡Felicitaciones por haber obtenido la posición No- ${position} con un tiempo de ${time} en la ${prueba} en el - IV Championship Master Swimming - 23-08-2025! 🏆 
 
 #Natación #AquaTEN #Elyanasnatacion #Championship2025 #Swimming
 
@@ -3086,12 +3086,12 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
             } else {
                 // Para equipos o clasificación general
                 if (prueba.includes('Equipos')) {
-                    message = `🏊‍♂️ ${swimmer}: ¡Felicitaciones por haber obtenido la posición No- ${position} en la ${categoria} con un puntaje de ${puntosTotales} en el - IV Championship Master Swimming - 23-08-2025! 🏆 
-#NataciónMaster #AquaTEN #Championship2024 #Swimming #Equipos
+                    message = `🏊‍♂️ Felicitaciones al equipo ${swimmer} por haber obtenido la posición No- ${position} en el - IV Championship Master Swimming - 23-08-2025! 🏆 
+#NataciónMaster #AquaTEN #Championship2025 #Swimming #Equipos
 
 Ver resultados completos: https://ivchampionship.netlify.app`;
                 } else {
-                    message = `🏊‍♂️ ${swimmer}: ¡Felicitaciones por haber obtenido la posición No- ${position} con un tiempo de ${time} en la ${prueba} con un puntaje de ${puntos} en el - IV Championship Master Swimming - 23-08-2025! 🏆 
+                    message = `🏊‍♂️ ${swimmer}: ¡Felicitaciones por haber obtenido la posición No- ${position} en la ${prueba} en el - IV Championship Master Swimming - 23-08-2025! 🏆 
 
 #Natación #AquaTEN #Elyanasnatacion #Championship2025 #Swimming
 
@@ -3201,6 +3201,9 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
                 const pdf = new window.jsPDF();
                 let yPosition = 20;
                 
+                // Agregar logo en la primera página
+                addCompetitionLogo(pdf);
+                
                 // Configurar fuentes y colores
                 pdf.setFont("helvetica", "bold");
                 pdf.setFontSize(18);
@@ -3220,12 +3223,14 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
                 
                 // Nueva página para resultados por género
                 pdf.addPage();
-                yPosition = 20;
+                addCompetitionLogo(pdf);
+                yPosition = 30;
                 yPosition = await addGenderResultsBoxesToPDF(pdf, yPosition, allSheetData);
                 
                 // Nueva página para resultados por equipos
                 pdf.addPage();
-                yPosition = 20;
+                addCompetitionLogo(pdf);
+                yPosition = 30;
                 await addTeamResultsBoxesToPDF(pdf, yPosition, allSheetData);
                 
                 // Guardar el PDF
@@ -3295,6 +3300,84 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
             }
         }
 
+        // Función para mapear títulos de hojas a nombres de display amigables
+        function mapSheetTitleToDisplayName(sheetTitle) {
+            const title = sheetTitle.toUpperCase().trim();
+            
+            // Mapeo de títulos comunes a nombres de display
+            const titleMapping = {
+                // 50m libre
+                'FEMENINO': '50m Libre Femenino',
+                '50M-FEM': '50m Libre Femenino',
+                '50M FEM': '50m Libre Femenino',
+                '50M-FEMENINO': '50m Libre Femenino',
+                '50M FEMENINO': '50m Libre Femenino',
+                
+                'MASCULINO': '50m Libre Masculino',
+                '50M-MAS': '50m Libre Masculino',
+                '50M MAS': '50m Libre Masculino',
+                '50M-MASCULINO': '50m Libre Masculino',
+                '50M MASCULINO': '50m Libre Masculino',
+                
+                // 100m libre
+                '100M-FEM': '100m Libre Femenino',
+                '100M FEM': '100m Libre Femenino',
+                '100M-FEMENINO': '100m Libre Femenino',
+                '100M FEMENINO': '100m Libre Femenino',
+                'FEMENINO 100M': '100m Libre Femenino',
+                
+                '100M-MAS': '100m Libre Masculino',
+                '100M MAS': '100m Libre Masculino',
+                '100M-MASCULINO': '100m Libre Masculino',
+                '100M MASCULINO': '100m Libre Masculino',
+                'MASCULINO 100M': '100m Libre Masculino',
+                
+                // 200m libre
+                '200M-FEM': '200m Libre Femenino',
+                '200M FEM': '200m Libre Femenino',
+                '200M-FEMENINO': '200m Libre Femenino',
+                '200M FEMENINO': '200m Libre Femenino',
+                'FEMENINO 200M': '200m Libre Femenino',
+                
+                '200M-MAS': '200m Libre Masculino',
+                '200M MAS': '200m Libre Masculino',
+                '200M-MASCULINO': '200m Libre Masculino',
+                '200M MASCULINO': '200m Libre Masculino',
+                'MASCULINO 200M': '200m Libre Masculino',
+                
+                // 4x50m libre
+                '4X50M-FEM': '4x50m Libre Femenino',
+                '4X50M FEM': '4x50m Libre Femenino',
+                '4X50M-FEMENINO': '4x50m Libre Femenino',
+                '4X50M FEMENINO': '4x50m Libre Femenino',
+                'FEMENINO 4X50M': '4x50m Libre Femenino',
+                
+                '4X50M-MAS': '4x50m Libre Masculino',
+                '4X50M MAS': '4x50m Libre Masculino',
+                '4X50M-MASCULINO': '4x50m Libre Masculino',
+                '4X50M MASCULINO': '4x50m Libre Masculino',
+                'MASCULINO 4X50M': '4x50m Libre Masculino'
+            };
+            
+            // Buscar coincidencia exacta
+            if (titleMapping[title]) {
+                return titleMapping[title];
+            }
+            
+            // Buscar coincidencias parciales para casos donde el título tenga formato diferente
+            if (title.includes('50') && title.includes('FEM')) return '50m Libre Femenino';
+            if (title.includes('50') && title.includes('MAS')) return '50m Libre Masculino';
+            if (title.includes('100') && title.includes('FEM')) return '100m Libre Femenino';
+            if (title.includes('100') && title.includes('MAS')) return '100m Libre Masculino';
+            if (title.includes('200') && title.includes('FEM')) return '200m Libre Femenino';
+            if (title.includes('200') && title.includes('MAS')) return '200m Libre Masculino';
+            if (title.includes('4X50') && title.includes('FEM')) return '4x50m Libre Femenino';
+            if (title.includes('4X50') && title.includes('MAS')) return '4x50m Libre Masculino';
+            
+            // Si no hay coincidencia, devolver el título original
+            return sheetTitle;
+        }
+
         // Función para cargar todas las hojas por posición
         async function getAllSheetData() {
             try {
@@ -3335,7 +3418,7 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
                             );
                             console.log(`✅ ${sheet.title}: ${dataRows.length} filas de datos (salteando headers)`);
                             allData.eventos.push({
-                                name: sheet.title,
+                                name: mapSheetTitleToDisplayName(sheet.title),
                                 data: dataRows
                             });
                         }
@@ -3568,6 +3651,33 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
             return timeStr; // Devolver sin cambios si no coincide con ningún formato
         }
 
+        // Función para agregar logo de la competencia en cada página
+        function addCompetitionLogo(pdf) {
+            // Logo simple usando texto estilizado (como placeholder)
+            pdf.setFont("helvetica", "bold");
+            pdf.setFontSize(10);
+            pdf.setTextColor(11, 16, 57);
+            
+            // Posición en la esquina superior derecha
+            const logoX = 160;
+            const logoY = 15;
+            
+            // Caja para el logo
+            pdf.setDrawColor(11, 16, 57);
+            pdf.setLineWidth(1);
+            pdf.rect(logoX, logoY - 8, 30, 16);
+            
+            // Texto del logo
+            pdf.text("IV CHAMP", logoX + 2, logoY - 2);
+            pdf.setFontSize(8);
+            pdf.text("AQUATEN", logoX + 2, logoY + 4);
+            
+            // Línea decorativa
+            pdf.setDrawColor(25, 118, 210);
+            pdf.setLineWidth(2);
+            pdf.line(logoX, logoY + 8, logoX + 30, logoY + 8);
+        }
+
         // Función para separar datos por tipo desde RESULTADOS
         function parseResultadosData(allRows) {
             const sections = {
@@ -3634,7 +3744,8 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
                     // Verificar espacio en la página
                     if (yPosition > 200) {
                         pdf.addPage();
-                        yPosition = 30;
+                        addCompetitionLogo(pdf);
+                        yPosition = 40;
                     }
                     
                     // Título del evento
@@ -3683,18 +3794,9 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
             const maxRows = Math.min(data.length, 20); // Mostrar máximo 20 resultados
             const boxHeight = headerHeight + (maxRows * rowHeight);
             
-            // Colores temáticos por tipo
-            let headerColor, accentColor;
-            if (type === 'event') {
-                headerColor = [11, 16, 57];    // Azul corporativo
-                accentColor = [25, 118, 210];  // Azul más claro
-            } else if (type === 'gender') {
-                headerColor = [76, 175, 80];   // Verde
-                accentColor = [129, 199, 132]; // Verde claro
-            } else if (type === 'team') {
-                headerColor = [255, 152, 0];   // Naranja
-                accentColor = [255, 183, 77];  // Naranja claro
-            }
+            // Usar solo el color corporativo de la página
+            const headerColor = [11, 16, 57];    // Azul corporativo
+            const accentColor = [25, 118, 210];  // Azul más claro
             
             // Marco principal con color temático
             pdf.setDrawColor(...headerColor);
@@ -3754,15 +3856,9 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
             data.slice(0, maxRows).forEach((row, index) => {
                 const rowY = yPosition + (index * rowHeight);
                 
-                // Fondo alternado con colores temáticos
+                // Fondo alternado con color corporativo suave
                 if (index % 2 === 0) {
-                    if (type === 'event') {
-                        pdf.setFillColor(240, 248, 255); // Azul muy claro
-                    } else if (type === 'gender') {
-                        pdf.setFillColor(240, 255, 240); // Verde muy claro
-                    } else if (type === 'team') {
-                        pdf.setFillColor(255, 248, 225); // Naranja muy claro
-                    }
+                    pdf.setFillColor(240, 248, 255); // Azul muy claro
                     pdf.rect(boxX, rowY, boxWidth, rowHeight, 'F');
                 }
                 
@@ -3894,6 +3990,7 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
             // Nueva página para femeninos si es necesario
             if (yPosition > 150) {
                 pdf.addPage();
+                addCompetitionLogo(pdf);
                 yPosition = 30;
             }
             
@@ -3995,6 +4092,7 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
                     // Nueva página si no es el primer evento y no hay espacio
                     if (i > 0 && yPosition > 200) {
                         pdf.addPage();
+                        addCompetitionLogo(pdf);
                         yPosition = 20;
                     }
                     
@@ -4016,6 +4114,7 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
                             // Verificar si necesitamos nueva página
                             if (yPosition > 270) {
                                 pdf.addPage();
+                                addCompetitionLogo(pdf);
                                 yPosition = 20;
                                 
                                 // Repetir título del evento en nueva página
@@ -4082,6 +4181,7 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
                         // Verificar si necesitamos nueva página
                         if (yPosition > 270) {
                             pdf.addPage();
+                            addCompetitionLogo(pdf);
                             yPosition = 20;
                             
                             // Repetir título en nueva página
@@ -4116,6 +4216,7 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
             // Verificar espacio para sección femenina
             if (yPosition > 200) {
                 pdf.addPage();
+                addCompetitionLogo(pdf);
                 yPosition = 20;
             }
             
@@ -4139,6 +4240,7 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
                         // Verificar si necesitamos nueva página
                         if (yPosition > 270) {
                             pdf.addPage();
+                            addCompetitionLogo(pdf);
                             yPosition = 20;
                             
                             // Repetir título en nueva página
@@ -4193,6 +4295,7 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
                         // Verificar si necesitamos nueva página
                         if (yPosition > 250) {
                             pdf.addPage();
+                            addCompetitionLogo(pdf);
                             yPosition = 20;
                             
                             // Repetir título en nueva página
@@ -4229,6 +4332,7 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
             // Pie de página
             if (yPosition > 250) {
                 pdf.addPage();
+                addCompetitionLogo(pdf);
                 yPosition = 280;
             } else {
                 yPosition = 280;
