@@ -1232,6 +1232,42 @@
             color: #00ADEF;
             font-weight: 500;
         }
+
+        /* Estilos de estadísticas - SEGUROS */
+        .stat-number {
+            color: #0b1039;
+            font-size: 3rem;
+            font-weight: bold;
+            margin: 0 0 10px 0;
+        }
+        
+        .stat-label {
+            color: #666;
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin: 0;
+        }
+        
+        .stat-description {
+            color: #999;
+            font-size: 0.9rem;
+            margin-top: 8px;
+        }
+
+        /* Párrafos descriptivos - SEGUROS */
+        .info-text-large {
+            color: #666;
+            margin: 0 0 15px 0;
+            line-height: 1.6;
+            font-size: 1.1rem;
+        }
+        
+        .info-text-small {
+            color: #666;
+            margin: 0 0 15px 0;
+            line-height: 1.5;
+            font-size: 0.95rem;
+        }
     </style>
 </head>
 <body>
@@ -1376,9 +1412,9 @@
                             <rect x="11.5" y="11" width="1" height="1" fill="#0b5079" rx="0.5"/>
                         </svg>
                     </div>
-                    <h3 style="color: #0b1039; font-size: 3rem; font-weight: bold; margin: 0 0 10px 0;" id="swimmerCount">150+</h3>
-                    <p style="color: #666; font-size: 1.1rem; font-weight: 600; margin: 0;">Nadadores Inscritos</p>
-                    <p style="color: #999; font-size: 0.9rem; margin-top: 8px;">Atletas de élite</p>
+                    <h3 class="stat-number" id="swimmerCount">150+</h3>
+                    <p class="stat-label">Nadadores Inscritos</p>
+                    <p class="stat-description">Atletas de élite</p>
                 </div>
                 
                 <!-- Clubes Participantes -->
@@ -1399,9 +1435,9 @@
                             <rect x="16" y="7" width="1.5" height="4" stroke="#0b5079" stroke-width="1.5"/>
                         </svg>
                     </div>
-                    <h3 style="color: #0b1039; font-size: 3rem; font-weight: bold; margin: 0 0 10px 0;" id="clubCount">25+</h3>
-                    <p style="color: #666; font-size: 1.1rem; font-weight: 600; margin: 0;">Clubes Participantes</p>
-                    <p style="color: #999; font-size: 0.9rem; margin-top: 8px;">De todo el país</p>
+                    <h3 class="stat-number" id="clubCount">25+</h3>
+                    <p class="stat-label">Clubes Participantes</p>
+                    <p class="stat-description">De todo el país</p>
                 </div>
                 
                 <!-- Patrocinadores -->
@@ -1416,9 +1452,9 @@
                             <circle cx="12" cy="12" r="1.2" fill="#ffffff" opacity="0.4"/>
                         </svg>
                     </div>
-                    <h3 style="color: #0b1039; font-size: 3rem; font-weight: bold; margin: 0 0 10px 0;" id="sponsorCount">15+</h3>
-                    <p style="color: #666; font-size: 1.1rem; font-weight: 600; margin: 0;">Patrocinadores</p>
-                    <p style="color: #999; font-size: 0.9rem; margin-top: 8px;">Empresas aliadas</p>
+                    <h3 class="stat-number" id="sponsorCount">15+</h3>
+                    <p class="stat-label">Patrocinadores</p>
+                    <p class="stat-description">Empresas aliadas</p>
                 </div>
             </div>
             
@@ -1485,7 +1521,7 @@
                         </div>
                         <div style="flex: 1;">
                             <h3 style="color: #0b1039; margin: 0 0 10px 0; font-size: 1.8rem; font-weight: bold;">Términos y Condiciones</h3>
-                            <p style="color: #666; margin: 0 0 15px 0; line-height: 1.6; font-size: 1.1rem;">
+                            <p class="info-text-large">
                                 Descarga el documento oficial con todos los términos, condiciones y reglamentos de la convocatoria del IV Championship Master Swimming.
                             </p>
                             <div style="display: flex; gap: 15px; align-items: center; flex-wrap: wrap; margin-bottom: 20px;">
@@ -1556,7 +1592,7 @@
                         </div>
                         <div style="flex: 1;">
                             <h4 style="color: #0b1039; margin: 0 0 8px 0; font-size: 1.4rem; font-weight: bold;">Política de Tratamiento de Datos Personales</h4>
-                            <p style="color: #666; margin: 0 0 15px 0; line-height: 1.5; font-size: 0.95rem;">
+                            <p class="info-text-small">
                                 Conoce cómo protegemos y manejamos tu información personal durante el evento.
                             </p>
                             <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
