@@ -1806,6 +1806,99 @@
             line-height: 1.5;
             font-size: 0.95rem;
         }
+
+        /* Final 8 validation fixes */
+        .quotes-slider-background {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            padding: 30px 0;
+            border-top: 3px solid #00ADEF;
+            border-bottom: 3px solid #0b1039;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .main-download-btn {
+            background: linear-gradient(135deg, #0b1039, #00ADEF);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 10px;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 20px rgba(11, 16, 57, 0.3);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 0 auto;
+        }
+        
+        .main-download-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(11, 16, 57, 0.4);
+        }
+        
+        .document-download-btn {
+            background: linear-gradient(135deg, #00ADEF, #0099d8);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 8px;
+            font-size: 1em;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .document-download-btn:hover {
+            background: linear-gradient(135deg, #0099d8, #0088c7);
+            transform: translateY(-1px);
+        }
+        
+        .icon-span-large {
+            font-size: 1.2em;
+        }
+        
+        .modal-close-btn {
+            background: #6c757d;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.9em;
+            margin-top: 15px;
+        }
+        
+        .modal-close-btn:hover {
+            background: #5a6268;
+        }
+        
+        .modal-remove-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(255, 255, 255, 0.9);
+            border: none;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            cursor: pointer;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #666;
+        }
+        
+        .modal-remove-btn:hover {
+            background: rgba(255, 255, 255, 1);
+            color: #000;
+        }
     </style>
 </head>
 <body>
@@ -1865,14 +1958,7 @@
     </section>
 
     <!-- Inspirational Quotes Slider Section -->
-    <section class="quotes-slider-section" style="
-        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); 
-        padding: 30px 0; 
-        border-top: 3px solid #00ADEF; 
-        border-bottom: 3px solid #0b1039;
-        position: relative; 
-        overflow: hidden;
-    ">
+    <section class="quotes-slider-section quotes-slider-background">
         <div class="container">
             <div class="quote-container">
                 <div class="quotes-slider quotes-slider-inner">
@@ -2064,33 +2150,11 @@
                                 Descarga el documento oficial con todos los términos, condiciones y reglamentos de la convocatoria del IV Championship Master Swimming.
                             </p>
                             <div class="button-group">
-                                <button type="button" onclick="downloadTermsAndConditions()" style="
-                                    background: linear-gradient(135deg, #1e88e5, #00adef);
-                                    color: white;
-                                    border: none;
-                                    padding: 12px 30px;
-                                    border-radius: 50px;
-                                    font-weight: bold;
-                                    font-size: 1rem;
-                                    cursor: pointer;
-                                    transition: var(--transition);
-                                    box-shadow: 0 4px 15px rgba(30, 136, 229, 0.3);
-                                " onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 20px rgba(30, 136, 229, 0.4)'" onmouseout="this.style.transform='translateY(0px)'; this.style.boxShadow='0 4px 15px rgba(30, 136, 229, 0.3)'">
+                                <button type="button" onclick="downloadTermsAndConditions()" class="document-download-btn">
                                     <span class="button-loading-text">📄</span>
                                     Generar PDF
                                 </button>
-                                <button type="button" onclick="downloadLocalDocument()" style="
-                                    background: linear-gradient(135deg, #0b1039, #1e88e5);
-                                    color: white;
-                                    border: none;
-                                    padding: 12px 30px;
-                                    border-radius: 50px;
-                                    font-weight: bold;
-                                    font-size: 1rem;
-                                    cursor: pointer;
-                                    transition: var(--transition);
-                                    box-shadow: 0 4px 15px rgba(11, 16, 57, 0.3);
-                                " onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 20px rgba(11, 16, 57, 0.4)'" onmouseout="this.style.transform='translateY(0px)'; this.style.boxShadow='0 4px 15px rgba(11, 16, 57, 0.3)'">
+                                <button type="button" onclick="downloadLocalDocument()" class="document-download-btn">
                                     <span class="button-loading-text">⬇️</span>
                                     Documento Oficial
                                 </button>
@@ -2135,18 +2199,7 @@
                                 Conoce cómo protegemos y manejamos tu información personal durante el evento.
                             </p>
                             <div class="button-group-small">
-                                <button type="button" onclick="downloadPrivacyPolicy()" style="
-                                    background: linear-gradient(135deg, #6c757d, #495057);
-                                    color: white;
-                                    border: none;
-                                    padding: 8px 20px;
-                                    border-radius: var(--border-radius-large);
-                                    font-weight: bold;
-                                    font-size: 0.9rem;
-                                    cursor: pointer;
-                                    transition: var(--transition);
-                                    box-shadow: 0 3px 10px rgba(108, 117, 125, 0.3);
-                                " onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 5px 15px rgba(108, 117, 125, 0.4)'" onmouseout="this.style.transform='translateY(0px)'; this.style.boxShadow='0 3px 10px rgba(108, 117, 125, 0.3)'">
+                                <button type="button" onclick="downloadPrivacyPolicy()" class="document-download-btn">
                                     <span class="button-privacy-icon">📄</span>
                                     Descargar
                                 </button>
@@ -2539,23 +2592,8 @@
                         incluyendo clasificaciones por pruebas, género y equipos.
                     </p>
                 </div>
-                <button id="downloadPdfBtn" class="download-btn" style="
-                    background: linear-gradient(135deg, #0b1039, #1a2470);
-                    color: white;
-                    border: none;
-                    padding: 15px 40px;
-                    font-size: 1.1em;
-                    font-weight: 600;
-                    border-radius: 50px;
-                    cursor: pointer;
-                    transition: var(--transition);
-                    box-shadow: 0 5px 20px rgba(11, 16, 57, 0.3);
-                    display: inline-flex;
-                    align-items: center;
-                    gap: 10px;
-                " onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 8px 25px rgba(11, 16, 57, 0.4)'" 
-                   onmouseout="this.style.transform='translateY(0px)'; this.style.boxShadow='0 5px 20px rgba(11, 16, 57, 0.3)'">
-                    <span style="font-size: 1.2em;">📋</span>
+                <button id="downloadPdfBtn" class="download-btn main-download-btn">
+                    <span class="icon-span-large">📋</span>
                     Descargar Resultados PDF
                 </button>
 
@@ -4188,16 +4226,7 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
                             <p class="share-step"><strong>✍️ Paso 3:</strong> Pega el texto copiado</p>
                             <p class="share-step"><strong>🚀 Paso 4:</strong> ¡Comparte tu resultado!</p>
                         </div>
-                        <button onclick="closeInstagramInstructions()" style="
-                            background: var(--secondary-color); 
-                            color: white; 
-                            border: none; 
-                            padding: 12px 25px; 
-                            border-radius: var(--border-radius-large);
-                            font-weight: 600;
-                            cursor: pointer;
-                            transition: var(--transition);
-                        " onmouseover="this.style.background='#0090c7'" onmouseout="this.style.background='var(--secondary-color)'">
+                        <button onclick="closeInstagramInstructions()" class="modal-close-btn">
                             Entendido 👍
                         </button>
                     </div>
@@ -5899,15 +5928,7 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
                     El documento oficial aún no ha sido cargado. 
                     <br>Puedes generar una versión temporal usando el botón "Generar PDF".
                 </p>
-                <button onclick="this.parentElement.remove()" style="
-                    background: #0b1039;
-                    color: white;
-                    border: none;
-                    padding: 10px 20px;
-                    border-radius: var(--border-radius-large);
-                    cursor: pointer;
-                    font-weight: bold;
-                ">Entendido</button>
+                <button onclick="this.parentElement.remove()" class="modal-remove-btn">Entendido</button>
             `;
             
             // Agregar overlay
@@ -6025,16 +6046,7 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
                     La Política de Tratamiento de Datos Personales aún no ha sido cargada.
                     <br><br>Por favor, contacta al equipo organizador para obtener este documento.
                 </p>
-                <button onclick="this.parentElement.remove()" style="
-                    background: #6c757d;
-                    color: white;
-                    border: none;
-                    padding: 8px 18px;
-                    border-radius: 20px;
-                    cursor: pointer;
-                    font-weight: bold;
-                    font-size: 0.9rem;
-                ">Entendido</button>
+                <button onclick="this.parentElement.remove()" class="modal-remove-btn">Entendido</button>
             `;
             
             // Agregar overlay
