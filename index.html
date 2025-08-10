@@ -1316,6 +1316,72 @@
             font-size: 1.4rem;
             font-weight: bold;
         }
+
+        /* Estilos finales - últimos detalles */
+        .quote-container {
+            position: relative;
+            height: 80px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .quotes-slider-inner {
+            width: 100%;
+            overflow: hidden;
+        }
+        
+        .quotes-track-animated {
+            display: flex;
+            animation: slideQuotes 20s infinite linear;
+        }
+        
+        .quote-item-styled {
+            min-width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: #0b1039;
+            padding: 0 50px;
+        }
+
+        /* Metadatos y información adicional */
+        .document-meta {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            flex-wrap: wrap;
+            font-size: 0.9rem;
+            color: #999;
+        }
+        
+        .meta-text {
+            color: #999;
+            font-size: 0.8rem;
+        }
+
+        /* Layouts simples y centrado */
+        .text-center-container {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        
+        .content-wrapper {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .flex-one {
+            flex: 1;
+        }
     </style>
 </head>
 <body>
@@ -1383,41 +1449,41 @@
         overflow: hidden;
     ">
         <div class="container">
-            <div style="position: relative; height: 80px; display: flex; align-items: center;">
-                <div class="quotes-slider" style="width: 100%; overflow: hidden;">
-                    <div class="quotes-track" style="display: flex; animation: slideQuotes 20s infinite linear;">
-                        <div class="quote-item" style="min-width: 100%; display: flex; align-items: center; justify-content: center; text-align: center; color: #0b1039; padding: 0 50px;">
+            <div class="quote-container">
+                <div class="quotes-slider quotes-slider-inner">
+                    <div class="quotes-track quotes-track-animated">
+                        <div class="quote-item quote-item-styled">
                             <div>
                                 <p class="quote-text">"El agua es mi territorio, la piscina mi hogar"</p>
                                 <span class="quote-author">- Espíritu Nadador</span>
                             </div>
                         </div>
-                        <div class="quote-item" style="min-width: 100%; display: flex; align-items: center; justify-content: center; text-align: center; color: #0b1039; padding: 0 50px;">
+                        <div class="quote-item quote-item-styled">
                             <div>
                                 <p class="quote-text">"Cada brazada cuenta, cada segundo importa"</p>
                                 <span class="quote-author">- Filosofía Master</span>
                             </div>
                         </div>
-                        <div class="quote-item" style="min-width: 100%; display: flex; align-items: center; justify-content: center; text-align: center; color: #0b1039; padding: 0 50px;">
+                        <div class="quote-item quote-item-styled">
                             <div>
                                 <p class="quote-text">"En master, la experiencia es tu mejor aliada"</p>
                                 <span class="quote-author">- Sabiduría Acuática</span>
                             </div>
                         </div>
-                        <div class="quote-item" style="min-width: 100%; display: flex; align-items: center; justify-content: center; text-align: center; color: #0b1039; padding: 0 50px;">
+                        <div class="quote-item quote-item-styled">
                             <div>
                                 <p class="quote-text">"Record mundial master: 50m libre en 21.28 segundos"</p>
                                 <span class="quote-author">- Dato Curioso</span>
                             </div>
                         </div>
-                        <div class="quote-item" style="min-width: 100%; display: flex; align-items: center; justify-content: center; text-align: center; color: #0b1039; padding: 0 50px;">
+                        <div class="quote-item quote-item-styled">
                             <div>
                                 <p class="quote-text">"La natación master comenzó oficialmente en 1970"</p>
                                 <span class="quote-author">- Historia de la Natación</span>
                             </div>
                         </div>
                         <!-- Duplicar las frases para efecto continuo -->
-                        <div class="quote-item" style="min-width: 100%; display: flex; align-items: center; justify-content: center; text-align: center; color: #0b1039; padding: 0 50px;">
+                        <div class="quote-item quote-item-styled">
                             <div>
                                 <p class="quote-text">"El agua es mi territorio, la piscina mi hogar"</p>
                                 <span class="quote-author">- Espíritu Nadador</span>
@@ -1432,7 +1498,7 @@
     <!-- Event Statistics Section -->
     <section class="event-stats-section" style="background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%); padding: 80px 0; border-bottom: 2px solid #e9ecef;">
         <div class="container">
-            <div style="text-align: center; margin-bottom: 50px;">
+            <div class="text-center-container">
                 <h2 style="color: #0b1039; font-size: 2.5rem; font-weight: bold; margin-bottom: 15px; display: flex; align-items: center; justify-content: center; gap: 15px;">
                     <svg width="40" height="40" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M3 3V21H21V19H5V3H3ZM19 17H17V10H19V17ZM15 17H13V7H15V17ZM11 17H9V13H11V17ZM7 17H5V15H7V17Z" fill="#0b1039"/>
@@ -1444,7 +1510,7 @@
                 </p>
             </div>
             
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 30px; max-width: 1000px; margin: 0 auto;">
+            <div class="stats-grid">
                 
                 <!-- Nadadores Inscritos -->
                 <div class="stat-card" onmouseover="this.style.transform='translateY(-10px)'; this.style.boxShadow='0 20px 40px rgba(11, 16, 57, 0.15)'" onmouseout="this.style.transform='translateY(0px)'; this.style.boxShadow='0 10px 30px rgba(11, 16, 57, 0.1)'">
@@ -1557,7 +1623,7 @@
                 Documentos de la Convocatoria
             </h2>
             
-            <div style="max-width: 800px; margin: 0 auto;">
+            <div class="content-wrapper">
                 <div style="background: white; border-radius: 20px; padding: 40px; box-shadow: 0 10px 30px rgba(11, 16, 57, 0.1); border: 2px solid #e3f2fd;">
                     
                     <!-- Terms and Conditions Card -->
@@ -1567,7 +1633,7 @@
                                 <path d="M14 2H6C4.9 2 4 2.9 4 4V20C4 21.1 4.9 22 6 22H18C19.1 22 20 21.1 20 20V8L14 2ZM18 20H6V4H13V9H18V20ZM8 12V14H16V12H8ZM8 16V18H13V16H8Z" fill="white"/>
                             </svg>
                         </div>
-                        <div style="flex: 1;">
+                        <div class="flex-one">
                             <h3 class="section-subtitle">Términos y Condiciones</h3>
                             <p class="info-text-large">
                                 Descarga el documento oficial con todos los términos, condiciones y reglamentos de la convocatoria del IV Championship Master Swimming.
@@ -1604,7 +1670,7 @@
                                     Documento Oficial
                                 </button>
                             </div>
-                            <div style="display: flex; gap: 20px; align-items: center; flex-wrap: wrap; font-size: 0.9rem; color: #999;">
+                            <div class="document-meta">
                                 <span>📄 PDF Generado • Agosto 2025</span>
                                 <span>📋 Documento Oficial • Versión Completa</span>
                             </div>
@@ -1638,7 +1704,7 @@
                                 <path d="M18 8H17V6C17 3.24 14.76 1 12 1S7 3.24 7 6V8H6C4.9 8 4 8.9 4 10V20C4 21.1 4.9 22 6 22H18C19.1 22 20 21.1 20 20V10C20 8.9 19.1 8 18 8ZM9 6C9 4.34 10.34 3 12 3S15 4.34 15 6V8H9V6ZM18 20H6V10H18V20ZM12 17C13.1 17 14 16.1 14 15S13.1 13 12 13 10 13.9 10 15 10.9 17 12 17Z" fill="white"/>
                             </svg>
                         </div>
-                        <div style="flex: 1;">
+                        <div class="flex-one">
                             <h4 class="policy-title">Política de Tratamiento de Datos Personales</h4>
                             <p class="info-text-small">
                                 Conoce cómo protegemos y manejamos tu información personal durante el evento.
@@ -1659,7 +1725,7 @@
                                     <span style="margin-right: 6px;">📄</span>
                                     Descargar
                                 </button>
-                                <span style="color: #999; font-size: 0.8rem;">
+                                <span class="meta-text">
                                     PDF • Versión 2025
                                 </span>
                             </div>
