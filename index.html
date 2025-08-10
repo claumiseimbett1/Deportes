@@ -1904,6 +1904,19 @@
             background: rgba(255, 255, 255, 1);
             color: #000;
         }
+        
+        /* Accessibility: Hidden labels for screen readers */
+        .visually-hidden {
+            position: absolute !important;
+            width: 1px !important;
+            height: 1px !important;
+            padding: 0 !important;
+            margin: -1px !important;
+            overflow: hidden !important;
+            clip: rect(0, 0, 0, 0) !important;
+            white-space: nowrap !important;
+            border: 0 !important;
+        }
     </style>
 </head>
 <body>
@@ -1950,7 +1963,7 @@
     <section class="video-hero" id="inicio">
         <div class="video-container">
             <!-- playsinline: Required for iOS Safari inline video playback -->
-            <video autoplay muted loop playsinline src="video/promocional.mp4">
+            <video autoplay muted loop playsinline="true" src="video/promocional.mp4">
                 Tu navegador no soporta la etiqueta de video.
             </video>
         </div>
@@ -2239,6 +2252,7 @@
             <div class="search-container">
                 <div class="search-box">
                     <span class="search-icon">🔍</span>
+                    <label for="searchPruebas" class="visually-hidden">Buscar participante por nombre en resultados por pruebas</label>
                     <input type="text" class="search-input" id="searchPruebas" placeholder="Buscar participante por nombre...">
                     <button type="button" class="clear-search clear-search-hidden" onclick="clearSearch('searchPruebas')">✕</button>
                 </div>
@@ -2473,6 +2487,7 @@
             <div class="search-container">
                 <div class="search-box">
                     <span class="search-icon">🔍</span>
+                    <label for="searchGender" class="visually-hidden">Buscar participante por nombre en clasificación general</label>
                     <input type="text" class="search-input" id="searchGender" placeholder="Buscar participante por nombre...">
                     <button class="clear-search clear-search-hidden" onclick="clearSearch('searchGender')">✕</button>
                 </div>
