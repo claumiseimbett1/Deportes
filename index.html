@@ -1470,7 +1470,7 @@
                                 Descarga el documento oficial con todos los términos, condiciones y reglamentos de la convocatoria del IV Championship Master Swimming.
                             </p>
                             <div style="display: flex; gap: 15px; align-items: center; flex-wrap: wrap; margin-bottom: 20px;">
-                                <button onclick="downloadTermsAndConditions()" style="
+                                <button type="button" onclick="downloadTermsAndConditions()" style="
                                     background: linear-gradient(135deg, #1e88e5, #00adef);
                                     color: white;
                                     border: none;
@@ -1485,7 +1485,7 @@
                                     <span style="margin-right: 8px;">📄</span>
                                     Generar PDF
                                 </button>
-                                <button onclick="downloadLocalDocument()" style="
+                                <button type="button" onclick="downloadLocalDocument()" style="
                                     background: linear-gradient(135deg, #0b1039, #1e88e5);
                                     color: white;
                                     border: none;
@@ -1541,7 +1541,7 @@
                                 Conoce cómo protegemos y manejamos tu información personal durante el evento.
                             </p>
                             <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
-                                <button onclick="downloadPrivacyPolicy()" style="
+                                <button type="button" onclick="downloadPrivacyPolicy()" style="
                                     background: linear-gradient(135deg, #6c757d, #495057);
                                     color: white;
                                     border: none;
@@ -1588,7 +1588,7 @@
                 <div class="search-box">
                     <span class="search-icon">🔍</span>
                     <input type="text" class="search-input" id="searchPruebas" placeholder="Buscar participante por nombre...">
-                    <button class="clear-search" onclick="clearSearch('searchPruebas')" style="display: none;">✕</button>
+                    <button type="button" class="clear-search" onclick="clearSearch('searchPruebas')" style="display: none;">✕</button>
                 </div>
                 <div class="search-results-info" id="searchResultsPruebas"></div>
             </div>
@@ -1599,14 +1599,14 @@
                 </div>
                 
                 <div class="tabs">
-                    <button class="tab-button active" onclick="openTab(event, '50m-libre-femenino')">50 m Libre Femenino</button>
-                    <button class="tab-button" onclick="openTab(event, '50m-libre-masculino')">50 m Libre Masculino</button>
-                    <button class="tab-button" onclick="openTab(event, '100m-libre-femenino')">100 m Libre Femenino</button>
-                    <button class="tab-button" onclick="openTab(event, '100m-libre-masculino')">100 m Libre Masculino</button>
-                    <button class="tab-button" onclick="openTab(event, '200m-libre-femenino')">200 m Libre Femenino</button>
-                    <button class="tab-button" onclick="openTab(event, '200m-libre-masculino')">200 m Libre Masculino</button>
-                    <button class="tab-button" onclick="openTab(event, '4x50m-libre-femenino')">4x50 m Libre Femenino</button>
-                    <button class="tab-button" onclick="openTab(event, '4x50m-libre-masculino')">4x50 m Libre Masculino</button>
+                    <button type="button" class="tab-button active" onclick="openTab(event, '50m-libre-femenino')">50 m Libre Femenino</button>
+                    <button type="button" class="tab-button" onclick="openTab(event, '50m-libre-masculino')">50 m Libre Masculino</button>
+                    <button type="button" class="tab-button" onclick="openTab(event, '100m-libre-femenino')">100 m Libre Femenino</button>
+                    <button type="button" class="tab-button" onclick="openTab(event, '100m-libre-masculino')">100 m Libre Masculino</button>
+                    <button type="button" class="tab-button" onclick="openTab(event, '200m-libre-femenino')">200 m Libre Femenino</button>
+                    <button type="button" class="tab-button" onclick="openTab(event, '200m-libre-masculino')">200 m Libre Masculino</button>
+                    <button type="button" class="tab-button" onclick="openTab(event, '4x50m-libre-femenino')">4x50 m Libre Femenino</button>
+                    <button type="button" class="tab-button" onclick="openTab(event, '4x50m-libre-masculino')">4x50 m Libre Masculino</button>
                 </div>
                 <!-- Pestaña 50 m Libre Femenino -->
                 <div id="50m-libre-femenino" class="tab-content active">
@@ -1834,7 +1834,7 @@
                 
                 <div class="tabs">
                     <button class="tab-button active" onclick="openGenderTab(event, 'masculino-general')">🏊‍♂️ Masculino</button>
-                    <button class="tab-button" onclick="openGenderTab(event, 'femenino-general')">🏊‍♀️ Femenino</button>
+                    <button type="button" class="tab-button" onclick="openGenderTab(event, 'femenino-general')">🏊‍♀️ Femenino</button>
                 </div>
 
                 <!-- Pestaña Masculino General -->
@@ -2015,7 +2015,7 @@
             <h2 class="section-title">Contacto</h2>
             <div class="contact-grid">
                 <!-- WhatsApp Card -->
-                <a href="https://wa.me/573196583574" target="_blank" class="contact-card-link">
+                <a href="https://wa.me/573196583574" target="_blank" rel="noopener" class="contact-card-link">
                     <div class="sticker-icon">
                         <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M16.75 13.96C16.41 13.79 15.31 13.24 15.08 13.15C14.86 13.06 14.7 13.02 14.54 13.28C14.38 13.55 13.91 14.11 13.75 14.28C13.59 14.45 13.43 14.47 13.16 14.3C12.89 14.13 12.06 13.85 11.07 12.99C10.29 12.3 9.73 11.48 9.59 11.21C9.45 10.94 9.56 10.81 9.7 10.67C9.83 10.53 9.99 10.33 10.13 10.18C10.27 10.03 10.32 9.9 10.42 9.73C10.52 9.56 10.47 9.4 10.39 9.27C10.31 9.14 9.85 7.97 9.66 7.52C9.47 7.07 9.28 7.13 9.14 7.12H8.62C8.42 7.12 8.13 7.19 7.89 7.43C7.65 7.67 6.96 8.31 6.96 9.56C6.96 10.81 7.92 12.01 8.06 12.18C8.2 12.35 9.85 14.8 12.29 15.76C14.73 16.72 14.73 16.34 15.13 16.3C15.53 16.26 16.54 15.68 16.75 15.13C16.96 14.58 16.96 14.12 16.88 13.96H16.75Z" stroke="#0b5079" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M12.04 21.82C17.56 21.82 22 17.38 22 11.86C22 6.34 17.56 1.9 12.04 1.9C6.52 1.9 2.08 6.34 2.08 11.86C2.08 14.13 2.84 16.24 4.12 17.9L2.56 21.34L6.17 19.95C7.73 21.13 9.79 21.82 12.04 21.82Z" stroke="#00ADEF" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
                     </div>
@@ -2023,7 +2023,7 @@
                     <p>+57 319 658 3574</p>
                 </a>
                 <!-- Instagram Card -->
-                <a href="https://www.instagram.com/aquaten.cd" target="_blank" class="contact-card-link">
+                <a href="https://www.instagram.com/aquaten.cd" target="_blank" rel="noopener" class="contact-card-link">
                     <div class="sticker-icon">
                         <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="2" y="2" width="20" height="20" rx="5" ry="5" stroke="#00ADEF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M16 11.37C16 13.38 14.21 15 12 15C9.79 15 8 13.38 8 11.37C8 9.36 9.79 7.75 12 7.75C14.21 7.75 16 9.36 16 11.37Z" stroke="#0b5079" stroke-width="2"/><path d="M17.5 6.5H17.51" stroke="#0b5079" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
                     </div>
