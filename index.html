@@ -1920,31 +1920,62 @@
 
         /* Responsive adjustments for documents section */
         @media (max-width: 768px) {
-            .terms-header-row {
+            /* Hacer que cada documento sea un bloque independiente y centrado */
+            .terms-main-card {
+                margin-bottom: 30px;
+            }
+            
+            .privacy-main-card {
+                margin-top: 30px;
+            }
+            
+            .terms-header-row,
+            .privacy-header-row {
                 flex-direction: column;
                 text-align: center;
                 gap: 20px;
+                align-items: center;
+            }
+            
+            .terms-icon-box,
+            .privacy-icon-box {
+                align-self: center;
+                margin-bottom: 10px;
             }
             
             .terms-icon-box {
-                align-self: center;
                 width: 60px;
                 height: 60px;
             }
             
-            .button-group {
+            /* Agrupar contenido de cada documento */
+            .flex-one {
+                width: 100%;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
+            }
+            
+            .button-group,
+            .button-group-small {
                 justify-content: center;
-                margin-bottom: 15px;
+                margin: 15px 0;
+            }
+            
+            .document-meta,
+            .meta-text {
+                justify-content: center;
+                text-align: center;
+                margin-top: 10px;
             }
             
             .document-meta {
-                justify-content: center;
-                text-align: center;
                 flex-direction: column;
-                gap: 10px;
-                margin-bottom: 20px;
-                border-bottom: 1px solid #e9ecef;
-                padding-bottom: 20px;
+                gap: 8px;
+                border-top: 1px solid #e9ecef;
+                padding-top: 15px;
+                margin-top: 20px;
             }
             
             .document-meta span {
@@ -1953,23 +1984,11 @@
                 color: #666;
             }
             
-            /* Espaciado entre las secciones de documentos */
-            .privacy-header-row {
-                flex-direction: column;
-                text-align: center;
-                gap: 15px;
-                margin-top: 30px;
-                padding-top: 30px;
-                border-top: 2px solid #e9ecef;
-            }
-            
-            .privacy-icon-box {
-                align-self: center;
-            }
-            
-            .button-group-small {
-                justify-content: center;
-                margin-bottom: 15px;
+            /* Separación visual entre las dos secciones principales */
+            .privacy-policy-section {
+                border-top: 3px solid #e9ecef;
+                padding-top: 40px;
+                margin-top: 20px;
             }
         }
     </style>
