@@ -6122,16 +6122,28 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
             });
         }
 
-        // Intersection Observer para animar cuando sea visible (opcional)
+        // Intersection Observer para animar cuando sea visible (optimizado para móvil)
         document.addEventListener('DOMContentLoaded', function() {
+            // Detectar si es dispositivo móvil
+            const isMobile = window.innerWidth <= 768;
+            
+            // Configurar threshold según el tipo de dispositivo
+            const observerOptions = {
+                threshold: isMobile ? 0.1 : 0.5, // 10% para móvil, 50% para desktop
+                rootMargin: isMobile ? '50px 0px -50px 0px' : '0px' // Margen adicional para móviles
+            };
+
             const observer = new IntersectionObserver((entries) => {
                 entries.forEach(entry => {
                     if (entry.isIntersecting) {
-                        animateEventStats();
+                        // Pequeño delay para asegurar que la sección es visible
+                        setTimeout(() => {
+                            animateEventStats();
+                        }, isMobile ? 100 : 0);
                         observer.unobserve(entry.target);
                     }
                 });
-            }, { threshold: 0.5 });
+            }, observerOptions);
 
             const statsSection = document.querySelector('.event-stats-section');
             if (statsSection) {
