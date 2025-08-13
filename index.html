@@ -4550,26 +4550,26 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
                 // Posición y equipo
                 pdf.setFontSize(16);
                 pdf.setTextColor(0, 173, 239);
-                pdf.text(`${position}° LUGAR`, 60, 135, { align: "center" });
+                pdf.text(`${position}° LUGAR`, pageWidth/2 - 100, 135, { align: "center" });
                 
                 pdf.setFont("helvetica", "normal");
                 pdf.setFontSize(16);
                 pdf.setTextColor(80, 80, 80);
-                pdf.text(`Equipo: ${team}`, pageWidth/2, 135, { align: "center" });
-                pdf.text(`Categoría: ${category}`, pageWidth/2, 150, { align: "center" });
+                pdf.text(`Equipo: ${team}`, 50, 135, { align: "center" });
+                pdf.text(`Categoría: ${category}`, pageWidth/2 -80, 135, { align: "center" });
                 
                 // Tiempos individuales
                 pdf.setFont("helvetica", "bold");
                 pdf.setFontSize(14);
                 pdf.setTextColor(11, 16, 57);
-                pdf.text("TIEMPOS REGISTRADOS:", pageWidth/2, 170, { align: "center" });
+                pdf.text("TIEMPOS REGISTRADOS:", pageWidth/2 - 40, 135, { align: "center" });
                 
                 pdf.setFont("helvetica", "normal");
                 pdf.setFontSize(12);
                 pdf.setTextColor(60, 60, 60);
-                pdf.text(`50m Libre: ${times['50m']}`, pageWidth/2 - 60, 190, { align: "center" });
-                pdf.text(`100m Libre: ${times['100m']}`, pageWidth/2, 190, { align: "center" });
-                pdf.text(`200m Libre: ${times['200m']}`, pageWidth/2 + 60, 190, { align: "center" });
+                pdf.text(`50m Libre: ${times['50m']}`, pageWidth/2 + 60, 135, { align: "center" });
+                pdf.text(`100m Libre: ${times['100m']}`, pageWidth/2 +80, 135, { align: "center" });
+                pdf.text(`200m Libre: ${times['200m']}`, pageWidth/2 + 100, 135, { align: "center" });
                 
                 // Fecha
                 const currentDate = new Date().toLocaleDateString('es-ES', { 
