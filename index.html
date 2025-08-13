@@ -4468,9 +4468,9 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
                 pdf.setFontSize(12);
                 pdf.setTextColor(60, 60, 60);
                 
-                pdf.text(`50m: ${participantTimes['50m']}`, textPositions.time50m.x, textPositions.time50m.y, { align: "center" });
-                pdf.text(`100m: ${participantTimes['100m']}`, textPositions.time100m.x, textPositions.time100m.y, { align: "center" });
-                pdf.text(`200m: ${participantTimes['200m']}`, textPositions.time200m.x, textPositions.time200m.y, { align: "center" });
+                pdf.text(`${participantTimes['50m']}`, textPositions.time50m.x, textPositions.time50m.y, { align: "center" });
+                pdf.text(`${participantTimes['100m']}`, textPositions.time100m.x, textPositions.time100m.y, { align: "center" });
+                pdf.text(`${participantTimes['200m']}`, textPositions.time200m.x, textPositions.time200m.y, { align: "center" });
 
                 // Generate filename and download
                 const sanitizedName = swimmer.replace(/[^a-zA-Z0-9]/g, '_');
