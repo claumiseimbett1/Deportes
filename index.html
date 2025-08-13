@@ -2197,8 +2197,8 @@
             <div class="event-goal-card">
                 <h4 class="goal-card-title">🎯 Meta del Evento</h4>
                 <p class="goal-card-text">
-                   Una gran oportunidad para los nadadores de edades desde infantil B hasta Master demuestren sus habilidades, compitiendo.
-                   Nuestra meta Promover la competición para superarse personalmente y fomentar la sana rivalidad,
+                   Una gran oportunidad para que los nadadores de edades de infantil B hasta Master demuestren sus habilidades, compitiendo.
+                   Nuestra meta es promover la competición para superarse personalmente y fomentar la sana rivalidad,
                    disfrutando del deporte y del entorno social para mantenerse fuerte tanto física como mentalmente, 
                    promoviendo la excelencia deportiva y el compañerismo en la natación.
                 </p>
@@ -2604,7 +2604,7 @@
                     <table class="results-table" id="resultsTableMasculinoGeneral">
                         <thead>
                             <tr>
-                                <th>Lugar</th>
+                                <th>Pos.</th>
                                 <th>Atleta</th>
                                 <th>Equipo</th>
                                 <th>Edad</th>
@@ -2633,7 +2633,7 @@
                     <table class="results-table" id="resultsTableFemeninoGeneral">
                         <thead>
                             <tr>
-                                <th>Lugar</th>
+                                <th>Pos.</th>
                                 <th>Atleta</th>
                                 <th>Equipo</th>
                                 <th>Edad</th>
@@ -3645,7 +3645,7 @@
                         if (atleta && atleta.toLowerCase().includes('sin atletas')) {
                             htmlContent += `
                                 <tr>
-                                    <td data-label="Lugar" class="rank rank-empty-cell">-</td>
+                                    <td data-label="Pos." class="rank rank-empty-cell">-</td>
                                     <td data-label="Atleta" class="athlete-empty-cell">Sin atletas</td>
                                     <td data-label="Equipo" class="team-empty-cell">-</td>
                                     <td data-label="Edad" class="age-empty-cell">-</td>
@@ -3680,7 +3680,7 @@
 
                     htmlContent += `
                         <tr>
-                            <td data-label="Lugar" class="rank">${displayPos || '-'}</td>
+                            <td data-label="Pos." class="rank">${displayPos || '-'}</td>
                             <td data-label="Atleta" class="athlete-name-cell">${atleta || '-'}</td>
                             <td data-label="Equipo">${equipo || '-'}</td>
                             <td data-label="Edad">${edad || '-'}</td>
