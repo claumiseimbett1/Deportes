@@ -1917,6 +1917,61 @@
             white-space: nowrap !important;
             border: 0 !important;
         }
+
+        /* Responsive adjustments for documents section */
+        @media (max-width: 768px) {
+            .terms-header-row {
+                flex-direction: column;
+                text-align: center;
+                gap: 20px;
+            }
+            
+            .terms-icon-box {
+                align-self: center;
+                width: 60px;
+                height: 60px;
+            }
+            
+            .button-group {
+                justify-content: center;
+                margin-bottom: 15px;
+            }
+            
+            .document-meta {
+                justify-content: center;
+                text-align: center;
+                flex-direction: column;
+                gap: 10px;
+                margin-bottom: 20px;
+                border-bottom: 1px solid #e9ecef;
+                padding-bottom: 20px;
+            }
+            
+            .document-meta span {
+                display: block;
+                font-size: 0.85rem;
+                color: #666;
+            }
+            
+            /* Espaciado entre las secciones de documentos */
+            .privacy-header-row {
+                flex-direction: column;
+                text-align: center;
+                gap: 15px;
+                margin-top: 30px;
+                padding-top: 30px;
+                border-top: 2px solid #e9ecef;
+            }
+            
+            .privacy-icon-box {
+                align-self: center;
+            }
+            
+            .button-group-small {
+                justify-content: center;
+                margin-bottom: 15px;
+            }
+        }
     </style>
 </head>
 <body>
