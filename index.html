@@ -4566,13 +4566,13 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
                 
                 // Nueva página para resultados por género
                 pdf.addPage();
-                addCompetitionLogo(pdf);
+                await addCompetitionLogo(pdf);
                 yPosition = 30;
                 yPosition = await addGenderResultsBoxesToPDF(pdf, yPosition, allSheetData);
                 
                 // Nueva página para resultados por equipos
                 pdf.addPage();
-                addCompetitionLogo(pdf);
+                await addCompetitionLogo(pdf);
                 yPosition = 30;
                 await addTeamResultsBoxesToPDF(pdf, yPosition, allSheetData);
                 
@@ -4995,15 +4995,65 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
         }
 
         // Función para agregar logo de la competencia en cada página
-        function addCompetitionLogo(pdf) {
-            // Logo simple usando texto estilizado (como placeholder)
+        async function addCompetitionLogo(pdf) {
+            try {
+                // Posición en la esquina superior derecha
+                const logoX = 150;
+                const logoY = 10;
+                const logoWidth = 40;
+                const logoHeight = 25;
+                
+                // Cargar el logo desde el archivo
+                const logoImg = new Image();
+                logoImg.crossOrigin = 'anonymous';
+                
+                return new Promise((resolve, reject) => {
+                    logoImg.onload = function() {
+                        try {
+                            // Crear canvas para procesar la imagen
+                            const canvas = document.createElement('canvas');
+                            const ctx = canvas.getContext('2d');
+                            canvas.width = logoImg.width;
+                            canvas.height = logoImg.height;
+                            
+                            // Dibujar imagen en canvas
+                            ctx.drawImage(logoImg, 0, 0);
+                            
+                            // Convertir a base64
+                            const imgData = canvas.toDataURL('image/png');
+                            
+                            // Agregar imagen al PDF
+                            pdf.addImage(imgData, 'PNG', logoX, logoY, logoWidth, logoHeight);
+                            
+                            resolve();
+                        } catch (error) {
+                            console.warn('Error procesando logo, usando texto alternativo:', error);
+                            addTextLogo(pdf, logoX, logoY);
+                            resolve();
+                        }
+                    };
+                    
+                    logoImg.onerror = function() {
+                        console.warn('Error cargando logo, usando texto alternativo');
+                        addTextLogo(pdf, logoX, logoY);
+                        resolve();
+                    };
+                    
+                    // Intentar cargar el logo
+                    logoImg.src = './img/LogoChampion2025.png';
+                });
+                
+            } catch (error) {
+                console.warn('Error con logo, usando texto alternativo:', error);
+                addTextLogo(pdf, 150, 10);
+            }
+        }
+        
+        // Función auxiliar para logo de texto como respaldo
+        function addTextLogo(pdf, logoX, logoY) {
             pdf.setFont("helvetica", "bold");
             pdf.setFontSize(10);
             pdf.setTextColor(11, 16, 57);
-            
-            // Posición en la esquina superior derecha
-            const logoX = 160;
-            const logoY = 15;
             
             // Caja para el logo
             pdf.setDrawColor(11, 16, 57);
@@ -5087,7 +5137,7 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
                     // Verificar espacio en la página
                     if (yPosition > 200) {
                         pdf.addPage();
-                        addCompetitionLogo(pdf);
+                        await addCompetitionLogo(pdf);
                         yPosition = 40;
                     }
                     
@@ -5361,7 +5411,7 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
             // Nueva página para femeninos si es necesario
             if (yPosition > 150) {
                 pdf.addPage();
-                addCompetitionLogo(pdf);
+                await addCompetitionLogo(pdf);
                 yPosition = 30;
             }
             
@@ -5463,7 +5513,7 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
                     // Nueva página si no es el primer evento y no hay espacio
                     if (i > 0 && yPosition > 200) {
                         pdf.addPage();
-                        addCompetitionLogo(pdf);
+                        await addCompetitionLogo(pdf);
                         yPosition = 20;
                     }
                     
@@ -5485,7 +5535,7 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
                             // Verificar si necesitamos nueva página
                             if (yPosition > 270) {
                                 pdf.addPage();
-                                addCompetitionLogo(pdf);
+                                await addCompetitionLogo(pdf);
                                 yPosition = 20;
                                 
                                 // Repetir título del evento en nueva página
@@ -5552,7 +5602,7 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
                         // Verificar si necesitamos nueva página
                         if (yPosition > 270) {
                             pdf.addPage();
-                            addCompetitionLogo(pdf);
+                            await addCompetitionLogo(pdf);
                             yPosition = 20;
                             
                             // Repetir título en nueva página
@@ -5611,7 +5661,7 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
                         // Verificar si necesitamos nueva página
                         if (yPosition > 270) {
                             pdf.addPage();
-                            addCompetitionLogo(pdf);
+                            await addCompetitionLogo(pdf);
                             yPosition = 20;
                             
                             // Repetir título en nueva página
@@ -5666,7 +5716,7 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
                         // Verificar si necesitamos nueva página
                         if (yPosition > 250) {
                             pdf.addPage();
-                            addCompetitionLogo(pdf);
+                            await addCompetitionLogo(pdf);
                             yPosition = 20;
                             
                             // Repetir título en nueva página
@@ -5703,7 +5753,7 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
             // Pie de página
             if (yPosition > 250) {
                 pdf.addPage();
-                addCompetitionLogo(pdf);
+                await addCompetitionLogo(pdf);
                 yPosition = 280;
             } else {
                 yPosition = 280;
