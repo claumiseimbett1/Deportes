@@ -1957,31 +1957,49 @@
                 text-align: center;
             }
             
-            .button-group,
+            /* Reestructurar botones para que cada uno tenga su texto explicativo debajo */
+            .button-group {
+                flex-direction: column;
+                gap: 25px;
+                margin: 20px 0;
+            }
+            
             .button-group-small {
                 justify-content: center;
                 margin: 15px 0;
             }
             
-            .document-meta,
-            .meta-text {
-                justify-content: center;
-                text-align: center;
-                margin-top: 10px;
-            }
-            
+            /* Ocultar el document-meta original y crear nuevos elementos debajo de cada botón */
             .document-meta {
-                flex-direction: column;
-                gap: 8px;
-                border-top: 1px solid #e9ecef;
-                padding-top: 15px;
-                margin-top: 20px;
+                display: none;
             }
             
-            .document-meta span {
+            /* Crear grupos de botón + texto explicativo */
+            .button-group button:nth-child(1)::after {
+                content: "📄 PDF Generado • Agosto 2025";
                 display: block;
                 font-size: 0.85rem;
                 color: #666;
+                margin-top: 8px;
+                font-weight: normal;
+            }
+            
+            .button-group button:nth-child(2)::after {
+                content: "📋 Documento Oficial • Versión Completa";
+                display: block;
+                font-size: 0.85rem;
+                color: #666;
+                margin-top: 8px;
+                font-weight: normal;
+            }
+            
+            .meta-text {
+                justify-content: center;
+                text-align: center;
+                margin-top: 8px;
+                font-size: 0.85rem;
+                color: #666;
+                display: block;
             }
             
             /* Separación visual entre las dos secciones principales */
