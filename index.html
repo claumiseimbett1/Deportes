@@ -5049,9 +5049,31 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
             const logoY = 10;
             
             try {
-                // Si tenemos el logo cargado, usarlo con dimensiones originales
+                // Si tenemos el logo cargado, calcularlo con reducción proporcional
                 if (logoImageData && logoOriginalWidth > 0 && logoOriginalHeight > 0) {
-                    pdf.addImage(logoImageData, 'PNG', logoX, logoY, logoOriginalWidth, logoOriginalHeight);
+                    // Obtener dimensiones de la página PDF
+                    const pageWidth = pdf.internal.pageSize.getWidth();
+                    const pageHeight = pdf.internal.pageSize.getHeight();
+                    
+                    // Calcular espacio máximo disponible (con margen de seguridad)
+                    const maxWidth = pageWidth - logoX - 10; // 10mm de margen derecho
+                    const maxHeight = 40; // Máximo 40mm de altura para no interferir con el contenido
+                    
+                    // Calcular factor de escala para mantener proporciones
+                    let scale = 1;
+                    if (logoOriginalWidth > maxWidth || logoOriginalHeight > maxHeight) {
+                        const scaleWidth = maxWidth / logoOriginalWidth;
+                        const scaleHeight = maxHeight / logoOriginalHeight;
+                        scale = Math.min(scaleWidth, scaleHeight); // Usar el factor más restrictivo
+                    }
+                    
+                    // Aplicar escala
+                    const finalWidth = logoOriginalWidth * scale;
+                    const finalHeight = logoOriginalHeight * scale;
+                    
+                    console.log(`📐 Logo en PDF: ${finalWidth.toFixed(1)}x${finalHeight.toFixed(1)}mm (escala: ${(scale * 100).toFixed(1)}%)`);
+                    
+                    pdf.addImage(logoImageData, 'PNG', logoX, logoY, finalWidth, finalHeight);
                     return;
                 }
             } catch (error) {
