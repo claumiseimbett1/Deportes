@@ -4399,7 +4399,12 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
                 // Verificar si tenemos la plantilla cargada
                 console.log('🖼️ Estado de plantilla:', diplomaTemplateData ? 'Cargada' : 'No disponible');
                 
-                // Usar plantilla PNG si está disponible, sino diploma básico
+                // Por ahora, siempre usar diploma básico hasta que subas la plantilla PNG
+                console.log('📝 Generando diploma básico...');
+                //return downloadBasicDiploma(swimmer, position, team, category, participantTimes, pdf);
+                
+                // TODO: Descomentar esta sección cuando tengas diploma-template.png en img/
+                
                 if (!diplomaTemplateData) {
                     console.warn('Plantilla de diploma no disponible, usando diploma básico');
                     return downloadBasicDiploma(swimmer, position, team, category, participantTimes, pdf);
