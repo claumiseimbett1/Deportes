@@ -4374,6 +4374,8 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
         // Diploma download functionality basado en plantilla PNG
         async function downloadDiploma(swimmer, position, team, category) {
             try {
+                console.log('🎓 Iniciando descarga de diploma para:', swimmer, position, team, category);
+                
                 // Clean the data to avoid format issues
                 swimmer = swimmer.replace(/['"]/g, '');
                 position = position.replace(/['"]/g, '');
@@ -4381,13 +4383,23 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
                 category = category.replace(/['"]/g, '');
 
                 // Obtener tiempos específicos del participante
+                console.log('⏱️ Obteniendo tiempos del participante...');
                 const participantTimes = getParticipantTimes(swimmer, team);
 
                 // Load jsPDF
+                console.log('📄 Cargando jsPDF...');
                 const jsPDF = await loadjsPDF();
+                
+                if (!jsPDF) {
+                    throw new Error('No se pudo cargar jsPDF');
+                }
+                
                 const pdf = new jsPDF('landscape', 'mm', 'a4'); // Landscape para diplomas
 
                 // Verificar si tenemos la plantilla cargada
+                console.log('🖼️ Estado de plantilla:', diplomaTemplateData ? 'Cargada' : 'No disponible');
+                
+                // Usar plantilla PNG si está disponible, sino diploma básico
                 if (!diplomaTemplateData) {
                     console.warn('Plantilla de diploma no disponible, usando diploma básico');
                     return downloadBasicDiploma(swimmer, position, team, category, participantTimes, pdf);
@@ -4468,41 +4480,113 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
                 pdf.save(filename);
 
             } catch (error) {
-                console.error('Error generating diploma:', error);
-                alert('Error generando el diploma. Por favor, inténtelo de nuevo.');
+                console.error('❌ Error generando diploma:', error);
+                console.error('Stack trace:', error.stack);
+                
+                // Intentar generar diploma básico como último recurso
+                try {
+                    console.log('🔄 Intentando diploma básico como respaldo...');
+                    const jsPDF = await loadjsPDF();
+                    const pdf = new jsPDF('landscape', 'mm', 'a4');
+                    const participantTimes = getParticipantTimes(swimmer, team);
+                    downloadBasicDiploma(swimmer, position, team, category, participantTimes, pdf);
+                } catch (fallbackError) {
+                    console.error('❌ Error en diploma básico:', fallbackError);
+                    alert(`Error generando el diploma: ${error.message}. Por favor, verifica la consola del navegador para más detalles.`);
+                }
             }
         }
 
         // Función de respaldo para diploma básico si no hay plantilla
         function downloadBasicDiploma(swimmer, position, team, category, times, pdf) {
-            const pageWidth = pdf.internal.pageSize.getWidth();
-            const pageHeight = pdf.internal.pageSize.getHeight();
-            
-            // Fondo básico
-            pdf.setFillColor(248, 249, 250);
-            pdf.rect(0, 0, pageWidth, pageHeight, 'F');
-            
-            // Título
-            pdf.setFont("helvetica", "bold");
-            pdf.setFontSize(24);
-            pdf.setTextColor(11, 16, 57);
-            pdf.text("IV CHAMPIONSHIP MASTER SWIMMING", pageWidth/2, 40, { align: "center" });
-            
-            // Contenido básico con tiempos
-            pdf.setFontSize(20);
-            pdf.text(swimmer.toUpperCase(), pageWidth/2, 80, { align: "center" });
-            
-            pdf.setFontSize(16);
-            pdf.text(`${position}° LUGAR - ${team}`, pageWidth/2, 110, { align: "center" });
-            pdf.text(`Categoría: ${category}`, pageWidth/2, 130, { align: "center" });
-            
-            // Tiempos
-            pdf.setFontSize(14);
-            pdf.text(`Tiempos: 50m: ${times['50m']} | 100m: ${times['100m']} | 200m: ${times['200m']}`, pageWidth/2, 160, { align: "center" });
-            
-            const sanitizedName = swimmer.replace(/[^a-zA-Z0-9]/g, '_');
-            const filename = `Diploma_${sanitizedName}_${position}lugar.pdf`;
-            pdf.save(filename);
+            try {
+                console.log('📄 Generando diploma básico para:', swimmer);
+                
+                const pageWidth = pdf.internal.pageSize.getWidth();
+                const pageHeight = pdf.internal.pageSize.getHeight();
+                
+                // Fondo básico con gradiente
+                pdf.setFillColor(248, 249, 250);
+                pdf.rect(0, 0, pageWidth, pageHeight, 'F');
+                
+                // Borde decorativo
+                pdf.setFillColor(11, 16, 57);
+                pdf.rect(0, 0, pageWidth, 10, 'F');
+                pdf.setFillColor(0, 173, 239);
+                pdf.rect(0, 10, pageWidth, 3, 'F');
+                
+                pdf.setFillColor(11, 16, 57);
+                pdf.rect(0, pageHeight - 13, pageWidth, 10, 'F');
+                pdf.setFillColor(0, 173, 239);
+                pdf.rect(0, pageHeight - 13, pageWidth, 3, 'F');
+                
+                // Título principal
+                pdf.setFont("helvetica", "bold");
+                pdf.setFontSize(28);
+                pdf.setTextColor(11, 16, 57);
+                pdf.text("IV CHAMPIONSHIP MASTER SWIMMING", pageWidth/2, 35, { align: "center" });
+                
+                // Subtítulo
+                pdf.setFontSize(20);
+                pdf.setTextColor(0, 173, 239);
+                pdf.text("DIPLOMA DE PARTICIPACIÓN", pageWidth/2, 55, { align: "center" });
+                
+                // Línea decorativa
+                pdf.setLineWidth(1);
+                pdf.setDrawColor(0, 173, 239);
+                pdf.line(50, 70, pageWidth - 50, 70);
+                
+                // Contenido principal - Nombre
+                pdf.setFont("helvetica", "bold");
+                pdf.setFontSize(24);
+                pdf.setTextColor(11, 16, 57);
+                pdf.text(swimmer.toUpperCase(), pageWidth/2, 95, { align: "center" });
+                
+                // Posición y equipo
+                pdf.setFontSize(18);
+                pdf.setTextColor(0, 173, 239);
+                pdf.text(`${position}° LUGAR`, pageWidth/2, 115, { align: "center" });
+                
+                pdf.setFont("helvetica", "normal");
+                pdf.setFontSize(16);
+                pdf.setTextColor(80, 80, 80);
+                pdf.text(`Equipo: ${team}`, pageWidth/2, 135, { align: "center" });
+                pdf.text(`Categoría: ${category}`, pageWidth/2, 150, { align: "center" });
+                
+                // Tiempos individuales
+                pdf.setFont("helvetica", "bold");
+                pdf.setFontSize(14);
+                pdf.setTextColor(11, 16, 57);
+                pdf.text("TIEMPOS REGISTRADOS:", pageWidth/2, 170, { align: "center" });
+                
+                pdf.setFont("helvetica", "normal");
+                pdf.setFontSize(12);
+                pdf.setTextColor(60, 60, 60);
+                pdf.text(`50m Libre: ${times['50m']}`, pageWidth/2 - 60, 190, { align: "center" });
+                pdf.text(`100m Libre: ${times['100m']}`, pageWidth/2, 190, { align: "center" });
+                pdf.text(`200m Libre: ${times['200m']}`, pageWidth/2 + 60, 190, { align: "center" });
+                
+                // Fecha
+                const currentDate = new Date().toLocaleDateString('es-ES', { 
+                    year: 'numeric', 
+                    month: 'long', 
+                    day: 'numeric' 
+                });
+                pdf.setFontSize(10);
+                pdf.setTextColor(100, 100, 100);
+                pdf.text(`Bogotá, ${currentDate}`, pageWidth/2, pageHeight - 25, { align: "center" });
+                
+                // Guardar archivo
+                const sanitizedName = swimmer.replace(/[^a-zA-Z0-9]/g, '_');
+                const filename = `Diploma_${sanitizedName}_${position}lugar.pdf`;
+                
+                console.log('💾 Guardando diploma:', filename);
+                pdf.save(filename);
+                
+            } catch (error) {
+                console.error('❌ Error en diploma básico:', error);
+                throw error;
+            }
         }
 
 
