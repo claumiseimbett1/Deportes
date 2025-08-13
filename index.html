@@ -4999,6 +4999,8 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
 
         // Variable global para almacenar el logo cargado
         let logoImageData = null;
+        let logoOriginalWidth = 0;
+        let logoOriginalHeight = 0;
         let logoLoadAttempted = false;
 
         // Función para precargar el logo (se ejecuta una sola vez)
@@ -5018,7 +5020,14 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
                         canvas.height = logoImg.height;
                         ctx.drawImage(logoImg, 0, 0);
                         logoImageData = canvas.toDataURL('image/png');
+                        
+                        // Guardar dimensiones originales (convertidas a unidades PDF)
+                        // Conversión aproximada: píxeles a mm para PDF (300 DPI ≈ 0.264583 mm/píxel)
+                        logoOriginalWidth = logoImg.width * 0.264583;
+                        logoOriginalHeight = logoImg.height * 0.264583;
+                        
                         console.log('✅ Logo cargado correctamente para PDFs');
+                        console.log(`📐 Dimensiones originales: ${logoImg.width}x${logoImg.height}px (${logoOriginalWidth.toFixed(1)}x${logoOriginalHeight.toFixed(1)}mm)`);
                     } catch (error) {
                         console.warn('Error procesando logo:', error);
                     }
@@ -5038,13 +5047,11 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
         function addCompetitionLogo(pdf) {
             const logoX = 150;
             const logoY = 10;
-            const logoWidth = 40;
-            const logoHeight = 25;
             
             try {
-                // Si tenemos el logo cargado, usarlo
-                if (logoImageData) {
-                    pdf.addImage(logoImageData, 'PNG', logoX, logoY, logoWidth, logoHeight);
+                // Si tenemos el logo cargado, usarlo con dimensiones originales
+                if (logoImageData && logoOriginalWidth > 0 && logoOriginalHeight > 0) {
+                    pdf.addImage(logoImageData, 'PNG', logoX, logoY, logoOriginalWidth, logoOriginalHeight);
                     return;
                 }
             } catch (error) {
