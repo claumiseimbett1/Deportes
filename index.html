@@ -3570,16 +3570,16 @@
                     const diplomaButtonClick = isRecord ? `generateDiploma('${(nombre || '').replace(/'/g, '\\\'')}', '${(equipo || '').replace(/'/g, '\\\'')}', '${(categoria || '').replace(/'/g, '\\\'')}', '${tiempo || ''}')` : '';
                     
                     return `<tr>
-                        <td class="rank">${pos || index}</td>
-                        <td><strong>${nombre || ''}</strong></td>
-                        <td>${equipo || ''}</td>
-                        <td>${edad || ''}</td>
-                        <td><span class="category-badge">${categoria || ''}</span></td>
-                        <td class="time">${tiempo || ''}</td>
-                        <td><strong class="total-points-cell">${puntos || ''}</strong></td>
-                        <td class="obs-cell ${isRecord ? 'record-indicator' : ''}">${obs || ''}</td>
-                        <td><button onclick="shareResult('${nombre}', '${pos || index}', '${tiempo}', '${categoria}')" class="share-btn">📱</button></td>
-                        <td class="diploma-cell">
+                        <td data-label="Pos." class="rank">${pos || index}</td>
+                        <td data-label="Nadador/a"><strong>${nombre || ''}</strong></td>
+                        <td data-label="Equipo">${equipo || ''}</td>
+                        <td data-label="Edad">${edad || ''}</td>
+                        <td data-label="Categoría"><span class="category-badge">${categoria || ''}</span></td>
+                        <td data-label="Tiempo Final" class="time">${tiempo || ''}</td>
+                        <td data-label="Puntos"><strong class="total-points-cell">${puntos || ''}</strong></td>
+                        <td data-label="Obs" class="obs-cell ${isRecord ? 'record-indicator' : ''}">${obs || ''}</td>
+                        <td data-label="Compartir"><button onclick="shareResult('${nombre}', '${pos || index}', '${tiempo}', '${categoria}')" class="share-btn">📱</button></td>
+                        <td data-label="Diploma" class="diploma-cell">
                             <button class="${diplomaButtonClass}" ${isRecord ? `onclick="${diplomaButtonClick}"` : ''} ${!isRecord ? 'disabled' : ''} title="${isRecord ? 'Descargar diploma de récord' : 'Solo disponible para récords (marcar con R en Obs)'}" data-status="${obs || 'N/A'}">
                                 🏆
                             </button>
