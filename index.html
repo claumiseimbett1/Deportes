@@ -745,58 +745,6 @@
             font-weight: bold;
             color: var(--secondary-color);
         }
-        
-        /* Acciones en tarjeta móvil de equipos */
-        .mobile-team-actions {
-            display: flex;
-            gap: 10px;
-            margin-top: 15px;
-            justify-content: center;
-        }
-        
-        .mobile-share-btn, .mobile-diploma-btn {
-            flex: 1;
-            padding: 12px;
-            border: none;
-            border-radius: 8px;
-            font-size: 14px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 5px;
-        }
-        
-        .mobile-share-btn {
-            background: linear-gradient(135deg, #1e88e5, #00adef);
-            color: white;
-            box-shadow: 0 2px 8px rgba(30, 136, 229, 0.3);
-        }
-        
-        .mobile-share-btn:hover {
-            background: linear-gradient(135deg, #1976d2, #0099cc);
-            transform: translateY(-2px);
-        }
-        
-        .mobile-diploma-btn.enabled {
-            background: linear-gradient(135deg, #4caf50, #45a049);
-            color: white;
-            box-shadow: 0 2px 8px rgba(76, 175, 80, 0.3);
-        }
-        
-        .mobile-diploma-btn.enabled:hover {
-            background: linear-gradient(135deg, #45a049, #3d8b40);
-            transform: translateY(-2px);
-        }
-        
-        .mobile-diploma-btn.disabled {
-            background: #ffcdd2;
-            color: #d32f2f;
-            cursor: not-allowed;
-            opacity: 0.7;
-        }
 
         /* Estilos adicionales para pantallas muy pequeñas - SOLO equipos */
         @media screen and (max-width: 480px) {
@@ -3707,7 +3655,7 @@
                                     const diplomaDisabled = isCertificateEnabled ? '' : 'disabled';
                                     
                                     return `<button class="${diplomaClass}" ${diplomaClick} ${diplomaDisabled} title="${diplomaTitle}" data-status="${certificado || 'N/A'}">
-                                        🏆
+                                        📄
                                     </button>`;
                                 })()
                                 }
@@ -3732,23 +3680,6 @@
                                     <div class="label">Masculinos</div>
                                     <div class="value male-points-value">${puntosMasculinos || '0'}</div>
                                 </div>
-                            </div>
-                            <div class="mobile-team-actions">
-                                <button class="share-btn mobile-share-btn" onclick="shareResult('${equipo || ''}', '${lugar || ''}', 'N/A', 'Clasificación por Equipos')" title="Compartir resultado">
-                                    📱 Compartir
-                                </button>
-                                ${(() => {
-                                    const isCertificateEnabled = certificado && certificado.toString().toUpperCase().trim() === 'SI';
-                                    const diplomaClass = isCertificateEnabled ? 'diploma-btn enabled mobile-diploma-btn' : 'diploma-btn disabled mobile-diploma-btn';
-                                    const diplomaClick = isCertificateEnabled ? `onclick="generateTeamDiploma('${(equipo || '').replace(/'/g, '\\\'')}', '${lugar || ''}', '${puntosTotales || '0'}')"` : '';
-                                    const diplomaTitle = isCertificateEnabled ? 'Descargar diploma de equipo' : 'Diploma no disponible (requiere certificado SI)';
-                                    const diplomaDisabled = isCertificateEnabled ? '' : 'disabled';
-                                    
-                                    return `<button class="${diplomaClass}" ${diplomaClick} ${diplomaDisabled} title="${diplomaTitle}">
-                                        🏆 Diploma
-                                    </button>`;
-                                })()
-                                }
                             </div>
                         </div>`;
                 }
@@ -3839,16 +3770,14 @@
                     else if (lugar && lugar !== '-' && lugar !== '') displayPos = `${lugar}°`;
                     
                     // Determine if diploma download should be enabled - Column J is at index 9
-                    const finalDiplomaStatus = row[9] || '';
-                    
-                    // Debug: mostrar información de la columna Diploma para género
-                    if (atleta && atleta.trim() !== '' && atleta !== 'Sin atletas') {
-                        console.log(`🎖️ Diploma género para ${atleta}: "${finalDiplomaStatus}" - Habilitado: ${finalDiplomaStatus && finalDiplomaStatus.toString().toUpperCase().trim() === 'SI'}`);
-                    }
+                    const finalDiplomaStatus = row[9] || diplomaStatus || '';
                     
                     const isDiplomaEnabled = finalDiplomaStatus && finalDiplomaStatus.toString().toUpperCase().trim() === 'SI';
                     const diplomaButtonClass = isDiplomaEnabled ? 'diploma-btn enabled' : 'diploma-btn disabled';
-                    const diplomaButtonClick = isDiplomaEnabled ? `generateGenderDiploma('${(atleta || '').replace(/'/g, '\\\'')}', '${lugar || ''}', '${(equipo || '').replace(/'/g, '\\\'')}', '${(categoria || currentCategory || '').replace(/'/g, '\\\'')}')`  : '';
+                    const diplomaButtonClick = isDiplomaEnabled ? `downloadDiploma('${(atleta || '').replace(/'/g, '\\\'')
+                    }', '${lugar || ''}', '${(equipo || '').replace(/'/g, '\\\'')
+                    }', '${(categoria || currentCategory || '').replace(/'/g, '\\\'')
+                    }')` : '';
 
                     htmlContent += `
                         <tr>
@@ -3865,7 +3794,7 @@
                                 <button class="share-btn" onclick="shareResult('${atleta || ''}', '${lugar || ''}', 'N/A', '${categoria || currentCategory || ''}')">📱</button>
                             </td>
                             <td data-label="Diploma" class="diploma-cell">
-                                <button class="${diplomaButtonClass}" ${isDiplomaEnabled ? `onclick="${diplomaButtonClick}"` : ''} ${!isDiplomaEnabled ? 'disabled' : ''} title="${isDiplomaEnabled ? 'Descargar diploma de clasificación' : 'Diploma no disponible (requiere SI)'}" data-status="${finalDiplomaStatus || 'N/A'}">
+                                <button class="${diplomaButtonClass}" ${isDiplomaEnabled ? `onclick="${diplomaButtonClick}"` : ''} ${!isDiplomaEnabled ? 'disabled' : ''} title="${isDiplomaEnabled ? 'Descargar diploma' : 'Diploma no disponible'}" data-status="${finalDiplomaStatus || 'N/A'}">
                                     🎓
                                 </button>
                             </td>
@@ -4060,15 +3989,14 @@
             // Precargar logo para PDFs
             preloadLogo();
             
+            // Precargar plantilla de diploma
+            preloadDiplomaTemplate();
             
             // Precargar plantilla de diploma de récord
             preloadRecordDiplomaTemplate();
             
             // Precargar plantilla de diploma de equipo
             preloadTeamDiplomaTemplate();
-            
-            // Precargar plantilla de diploma de género
-            preloadGenderDiplomaTemplate();
             
             // Verificar acceso inmediato
             fetch(`https://docs.google.com/spreadsheets/d/${CONFIG.SHEET_ID}/export?format=csv&gid=0&range=A:J`)
@@ -4550,6 +4478,119 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
         }
 
 
+        // Diploma download functionality basado en plantilla PNG
+        async function downloadDiploma(swimmer, position, team, category) {
+            try {
+                console.log('🎓 Iniciando descarga de diploma para:', swimmer, position, team, category);
+                
+                // Clean the data to avoid format issues
+                swimmer = swimmer.replace(/['"]/g, '');
+                position = position.replace(/['"]/g, '');
+                team = team.replace(/['"]/g, '');
+                category = category.replace(/['"]/g, '');
+
+                // Obtener tiempos específicos del participante
+                console.log('⏱️ Obteniendo tiempos del participante...');
+                const participantTimes = getParticipantTimes(swimmer, team);
+
+                // Load jsPDF
+                console.log('📄 Cargando jsPDF...');
+                const jsPDF = await loadjsPDF();
+                
+                if (!jsPDF) {
+                    throw new Error('No se pudo cargar jsPDF');
+                }
+                
+                const pdf = new jsPDF('landscape', 'mm', 'a4'); // Landscape para diplomas
+
+                // Verificar si tenemos la plantilla cargada
+                console.log('🖼️ Estado de plantilla:', diplomaTemplateData ? 'Cargada' : 'No disponible');
+                
+                if (!diplomaTemplateData) {
+                    console.error('❌ Plantilla de diploma PNG no disponible');
+                    throw new Error('La plantilla del diploma PNG no está cargada. Asegúrate de que diploma-template.png esté en la carpeta img/');
+                }
+
+                // Dimensiones de la página
+                const pageWidth = pdf.internal.pageSize.getWidth();
+                const pageHeight = pdf.internal.pageSize.getHeight();
+                
+                // Calcular dimensiones para ajustar la plantilla a la página
+                const templateAspectRatio = diplomaTemplateWidth / diplomaTemplateHeight;
+                let imgWidth, imgHeight, imgX, imgY;
+                
+                if (templateAspectRatio > pageWidth / pageHeight) {
+                    // La plantilla es más ancha proporcionalmente
+                    imgWidth = pageWidth;
+                    imgHeight = pageWidth / templateAspectRatio;
+                    imgX = 0;
+                    imgY = (pageHeight - imgHeight) / 2;
+                } else {
+                    // La plantilla es más alta proporcionalmente
+                    imgHeight = pageHeight;
+                    imgWidth = pageHeight * templateAspectRatio;
+                    imgX = (pageWidth - imgWidth) / 2;
+                    imgY = 0;
+                }
+
+                // Agregar la plantilla como fondo
+                pdf.addImage(diplomaTemplateData, 'PNG', imgX, imgY, imgWidth, imgHeight);
+
+                // CONFIGURAR POSICIONES PARA EL TEXTO (ajustar según tu diseño)
+                // Estas coordenadas necesitarás ajustarlas según donde quieras que aparezca cada texto
+                const textPositions = {
+                    name: { x: pageWidth * 0.48, y: pageHeight * 0.45 },      // Centro para el nombre
+                    position: { x: pageWidth * 0.19, y: pageHeight * 0.7 },   // Posición lograda
+                    team: { x: pageWidth * 0.3, y: pageHeight * 0.7 },       // Equipo
+                    category: { x: pageWidth * 0.43, y: pageHeight * 0.7 },   // Categoría
+                    time50m: { x: pageWidth * 0.55, y: pageHeight * 0.7 },   // Tiempo 50m
+                    time100m: { x: pageWidth * 0.67, y: pageHeight * 0.7 },   // Tiempo 100m
+                    time200m: { x: pageWidth * 0.79, y: pageHeight * 0.7 }   // Tiempo 200m
+                };
+
+                // Configurar estilo del texto
+                pdf.setFont("helvetica", "bold");
+                
+                // Nombre del participante (destacado)
+                pdf.setFontSize(28);
+                pdf.setTextColor(11, 16, 57); // Azul corporativo
+                pdf.text(swimmer.toUpperCase(), textPositions.name.x, textPositions.name.y, { align: "center" });
+
+                // Posición
+                pdf.setFontSize(14);
+                pdf.setTextColor(0, 173, 239); // Celeste corporativo
+                pdf.text(`${position}° LUGAR`, textPositions.position.x, textPositions.position.y, { align: "center" });
+
+                // Equipo
+                pdf.setFontSize(14);
+                pdf.setTextColor(11, 16, 57);
+                pdf.text(team, textPositions.team.x, textPositions.team.y, { align: "center" });
+
+                // Categoría
+                pdf.setFontSize(14);
+                pdf.setTextColor(80, 80, 80);
+                pdf.text(category, textPositions.category.x, textPositions.category.y, { align: "center" });
+
+                // Tiempos (más pequeños)
+                pdf.setFontSize(12);
+                pdf.setTextColor(60, 60, 60);
+                
+                pdf.text(`${participantTimes['50m']}`, textPositions.time50m.x, textPositions.time50m.y, { align: "center" });
+                pdf.text(`${participantTimes['100m']}`, textPositions.time100m.x, textPositions.time100m.y, { align: "center" });
+                pdf.text(`${participantTimes['200m']}`, textPositions.time200m.x, textPositions.time200m.y, { align: "center" });
+
+                // Generate filename and download
+                const sanitizedName = swimmer.replace(/[^a-zA-Z0-9]/g, '_');
+                const filename = `Diploma_${sanitizedName}_${position}lugar.pdf`;
+                
+                pdf.save(filename);
+
+            } catch (error) {
+                console.error('❌ Error generando diploma:', error);
+                console.error('Stack trace:', error.stack);
+                alert(`Error generando el diploma: ${error.message}. Asegúrate de que la plantilla diploma-template.png esté disponible en la carpeta img/`);
+            }
+        }
 
 
 
@@ -5068,6 +5109,11 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
         let logoOriginalHeight = 0;
         let logoLoadAttempted = false;
 
+        // Variables globales para el diploma
+        let diplomaTemplateData = null;
+        let diplomaTemplateWidth = 0;
+        let diplomaTemplateHeight = 0;
+        let diplomaLoadAttempted = false;
         
         // Variables globales para el diploma de récord
         let recordDiplomaTemplateData = null;
@@ -5080,12 +5126,6 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
         let teamDiplomaTemplateWidth = 0;
         let teamDiplomaTemplateHeight = 0;
         let teamDiplomaLoadAttempted = false;
-        
-        // Variables globales para el diploma de género/clasificación
-        let genderDiplomaTemplateData = null;
-        let genderDiplomaTemplateWidth = 0;
-        let genderDiplomaTemplateHeight = 0;
-        let genderDiplomaLoadAttempted = false;
 
         // Función para obtener tiempos específicos de un participante en las diferentes pruebas
         function getParticipantTimes(participantName, participantTeam) {
@@ -5140,6 +5180,45 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
             }
         }
 
+        // Función para precargar la plantilla del diploma (se ejecuta una sola vez)
+        function preloadDiplomaTemplate() {
+            if (diplomaLoadAttempted) return;
+            diplomaLoadAttempted = true;
+            
+            try {
+                const diplomaImg = new Image();
+                diplomaImg.crossOrigin = 'anonymous';
+                
+                diplomaImg.onload = function() {
+                    try {
+                        const canvas = document.createElement('canvas');
+                        const ctx = canvas.getContext('2d');
+                        canvas.width = diplomaImg.width;
+                        canvas.height = diplomaImg.height;
+                        ctx.drawImage(diplomaImg, 0, 0);
+                        diplomaTemplateData = canvas.toDataURL('image/png');
+                        
+                        // Guardar dimensiones originales
+                        diplomaTemplateWidth = diplomaImg.width;
+                        diplomaTemplateHeight = diplomaImg.height;
+                        
+                        console.log('✅ Plantilla de diploma cargada correctamente');
+                        console.log(`📐 Dimensiones plantilla: ${diplomaTemplateWidth}x${diplomaTemplateHeight}px`);
+                    } catch (error) {
+                        console.warn('Error procesando plantilla de diploma:', error);
+                    }
+                };
+                
+                diplomaImg.onerror = function() {
+                    console.warn('Error cargando plantilla de diploma desde:', diplomaImg.src);
+                };
+                
+                // Cambia este nombre por el archivo que subas a la carpeta img/
+                diplomaImg.src = './img/diploma-template.png';
+            } catch (error) {
+                console.warn('Error iniciando carga de plantilla de diploma:', error);
+            }
+        }
 
         // Función para precargar la plantilla del diploma de récord
         function preloadRecordDiplomaTemplate() {
@@ -5387,9 +5466,9 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
                 pdf.setFontSize(14);
                 const positionY = teamNameY + 45;
                 let positionText = 'Participación';
-                if (posicion === '1' || posicion === 1) positionText = 'PRIMER LUGAR';
-                else if (posicion === '2' || posicion === 2) positionText = 'SEGUNDO LUGAR';
-                else if (posicion === '3' || posicion === 3) positionText = 'TERCER LUGAR';
+                if (posicion === '1' || posicion === 1) positionText = 'PRIMER LUGAR ';
+                else if (posicion === '2' || posicion === 2) positionText = 'SEGUNDO LUGAR ';
+                else if (posicion === '3' || posicion === 3) positionText = 'TERCER LUGAR ';
                 else if (posicion && posicion !== '-') positionText = `${posicion}° LUGAR`;
                 
                 pdf.text(positionText, (pageWidth / 2) -50, positionY, { align: 'center' });
@@ -5399,6 +5478,10 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
                 const pointsY = teamNameY + 45;
                 pdf.text(`${puntosTotales || '0'}`, (pageWidth / 2) + 51, pointsY, { align: 'center' });
                 
+                // Competencia
+                pdf.setFontSize(14);
+                const competitionY = teamNameY + 45;
+                pdf.text('Torneo de Natación', pageWidth / 2, competitionY, { align: 'center' });
                 
                 // Generar nombre de archivo y descargar
                 const sanitizedTeamName = (nombreEquipo || 'Equipo').replace(/[^a-zA-Z0-9]/g, '_');
@@ -5411,129 +5494,6 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
             } catch (error) {
                 console.error('❌ Error generando diploma de equipo:', error);
                 alert(`Error generando el diploma de equipo: ${error.message}. Asegúrate de que la plantilla diploma-equipo-template.png esté disponible en la carpeta img/`);
-            }
-        }
-
-        // Función para precargar la plantilla del diploma de género
-        function preloadGenderDiplomaTemplate() {
-            if (genderDiplomaLoadAttempted) return;
-            genderDiplomaLoadAttempted = true;
-            
-            try {
-                const genderDiplomaImg = new Image();
-                genderDiplomaImg.crossOrigin = 'anonymous';
-                
-                genderDiplomaImg.onload = function() {
-                    try {
-                        const canvas = document.createElement('canvas');
-                        const ctx = canvas.getContext('2d');
-                        canvas.width = genderDiplomaImg.width;
-                        canvas.height = genderDiplomaImg.height;
-                        ctx.drawImage(genderDiplomaImg, 0, 0);
-                        genderDiplomaTemplateData = canvas.toDataURL('image/png');
-                        
-                        genderDiplomaTemplateWidth = genderDiplomaImg.width;
-                        genderDiplomaTemplateHeight = genderDiplomaImg.height;
-                        
-                        console.log('✅ Plantilla de diploma de género cargada correctamente');
-                        console.log(`📐 Dimensiones: ${genderDiplomaTemplateWidth}x${genderDiplomaTemplateHeight}px`);
-                    } catch (error) {
-                        console.warn('Error procesando plantilla de diploma de género:', error);
-                    }
-                };
-                
-                genderDiplomaImg.onerror = function() {
-                    console.warn('Error cargando plantilla de diploma de género desde:', genderDiplomaImg.src);
-                };
-                
-                genderDiplomaImg.src = './img/diploma-template.png';
-            } catch (error) {
-                console.warn('Error iniciando carga de plantilla de diploma de género:', error);
-            }
-        }
-
-        // Función para generar diploma de clasificación general por género
-        async function generateGenderDiploma(atleta, posicion, equipo, categoria) {
-            try {
-                console.log('🎖️ Generando diploma de clasificación para:', { atleta, posicion, equipo, categoria });
-                
-                // Cargar jsPDF dinámicamente
-                await loadjsPDF();
-                
-                if (!window.jsPDF) {
-                    throw new Error('No se pudo cargar jsPDF');
-                }
-                
-                const pdf = new jsPDF('landscape', 'mm', 'a4');
-
-                // Verificar si tenemos la plantilla de género cargada
-                if (!genderDiplomaTemplateData) {
-                    console.error('❌ Plantilla de diploma de género PNG no disponible');
-                    throw new Error('La plantilla del diploma de género PNG no está cargada. Asegúrate de que diploma-template.png esté en la carpeta img/');
-                }
-
-                // Dimensiones de la página
-                const pageWidth = pdf.internal.pageSize.getWidth();
-                const pageHeight = pdf.internal.pageSize.getHeight();
-                
-                // Calcular dimensiones para ajustar la plantilla a la página
-                const templateAspectRatio = genderDiplomaTemplateWidth / genderDiplomaTemplateHeight;
-                let imgWidth, imgHeight, imgX, imgY;
-                
-                if (templateAspectRatio > pageWidth / pageHeight) {
-                    imgWidth = pageWidth;
-                    imgHeight = pageWidth / templateAspectRatio;
-                    imgX = 0;
-                    imgY = (pageHeight - imgHeight) / 2;
-                } else {
-                    imgHeight = pageHeight;
-                    imgWidth = pageHeight * templateAspectRatio;
-                    imgY = 0;
-                    imgX = (pageWidth - imgWidth) / 2;
-                }
-                
-                // Agregar la plantilla de fondo
-                pdf.addImage(genderDiplomaTemplateData, 'PNG', imgX, imgY, imgWidth, imgHeight);
-                
-                // Configurar fuente y agregar texto personalizado
-                pdf.setFont('helvetica', 'bold');
-                pdf.setTextColor(0, 0, 0);
-                
-                // Nombre del atleta (centro superior)
-                pdf.setFontSize(24);
-                const athleteY = imgY + (imgHeight * 0.45);
-                pdf.text(atleta || 'ATLETA', pageWidth / 2, athleteY, { align: 'center' });
-                
-                // Posición en clasificación
-                pdf.setFontSize(18);
-                const positionY = athleteY + 12;
-                pdf.text(`${posicion}° LUGAR`, pageWidth / 2, positionY, { align: 'center' });
-                
-                // Equipo
-                pdf.setFontSize(16);
-                const teamY = positionY + 10;
-                pdf.text(`Equipo: ${equipo || 'N/A'}`, pageWidth / 2, teamY, { align: 'center' });
-                
-                // Categoría
-                const categoryY = teamY + 10;
-                pdf.text(`Categoría: ${categoria || 'N/A'}`, pageWidth / 2, categoryY, { align: 'center' });
-                
-                // Tipo de clasificación
-                pdf.setFontSize(14);
-                const classificationY = categoryY + 12;
-                pdf.text('Clasificación General', pageWidth / 2, classificationY, { align: 'center' });
-                
-                // Generar nombre de archivo y descargar
-                const sanitizedName = (atleta || 'Atleta').replace(/[^a-zA-Z0-9]/g, '_');
-                const filename = `Diploma_Clasificacion_${sanitizedName}.pdf`;
-                
-                pdf.save(filename);
-                
-                console.log('✅ Diploma de clasificación generado exitosamente');
-
-            } catch (error) {
-                console.error('❌ Error generando diploma de clasificación:', error);
-                alert(`Error generando el diploma de clasificación: ${error.message}. Asegúrate de que la plantilla diploma-template.png esté disponible en la carpeta img/`);
             }
         }
 
