@@ -3567,7 +3567,7 @@
                         console.log(`📄 Obs detectada para ${nombre}: "${obs}" - Es récord: ${isRecord}`);
                     }
                     const diplomaButtonClass = isRecord ? 'diploma-btn enabled' : 'diploma-btn disabled';
-                    const diplomaButtonClick = isRecord ? `generateDiploma('${(nombre || '').replace(/'/g, '\\\'')}', '${(equipo || '').replace(/'/g, '\\\'')}', '${(categoria || '').replace(/'/g, '\\\'')}', '${tiempo || ''}')` : '';
+                    const diplomaButtonClick = isRecord ? `generateDiploma('${(nombre || '').replace(/'/g, '\\\'')}', '${(equipo || '').replace(/'/g, '\\\'')}', '${(categoria || '').replace(/'/g, '\\\'')}', '${tiempo || ''}', '${getCurrentEventName()}')` : '';
                     
                     return `<tr>
                         <td data-label="Pos." class="rank">${pos || index}</td>
@@ -5229,10 +5229,35 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
             }
         }
 
+        // Función para obtener el nombre del evento actual
+        function getCurrentEventName() {
+            const activeTab = document.querySelector('.tab-button.active');
+            if (activeTab) {
+                const tabText = activeTab.textContent.trim();
+                return tabText;
+            }
+            
+            // Fallback: buscar por contenido activo
+            const activeContent = document.querySelector('.tab-content.active');
+            if (activeContent) {
+                const contentId = activeContent.id;
+                if (contentId.includes('50m-libre-femenino')) return '50m Libre Femenino';
+                else if (contentId.includes('50m-libre-masculino')) return '50m Libre Masculino';
+                else if (contentId.includes('100m-libre-femenino')) return '100m Libre Femenino';
+                else if (contentId.includes('100m-libre-masculino')) return '100m Libre Masculino';
+                else if (contentId.includes('200m-libre-femenino')) return '200m Libre Femenino';
+                else if (contentId.includes('200m-libre-masculino')) return '200m Libre Masculino';
+                else if (contentId.includes('4x50m-libre-femenino')) return '4x50m Libre Femenino';
+                else if (contentId.includes('4x50m-libre-masculino')) return '4x50m Libre Masculino';
+            }
+            
+            return 'Evento de Natación';
+        }
+        
         // Función para generar diploma de récord
-        async function generateDiploma(nombre, equipo, categoria, tiempo) {
+        async function generateDiploma(nombre, equipo, categoria, tiempo, prueba) {
             try {
-                console.log('🎓 Generando diploma de récord para:', { nombre, equipo, categoria, tiempo });
+                console.log('🎓 Generando diploma de récord para:', { nombre, equipo, categoria, tiempo, prueba });
                 
                 // Cargar jsPDF dinámicamente
                 await loadjsPDF();
@@ -5283,9 +5308,14 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
                 const nameY = imgY + (imgHeight * 0.45); // Ajustar posición según el diseño
                 pdf.text(nombre || 'ATLETA', pageWidth / 2, nameY, { align: 'center' });
                 
+                // Prueba
+                pdf.setFontSize(18);
+                const eventY = nameY + 12;
+                pdf.text(`${prueba || 'Evento de Natación'}`, pageWidth / 2, eventY, { align: 'center' });
+                
                 // Equipo
                 pdf.setFontSize(16);
-                const teamY = nameY + 15;
+                const teamY = eventY + 12;
                 pdf.text(`Equipo: ${equipo || 'N/A'}`, pageWidth / 2, teamY, { align: 'center' });
                 
                 // Categoría
@@ -5295,7 +5325,7 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
                 // Tiempo récord
                 pdf.setFontSize(20);
                 const timeY = categoryY + 15;
-                pdf.text(`Tiempo: ${tiempo || 'N/A'}`, pageWidth / 2, timeY, { align: 'center' });
+                pdf.text(`Tiempo Récord: ${tiempo || 'N/A'}`, pageWidth / 2, timeY, { align: 'center' });
                 
                 // Generar nombre de archivo y descargar
                 const sanitizedName = (nombre || 'Atleta').replace(/[^a-zA-Z0-9]/g, '_');
