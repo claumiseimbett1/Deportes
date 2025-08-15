@@ -676,16 +676,16 @@
             color: #f0f6ff;
         }
 
-        /* Enfoque completamente nuevo para tabla de equipos móvil */
+        /* Tabla de equipos responsive - usar formato estándar */
         @media (max-width: 768px) {
-            /* Ocultar completamente la tabla original de equipos */
+            /* Mantener la tabla visible y usar el formato responsive estándar */
             #resultsTableTeams {
-                display: none;
+                display: table;
             }
             
-            /* Crear un contenedor custom para mostrar los datos */
+            /* Ocultar el contenedor móvil personalizado */
             #resultsTableTeams + .mobile-teams-container {
-                display: block;
+                display: none !important;
             }
         }
         
