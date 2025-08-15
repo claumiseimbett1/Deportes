@@ -5459,12 +5459,12 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
                 
                 // Nombre del equipo (centro superior)
                 pdf.setFontSize(28);
-                const teamNameY = imgY + (imgHeight * 0.45);
+                const teamNameY = imgY + (imgHeight * 0.48);
                 pdf.text(nombreEquipo || 'EQUIPO', pageWidth / 2, teamNameY, { align: 'center' });
                 
                 // Posición
                 pdf.setFontSize(20);
-                const positionY = teamNameY + 15;
+                const positionY = teamNameY + 45;
                 let positionText = 'Participación';
                 if (posicion === '1' || posicion === 1) positionText = 'PRIMER LUGAR 🥇';
                 else if (posicion === '2' || posicion === 2) positionText = 'SEGUNDO LUGAR 🥈';
@@ -5474,13 +5474,13 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
                 pdf.text(positionText, pageWidth / 2, positionY, { align: 'center' });
                 
                 // Puntos totales
-                pdf.setFontSize(18);
-                const pointsY = positionY + 12;
+                pdf.setFontSize(14);
+                const pointsY = teamNameY + 45;
                 pdf.text(`Puntos Totales: ${puntosTotales || '0'}`, pageWidth / 2, pointsY, { align: 'center' });
                 
                 // Competencia
-                pdf.setFontSize(16);
-                const competitionY = pointsY + 15;
+                pdf.setFontSize(14);
+                const competitionY = teamNameY + 45;
                 pdf.text('Torneo de Natación', pageWidth / 2, competitionY, { align: 'center' });
                 
                 // Generar nombre de archivo y descargar
