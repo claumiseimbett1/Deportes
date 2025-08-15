@@ -745,6 +745,58 @@
             font-weight: bold;
             color: var(--secondary-color);
         }
+        
+        /* Acciones en tarjeta móvil de equipos */
+        .mobile-team-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+            justify-content: center;
+        }
+        
+        .mobile-share-btn, .mobile-diploma-btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+        }
+        
+        .mobile-share-btn {
+            background: linear-gradient(135deg, #1e88e5, #00adef);
+            color: white;
+            box-shadow: 0 2px 8px rgba(30, 136, 229, 0.3);
+        }
+        
+        .mobile-share-btn:hover {
+            background: linear-gradient(135deg, #1976d2, #0099cc);
+            transform: translateY(-2px);
+        }
+        
+        .mobile-diploma-btn.enabled {
+            background: linear-gradient(135deg, #4caf50, #45a049);
+            color: white;
+            box-shadow: 0 2px 8px rgba(76, 175, 80, 0.3);
+        }
+        
+        .mobile-diploma-btn.enabled:hover {
+            background: linear-gradient(135deg, #45a049, #3d8b40);
+            transform: translateY(-2px);
+        }
+        
+        .mobile-diploma-btn.disabled {
+            background: #ffcdd2;
+            color: #d32f2f;
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
 
         /* Estilos adicionales para pantallas muy pequeñas - SOLO equipos */
         @media screen and (max-width: 480px) {
@@ -3680,6 +3732,23 @@
                                     <div class="label">Masculinos</div>
                                     <div class="value male-points-value">${puntosMasculinos || '0'}</div>
                                 </div>
+                            </div>
+                            <div class="mobile-team-actions">
+                                <button class="share-btn mobile-share-btn" onclick="shareResult('${equipo || ''}', '${lugar || ''}', 'N/A', 'Clasificación por Equipos')" title="Compartir resultado">
+                                    📱 Compartir
+                                </button>
+                                ${(() => {
+                                    const isCertificateEnabled = certificado && certificado.toString().toUpperCase().trim() === 'SI';
+                                    const diplomaClass = isCertificateEnabled ? 'diploma-btn enabled mobile-diploma-btn' : 'diploma-btn disabled mobile-diploma-btn';
+                                    const diplomaClick = isCertificateEnabled ? `onclick="generateTeamDiploma('${(equipo || '').replace(/'/g, '\\\'')}', '${lugar || ''}', '${puntosTotales || '0'}')"` : '';
+                                    const diplomaTitle = isCertificateEnabled ? 'Descargar diploma de equipo' : 'Diploma no disponible (requiere certificado SI)';
+                                    const diplomaDisabled = isCertificateEnabled ? '' : 'disabled';
+                                    
+                                    return `<button class="${diplomaClass}" ${diplomaClick} ${diplomaDisabled} title="${diplomaTitle}">
+                                        🏆 Diploma
+                                    </button>`;
+                                })()
+                                }
                             </div>
                         </div>`;
                 }
