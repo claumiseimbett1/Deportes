@@ -2381,12 +2381,13 @@
                                 <th>Categoría</th>
                                 <th>Tiempo Final</th>
                                 <th>Puntos</th>
+                                <th>Obs</th>
                                 <th>Compartir</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr class="loading-row">
-                                <td colspan="8" class="no-data-cell">
+                                <td colspan="9" class="no-data-cell">
                                     🔄 Cargando datos desde Google Sheets...
                                 </td>
                             </tr>
@@ -2406,12 +2407,13 @@
                                 <th>Categoría</th>
                                 <th>Tiempo Final</th>
                                 <th>Puntos</th>
+                                <th>Obs</th>
                                 <th>Compartir</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr class="loading-row">
-                                <td colspan="8" class="no-data-cell">
+                                <td colspan="9" class="no-data-cell">
                                     🔄 Cargando datos desde Google Sheets...
                                 </td>
                             </tr>
@@ -2431,12 +2433,13 @@
                                 <th>Categoría</th>
                                 <th>Tiempo Final</th>
                                 <th>Puntos</th>
+                                <th>Obs</th>
                                 <th>Compartir</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr class="loading-row">
-                                <td colspan="8" class="no-data-cell">
+                                <td colspan="9" class="no-data-cell">
                                     🔄 Cargando datos desde Google Sheets...
                                 </td>
                             </tr>
@@ -2456,12 +2459,13 @@
                                 <th>Categoría</th>
                                 <th>Tiempo Final</th>
                                 <th>Puntos</th>
+                                <th>Obs</th>
                                 <th>Compartir</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr class="loading-row">
-                                <td colspan="8" class="no-data-cell">
+                                <td colspan="9" class="no-data-cell">
                                     🔄 Cargando datos desde Google Sheets...
                                 </td>
                             </tr>
@@ -2481,12 +2485,13 @@
                                 <th>Categoría</th>
                                 <th>Tiempo Final</th>
                                 <th>Puntos</th>
+                                <th>Obs</th>
                                 <th>Compartir</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr class="loading-row">
-                                <td colspan="8" class="no-data-cell">
+                                <td colspan="9" class="no-data-cell">
                                     🔄 Cargando datos desde Google Sheets...
                                 </td>
                             </tr>
@@ -2506,12 +2511,13 @@
                                 <th>Categoría</th>
                                 <th>Tiempo Final</th>
                                 <th>Puntos</th>
+                                <th>Obs</th>
                                 <th>Compartir</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr class="loading-row">
-                                <td colspan="8" class="no-data-cell">
+                                <td colspan="9" class="no-data-cell">
                                     🔄 Cargando datos desde Google Sheets...
                                 </td>
                             </tr>
@@ -2531,12 +2537,13 @@
                                 <th>Categoría</th>
                                 <th>Tiempo Final</th>
                                 <th>Puntos</th>
+                                <th>Obs</th>
                                 <th>Compartir</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr class="loading-row">
-                                <td colspan="8" class="no-data-cell">
+                                <td colspan="9" class="no-data-cell">
                                     🔄 Cargando datos desde Google Sheets...
                                 </td>
                             </tr>
@@ -2556,12 +2563,13 @@
                                 <th>Categoría</th>
                                 <th>Tiempo Final</th>
                                 <th>Puntos</th>
+                                <th>Obs</th>
                                 <th>Compartir</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr class="loading-row">
-                                <td colspan="8" class="no-data-cell">
+                                <td colspan="9" class="no-data-cell">
                                     🔄 Cargando datos desde Google Sheets...
                                 </td>
                             </tr>
@@ -3205,7 +3213,7 @@
                         // Mostrar mensaje específico en la tabla
                         const table = document.getElementById(config.tableId);
                         if (table) {
-                            table.innerHTML = `<tr><td colspan="8" class="table-no-data">
+                            table.innerHTML = `<tr><td colspan="9" class="table-no-data">
                                 No se encontró pestaña para ${competitionKey}<br>
                                 <small>Palabras clave: ${config.keywords.join(', ')}</small>
                             </td></tr>`;
@@ -3399,7 +3407,7 @@
             const tbody = table.querySelector('tbody');
             tbody.innerHTML = `
                 <tr>
-                    <td colspan="7" class="no-data-cell">
+                    <td colspan="8" class="no-data-cell">
                         ${message}
                     </td>
                 </tr>`;
@@ -3417,7 +3425,7 @@
                 this.table = table;
                 this.tbody = table.querySelector('tbody');
                 this.config = {
-                    colspan: '8',
+                    colspan: '9',
                     hasGenderColumn: false,
                     hasDiplomaColumn: false,
                     ...config
@@ -3491,8 +3499,8 @@
                         <td><button onclick="shareResult('${nombre}', '${pos || index}', 'N/A', '${categoria}')" class="share-btn">📱</button></td>
                     </tr>`;
                 } else {
-                    // Tabla de prueba individual (8 columnas)
-                    const [pos, nombre, equipo, edad, categoria, tiempo, puntos] = row;
+                    // Tabla de prueba individual (9 columnas)
+                    const [pos, nombre, equipo, edad, categoria, tiempo, puntos, obs] = row;
                     
                     return `<tr>
                         <td class="rank">${pos || index}</td>
@@ -3502,6 +3510,7 @@
                         <td><span class="category-badge">${categoria || ''}</span></td>
                         <td class="time">${tiempo || ''}</td>
                         <td><strong class="total-points-cell">${puntos || ''}</strong></td>
+                        <td class="obs-cell">${obs || ''}</td>
                         <td><button onclick="shareResult('${nombre}', '${pos || index}', '${tiempo}', '${categoria}')" class="share-btn">📱</button></td>
                     </tr>`;
                 }
@@ -3738,7 +3747,7 @@
                     if (tbody) {
                         // Ajustar el colspan según el tipo de tabla
                         const isTeamTable = table.id === 'resultsTableTeams';
-                        const colspan = isTeamTable ? '6' : '8';
+                        const colspan = isTeamTable ? '6' : '9';
                         const adjustedErrorHTML = errorHTML.replace('colspan="7"', `colspan="${colspan}"`);
                         tbody.innerHTML = adjustedErrorHTML;
                     }
