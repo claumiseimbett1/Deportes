@@ -5446,7 +5446,7 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
                     console.warn('Error cargando plantilla de diploma de género desde:', genderDiplomaImg.src);
                 };
                 
-                genderDiplomaImg.src = './img/diploma-genero-template.png';
+                genderDiplomaImg.src = './img/diploma-template.png';
             } catch (error) {
                 console.warn('Error iniciando carga de plantilla de diploma de género:', error);
             }
@@ -5469,7 +5469,7 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
                 // Verificar si tenemos la plantilla de género cargada
                 if (!genderDiplomaTemplateData) {
                     console.error('❌ Plantilla de diploma de género PNG no disponible');
-                    throw new Error('La plantilla del diploma de género PNG no está cargada. Asegúrate de que diploma-genero-template.png esté en la carpeta img/');
+                    throw new Error('La plantilla del diploma de género PNG no está cargada. Asegúrate de que diploma-template.png esté en la carpeta img/');
                 }
 
                 // Dimensiones de la página
@@ -5533,7 +5533,7 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
 
             } catch (error) {
                 console.error('❌ Error generando diploma de clasificación:', error);
-                alert(`Error generando el diploma de clasificación: ${error.message}. Asegúrate de que la plantilla diploma-genero-template.png esté disponible en la carpeta img/`);
+                alert(`Error generando el diploma de clasificación: ${error.message}. Asegúrate de que la plantilla diploma-template.png esté disponible en la carpeta img/`);
             }
         }
 
