@@ -5311,16 +5311,16 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
                 // Prueba
                 pdf.setFontSize(12);
                 const eventY = nameY + 45;
-                pdf.text(`${prueba || 'Evento de Natación'}`, (pageWidth / 2) + 30 , eventY, { align: 'center' });
+                pdf.text(`${prueba || 'Evento de Natación'}`, (pageWidth / 2) + 27 , eventY, { align: 'center' });
                 
                 // Equipo
                 pdf.setFontSize(12);
                 const teamY = nameY + 45;
-                pdf.text(`${equipo || 'N/A'}`, (pageWidth / 2) - 83, teamY, { align: 'center' });
+                pdf.text(`${equipo || 'N/A'}`, (pageWidth / 2) - 81, teamY, { align: 'center' });
                 
                 // Categoría
                 const categoryY = nameY + 45;
-                pdf.text(`${categoria || 'N/A'}`, (pageWidth / 2) -35, categoryY, { align: 'center' });
+                pdf.text(`${categoria || 'N/A'}`, (pageWidth / 2) -30, categoryY, { align: 'center' });
                 
                 // Tiempo récord
                 pdf.setFontSize(12);
