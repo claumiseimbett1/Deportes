@@ -3769,15 +3769,9 @@
                     else if (lugar === '3' || lugar === 3) displayPos = '🥉 3°';
                     else if (lugar && lugar !== '-' && lugar !== '') displayPos = `${lugar}°`;
                     
-                    // Determine if diploma download should be enabled - Column J is at index 9
-                    const finalDiplomaStatus = row[9] || diplomaStatus || '';
-                    
-                    const isDiplomaEnabled = finalDiplomaStatus && finalDiplomaStatus.toString().toUpperCase().trim() === 'SI';
-                    const diplomaButtonClass = isDiplomaEnabled ? 'diploma-btn enabled' : 'diploma-btn disabled';
-                    const diplomaButtonClick = isDiplomaEnabled ? `downloadDiploma('${(atleta || '').replace(/'/g, '\\\'')
-                    }', '${lugar || ''}', '${(equipo || '').replace(/'/g, '\\\'')
-                    }', '${(categoria || currentCategory || '').replace(/'/g, '\\\'')
-                    }')` : '';
+                    // Diploma no disponible para clasificación general
+                    const diplomaButtonClass = 'diploma-btn disabled';
+                    const diplomaButtonClick = '';
 
                     htmlContent += `
                         <tr>
@@ -3794,7 +3788,7 @@
                                 <button class="share-btn" onclick="shareResult('${atleta || ''}', '${lugar || ''}', 'N/A', '${categoria || currentCategory || ''}')">📱</button>
                             </td>
                             <td data-label="Diploma" class="diploma-cell">
-                                <button class="${diplomaButtonClass}" ${isDiplomaEnabled ? `onclick="${diplomaButtonClick}"` : ''} ${!isDiplomaEnabled ? 'disabled' : ''} title="${isDiplomaEnabled ? 'Descargar diploma' : 'Diploma no disponible'}" data-status="${finalDiplomaStatus || 'N/A'}">
+                                <button class="${diplomaButtonClass}" disabled title="Diploma no disponible para clasificación general">
                                     🎓
                                 </button>
                             </td>
@@ -3989,8 +3983,6 @@
             // Precargar logo para PDFs
             preloadLogo();
             
-            // Precargar plantilla de diploma
-            preloadDiplomaTemplate();
             
             // Precargar plantilla de diploma de récord
             preloadRecordDiplomaTemplate();
@@ -4478,119 +4470,6 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
         }
 
 
-        // Diploma download functionality basado en plantilla PNG
-        async function downloadDiploma(swimmer, position, team, category) {
-            try {
-                console.log('🎓 Iniciando descarga de diploma para:', swimmer, position, team, category);
-                
-                // Clean the data to avoid format issues
-                swimmer = swimmer.replace(/['"]/g, '');
-                position = position.replace(/['"]/g, '');
-                team = team.replace(/['"]/g, '');
-                category = category.replace(/['"]/g, '');
-
-                // Obtener tiempos específicos del participante
-                console.log('⏱️ Obteniendo tiempos del participante...');
-                const participantTimes = getParticipantTimes(swimmer, team);
-
-                // Load jsPDF
-                console.log('📄 Cargando jsPDF...');
-                const jsPDF = await loadjsPDF();
-                
-                if (!jsPDF) {
-                    throw new Error('No se pudo cargar jsPDF');
-                }
-                
-                const pdf = new jsPDF('landscape', 'mm', 'a4'); // Landscape para diplomas
-
-                // Verificar si tenemos la plantilla cargada
-                console.log('🖼️ Estado de plantilla:', diplomaTemplateData ? 'Cargada' : 'No disponible');
-                
-                if (!diplomaTemplateData) {
-                    console.error('❌ Plantilla de diploma PNG no disponible');
-                    throw new Error('La plantilla del diploma PNG no está cargada. Asegúrate de que diploma-template.png esté en la carpeta img/');
-                }
-
-                // Dimensiones de la página
-                const pageWidth = pdf.internal.pageSize.getWidth();
-                const pageHeight = pdf.internal.pageSize.getHeight();
-                
-                // Calcular dimensiones para ajustar la plantilla a la página
-                const templateAspectRatio = diplomaTemplateWidth / diplomaTemplateHeight;
-                let imgWidth, imgHeight, imgX, imgY;
-                
-                if (templateAspectRatio > pageWidth / pageHeight) {
-                    // La plantilla es más ancha proporcionalmente
-                    imgWidth = pageWidth;
-                    imgHeight = pageWidth / templateAspectRatio;
-                    imgX = 0;
-                    imgY = (pageHeight - imgHeight) / 2;
-                } else {
-                    // La plantilla es más alta proporcionalmente
-                    imgHeight = pageHeight;
-                    imgWidth = pageHeight * templateAspectRatio;
-                    imgX = (pageWidth - imgWidth) / 2;
-                    imgY = 0;
-                }
-
-                // Agregar la plantilla como fondo
-                pdf.addImage(diplomaTemplateData, 'PNG', imgX, imgY, imgWidth, imgHeight);
-
-                // CONFIGURAR POSICIONES PARA EL TEXTO (ajustar según tu diseño)
-                // Estas coordenadas necesitarás ajustarlas según donde quieras que aparezca cada texto
-                const textPositions = {
-                    name: { x: pageWidth * 0.5, y: pageHeight * 0.45 },      // Centro para el nombre
-                    position: { x: pageWidth * 0.19, y: pageHeight * 0.7 },   // Posición lograda
-                    team: { x: pageWidth * 0.3, y: pageHeight * 0.7 },       // Equipo
-                    category: { x: pageWidth * 0.43, y: pageHeight * 0.7 },   // Categoría
-                    time50m: { x: pageWidth * 0.55, y: pageHeight * 0.7 },   // Tiempo 50m
-                    time100m: { x: pageWidth * 0.67, y: pageHeight * 0.7 },   // Tiempo 100m
-                    time200m: { x: pageWidth * 0.79, y: pageHeight * 0.7 }   // Tiempo 200m
-                };
-
-                // Configurar estilo del texto
-                pdf.setFont("helvetica", "bold");
-                
-                // Nombre del participante (destacado)
-                pdf.setFontSize(28);
-                pdf.setTextColor(11, 16, 57); // Azul corporativo
-                pdf.text(swimmer.toUpperCase(), textPositions.name.x, textPositions.name.y, { align: "center" });
-
-                // Posición
-                pdf.setFontSize(14);
-                pdf.setTextColor(0, 173, 239); // Celeste corporativo
-                pdf.text(`${position}° LUGAR`, textPositions.position.x, textPositions.position.y, { align: "center" });
-
-                // Equipo
-                pdf.setFontSize(14);
-                pdf.setTextColor(11, 16, 57);
-                pdf.text(team, textPositions.team.x, textPositions.team.y, { align: "center" });
-
-                // Categoría
-                pdf.setFontSize(14);
-                pdf.setTextColor(80, 80, 80);
-                pdf.text(category, textPositions.category.x, textPositions.category.y, { align: "center" });
-
-                // Tiempos (más pequeños)
-                pdf.setFontSize(12);
-                pdf.setTextColor(60, 60, 60);
-                
-                pdf.text(`${participantTimes['50m']}`, textPositions.time50m.x, textPositions.time50m.y, { align: "center" });
-                pdf.text(`${participantTimes['100m']}`, textPositions.time100m.x, textPositions.time100m.y, { align: "center" });
-                pdf.text(`${participantTimes['200m']}`, textPositions.time200m.x, textPositions.time200m.y, { align: "center" });
-
-                // Generate filename and download
-                const sanitizedName = swimmer.replace(/[^a-zA-Z0-9]/g, '_');
-                const filename = `Diploma_${sanitizedName}_${position}lugar.pdf`;
-                
-                pdf.save(filename);
-
-            } catch (error) {
-                console.error('❌ Error generando diploma:', error);
-                console.error('Stack trace:', error.stack);
-                alert(`Error generando el diploma: ${error.message}. Asegúrate de que la plantilla diploma-template.png esté disponible en la carpeta img/`);
-            }
-        }
 
 
 
@@ -5109,11 +4988,6 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
         let logoOriginalHeight = 0;
         let logoLoadAttempted = false;
 
-        // Variables globales para el diploma
-        let diplomaTemplateData = null;
-        let diplomaTemplateWidth = 0;
-        let diplomaTemplateHeight = 0;
-        let diplomaLoadAttempted = false;
         
         // Variables globales para el diploma de récord
         let recordDiplomaTemplateData = null;
@@ -5180,45 +5054,6 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
             }
         }
 
-        // Función para precargar la plantilla del diploma (se ejecuta una sola vez)
-        function preloadDiplomaTemplate() {
-            if (diplomaLoadAttempted) return;
-            diplomaLoadAttempted = true;
-            
-            try {
-                const diplomaImg = new Image();
-                diplomaImg.crossOrigin = 'anonymous';
-                
-                diplomaImg.onload = function() {
-                    try {
-                        const canvas = document.createElement('canvas');
-                        const ctx = canvas.getContext('2d');
-                        canvas.width = diplomaImg.width;
-                        canvas.height = diplomaImg.height;
-                        ctx.drawImage(diplomaImg, 0, 0);
-                        diplomaTemplateData = canvas.toDataURL('image/png');
-                        
-                        // Guardar dimensiones originales
-                        diplomaTemplateWidth = diplomaImg.width;
-                        diplomaTemplateHeight = diplomaImg.height;
-                        
-                        console.log('✅ Plantilla de diploma cargada correctamente');
-                        console.log(`📐 Dimensiones plantilla: ${diplomaTemplateWidth}x${diplomaTemplateHeight}px`);
-                    } catch (error) {
-                        console.warn('Error procesando plantilla de diploma:', error);
-                    }
-                };
-                
-                diplomaImg.onerror = function() {
-                    console.warn('Error cargando plantilla de diploma desde:', diplomaImg.src);
-                };
-                
-                // Cambia este nombre por el archivo que subas a la carpeta img/
-                diplomaImg.src = './img/diploma-template.png';
-            } catch (error) {
-                console.warn('Error iniciando carga de plantilla de diploma:', error);
-            }
-        }
 
         // Función para precargar la plantilla del diploma de récord
         function preloadRecordDiplomaTemplate() {
