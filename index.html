@@ -2741,11 +2741,12 @@
                             <th>Puntos Femeninos</th>
                             <th>Puntos Masculinos</th>
                             <th>Compartir</th>
+                            <th>Diploma</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr class="loading-row">
-                            <td colspan="6" class="no-data-cell">
+                            <td colspan="7" class="no-data-cell">
                                 🔄 Cargando clasificación de equipos...
                             </td>
                         </tr>
@@ -3640,6 +3641,11 @@
                             <td data-label="Compartir" class="share-cell">
                                 <button class="share-btn" onclick="shareResult('${equipo || ''}', '${lugar || ''}', 'N/A', 'Clasificación por Equipos')">📱</button>
                             </td>
+                            <td data-label="Diploma" class="diploma-cell">
+                                <button class="diploma-btn enabled" onclick="generateTeamDiploma('${(equipo || '').replace(/'/g, '\\\'')}', '${lugar || ''}', '${puntosTotales || '0'}')" title="Descargar diploma de equipo">
+                                    🏆
+                                </button>
+                            </td>
                         </tr>`;
                     
                     // Contenido para versión móvil
@@ -3665,7 +3671,7 @@
                 }
             }
             
-            tbody.innerHTML = htmlContent || '<tr><td colspan="6" class="no-data-cell">No hay datos de equipos disponibles</td></tr>';
+            tbody.innerHTML = htmlContent || '<tr><td colspan="7" class="no-data-cell">No hay datos de equipos disponibles</td></tr>';
             
             // Crear o actualizar contenedor móvil
             let mobileContainer = table.parentElement.querySelector('.mobile-teams-container');
@@ -3819,7 +3825,7 @@
                     if (tbody) {
                         // Ajustar el colspan según el tipo de tabla
                         const isTeamTable = table.id === 'resultsTableTeams';
-                        const colspan = isTeamTable ? '6' : '10';
+                        const colspan = isTeamTable ? '7' : '10';
                         const adjustedErrorHTML = errorHTML.replace('colspan="7"', `colspan="${colspan}"`);
                         tbody.innerHTML = adjustedErrorHTML;
                     }
@@ -3974,6 +3980,9 @@
             
             // Precargar plantilla de diploma de récord
             preloadRecordDiplomaTemplate();
+            
+            // Precargar plantilla de diploma de equipo
+            preloadTeamDiplomaTemplate();
             
             // Verificar acceso inmediato
             fetch(`https://docs.google.com/spreadsheets/d/${CONFIG.SHEET_ID}/export?format=csv&gid=0&range=A:J`)
@@ -5097,6 +5106,12 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
         let recordDiplomaTemplateWidth = 0;
         let recordDiplomaTemplateHeight = 0;
         let recordDiplomaLoadAttempted = false;
+        
+        // Variables globales para el diploma de equipo
+        let teamDiplomaTemplateData = null;
+        let teamDiplomaTemplateWidth = 0;
+        let teamDiplomaTemplateHeight = 0;
+        let teamDiplomaLoadAttempted = false;
 
         // Función para obtener tiempos específicos de un participante en las diferentes pruebas
         function getParticipantTimes(participantName, participantTeam) {
@@ -5338,6 +5353,133 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
             } catch (error) {
                 console.error('❌ Error generando diploma de récord:', error);
                 alert(`Error generando el diploma de récord: ${error.message}. Asegúrate de que la plantilla diploma-record-template.png esté disponible en la carpeta img/`);
+            }
+        }
+
+        // Función para precargar la plantilla del diploma de equipo
+        function preloadTeamDiplomaTemplate() {
+            if (teamDiplomaLoadAttempted) return;
+            teamDiplomaLoadAttempted = true;
+            
+            try {
+                const teamDiplomaImg = new Image();
+                teamDiplomaImg.crossOrigin = 'anonymous';
+                
+                teamDiplomaImg.onload = function() {
+                    try {
+                        const canvas = document.createElement('canvas');
+                        const ctx = canvas.getContext('2d');
+                        canvas.width = teamDiplomaImg.width;
+                        canvas.height = teamDiplomaImg.height;
+                        ctx.drawImage(teamDiplomaImg, 0, 0);
+                        teamDiplomaTemplateData = canvas.toDataURL('image/png');
+                        
+                        teamDiplomaTemplateWidth = teamDiplomaImg.width;
+                        teamDiplomaTemplateHeight = teamDiplomaImg.height;
+                        
+                        console.log('✅ Plantilla de diploma de equipo cargada correctamente');
+                        console.log(`📐 Dimensiones: ${teamDiplomaTemplateWidth}x${teamDiplomaTemplateHeight}px`);
+                    } catch (error) {
+                        console.warn('Error procesando plantilla de diploma de equipo:', error);
+                    }
+                };
+                
+                teamDiplomaImg.onerror = function() {
+                    console.warn('Error cargando plantilla de diploma de equipo desde:', teamDiplomaImg.src);
+                };
+                
+                teamDiplomaImg.src = './img/diploma-equipo-template.png';
+            } catch (error) {
+                console.warn('Error iniciando carga de plantilla de diploma de equipo:', error);
+            }
+        }
+
+        // Función para generar diploma de equipo
+        async function generateTeamDiploma(nombreEquipo, posicion, puntosTotales) {
+            try {
+                console.log('🏆 Generando diploma de equipo para:', { nombreEquipo, posicion, puntosTotales });
+                
+                // Cargar jsPDF dinámicamente
+                await loadjsPDF();
+                
+                if (!window.jsPDF) {
+                    throw new Error('No se pudo cargar jsPDF');
+                }
+                
+                const pdf = new jsPDF('landscape', 'mm', 'a4');
+
+                // Verificar si tenemos la plantilla de equipo cargada
+                if (!teamDiplomaTemplateData) {
+                    console.error('❌ Plantilla de diploma de equipo PNG no disponible');
+                    throw new Error('La plantilla del diploma de equipo PNG no está cargada. Asegúrate de que diploma-equipo-template.png esté en la carpeta img/');
+                }
+
+                // Dimensiones de la página
+                const pageWidth = pdf.internal.pageSize.getWidth();
+                const pageHeight = pdf.internal.pageSize.getHeight();
+                
+                // Calcular dimensiones para ajustar la plantilla a la página
+                const templateAspectRatio = teamDiplomaTemplateWidth / teamDiplomaTemplateHeight;
+                let imgWidth, imgHeight, imgX, imgY;
+                
+                if (templateAspectRatio > pageWidth / pageHeight) {
+                    // La plantilla es más ancha proporcionalmente
+                    imgWidth = pageWidth;
+                    imgHeight = pageWidth / templateAspectRatio;
+                    imgX = 0;
+                    imgY = (pageHeight - imgHeight) / 2;
+                } else {
+                    // La plantilla es más alta proporcionalmente
+                    imgHeight = pageHeight;
+                    imgWidth = pageHeight * templateAspectRatio;
+                    imgY = 0;
+                    imgX = (pageWidth - imgWidth) / 2;
+                }
+                
+                // Agregar la plantilla de fondo
+                pdf.addImage(teamDiplomaTemplateData, 'PNG', imgX, imgY, imgWidth, imgHeight);
+                
+                // Configurar fuente y agregar texto personalizado
+                pdf.setFont('helvetica', 'bold');
+                pdf.setTextColor(0, 0, 0);
+                
+                // Nombre del equipo (centro superior)
+                pdf.setFontSize(28);
+                const teamNameY = imgY + (imgHeight * 0.45);
+                pdf.text(nombreEquipo || 'EQUIPO', pageWidth / 2, teamNameY, { align: 'center' });
+                
+                // Posición
+                pdf.setFontSize(20);
+                const positionY = teamNameY + 15;
+                let positionText = 'Participación';
+                if (posicion === '1' || posicion === 1) positionText = 'PRIMER LUGAR 🥇';
+                else if (posicion === '2' || posicion === 2) positionText = 'SEGUNDO LUGAR 🥈';
+                else if (posicion === '3' || posicion === 3) positionText = 'TERCER LUGAR 🥉';
+                else if (posicion && posicion !== '-') positionText = `${posicion}° LUGAR`;
+                
+                pdf.text(positionText, pageWidth / 2, positionY, { align: 'center' });
+                
+                // Puntos totales
+                pdf.setFontSize(18);
+                const pointsY = positionY + 12;
+                pdf.text(`Puntos Totales: ${puntosTotales || '0'}`, pageWidth / 2, pointsY, { align: 'center' });
+                
+                // Competencia
+                pdf.setFontSize(16);
+                const competitionY = pointsY + 15;
+                pdf.text('Torneo de Natación', pageWidth / 2, competitionY, { align: 'center' });
+                
+                // Generar nombre de archivo y descargar
+                const sanitizedTeamName = (nombreEquipo || 'Equipo').replace(/[^a-zA-Z0-9]/g, '_');
+                const filename = `Diploma_Equipo_${sanitizedTeamName}.pdf`;
+                
+                pdf.save(filename);
+                
+                console.log('✅ Diploma de equipo generado exitosamente');
+
+            } catch (error) {
+                console.error('❌ Error generando diploma de equipo:', error);
+                alert(`Error generando el diploma de equipo: ${error.message}. Asegúrate de que la plantilla diploma-equipo-template.png esté disponible en la carpeta img/`);
             }
         }
 
