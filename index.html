@@ -1015,6 +1015,22 @@
             background: #ffcdd2;
             opacity: 0.8;
         }
+        
+        /* Estilos para indicador de récord */
+        .record-indicator {
+            background: linear-gradient(135deg, #ff6b35, #f7931e);
+            color: white;
+            font-weight: bold;
+            text-align: center;
+            border-radius: 4px;
+            padding: 4px 8px;
+            box-shadow: 0 2px 4px rgba(255, 107, 53, 0.3);
+        }
+        
+        .record-indicator::after {
+            content: ' 🏆';
+            margin-left: 4px;
+        }
 
         /* Share Modal Styles */
         .share-modal {
@@ -1166,6 +1182,34 @@
                 height: 30px;
                 font-size: 14px;
                 padding: 6px;
+            }
+            
+            /* Mejorar visibilidad de diploma en móvil */
+            .diploma-cell {
+                min-width: 50px;
+            }
+            
+            .diploma-btn.enabled {
+                background: linear-gradient(135deg, #4caf50, #45a049);
+                box-shadow: 0 2px 8px rgba(76, 175, 80, 0.4);
+                border: 2px solid #4caf50;
+            }
+            
+            .diploma-btn.disabled {
+                background: #ffcdd2;
+                border: 2px solid #d32f2f;
+            }
+            
+            /* Añadir indicador visual para récords en móvil */
+            .obs-cell {
+                font-weight: bold;
+                color: #1976d2;
+            }
+            
+            /* Destacar filas con récord en móvil */
+            tr:has(.diploma-btn.enabled) {
+                background-color: rgba(76, 175, 80, 0.05);
+                border-left: 3px solid #4caf50;
             }
 
             .share-modal-content {
@@ -3513,12 +3557,17 @@
                     </tr>`;
                 } else {
                     // Tabla de prueba individual (10 columnas)
-                    const [pos, nombre, equipo, edad, categoria, tiempo, puntos, obs, record] = row;
+                    const [pos, nombre, equipo, edad, categoria, tiempo, puntos, obs] = row;
                     
-                    // Determinar si el diploma debe estar habilitado (solo para récords marcados con 'R')
-                    const isRecord = record && record.toString().toUpperCase().includes('R');
+                    // Determinar si el diploma debe estar habilitado (solo para récords marcados con 'R' en la columna Obs)
+                    const isRecord = obs && obs.toString().toUpperCase().includes('R');
+                    
+                    // Debug: mostrar información de la columna Obs
+                    if (obs && obs.toString().trim() !== '') {
+                        console.log(`📄 Obs detectada para ${nombre}: "${obs}" - Es récord: ${isRecord}`);
+                    }
                     const diplomaButtonClass = isRecord ? 'diploma-btn enabled' : 'diploma-btn disabled';
-                    const diplomaButtonClick = isRecord ? `generateDiploma('${nombre || ''}', '${equipo || ''}', '${categoria || ''}', '${tiempo || ''}')` : '';
+                    const diplomaButtonClick = isRecord ? `generateDiploma('${(nombre || '').replace(/'/g, '\\\'')}', '${(equipo || '').replace(/'/g, '\\\'')}', '${(categoria || '').replace(/'/g, '\\\'')}', '${tiempo || ''}')` : '';
                     
                     return `<tr>
                         <td class="rank">${pos || index}</td>
@@ -3528,10 +3577,10 @@
                         <td><span class="category-badge">${categoria || ''}</span></td>
                         <td class="time">${tiempo || ''}</td>
                         <td><strong class="total-points-cell">${puntos || ''}</strong></td>
-                        <td class="obs-cell">${obs || ''}</td>
+                        <td class="obs-cell ${isRecord ? 'record-indicator' : ''}">${obs || ''}</td>
                         <td><button onclick="shareResult('${nombre}', '${pos || index}', '${tiempo}', '${categoria}')" class="share-btn">📱</button></td>
                         <td class="diploma-cell">
-                            <button class="${diplomaButtonClass}" ${isRecord ? `onclick="${diplomaButtonClick}"` : ''} ${!isRecord ? 'disabled' : ''} title="${isRecord ? 'Descargar diploma de récord' : 'Solo disponible para récords'}">
+                            <button class="${diplomaButtonClass}" ${isRecord ? `onclick="${diplomaButtonClick}"` : ''} ${!isRecord ? 'disabled' : ''} title="${isRecord ? 'Descargar diploma de récord' : 'Solo disponible para récords (marcar con R en Obs)'}" data-status="${obs || 'N/A'}">
                                 🏆
                             </button>
                         </td>
