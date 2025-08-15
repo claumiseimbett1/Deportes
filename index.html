@@ -5466,9 +5466,9 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
                 pdf.setFontSize(14);
                 const positionY = teamNameY + 45;
                 let positionText = 'Participación';
-                if (posicion === '1' || posicion === 1) positionText = 'PRIMER LUGAR 🥇';
-                else if (posicion === '2' || posicion === 2) positionText = 'SEGUNDO LUGAR 🥈';
-                else if (posicion === '3' || posicion === 3) positionText = 'TERCER LUGAR 🥉';
+                if (posicion === '1' || posicion === 1) positionText = 'PRIMER LUGAR';
+                else if (posicion === '2' || posicion === 2) positionText = 'SEGUNDO LUGAR';
+                else if (posicion === '3' || posicion === 3) positionText = 'TERCER LUGAR';
                 else if (posicion && posicion !== '-') positionText = `${posicion}° LUGAR`;
                 
                 pdf.text(positionText, (pageWidth / 2) -50, positionY, { align: 'center' });
