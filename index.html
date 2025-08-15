@@ -3663,6 +3663,12 @@
                         </tr>`;
                     
                     // Contenido para versión móvil
+                    const isCertificateEnabled = certificado && certificado.toString().toUpperCase().trim() === 'SI';
+                    const diplomaClass = isCertificateEnabled ? 'diploma-btn enabled' : 'diploma-btn disabled';
+                    const diplomaClick = isCertificateEnabled ? `onclick="generateTeamDiploma('${(equipo || '').replace(/'/g, '\\\'')}', '${lugar || ''}', '${puntosTotales || '0'}')"` : '';
+                    const diplomaTitle = isCertificateEnabled ? 'Descargar diploma de equipo' : 'Diploma no disponible (requiere certificado SI)';
+                    const diplomaDisabled = isCertificateEnabled ? '' : 'disabled';
+                    
                     mobileContent += `
                         <div class="mobile-team-card">
                             <div class="team-position">${displayPos || '-'}</div>
@@ -3680,6 +3686,10 @@
                                     <div class="label">Masculinos</div>
                                     <div class="value male-points-value">${puntosMasculinos || '0'}</div>
                                 </div>
+                            </div>
+                            <div class="team-actions" style="display: flex; justify-content: center; gap: 15px; margin-top: 15px;">
+                                <button class="share-btn" onclick="shareResult('${equipo || ''}', '${lugar || ''}', 'N/A', 'Clasificación por Equipos')" title="Compartir resultado">📱</button>
+                                <button class="${diplomaClass}" ${diplomaClick} ${diplomaDisabled} title="${diplomaTitle}" data-status="${certificado || 'N/A'}">🎓</button>
                             </div>
                         </div>`;
                 }
