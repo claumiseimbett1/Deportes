@@ -5311,21 +5311,21 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
                 // Prueba
                 pdf.setFontSize(12);
                 const eventY = nameY + 45;
-                pdf.text(`${prueba || 'Evento de Natación'}`, pageWidth / 2, eventY, { align: 'center' });
+                pdf.text(`${prueba || 'Evento de Natación'}`, (pageWidth / 2) + 40 , eventY, { align: 'center' });
                 
                 // Equipo
                 pdf.setFontSize(12);
                 const teamY = nameY + 45;
-                pdf.text(`${equipo || 'N/A'}`, (pageWidth / 2) - 100, teamY, { align: 'center' });
+                pdf.text(`${equipo || 'N/A'}`, (pageWidth / 2) - 85, teamY, { align: 'center' });
                 
                 // Categoría
                 const categoryY = nameY + 45;
-                pdf.text(`Categoría: ${categoria || 'N/A'}`, pageWidth / 2, categoryY, { align: 'center' });
+                pdf.text(`${categoria || 'N/A'}`, (pageWidth / 2) -40, categoryY, { align: 'center' });
                 
                 // Tiempo récord
                 pdf.setFontSize(12);
                 const timeY = nameY + 45;
-                pdf.text(`Tiempo Récord: ${tiempo || 'N/A'}`, pageWidth / 2, timeY, { align: 'center' });
+                pdf.text(`${tiempo || 'N/A'}`, (pageWidth / 2) + 85, timeY, { align: 'center' });
                 
                 // Generar nombre de archivo y descargar
                 const sanitizedName = (nombre || 'Atleta').replace(/[^a-zA-Z0-9]/g, '_');
