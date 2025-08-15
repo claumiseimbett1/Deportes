@@ -2383,11 +2383,12 @@
                                 <th>Puntos</th>
                                 <th>Obs</th>
                                 <th>Compartir</th>
+                                <th>Diploma</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr class="loading-row">
-                                <td colspan="9" class="no-data-cell">
+                                <td colspan="10" class="no-data-cell">
                                     🔄 Cargando datos desde Google Sheets...
                                 </td>
                             </tr>
@@ -2409,11 +2410,12 @@
                                 <th>Puntos</th>
                                 <th>Obs</th>
                                 <th>Compartir</th>
+                                <th>Diploma</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr class="loading-row">
-                                <td colspan="9" class="no-data-cell">
+                                <td colspan="10" class="no-data-cell">
                                     🔄 Cargando datos desde Google Sheets...
                                 </td>
                             </tr>
@@ -2435,11 +2437,12 @@
                                 <th>Puntos</th>
                                 <th>Obs</th>
                                 <th>Compartir</th>
+                                <th>Diploma</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr class="loading-row">
-                                <td colspan="9" class="no-data-cell">
+                                <td colspan="10" class="no-data-cell">
                                     🔄 Cargando datos desde Google Sheets...
                                 </td>
                             </tr>
@@ -2461,11 +2464,12 @@
                                 <th>Puntos</th>
                                 <th>Obs</th>
                                 <th>Compartir</th>
+                                <th>Diploma</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr class="loading-row">
-                                <td colspan="9" class="no-data-cell">
+                                <td colspan="10" class="no-data-cell">
                                     🔄 Cargando datos desde Google Sheets...
                                 </td>
                             </tr>
@@ -2487,11 +2491,12 @@
                                 <th>Puntos</th>
                                 <th>Obs</th>
                                 <th>Compartir</th>
+                                <th>Diploma</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr class="loading-row">
-                                <td colspan="9" class="no-data-cell">
+                                <td colspan="10" class="no-data-cell">
                                     🔄 Cargando datos desde Google Sheets...
                                 </td>
                             </tr>
@@ -2513,11 +2518,12 @@
                                 <th>Puntos</th>
                                 <th>Obs</th>
                                 <th>Compartir</th>
+                                <th>Diploma</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr class="loading-row">
-                                <td colspan="9" class="no-data-cell">
+                                <td colspan="10" class="no-data-cell">
                                     🔄 Cargando datos desde Google Sheets...
                                 </td>
                             </tr>
@@ -2539,11 +2545,12 @@
                                 <th>Puntos</th>
                                 <th>Obs</th>
                                 <th>Compartir</th>
+                                <th>Diploma</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr class="loading-row">
-                                <td colspan="9" class="no-data-cell">
+                                <td colspan="10" class="no-data-cell">
                                     🔄 Cargando datos desde Google Sheets...
                                 </td>
                             </tr>
@@ -2565,11 +2572,12 @@
                                 <th>Puntos</th>
                                 <th>Obs</th>
                                 <th>Compartir</th>
+                                <th>Diploma</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr class="loading-row">
-                                <td colspan="9" class="no-data-cell">
+                                <td colspan="10" class="no-data-cell">
                                     🔄 Cargando datos desde Google Sheets...
                                 </td>
                             </tr>
@@ -3213,7 +3221,7 @@
                         // Mostrar mensaje específico en la tabla
                         const table = document.getElementById(config.tableId);
                         if (table) {
-                            table.innerHTML = `<tr><td colspan="9" class="table-no-data">
+                            table.innerHTML = `<tr><td colspan="10" class="table-no-data">
                                 No se encontró pestaña para ${competitionKey}<br>
                                 <small>Palabras clave: ${config.keywords.join(', ')}</small>
                             </td></tr>`;
@@ -3407,7 +3415,7 @@
             const tbody = table.querySelector('tbody');
             tbody.innerHTML = `
                 <tr>
-                    <td colspan="8" class="no-data-cell">
+                    <td colspan="10" class="no-data-cell">
                         ${message}
                     </td>
                 </tr>`;
@@ -3425,7 +3433,7 @@
                 this.table = table;
                 this.tbody = table.querySelector('tbody');
                 this.config = {
-                    colspan: '9',
+                    colspan: '10',
                     hasGenderColumn: false,
                     hasDiplomaColumn: false,
                     ...config
@@ -3497,10 +3505,20 @@
                         <td>${p50 || ''}</td>
                         <td>${p100 || ''}</td>
                         <td><button onclick="shareResult('${nombre}', '${pos || index}', 'N/A', '${categoria}')" class="share-btn">📱</button></td>
+                        <td class="diploma-cell">
+                            <button class="diploma-btn disabled" disabled title="Diploma no disponible para clasificación general">
+                                🏆
+                            </button>
+                        </td>
                     </tr>`;
                 } else {
-                    // Tabla de prueba individual (9 columnas)
-                    const [pos, nombre, equipo, edad, categoria, tiempo, puntos, obs] = row;
+                    // Tabla de prueba individual (10 columnas)
+                    const [pos, nombre, equipo, edad, categoria, tiempo, puntos, obs, record] = row;
+                    
+                    // Determinar si el diploma debe estar habilitado (solo para récords marcados con 'R')
+                    const isRecord = record && record.toString().toUpperCase().includes('R');
+                    const diplomaButtonClass = isRecord ? 'diploma-btn enabled' : 'diploma-btn disabled';
+                    const diplomaButtonClick = isRecord ? `generateDiploma('${nombre || ''}', '${equipo || ''}', '${categoria || ''}', '${tiempo || ''}')` : '';
                     
                     return `<tr>
                         <td class="rank">${pos || index}</td>
@@ -3512,6 +3530,11 @@
                         <td><strong class="total-points-cell">${puntos || ''}</strong></td>
                         <td class="obs-cell">${obs || ''}</td>
                         <td><button onclick="shareResult('${nombre}', '${pos || index}', '${tiempo}', '${categoria}')" class="share-btn">📱</button></td>
+                        <td class="diploma-cell">
+                            <button class="${diplomaButtonClass}" ${isRecord ? `onclick="${diplomaButtonClick}"` : ''} ${!isRecord ? 'disabled' : ''} title="${isRecord ? 'Descargar diploma de récord' : 'Solo disponible para récords'}">
+                                🏆
+                            </button>
+                        </td>
                     </tr>`;
                 }
             }
@@ -3747,7 +3770,7 @@
                     if (tbody) {
                         // Ajustar el colspan según el tipo de tabla
                         const isTeamTable = table.id === 'resultsTableTeams';
-                        const colspan = isTeamTable ? '6' : '9';
+                        const colspan = isTeamTable ? '6' : '10';
                         const adjustedErrorHTML = errorHTML.replace('colspan="7"', `colspan="${colspan}"`);
                         tbody.innerHTML = adjustedErrorHTML;
                     }
@@ -3899,6 +3922,9 @@
             
             // Precargar plantilla de diploma
             preloadDiplomaTemplate();
+            
+            // Precargar plantilla de diploma de récord
+            preloadRecordDiplomaTemplate();
             
             // Verificar acceso inmediato
             fetch(`https://docs.google.com/spreadsheets/d/${CONFIG.SHEET_ID}/export?format=csv&gid=0&range=A:J`)
@@ -5016,6 +5042,12 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
         let diplomaTemplateWidth = 0;
         let diplomaTemplateHeight = 0;
         let diplomaLoadAttempted = false;
+        
+        // Variables globales para el diploma de récord
+        let recordDiplomaTemplateData = null;
+        let recordDiplomaTemplateWidth = 0;
+        let recordDiplomaTemplateHeight = 0;
+        let recordDiplomaLoadAttempted = false;
 
         // Función para obtener tiempos específicos de un participante en las diferentes pruebas
         function getParticipantTimes(participantName, participantTeam) {
@@ -5107,6 +5139,126 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
                 diplomaImg.src = './img/diploma-template.png';
             } catch (error) {
                 console.warn('Error iniciando carga de plantilla de diploma:', error);
+            }
+        }
+
+        // Función para precargar la plantilla del diploma de récord
+        function preloadRecordDiplomaTemplate() {
+            if (recordDiplomaLoadAttempted) return;
+            recordDiplomaLoadAttempted = true;
+            
+            try {
+                const recordDiplomaImg = new Image();
+                recordDiplomaImg.crossOrigin = 'anonymous';
+                
+                recordDiplomaImg.onload = function() {
+                    try {
+                        const canvas = document.createElement('canvas');
+                        const ctx = canvas.getContext('2d');
+                        canvas.width = recordDiplomaImg.width;
+                        canvas.height = recordDiplomaImg.height;
+                        ctx.drawImage(recordDiplomaImg, 0, 0);
+                        recordDiplomaTemplateData = canvas.toDataURL('image/png');
+                        
+                        recordDiplomaTemplateWidth = recordDiplomaImg.width;
+                        recordDiplomaTemplateHeight = recordDiplomaImg.height;
+                        
+                        console.log('✅ Plantilla de diploma de récord cargada correctamente');
+                        console.log(`📐 Dimensiones: ${recordDiplomaTemplateWidth}x${recordDiplomaTemplateHeight}px`);
+                    } catch (error) {
+                        console.warn('Error procesando plantilla de diploma de récord:', error);
+                    }
+                };
+                
+                recordDiplomaImg.onerror = function() {
+                    console.warn('Error cargando plantilla de diploma de récord desde:', recordDiplomaImg.src);
+                };
+                
+                recordDiplomaImg.src = './img/diploma-record-template.png';
+            } catch (error) {
+                console.warn('Error iniciando carga de plantilla de diploma de récord:', error);
+            }
+        }
+
+        // Función para generar diploma de récord
+        async function generateDiploma(nombre, equipo, categoria, tiempo) {
+            try {
+                console.log('🎓 Generando diploma de récord para:', { nombre, equipo, categoria, tiempo });
+                
+                // Cargar jsPDF dinámicamente
+                await loadjsPDF();
+                
+                if (!window.jsPDF) {
+                    throw new Error('No se pudo cargar jsPDF');
+                }
+                
+                const pdf = new jsPDF('landscape', 'mm', 'a4');
+
+                // Verificar si tenemos la plantilla de récord cargada
+                if (!recordDiplomaTemplateData) {
+                    console.error('❌ Plantilla de diploma de récord PNG no disponible');
+                    throw new Error('La plantilla del diploma de récord PNG no está cargada. Asegúrate de que diploma-record-template.png esté en la carpeta img/');
+                }
+
+                // Dimensiones de la página
+                const pageWidth = pdf.internal.pageSize.getWidth();
+                const pageHeight = pdf.internal.pageSize.getHeight();
+                
+                // Calcular dimensiones para ajustar la plantilla a la página
+                const templateAspectRatio = recordDiplomaTemplateWidth / recordDiplomaTemplateHeight;
+                let imgWidth, imgHeight, imgX, imgY;
+                
+                if (templateAspectRatio > pageWidth / pageHeight) {
+                    // La plantilla es más ancha proporcionalmente
+                    imgWidth = pageWidth;
+                    imgHeight = pageWidth / templateAspectRatio;
+                    imgX = 0;
+                    imgY = (pageHeight - imgHeight) / 2;
+                } else {
+                    // La plantilla es más alta proporcionalmente
+                    imgHeight = pageHeight;
+                    imgWidth = pageHeight * templateAspectRatio;
+                    imgY = 0;
+                    imgX = (pageWidth - imgWidth) / 2;
+                }
+                
+                // Agregar la plantilla de fondo
+                pdf.addImage(recordDiplomaTemplateData, 'PNG', imgX, imgY, imgWidth, imgHeight);
+                
+                // Configurar fuente y agregar texto personalizado
+                pdf.setFont('helvetica', 'bold');
+                pdf.setTextColor(0, 0, 0);
+                
+                // Nombre del atleta (centro superior)
+                pdf.setFontSize(24);
+                const nameY = imgY + (imgHeight * 0.45); // Ajustar posición según el diseño
+                pdf.text(nombre || 'ATLETA', pageWidth / 2, nameY, { align: 'center' });
+                
+                // Equipo
+                pdf.setFontSize(16);
+                const teamY = nameY + 15;
+                pdf.text(`Equipo: ${equipo || 'N/A'}`, pageWidth / 2, teamY, { align: 'center' });
+                
+                // Categoría
+                const categoryY = teamY + 10;
+                pdf.text(`Categoría: ${categoria || 'N/A'}`, pageWidth / 2, categoryY, { align: 'center' });
+                
+                // Tiempo récord
+                pdf.setFontSize(20);
+                const timeY = categoryY + 15;
+                pdf.text(`Tiempo: ${tiempo || 'N/A'}`, pageWidth / 2, timeY, { align: 'center' });
+                
+                // Generar nombre de archivo y descargar
+                const sanitizedName = (nombre || 'Atleta').replace(/[^a-zA-Z0-9]/g, '_');
+                const filename = `Diploma_Record_${sanitizedName}.pdf`;
+                
+                pdf.save(filename);
+                
+                console.log('✅ Diploma de récord generado exitosamente');
+
+            } catch (error) {
+                console.error('❌ Error generando diploma de récord:', error);
+                alert(`Error generando el diploma de récord: ${error.message}. Asegúrate de que la plantilla diploma-record-template.png esté disponible en la carpeta img/`);
             }
         }
 
