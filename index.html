@@ -5316,7 +5316,7 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
                 // Equipo
                 pdf.setFontSize(12);
                 const teamY = nameY + 45;
-                pdf.text(`Equipo: ${equipo || 'N/A'}`, (pageWidth / 2) - 40, teamY, { align: 'center' });
+                pdf.text(`${equipo || 'N/A'}`, (pageWidth / 2) - 100, teamY, { align: 'center' });
                 
                 // Categoría
                 const categoryY = nameY + 45;
