@@ -5471,12 +5471,12 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
                 else if (posicion === '3' || posicion === 3) positionText = 'TERCER LUGAR 🥉';
                 else if (posicion && posicion !== '-') positionText = `${posicion}° LUGAR`;
                 
-                pdf.text(positionText, (pageWidth / 2) -40, positionY, { align: 'center' });
+                pdf.text(positionText, (pageWidth / 2) -50, positionY, { align: 'center' });
                 
                 // Puntos totales
                 pdf.setFontSize(14);
                 const pointsY = teamNameY + 45;
-                pdf.text(`${puntosTotales || '0'}`, (pageWidth / 2) + 40, pointsY, { align: 'center' });
+                pdf.text(`${puntosTotales || '0'}`, (pageWidth / 2) + 51, pointsY, { align: 'center' });
                 
                 // Competencia
                 pdf.setFontSize(14);
