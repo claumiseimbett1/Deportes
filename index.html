@@ -5305,12 +5305,12 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
                 
                 // Nombre del atleta (centro superior)
                 pdf.setFontSize(24);
-                const nameY = imgY + (imgHeight * 0.5); // Ajustar posición según el diseño
+                const nameY = imgY + (imgHeight * 0.48); // Ajustar posición según el diseño
                 pdf.text(nombre || 'ATLETA', pageWidth / 2, nameY, { align: 'center' });
                 
                 // Prueba
                 pdf.setFontSize(18);
-                const eventY = nameY + 12;
+                const eventY = nameY + 44;
                 pdf.text(`${prueba || 'Evento de Natación'}`, pageWidth / 2, eventY, { align: 'center' });
                 
                 // Equipo
