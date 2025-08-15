@@ -5478,10 +5478,6 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
                 const pointsY = teamNameY + 45;
                 pdf.text(`${puntosTotales || '0'}`, (pageWidth / 2) + 51, pointsY, { align: 'center' });
                 
-                // Competencia
-                pdf.setFontSize(14);
-                const competitionY = teamNameY + 45;
-                pdf.text('Torneo de Natación', pageWidth / 2, competitionY, { align: 'center' });
                 
                 // Generar nombre de archivo y descargar
                 const sanitizedTeamName = (nombreEquipo || 'Equipo').replace(/[^a-zA-Z0-9]/g, '_');
