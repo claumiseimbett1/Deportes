@@ -3616,11 +3616,16 @@
                 
                 // Esperar al menos 3 columnas: LUGAR, EQUIPO, PUNTOS TOTALES
                 if (row.length >= 3) {
-                    const [lugar, equipo, puntosTotales, puntosFemeninos, puntosMasculinos] = row;
+                    const [lugar, equipo, puntosTotales, puntosFemeninos, puntosMasculinos, certificado] = row;
                     
                     // Skip si no hay equipo válido
                     if (!equipo || equipo === '-' || equipo.toLowerCase().includes('sin equipos')) {
                         continue;
+                    }
+                    
+                    // Debug: mostrar información de la columna Certificado
+                    if (equipo && equipo.trim() !== '') {
+                        console.log(`🏆 Certificado para equipo ${equipo}: "${certificado}" - Habilitado: ${certificado && certificado.toString().toUpperCase().trim() === 'SI'}`);
                     }
                     
                     // Generar medallas para las posiciones
@@ -3642,9 +3647,18 @@
                                 <button class="share-btn" onclick="shareResult('${equipo || ''}', '${lugar || ''}', 'N/A', 'Clasificación por Equipos')">📱</button>
                             </td>
                             <td data-label="Diploma" class="diploma-cell">
-                                <button class="diploma-btn enabled" onclick="generateTeamDiploma('${(equipo || '').replace(/'/g, '\\\'')}', '${lugar || ''}', '${puntosTotales || '0'}')" title="Descargar diploma de equipo">
-                                    🏆
-                                </button>
+                                ${(() => {
+                                    const isCertificateEnabled = certificado && certificado.toString().toUpperCase().trim() === 'SI';
+                                    const diplomaClass = isCertificateEnabled ? 'diploma-btn enabled' : 'diploma-btn disabled';
+                                    const diplomaClick = isCertificateEnabled ? `onclick="generateTeamDiploma('${(equipo || '').replace(/'/g, '\\\'')}', '${lugar || ''}', '${puntosTotales || '0'}')"` : '';
+                                    const diplomaTitle = isCertificateEnabled ? 'Descargar diploma de equipo' : 'Diploma no disponible (requiere certificado SI)';
+                                    const diplomaDisabled = isCertificateEnabled ? '' : 'disabled';
+                                    
+                                    return `<button class="${diplomaClass}" ${diplomaClick} ${diplomaDisabled} title="${diplomaTitle}" data-status="${certificado || 'N/A'}">
+                                        🏆
+                                    </button>`;
+                                })()
+                                }
                             </td>
                         </tr>`;
                     
