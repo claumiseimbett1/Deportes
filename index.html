@@ -926,14 +926,32 @@
 
             .contact-grid {
                 grid-template-columns: repeat(3, 1fr);
-                gap: 10px;
+                gap: 8px;
                 max-width: 100%;
+                padding: 0 10px;
             }
 
             .contact-card-link {
                 min-width: auto;
-                padding: 15px 8px;
+                padding: 12px 5px;
+                font-size: 0.8em;
+                text-align: center;
+            }
+
+            .contact-card-link h3 {
                 font-size: 0.9em;
+                margin-bottom: 4px;
+            }
+
+            .contact-card-link p {
+                font-size: 0.75em;
+                margin: 0;
+            }
+
+            .sticker-icon {
+                width: 30px;
+                height: 30px;
+                margin: 0 auto 8px auto;
             }
 
             .status-indicator {
@@ -942,6 +960,34 @@
                 right: auto;
                 margin: 10px auto;
                 display: inline-block;
+            }
+        }
+
+        /* Extra small devices */
+        @media (max-width: 480px) {
+            .contact-grid {
+                grid-template-columns: 1fr 1fr;
+                gap: 10px;
+                padding: 0 5px;
+            }
+
+            .contact-card-link:last-child {
+                grid-column: 1 / -1;
+                max-width: 200px;
+                margin: 0 auto;
+            }
+
+            .contact-card-link {
+                padding: 15px 8px;
+                font-size: 0.85em;
+            }
+
+            .contact-card-link h3 {
+                font-size: 1em;
+            }
+
+            .contact-card-link p {
+                font-size: 0.8em;
             }
         }
 
