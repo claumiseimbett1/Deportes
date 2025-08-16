@@ -919,9 +919,14 @@
                 color: #666 !important;
             }
 
-            .cards-grid, .contact-grid {
+            .cards-grid {
                 grid-template-columns: 1fr;
                 gap: 25px;
+            }
+
+            .contact-grid {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 15px;
             }
 
             .status-indicator {
