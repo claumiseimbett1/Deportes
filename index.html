@@ -3634,7 +3634,7 @@
                         console.log(`📄 Obs detectada para ${nombre}: "${obs}" - Es récord: ${isRecord}`);
                     }
                     const diplomaButtonClass = isRecord ? 'diploma-btn enabled' : 'diploma-btn disabled';
-                    const diplomaButtonClick = isRecord ? `generateDiploma('${(nombre || '').replace(/'/g, '\\\'')}', '${(equipo || '').replace(/'/g, '\\\'')}', '${(categoria || '').replace(/'/g, '\\\'')}', '${tiempo || ''}', '${getCurrentEventName()}')` : '';
+                    const diplomaButtonClick = isRecord ? `generateDiploma('${(nombre || '').replace(/'/g, '\\\'')}', '${(equipo || '').replace(/'/g, '\\\'')}', '${(categoria || '').replace(/'/g, '\\\'')}', '${tiempo || ''}', getCurrentEventName())` : '';
                     
                     return `<tr>
                         <td data-label="Pos." class="rank">${pos || index}</td>
