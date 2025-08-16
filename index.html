@@ -4616,7 +4616,7 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
                 // Estas coordenadas necesitarás ajustarlas según donde quieras que aparezca cada texto
                 const textPositions = {
                     name: { x: pageWidth * 0.48, y: pageHeight * 0.45 },      // Centro para el nombre
-                    position: { x: pageWidth * 0.19, y: pageHeight * 0.7 },   // Posición lograda
+                    position: { x: pageWidth * 0.20, y: pageHeight * 0.7 },   // Posición lograda
                     team: { x: pageWidth * 0.3, y: pageHeight * 0.7 },       // Equipo
                     category: { x: pageWidth * 0.43, y: pageHeight * 0.7 },   // Categoría
                     time50m: { x: pageWidth * 0.55, y: pageHeight * 0.7 },   // Tiempo 50m
@@ -4633,17 +4633,17 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
                 pdf.text(swimmer.toUpperCase(), textPositions.name.x, textPositions.name.y, { align: "center" });
 
                 // Posición
-                pdf.setFontSize(14);
+                pdf.setFontSize(12);
                 pdf.setTextColor(0, 173, 239); // Celeste corporativo
                 pdf.text(`${position}° LUGAR`, textPositions.position.x, textPositions.position.y, { align: "center" });
 
                 // Equipo
-                pdf.setFontSize(14);
+                pdf.setFontSize(12);
                 pdf.setTextColor(11, 16, 57);
                 pdf.text(team, textPositions.team.x, textPositions.team.y, { align: "center" });
 
                 // Categoría
-                pdf.setFontSize(14);
+                pdf.setFontSize(12);
                 pdf.setTextColor(80, 80, 80);
                 pdf.text(category, textPositions.category.x, textPositions.category.y, { align: "center" });
 
@@ -5547,11 +5547,11 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
                 else if (posicion === '3' || posicion === 3) positionText = 'TERCER LUGAR ';
                 else if (posicion && posicion !== '-') positionText = `${posicion}° LUGAR`;
                 
-                pdf.text(positionText, (pageWidth / 2) -50, positionY, { align: 'center' });
+                pdf.text(positionText, (pageWidth / 2) - 48, positionY, { align: 'center' });
                 
                 // Puntos totales
                 pdf.setFontSize(14);
-                const pointsY = teamNameY + 45;
+                const pointsY = teamNameY + 50;
                 pdf.text(`${puntosTotales || '0'}`, (pageWidth / 2) + 51, pointsY, { align: 'center' });
                 
                 
