@@ -3621,10 +3621,10 @@
                     } else {
                         // Para otras pruebas: usar lógica de récords (R en Obs)
                         const [pos, nombre, equipo, edad, categoria, tiempo, puntos, obs] = row;
-                        
+                                                console.log('DEBUG ROW:', row, 'OBS VALUE:', obs, 'OBS INDEX:', row.indexOf(obs));
                         // Determinar si el diploma debe estar habilitado (solo para récords marcados con 'R' en la columna Obs)
                         const isRecord = obs && obs.toString().toUpperCase().includes('R');
-                        
+
                         // Debug: mostrar información de la columna Obs
                         if (obs && obs.toString().trim() !== '') {
                             console.log(`📄 Obs detectada para ${nombre}: "${obs}" - Es récord: ${isRecord}`);
