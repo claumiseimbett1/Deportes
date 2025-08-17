@@ -4785,10 +4785,31 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
             }
         }
 
+        // Función para determinar el rango de columnas según el tipo de hoja
+        function getColumnRange(sheetName) {
+            if (!sheetName) return 'A:H'; // Por defecto
+            
+            const upperName = sheetName.toUpperCase();
+            
+            // Clasificación general - necesitan hasta columna J (ACTIVADOR)
+            if (upperName.includes('RESULTADOS')) {
+                return 'A:J';
+            }
+            
+            // Equipos - solo hasta columna F
+            if (upperName.includes('EQUIPOS') || upperName.includes('EQUIPO')) {
+                return 'A:F';
+            }
+            
+            // Pruebas individuales - hasta columna H (Obs)
+            return 'A:H';
+        }
+
         // Función para cargar datos directamente del Google Sheet
         async function loadDirectSheetData(gid, sheetName) {
             try {
-                const url = `https://docs.google.com/spreadsheets/d/${CONFIG.SHEET_ID}/export?format=csv&gid=${gid}&range=A:J`;
+                const range = getColumnRange(sheetName);
+                const url = `https://docs.google.com/spreadsheets/d/${CONFIG.SHEET_ID}/export?format=csv&gid=${gid}&range=${range}`;
                 const response = await fetch(url);
                 
                 if (!response.ok) {
