@@ -2645,14 +2645,15 @@
                                 <th>Categoría</th>
                                 <th>Tiempo Final</th>
                                 <th>Puntos</th>
+                                <th>Diploma</th>
                                 <th>Obs</th>
                                 <th>Compartir</th>
-                                <th>Diploma</th>
+                                <th>Certificado</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr class="loading-row">
-                                <td colspan="10" class="no-data-cell">
+                                <td colspan="11" class="no-data-cell">
                                     🔄 Cargando datos desde Google Sheets...
                                 </td>
                             </tr>
@@ -3563,6 +3564,9 @@
         // Specific renderer for general tables
         class GeneralTableRenderer extends TableRenderer {
             renderDataRow(row, index) {
+                // Detectar si es la tabla de 4x50m Mixto
+                const is4x50mMixto = this.table && this.table.id === 'resultsTable4x50mMixto';
+                
                 // Detectar el tipo de tabla por el número de columnas o el contenido
                 if (row.length >= 9) {
                     // Tabla de clasificación general (10 columnas)
@@ -3586,35 +3590,69 @@
                         </td>
                     </tr>`;
                 } else {
-                    // Tabla de prueba individual (10 columnas)
-                    const [pos, nombre, equipo, edad, categoria, tiempo, puntos, obs] = row;
-                    
-                    // Determinar si el diploma debe estar habilitado (solo para récords marcados con 'R' en la columna Obs)
-                    const isRecord = obs && obs.toString().toUpperCase().includes('R');
-                    
-                    // Debug: mostrar información de la columna Obs
-                    if (obs && obs.toString().trim() !== '') {
-                        console.log(`📄 Obs detectada para ${nombre}: "${obs}" - Es récord: ${isRecord}`);
+                    // Tabla de prueba individual
+                    if (is4x50mMixto) {
+                        // Para 4x50m Mixto: usar columna Diploma (SI/NO)
+                        const [pos, nombre, equipo, edad, categoria, tiempo, puntos, diploma, obs] = row;
+                        
+                        // Determinar si el diploma debe estar habilitado (columna Diploma con valor 'SI')
+                        const isDiplomaEnabled = diploma && diploma.toString().toUpperCase().trim() === 'SI';
+                        
+                        // Debug: mostrar información de la columna Diploma
+                        if (diploma && diploma.toString().trim() !== '') {
+                            console.log(`🏆 Diploma para ${nombre}: "${diploma}" - Habilitado: ${isDiplomaEnabled}`);
+                        }
+                        const diplomaButtonClass = isDiplomaEnabled ? 'diploma-btn enabled' : 'diploma-btn disabled';
+                        const diplomaButtonClick = isDiplomaEnabled ? `generateDiploma('${(nombre || '').replace(/'/g, '\\\'')}', '${(equipo || '').replace(/'/g, '\\\'')}', '${(categoria || '').replace(/'/g, '\\\'')}', '${tiempo || ''}', getCurrentEventName())` : '';
+                        
+                        return `<tr>
+                            <td data-label="Pos." class="rank">${pos || index}</td>
+                            <td data-label="Nadador/a"><strong>${nombre || ''}</strong></td>
+                            <td data-label="Equipo">${equipo || ''}</td>
+                            <td data-label="Edad">${edad || ''}</td>
+                            <td data-label="Categoría"><span class="category-badge">${categoria || ''}</span></td>
+                            <td data-label="Tiempo Final" class="time">${tiempo || ''}</td>
+                            <td data-label="Puntos"><strong class="total-points-cell">${puntos || ''}</strong></td>
+                            <td data-label="Diploma" class="diploma-status-cell">${diploma || 'NO'}</td>
+                            <td data-label="Obs" class="obs-cell">${obs || ''}</td>
+                            <td data-label="Compartir"><button onclick="shareResult('${nombre}', '${pos || index}', '${tiempo}', '${categoria}')" class="share-btn">📱</button></td>
+                            <td data-label="Diploma" class="diploma-cell">
+                                <button class="${diplomaButtonClass}" ${isDiplomaEnabled ? `onclick="${diplomaButtonClick}"` : ''} ${!isDiplomaEnabled ? 'disabled' : ''} title="${isDiplomaEnabled ? 'Descargar diploma' : 'Diploma no habilitado'}" data-status="${diploma || 'NO'}">
+                                    🏆
+                                </button>
+                            </td>
+                        </tr>`;
+                    } else {
+                        // Para otras pruebas: usar lógica de récords (R en Obs)
+                        const [pos, nombre, equipo, edad, categoria, tiempo, puntos, obs] = row;
+                        
+                        // Determinar si el diploma debe estar habilitado (solo para récords marcados con 'R' en la columna Obs)
+                        const isRecord = obs && obs.toString().toUpperCase().includes('R');
+                        
+                        // Debug: mostrar información de la columna Obs
+                        if (obs && obs.toString().trim() !== '') {
+                            console.log(`📄 Obs detectada para ${nombre}: "${obs}" - Es récord: ${isRecord}`);
+                        }
+                        const diplomaButtonClass = isRecord ? 'diploma-btn enabled' : 'diploma-btn disabled';
+                        const diplomaButtonClick = isRecord ? `generateDiploma('${(nombre || '').replace(/'/g, '\\\'')}', '${(equipo || '').replace(/'/g, '\\\'')}', '${(categoria || '').replace(/'/g, '\\\'')}', '${tiempo || ''}', getCurrentEventName())` : '';
+                        
+                        return `<tr>
+                            <td data-label="Pos." class="rank">${pos || index}</td>
+                            <td data-label="Nadador/a"><strong>${nombre || ''}</strong></td>
+                            <td data-label="Equipo">${equipo || ''}</td>
+                            <td data-label="Edad">${edad || ''}</td>
+                            <td data-label="Categoría"><span class="category-badge">${categoria || ''}</span></td>
+                            <td data-label="Tiempo Final" class="time">${tiempo || ''}</td>
+                            <td data-label="Puntos"><strong class="total-points-cell">${puntos || ''}</strong></td>
+                            <td data-label="Obs" class="obs-cell ${isRecord ? 'record-indicator' : ''}">${obs || ''}</td>
+                            <td data-label="Compartir"><button onclick="shareResult('${nombre}', '${pos || index}', '${tiempo}', '${categoria}')" class="share-btn">📱</button></td>
+                            <td data-label="Diploma" class="diploma-cell">
+                                <button class="${diplomaButtonClass}" ${isRecord ? `onclick="${diplomaButtonClick}"` : ''} ${!isRecord ? 'disabled' : ''} title="${isRecord ? 'Descargar diploma de récord' : 'Solo disponible para récords (marcar con R en Obs)'}" data-status="${obs || 'N/A'}">
+                                    🏆
+                                </button>
+                            </td>
+                        </tr>`;
                     }
-                    const diplomaButtonClass = isRecord ? 'diploma-btn enabled' : 'diploma-btn disabled';
-                    const diplomaButtonClick = isRecord ? `generateDiploma('${(nombre || '').replace(/'/g, '\\\'')}', '${(equipo || '').replace(/'/g, '\\\'')}', '${(categoria || '').replace(/'/g, '\\\'')}', '${tiempo || ''}', getCurrentEventName())` : '';
-                    
-                    return `<tr>
-                        <td data-label="Pos." class="rank">${pos || index}</td>
-                        <td data-label="Nadador/a"><strong>${nombre || ''}</strong></td>
-                        <td data-label="Equipo">${equipo || ''}</td>
-                        <td data-label="Edad">${edad || ''}</td>
-                        <td data-label="Categoría"><span class="category-badge">${categoria || ''}</span></td>
-                        <td data-label="Tiempo Final" class="time">${tiempo || ''}</td>
-                        <td data-label="Puntos"><strong class="total-points-cell">${puntos || ''}</strong></td>
-                        <td data-label="Obs" class="obs-cell ${isRecord ? 'record-indicator' : ''}">${obs || ''}</td>
-                        <td data-label="Compartir"><button onclick="shareResult('${nombre}', '${pos || index}', '${tiempo}', '${categoria}')" class="share-btn">📱</button></td>
-                        <td data-label="Diploma" class="diploma-cell">
-                            <button class="${diplomaButtonClass}" ${isRecord ? `onclick="${diplomaButtonClick}"` : ''} ${!isRecord ? 'disabled' : ''} title="${isRecord ? 'Descargar diploma de récord' : 'Solo disponible para récords (marcar con R en Obs)'}" data-status="${obs || 'N/A'}">
-                                🏆
-                            </button>
-                        </td>
-                    </tr>`;
                 }
             }
         }
