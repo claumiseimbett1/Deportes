@@ -2468,7 +2468,7 @@
                     <button type="button" class="tab-button" onclick="openTab(event, '100m-libre-masculino')">100 m Libre Masculino</button>
                     <button type="button" class="tab-button" onclick="openTab(event, '200m-libre-femenino')">200 m Libre Femenino</button>
                     <button type="button" class="tab-button" onclick="openTab(event, '200m-libre-masculino')">200 m Libre Masculino</button>
-                    <button type="button" class="tab-button" onclick="openTab(event, '4x50m-libre-mixto')">4x50 m Relevo Libre Mixto</button>
+                    <button type="button" class="tab-button" onclick="openTab(event, '4x50m-libre-mixto')">4x50 m Relevo L.Mixto</button>
                 </div>
                 <!-- Pestaña 50 m Libre Femenino -->
                 <div id="50m-libre-femenino" class="tab-content active">
@@ -2632,9 +2632,9 @@
                         </tbody>
                     </table>
                 </div>
-                <!-- Pestaña 4x50 m Relevo Libre Mixto -->
+                <!-- Pestaña 4x50 m Relevo L.Mixto -->
                 <div id="4x50m-libre-mixto" class="tab-content">
-                    <h3>🏊‍♂️🏊‍♀️ 4x50 m Relevo Libre Mixto - Resultados Oficiales</h3>
+                    <h3>🏊‍♂️🏊‍♀️ 4x50 m Relevo L.Mixto - Resultados Oficiales</h3>
                     <table class="results-table" id="resultsTable4x50mMixto">
                         <thead>
                             <tr>
@@ -4317,7 +4317,7 @@
                 console.log('Tab activo detectado:', tabText);
                 
                 if (tabText.includes('4x50') && tabText.includes('libre')) {
-                    prueba = '4x50m Relevo Libre Mixto';
+                    prueba = '4x50m Relevo L.Mixto';
                 } else if (tabText.includes('200') && tabText.includes('libre')) {
                     prueba = tabText.includes('femenino') ? '200m Libre Femenino' : '200m Libre Masculino';
                 } else if (tabText.includes('100') && tabText.includes('libre')) {
@@ -4344,7 +4344,7 @@
                 else if (contentId.includes('100m-libre-masculino')) prueba = '100m Libre Masculino';
                 else if (contentId.includes('200m-libre-femenino')) prueba = '200m Libre Femenino';
                 else if (contentId.includes('200m-libre-masculino')) prueba = '200m Libre Masculino';
-                else if (contentId.includes('4x50m-libre-mixto')) prueba = '4x50m Relevo Libre Mixto';
+                else if (contentId.includes('4x50m-libre-mixto')) prueba = '4x50m Relevo L.Mixto';
                 else if (contentId.includes('masculino-general')) prueba = 'Clasificación General Masculina';
                 else if (contentId.includes('femenino-general')) prueba = 'Clasificación General Femenina';
                 else if (contentId.includes('equipos')) prueba = 'Clasificación por Equipos';
@@ -4870,11 +4870,11 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
                 'MASCULINO 200M': '200m Libre Masculino',
                 
                 // 4x50m libre
-                '4X50M-MIXTO': '4x50m Relevo Libre Mixto',
-                '4X50M MIXTO': '4x50m Relevo Libre Mixto',
-                '4X50M-MIX': '4x50m Relevo Libre Mixto',
-                '4X50M MIX': '4x50m Relevo Libre Mixto',
-                'MIXTO 4X50M': '4x50m Relevo Libre Mixto'
+                '4X50M-MIXTO': '4x50m Relevo L.Mixto',
+                '4X50M MIXTO': '4x50m Relevo L.Mixto',
+                '4X50M-MIX': '4x50m Relevo L.Mixto',
+                '4X50M MIX': '4x50m Relevo L.Mixto',
+                'MIXTO 4X50M': '4x50m Relevo L.Mixto'
             };
             
             // Buscar coincidencia exacta
@@ -4889,7 +4889,7 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
             if (title.includes('100') && title.includes('MAS')) return '100m Libre Masculino';
             if (title.includes('200') && title.includes('FEM')) return '200m Libre Femenino';
             if (title.includes('200') && title.includes('MAS')) return '200m Libre Masculino';
-            if (title.includes('4X50') && title.includes('MIX')) return '4x50m Relevo Libre Mixto';
+            if (title.includes('4X50') && title.includes('MIX')) return '4x50m Relevo L.Mixto';
             
             // Si no hay coincidencia, devolver el título original
             return sheetTitle;
@@ -5340,7 +5340,7 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
                 else if (contentId.includes('100m-libre-masculino')) return '100m Libre Masculino';
                 else if (contentId.includes('200m-libre-femenino')) return '200m Libre Femenino';
                 else if (contentId.includes('200m-libre-masculino')) return '200m Libre Masculino';
-                else if (contentId.includes('4x50m-libre-mixto')) return '4x50m Relevo Libre Mixto';
+                else if (contentId.includes('4x50m-libre-mixto')) return '4x50m Relevo L.Mixto';
             }
             
             return 'Evento de Natación';
@@ -6089,7 +6089,7 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
                     { id: 'resultsTable100mMas', name: '100m Libre Masculino' },
                     { id: 'resultsTable200mFem', name: '200m Libre Femenino' },
                     { id: 'resultsTable200mMas', name: '200m Libre Masculino' },
-                    { id: 'resultsTable4x50mMixto', name: '4x50m Relevo Libre Mixto' }
+                    { id: 'resultsTable4x50mMixto', name: '4x50m Relevo L.Mixto' }
                 ];
                 
                 for (let i = 0; i < eventTables.length; i++) {
@@ -6385,7 +6385,7 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
                     "• 50m Libre",
                     "• 100m Libre", 
                     "• 200m Libre",
-                    "• 4x50m Relevo Libre Mixto"
+                    "• 4x50m Relevo L.Mixto"
                 ];
                 
                 events.forEach((event, index) => {
