@@ -2645,15 +2645,13 @@
                                 <th>Categoría</th>
                                 <th>Tiempo Final</th>
                                 <th>Puntos</th>
-                                <th>Diploma</th>
-                                <th>Obs</th>
                                 <th>Compartir</th>
                                 <th>Certificado</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr class="loading-row">
-                                <td colspan="11" class="no-data-cell">
+                                <td colspan="9" class="no-data-cell">
                                     🔄 Cargando datos desde Google Sheets...
                                 </td>
                             </tr>
@@ -3592,7 +3590,7 @@
                 } else {
                     // Tabla de prueba individual
                     if (is4x50mMixto) {
-                        // Para 4x50m Mixto: usar columna Diploma (SI/NO)
+                        // Para 4x50m Mixto: usar columna Diploma (SI/NO) pero sin mostrar las columnas Diploma y Obs
                         const [pos, nombre, equipo, edad, categoria, tiempo, puntos, diploma, obs] = row;
                         
                         // Determinar si el diploma debe estar habilitado (columna Diploma con valor 'SI')
@@ -3613,11 +3611,9 @@
                             <td data-label="Categoría"><span class="category-badge">${categoria || ''}</span></td>
                             <td data-label="Tiempo Final" class="time">${tiempo || ''}</td>
                             <td data-label="Puntos"><strong class="total-points-cell">${puntos || ''}</strong></td>
-                            <td data-label="Diploma" class="diploma-status-cell">${diploma || 'NO'}</td>
-                            <td data-label="Obs" class="obs-cell">${obs || ''}</td>
                             <td data-label="Compartir"><button onclick="shareResult('${nombre}', '${pos || index}', '${tiempo}', '${categoria}')" class="share-btn">📱</button></td>
-                            <td data-label="Diploma" class="diploma-cell">
-                                <button class="${diplomaButtonClass}" ${isDiplomaEnabled ? `onclick="${diplomaButtonClick}"` : ''} ${!isDiplomaEnabled ? 'disabled' : ''} title="${isDiplomaEnabled ? 'Descargar diploma' : 'Diploma no habilitado'}" data-status="${diploma || 'NO'}">
+                            <td data-label="Certificado" class="diploma-cell">
+                                <button class="${diplomaButtonClass}" ${isDiplomaEnabled ? `onclick="${diplomaButtonClick}"` : ''} ${!isDiplomaEnabled ? 'disabled' : ''} title="${isDiplomaEnabled ? 'Descargar certificado' : 'Certificado no habilitado'}" data-status="${diploma || 'NO'}">
                                     🏆
                                 </button>
                             </td>
