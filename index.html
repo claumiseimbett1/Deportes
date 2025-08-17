@@ -3262,7 +3262,7 @@
                     
                     if (foundSheet) {
                         console.log(`📄 Cargando datos de "${foundSheet.title}" (GID: ${foundSheet.gid})...`);
-                        const data = await loadSheetByGid(foundSheet.gid);
+                        const data = await loadSheetByGid(foundSheet.gid, foundSheet.title);
                         
                         if (data && data.length > 0) {
                             console.log(`✅ Datos cargados: ${data.length} filas`);
@@ -3458,8 +3458,8 @@
         }
 
         // Legacy function wrappers for backwards compatibility
-        async function loadSheetByGid(gid) {
-            return await loadSheet({gid});
+        async function loadSheetByGid(gid, sheetName = null) {
+            return await loadDirectSheetData(gid, sheetName);
         }
         
         async function loadSheetByName(sheetName) {
@@ -3962,7 +3962,7 @@
                     
                     // 3. Cargar datos específicos de esa pestaña
                     console.log(`📄 Cargando datos de "${foundSheet.title}" (GID: ${foundSheet.gid})...`);
-                    const data = await loadSheetByGid(foundSheet.gid);
+                    const data = await loadSheetByGid(foundSheet.gid, foundSheet.title);
                     
                     if (data && data.length > 0) {
                         console.log(`✅ Datos cargados: ${data.length} filas`);
