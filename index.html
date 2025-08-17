@@ -3620,7 +3620,7 @@
                         </tr>`;
                     } else {
                         // Para otras pruebas: usar lógica de récords (R en Obs)
-                        const [pos, nombre, equipo, edad, categoria, tiempo, puntos, , obs] = row;
+                        const [pos, nombre, equipo, edad, categoria, tiempo, puntos, obs] = row;
                         
                         // Determinar si el diploma debe estar habilitado (solo para récords marcados con 'R' en la columna Obs)
                         const isRecord = obs && obs.toString().toUpperCase().includes('R');
