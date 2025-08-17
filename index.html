@@ -1965,6 +1965,172 @@
             background: linear-gradient(135deg, #0099d8, #0088c7);
             transform: translateY(-1px);
         }
+
+        /* Notas section styles */
+        .cedula-search-container {
+            margin: 30px 0;
+            max-width: 500px;
+            margin: 30px auto;
+        }
+
+        .search-input-group {
+            display: flex;
+            gap: 10px;
+            flex-direction: column;
+        }
+
+        .cedula-input {
+            padding: 15px 20px;
+            border: 2px solid #e1e5e9;
+            border-radius: 10px;
+            font-size: 1.1em;
+            font-family: var(--font-family);
+            transition: var(--transition);
+            text-align: center;
+        }
+
+        .cedula-input:focus {
+            outline: none;
+            border-color: var(--secondary-color);
+            box-shadow: 0 0 0 3px rgba(0, 173, 239, 0.1);
+        }
+
+        .search-notas-btn {
+            background: linear-gradient(135deg, #00ADEF, #0099d8);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 10px;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            min-height: 50px;
+        }
+
+        .search-notas-btn:hover {
+            background: linear-gradient(135deg, #0099d8, #0088c7);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 173, 239, 0.3);
+        }
+
+        .search-notas-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .search-icon {
+            font-size: 1.2em;
+        }
+
+        .notas-results-container {
+            margin-top: 30px;
+            min-height: 100px;
+        }
+
+        .notas-status-hidden {
+            display: none;
+            margin-top: 20px;
+            padding: 15px;
+            background: var(--background-light);
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .notas-status-text {
+            margin: 0;
+            color: var(--primary-color);
+            font-weight: 500;
+        }
+
+        .notas-status-icon {
+            margin-right: 8px;
+        }
+
+        .student-record {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            margin: 15px 0;
+            box-shadow: var(--box-shadow);
+            border-left: 4px solid var(--secondary-color);
+        }
+
+        .student-record h3 {
+            color: var(--primary-color);
+            margin: 0 0 15px 0;
+            font-size: 1.3em;
+        }
+
+        .record-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 10px;
+            margin: 15px 0;
+        }
+
+        .record-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .record-item:last-child {
+            border-bottom: none;
+        }
+
+        .record-label {
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+
+        .record-value {
+            color: #666;
+        }
+
+        .download-record-btn {
+            background: linear-gradient(135deg, #0b1039, #00ADEF);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            margin-top: 15px;
+        }
+
+        .download-record-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 5px 15px rgba(11, 16, 57, 0.3);
+        }
+
+        .no-records-message {
+            text-align: center;
+            padding: 40px 20px;
+            color: #666;
+            font-style: italic;
+        }
+
+        @media (min-width: 576px) {
+            .search-input-group {
+                flex-direction: row;
+            }
+            
+            .cedula-input {
+                flex: 1;
+            }
+            
+            .search-notas-btn {
+                min-width: 180px;
+            }
+        }
         
         .icon-span-large {
             font-size: 1.2em;
@@ -2128,6 +2294,7 @@
                     <li><a href="#informacion" onclick="scrollToSection('info-section')">Información</a></li>
                     <li><a href="#terminos" onclick="scrollToSection('terms-section')">Términos</a></li>
                     <li><a href="#resultados" onclick="scrollToSection('results-section')">Resultados</a></li>
+                    <li><a href="#notas" onclick="scrollToSection('notas-section')">Descarga de Notas</a></li>
                     <li><a href="#patrocinadores" onclick="scrollToSection('sponsors-section')">Patrocinadores</a></li>
                     <li><a href="#contacto" onclick="scrollToSection('contact-section')">Contacto</a></li>
                 </ul>
@@ -2812,6 +2979,41 @@
         </div>
     </section>
 
+    <!-- Student Notes Download Section -->
+    <section class="results-section notas-section" id="notas">
+        <div class="container">
+            <h2 class="section-title">📚 Descarga de Notas - En construcción</h2>
+            <div class="download-container download-container-center">
+                <div class="download-info">
+                    <p class="download-info-text">
+                        Consulta todos tus registros digitando tu número de cédula. 
+                        El sistema buscará en todos los niveles (NIVEL 1, NIVEL 2, NIVEL 3).
+                    </p>
+                </div>
+                
+                <div class="cedula-search-container">
+                    <div class="search-input-group">
+                        <input type="text" id="cedulaInput" placeholder="Ingresa tu número de cédula" class="cedula-input">
+                        <button id="searchNotasBtn" class="search-notas-btn">
+                            <span class="search-icon">🔍</span>
+                            Buscar Notas
+                        </button>
+                    </div>
+                </div>
+
+                <div id="notasResults" class="notas-results-container">
+                    <!-- Results will be displayed here -->
+                </div>
+
+                <div id="notasStatus" class="notas-status-hidden">
+                    <p class="notas-status-text">
+                        <span class="notas-status-icon">⏳</span> Buscando registros...
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <!-- Sponsors Section -->
     <section class="sponsors-section" id="patrocinadores">
         <div class="container">
@@ -2913,7 +3115,11 @@
                 'resultados-femenino': ['RESULTADOS-FEMENINO', 'RESULTADOS FEMENINO', 'RESULTADOS FEM'],
                 'resultados-masculino': ['RESULTADOS-MASCULINO', 'RESULTADOS MASCULINO', 'RESULTADOS MAS'],
                 // Tercera sesión: Resultado por equipo
-                'resultados-equipo': ['EQUIPO', 'EQUIPOS', 'TEAM', 'TEAMS', 'CLASIFICACION EQUIPOS', 'RESULTADOS EQUIPOS']
+                'resultados-equipo': ['EQUIPO', 'EQUIPOS', 'TEAM', 'TEAMS', 'CLASIFICACION EQUIPOS', 'RESULTADOS EQUIPOS'],
+                // Cuarta sesión: Notas por niveles
+                'nivel-1': ['NIVEL 1', 'NIVEL1', 'NIVEL_1', 'N1'],
+                'nivel-2': ['NIVEL 2', 'NIVEL2', 'NIVEL_2', 'N2'],
+                'nivel-3': ['NIVEL 3', 'NIVEL3', 'NIVEL_3', 'N3']
             }
         };
 
@@ -6874,6 +7080,282 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
                 observer.observe(statsSection);
             }
         });
+
+        // =============== NOTAS SEARCH FUNCTIONALITY ===============
+        
+        // Global variable to store nivel data cache
+        let nivelDataCache = {
+            'nivel-1': null,
+            'nivel-2': null,
+            'nivel-3': null
+        };
+
+        // Function to search student records by cedula
+        async function searchStudentByCedula(cedula) {
+            const statusDiv = document.getElementById('notasStatus');
+            const resultsDiv = document.getElementById('notasResults');
+            const searchBtn = document.getElementById('searchNotasBtn');
+            
+            // Show loading status
+            statusDiv.style.display = 'block';
+            statusDiv.innerHTML = '<p class="notas-status-text"><span class="notas-status-icon">⏳</span> Buscando registros en todos los niveles...</p>';
+            searchBtn.disabled = true;
+            resultsDiv.innerHTML = '';
+
+            try {
+                const records = [];
+                
+                // Search in all three levels
+                for (const nivel of ['nivel-1', 'nivel-2', 'nivel-3']) {
+                    try {
+                        console.log(`🔍 Buscando en ${nivel.toUpperCase()}...`);
+                        const data = await loadNivelData(nivel);
+                        
+                        if (data && data.length > 0) {
+                            // Search for cedula in column F (index 5)
+                            const matchingRecords = data.filter(row => {
+                                const cedulaValue = row[5]; // Column F (0-indexed)
+                                return cedulaValue && cedulaValue.toString().trim() === cedula.trim();
+                            });
+                            
+                            matchingRecords.forEach(record => {
+                                records.push({
+                                    nivel: nivel.replace('-', ' ').toUpperCase(),
+                                    data: record
+                                });
+                            });
+                        }
+                    } catch (error) {
+                        console.log(`⚠️ Error buscando en ${nivel}:`, error.message);
+                    }
+                }
+
+                // Display results
+                displaySearchResults(records, cedula);
+                
+            } catch (error) {
+                console.error('❌ Error en búsqueda:', error);
+                statusDiv.innerHTML = '<p class="notas-status-text" style="color: #d32f2f;"><span class="notas-status-icon">❌</span> Error al buscar registros. Inténtalo de nuevo.</p>';
+            } finally {
+                searchBtn.disabled = false;
+                setTimeout(() => {
+                    statusDiv.style.display = 'none';
+                }, 3000);
+            }
+        }
+
+        // Function to load data from a specific nivel sheet
+        async function loadNivelData(nivel) {
+            // Check cache first
+            if (nivelDataCache[nivel]) {
+                console.log(`📋 Usando datos de caché para ${nivel}`);
+                return nivelDataCache[nivel];
+            }
+
+            try {
+                // Try to find the sheet using the configuration
+                const sheetNames = CONFIG.COMPETITION_SHEETS[nivel];
+                if (!sheetNames) {
+                    throw new Error(`No se encontró configuración para ${nivel}`);
+                }
+
+                // Try each possible sheet name
+                for (const sheetName of sheetNames) {
+                    try {
+                        console.log(`🔍 Probando hoja: ${sheetName}`);
+                        const data = await loadSheet({name: sheetName, range: 'A:Z'});
+                        
+                        if (data && data.length > 0) {
+                            console.log(`✅ Datos cargados para ${nivel} (${sheetName}): ${data.length} filas`);
+                            nivelDataCache[nivel] = data;
+                            return data;
+                        }
+                    } catch (error) {
+                        console.log(`⚠️ Hoja ${sheetName} no encontrada, probando siguiente...`);
+                    }
+                }
+
+                throw new Error(`No se pudo cargar datos para ${nivel}`);
+                
+            } catch (error) {
+                console.error(`❌ Error cargando ${nivel}:`, error);
+                throw error;
+            }
+        }
+
+        // Function to display search results
+        function displaySearchResults(records, cedula) {
+            const resultsDiv = document.getElementById('notasResults');
+            
+            if (records.length === 0) {
+                resultsDiv.innerHTML = `
+                    <div class="no-records-message">
+                        <h3>📋 No se encontraron registros</h3>
+                        <p>No se encontraron registros para la cédula <strong>${cedula}</strong> en ningún nivel.</p>
+                        <p>Verifica que el número de cédula sea correcto y vuelve a intentar.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            let html = `<h3 style="text-align: center; color: var(--primary-color); margin-bottom: 20px;">
+                📋 Registros encontrados para cédula: <strong>${cedula}</strong>
+            </h3>`;
+
+            records.forEach((record, index) => {
+                const data = record.data;
+                const nivel = record.nivel;
+                
+                // Assuming common column structure: A=Nombre, B=Apellido, C=Categoria, D=Equipo, E=Otro, F=Cedula, etc.
+                const nombre = data[0] || '';
+                const apellido = data[1] || '';
+                const categoria = data[2] || '';
+                const equipo = data[3] || '';
+                const otherData = data.slice(4); // Rest of the data
+                
+                html += `
+                    <div class="student-record">
+                        <h3>📚 ${nivel} - ${nombre} ${apellido}</h3>
+                        <div class="record-details">
+                            <div class="record-item">
+                                <span class="record-label">Nombre Completo:</span>
+                                <span class="record-value">${nombre} ${apellido}</span>
+                            </div>
+                            <div class="record-item">
+                                <span class="record-label">Cédula:</span>
+                                <span class="record-value">${cedula}</span>
+                            </div>
+                            <div class="record-item">
+                                <span class="record-label">Categoría:</span>
+                                <span class="record-value">${categoria}</span>
+                            </div>
+                            <div class="record-item">
+                                <span class="record-label">Equipo:</span>
+                                <span class="record-value">${equipo}</span>
+                            </div>
+                            <div class="record-item">
+                                <span class="record-label">Nivel:</span>
+                                <span class="record-value">${nivel}</span>
+                            </div>
+                        </div>
+                        <button onclick="downloadStudentRecord('${nombre}', '${apellido}', '${cedula}', '${nivel}', ${JSON.stringify(data).replace(/'/g, "\\'").replace(/"/g, '&quot;')})" 
+                                class="download-record-btn">
+                            📄 Descargar Registro PDF
+                        </button>
+                    </div>
+                `;
+            });
+
+            resultsDiv.innerHTML = html;
+        }
+
+        // Function to download student record as PDF
+        async function downloadStudentRecord(nombre, apellido, cedula, nivel, data) {
+            try {
+                console.log('📄 Generando PDF para:', nombre, apellido, nivel);
+                
+                // Load jsPDF if not available
+                await loadjsPDF();
+                
+                const { jsPDF } = window.jspdf;
+                const pdf = new jsPDF();
+
+                // Add header
+                pdf.setFontSize(20);
+                pdf.setTextColor(11, 16, 57);
+                pdf.text('📚 Registro de Estudiante', 105, 30, { align: 'center' });
+                
+                pdf.setFontSize(16);
+                pdf.text(`${nivel}`, 105, 45, { align: 'center' });
+
+                // Add student info
+                let yPos = 70;
+                pdf.setFontSize(14);
+                pdf.setTextColor(0, 0, 0);
+                
+                pdf.text(`Nombre: ${nombre} ${apellido}`, 20, yPos);
+                yPos += 15;
+                pdf.text(`Cédula: ${cedula}`, 20, yPos);
+                yPos += 15;
+                pdf.text(`Nivel: ${nivel}`, 20, yPos);
+                yPos += 15;
+                
+                if (data[2]) {
+                    pdf.text(`Categoría: ${data[2]}`, 20, yPos);
+                    yPos += 15;
+                }
+                
+                if (data[3]) {
+                    pdf.text(`Equipo: ${data[3]}`, 20, yPos);
+                    yPos += 15;
+                }
+
+                // Add other data if available
+                yPos += 10;
+                pdf.setFontSize(12);
+                pdf.text('Información adicional:', 20, yPos);
+                yPos += 10;
+                
+                data.slice(6).forEach((item, index) => {
+                    if (item && item.toString().trim()) {
+                        pdf.text(`Dato ${index + 1}: ${item}`, 20, yPos);
+                        yPos += 10;
+                        if (yPos > 250) {
+                            pdf.addPage();
+                            yPos = 30;
+                        }
+                    }
+                });
+
+                // Add footer
+                pdf.setFontSize(10);
+                pdf.setTextColor(128, 128, 128);
+                pdf.text(`Generado el ${new Date().toLocaleDateString('es-ES')}`, 105, 280, { align: 'center' });
+                pdf.text('IV Championship Master Swimming - AquaTEN © 2025', 105, 290, { align: 'center' });
+
+                // Download
+                const fileName = `Registro_${nombre}_${apellido}_${nivel.replace(' ', '_')}.pdf`;
+                pdf.save(fileName);
+                
+                console.log('✅ PDF generado exitosamente');
+                
+            } catch (error) {
+                console.error('❌ Error generando PDF:', error);
+                alert('Error al generar el PDF. Inténtalo de nuevo.');
+            }
+        }
+
+        // Event listeners for notas search
+        document.addEventListener('DOMContentLoaded', function() {
+            const searchBtn = document.getElementById('searchNotasBtn');
+            const cedulaInput = document.getElementById('cedulaInput');
+            
+            if (searchBtn && cedulaInput) {
+                // Search button click
+                searchBtn.addEventListener('click', function() {
+                    const cedula = cedulaInput.value.trim();
+                    if (cedula) {
+                        searchStudentByCedula(cedula);
+                    } else {
+                        alert('Por favor ingresa un número de cédula');
+                    }
+                });
+
+                // Enter key in input
+                cedulaInput.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        searchBtn.click();
+                    }
+                });
+
+                // Input validation (only numbers)
+                cedulaInput.addEventListener('input', function(e) {
+                    this.value = this.value.replace(/[^0-9]/g, '');
+                });
+            }
+        });
+
+        // =============== END NOTAS SEARCH FUNCTIONALITY ===============
     </script>
 </body>
 </html>
