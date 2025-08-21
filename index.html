@@ -623,6 +623,80 @@
             font-weight: 600;
         }
 
+        /* Sponsor Thank You Section */
+        .sponsor-thank-you-section {
+            margin-top: 80px;
+            padding: 60px 0;
+            background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+            border-radius: 25px;
+            border: 2px solid #f0f6ff;
+        }
+
+        .thank-you-message {
+            text-align: center;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .thank-you-message h3 {
+            color: var(--primary-color);
+            font-size: 2.2em;
+            margin-bottom: 20px;
+            font-weight: 700;
+        }
+
+        .thank-you-message p {
+            color: #666;
+            font-size: 1.2em;
+            line-height: 1.6;
+            margin-bottom: 40px;
+        }
+
+        .share-thanks-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .share-thanks-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 25px;
+            font-size: 1.1em;
+            font-weight: 600;
+            text-decoration: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: white;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .share-thanks-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        .whatsapp-thanks {
+            background: linear-gradient(135deg, #25d366, #128c7e);
+        }
+
+        .whatsapp-thanks:hover {
+            background: linear-gradient(135deg, #128c7e, #25d366);
+        }
+
+        .instagram-thanks {
+            background: linear-gradient(135deg, #e4405f, #833ab4);
+        }
+
+        .instagram-thanks:hover {
+            background: linear-gradient(135deg, #833ab4, #e4405f);
+        }
+
         /* CTA Section */
         .cta-section {
             padding: 100px 20px;
@@ -873,6 +947,36 @@
 
             .sponsor-name {
                 font-size: 0.9em;
+            }
+
+            /* Responsive styles for sponsor thank you section */
+            .sponsor-thank-you-section {
+                margin-top: 50px;
+                padding: 40px 0;
+                border-radius: 15px;
+            }
+
+            .thank-you-message h3 {
+                font-size: 1.8em;
+                margin-bottom: 15px;
+            }
+
+            .thank-you-message p {
+                font-size: 1.1em;
+                margin-bottom: 30px;
+            }
+
+            .share-thanks-buttons {
+                flex-direction: column;
+                align-items: center;
+                gap: 15px;
+            }
+
+            .share-thanks-btn {
+                width: 100%;
+                max-width: 280px;
+                padding: 12px 20px;
+                font-size: 1em;
             }
 
             .tabs {
@@ -2855,14 +2959,41 @@
                     <div class="sponsor-logo"><img src="/img/michanchito.png" alt="Patrocinador 4"></div>
                     <div class="sponsor-name">Mi Chanchito</div>
                 </a>
-                 <a href="https://www.instagram.com/quiropediaemma/" target="_blank" class="sponsor-card">
+                <a href="https://www.instagram.com/quiropediaemma/" target="_blank" class="sponsor-card">
                     <div class="sponsor-logo"><img src="/img/emma-quiropedia.png" alt="Patrocinador 5"></div>
                     <div class="sponsor-name">Emma Quiropedia</div>
                 </a>
-                 <a href="https://www.instagram.com/bambinotiendadelujo__89/" target="_blank" class="sponsor-card">
+                <a href="https://www.instagram.com/bambinotiendadelujo__89/" target="_blank" class="sponsor-card">
                     <div class="sponsor-logo"><img src="/img/bambino.png" alt="Patrocinador 6"></div>
                     <div class="sponsor-name">Bambino - Tienda de Lujo</div>
                 </a>
+            </div>
+            
+            <!-- Thank You Message Section -->
+            <div class="sponsor-thank-you-section">
+                <div class="thank-you-message">
+                    <h3>¡Gracias por hacer posible este gran evento!</h3>
+                    <p>El IV Championship Master Swimming no sería posible sin el apoyo incondicional de nuestros patrocinadores. Su compromiso con el deporte y la comunidad de natación hace que cada brazada cuente y cada sueño se haga realidad. ¡Comparte tu agradecimiento!</p>
+                    
+                    <div class="share-thanks-buttons">
+                        <button class="share-thanks-btn whatsapp-thanks" onclick="shareThankYouMessage('whatsapp')">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M16.75 13.96C16.41 13.79 15.31 13.24 15.08 13.15C14.86 13.06 14.7 13.02 14.54 13.28C14.38 13.55 13.91 14.11 13.75 14.28C13.59 14.45 13.43 14.47 13.16 14.3C12.89 14.13 12.06 13.85 11.07 12.99C10.29 12.3 9.73 11.48 9.59 11.21C9.45 10.94 9.56 10.81 9.7 10.67C9.83 10.53 9.99 10.33 10.13 10.18C10.27 10.03 10.32 9.9 10.42 9.73C10.52 9.56 10.47 9.4 10.39 9.27C10.31 9.14 9.85 7.97 9.66 7.52C9.47 7.07 9.28 7.13 9.14 7.12H8.62C8.42 7.12 8.13 7.19 7.89 7.43C7.65 7.67 6.96 8.31 6.96 9.56C6.96 10.81 7.92 12.01 8.06 12.18C8.2 12.35 9.85 14.8 12.29 15.76C14.73 16.72 14.73 16.34 15.13 16.3C15.53 16.26 16.54 15.68 16.75 15.13C16.96 14.58 16.96 14.12 16.88 13.96H16.75Z"/>
+                                <path d="M12.04 21.82C17.56 21.82 22 17.38 22 11.86C22 6.34 17.56 1.9 12.04 1.9C6.52 1.9 2.08 6.34 2.08 11.86C2.08 14.13 2.84 16.24 4.12 17.9L2.56 21.34L6.17 19.95C7.73 21.13 9.79 21.82 12.04 21.82Z"/>
+                            </svg>
+                            Compartir por WhatsApp
+                        </button>
+                        
+                        <button class="share-thanks-btn instagram-thanks" onclick="shareThankYouMessage('instagram')">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                                <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
+                                <path d="M16 11.37C16 13.38 14.21 15 12 15C9.79 15 8 13.38 8 11.37C8 9.36 9.79 7.75 12 7.75C14.21 7.75 16 9.36 16 11.37Z"/>
+                                <path d="M17.5 6.5H17.51"/>
+                            </svg>
+                            Compartir en Instagram
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>
     </section>
@@ -6924,6 +7055,83 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
             if (statsSection) {
                 observer.observe(statsSection);
             }
+        });
+
+        // Función para compartir mensaje de agradecimiento a patrocinadores
+        function shareThankYouMessage(platform) {
+            const thankYouMessage = `🙏 ¡Gracias infinitas a nuestros increíbles patrocinadores! 
+
+Sin su apoyo, el IV Championship Master Swimming 2025 no sería posible. Su compromiso con el deporte acuático y la comunidad de natación hace que cada brazada cuente y cada sueño se haga realidad. 🏊‍♂️🏊‍♀️
+
+🤝 Nuestros aliados:
+@techfucol
+@quiropediaemma  
+@bambinotiendadelujo__89
+
+Organizadores:
+@aquaten.cd
+@elyanasnatacion
+
+#Natación #AquaTEN #Championship2025 #Swimming #MasterSwimming #Agradecimiento #Patrocinadores #DeporteAcuático #ComunidadDeportiva
+
+¡Gracias por creer en el deporte colombiano! 💙🏆`;
+
+            if (platform === 'whatsapp') {
+                const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(thankYouMessage)}`;
+                window.open(whatsappUrl, '_blank');
+            } else if (platform === 'instagram') {
+                // Copiar al portapapeles para Instagram
+                if (navigator.clipboard && navigator.clipboard.writeText) {
+                    navigator.clipboard.writeText(thankYouMessage).then(() => {
+                        showInstagramThankYouInstructions();
+                    }).catch(() => {
+                        fallbackCopyToClipboard(thankYouMessage);
+                        showInstagramThankYouInstructions();
+                    });
+                } else {
+                    fallbackCopyToClipboard(thankYouMessage);
+                    showInstagramThankYouInstructions();
+                }
+            }
+        }
+
+        // Mostrar instrucciones específicas para compartir mensaje de agradecimiento en Instagram
+        function showInstagramThankYouInstructions() {
+            const instructionModal = document.createElement('div');
+            instructionModal.className = 'share-modal';
+            instructionModal.innerHTML = `
+                <div class="share-modal-content share-modal-content-center">
+                    <div class="share-modal-header">
+                        <h3 class="instagram-title">📱 Instagram - Mensaje de Agradecimiento</h3>
+                        <button class="close-modal" onclick="closeInstagramThankYouInstructions()">&times;</button>
+                    </div>
+                    <div class="share-content-padding">
+                        <div class="share-icon-large">📋✅</div>
+                        <h4 class="share-icon-title">¡Mensaje copiado exitosamente!</h4>
+                        <div class="share-instructions-text">
+                            <p><strong>Paso 1:</strong> Abre Instagram en tu dispositivo</p>
+                            <p><strong>Paso 2:</strong> Ve a tu perfil o stories</p>
+                            <p><strong>Paso 3:</strong> Pega el mensaje copiado</p>
+                            <p><strong>Paso 4:</strong> ¡Comparte tu agradecimiento!</p>
+                        </div>
+                        <div class="share-modal-footer">
+                            <button class="modal-btn modal-btn-primary" onclick="closeInstagramThankYouInstructions()">¡Entendido!</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(instructionModal);
+            instructionModal.style.display = 'flex';
+        }
+
+        // Cerrar modal de instrucciones de Instagram
+        function closeInstagramThankYouInstructions() {
+            const modal = document.querySelector('.share-modal');
+            if (modal) {
+                modal.remove();
+            }
+        }
         });
     </script>
 </body>
