@@ -571,12 +571,9 @@
 
         .sponsors-grid {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
             gap: 40px;
             margin-top: 50px;
-            max-width: 1200px;
-            margin-left: auto;
-            margin-right: auto;
         }
 
         .sponsor-card {
@@ -857,22 +854,8 @@
             }
 
             .sponsors-grid {
-                grid-template-columns: repeat(2, 1fr);
+                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
                 gap: 25px;
-                margin-top: 30px;
-            }
-
-            .sponsor-card {
-                padding: 25px;
-            }
-
-            .sponsor-logo {
-                height: 60px;
-                margin-bottom: 15px;
-            }
-
-            .sponsor-name {
-                font-size: 0.9em;
             }
 
             .tabs {
@@ -982,11 +965,6 @@
 
         /* Extra small devices */
         @media (max-width: 480px) {
-            .sponsors-grid {
-                grid-template-columns: 1fr;
-                gap: 20px;
-            }
-
             .contact-grid {
                 grid-template-columns: 1fr 1fr;
                 gap: 10px;
@@ -2839,31 +2817,29 @@
         <div class="container">
             <h2 class="section-title">Nuestros Patrocinadores</h2>
             <div class="sponsors-grid">
-                <!-- Primera fila -->
                 <a href="https://www.instagram.com/techfucol/" target="_blank" class="sponsor-card">
-                    <div class="sponsor-logo"><img src="/img/techfucol.png" alt="TechFuCol"></div>
+                    <div class="sponsor-logo"><img src="/img/techfucol.png" alt="Patrocinador 1"></div>
                     <div class="sponsor-name">TechFuCol</div>
                 </a>
                 <a href="https://konkretes.com/" target="_blank" class="sponsor-card">
-                    <div class="sponsor-logo"><img src="/img/konkretes.png" alt="Konkretes"></div>
+                    <div class="sponsor-logo"><img src="/img/konkretes.png" alt="Patrocinador 2"></div>
                     <div class="sponsor-name">Konkretes</div>
                 </a>
                 <a href="https://hypersatelliteapp.com/" target="_blank" class="sponsor-card">
-                    <div class="sponsor-logo"><img src="/img/dr-innova.png" alt="DR-Innova"></div>
+                    <div class="sponsor-logo"><img src="/img/dr-innova.png" alt="Patrocinador 3"></div>
                     <div class="sponsor-name">DR-Innova</div>
                 </a>
-                <!-- Segunda fila -->
-                <a href="#" target="_blank" class="sponsor-card">
-                    <div class="sponsor-logo"><img src="/img/michanchito.png" alt="Mi Chanchito"></div>
+                    <a href="#" target="_blank" class="sponsor-card">
+                    <div class="sponsor-logo"><img src="/img/michanchito.png" alt="Patrocinador 4"></div>
                     <div class="sponsor-name">Mi Chanchito</div>
                 </a>
-                <a href="#" target="_blank" class="sponsor-card">
-                    <div class="sponsor-logo"><img src="/img/emma-quiropedia.png" alt="Emma Quiropedia"></div>
+                 <a href="https://www.instagram.com/quiropediaemma/" target="_blank" class="sponsor-card">
+                    <div class="sponsor-logo"><img src="/img/emma-quiropedia.png" alt="Patrocinador 5"></div>
                     <div class="sponsor-name">Emma Quiropedia</div>
                 </a>
-                <a href="#" target="_blank" class="sponsor-card">
-                    <div class="sponsor-logo"><img src="/img/bambino.png" alt="Bambino"></div>
-                    <div class="sponsor-name">Bambino</div>
+                 <a href="https://www.instagram.com/bambinotiendadelujo__89/" target="_blank" class="sponsor-card">
+                    <div class="sponsor-logo"><img src="/img/bambino.png" alt="Patrocinador 6"></div>
+                    <div class="sponsor-name">Bambino - Tienda de Lujo</div>
                 </a>
             </div>
         </div>
