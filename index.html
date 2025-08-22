@@ -4883,6 +4883,26 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
                 // Obtener datos frescos directamente del Google Sheet
                 const allSheetData = await getAllSheetData();
                 console.log('📊 Datos obtenidos para PDF:', Object.keys(allSheetData));
+                console.log('📊 DEBUG PDF - Conteo de datos:', {
+                    eventos: allSheetData.eventos?.length || 0,
+                    masculino: allSheetData.masculino?.length || 0,
+                    femenino: allSheetData.femenino?.length || 0,
+                    equipos: allSheetData.equipos?.length || 0
+                });
+                
+                // Validación adicional: Si falta alguna sección crítica, mostrar advertencia
+                if (!allSheetData.femenino || allSheetData.femenino.length === 0) {
+                    console.warn('⚠️ ADVERTENCIA PDF: No hay datos de clasificación femenina');
+                }
+                if (!allSheetData.equipos || allSheetData.equipos.length === 0) {
+                    console.warn('⚠️ ADVERTENCIA PDF: No hay datos de clasificación de equipos');
+                }
+                
+                // Asegurar que las estructuras existan aunque estén vacías
+                allSheetData.eventos = allSheetData.eventos || [];
+                allSheetData.masculino = allSheetData.masculino || [];
+                allSheetData.femenino = allSheetData.femenino || [];
+                allSheetData.equipos = allSheetData.equipos || [];
                 
                 statusDiv.innerHTML = '<p class="status-loading-text"><span class="status-loading-icon">⏳</span> Generando PDF...</p>';
                 
@@ -5264,13 +5284,39 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
             } catch (error) {
                 console.error('❌ Error cargando datos del Google Sheet:', error);
                 
-                // Como fallback, intentar cargar la primera hoja disponible
-                console.log('🔄 Intentando fallback con la primera hoja...');
+                // Como fallback, intentar cargar datos desde las tablas HTML existentes
+                console.log('🔄 Intentando fallback desde tablas HTML...');
+                try {
+                    const htmlData = getDataFromHTMLTables();
+                    if (htmlData && Object.keys(htmlData).length > 0) {
+                        console.log('✅ Fallback exitoso desde HTML');
+                        
+                        // Mapear correctamente los datos HTML a la estructura esperada
+                        const estructuradoHTML = {
+                            eventos: [],
+                            masculino: htmlData['RESULTADOS-MASCULINO'] || htmlData['RESULTADOS MASCULINO'] || htmlData['MASCULINO'] || [],
+                            femenino: htmlData['RESULTADOS-FEMENINO'] || htmlData['RESULTADOS FEMENINO'] || htmlData['FEMENINO'] || [],
+                            equipos: htmlData['EQUIPOS'] || htmlData['EQUIPO'] || htmlData['TEAMS'] || []
+                        };
+                        
+                        console.log('📊 Fallback HTML - Datos estructurados:', {
+                            masculino: estructuradoHTML.masculino.length,
+                            femenino: estructuradoHTML.femenino.length,
+                            equipos: estructuradoHTML.equipos.length
+                        });
+                        
+                        return estructuradoHTML;
+                    }
+                } catch (htmlError) {
+                    console.warn('⚠️ Fallback HTML falló:', htmlError);
+                }
+                
+                // Si el HTML fallback falla, intentar la primera hoja como último recurso
+                console.log('🔄 Último intento: cargando primera hoja...');
                 try {
                     const fallbackData = await loadSheetByGid(0);
                     if (fallbackData && fallbackData.length > 0) {
                         console.log('✅ Fallback exitoso:', fallbackData.length, 'filas');
-                        // Organizar todos los datos en eventos como último recurso
                         return {
                             eventos: [{ name: 'Resultados Generales', data: fallbackData }],
                             masculino: [],
@@ -6235,6 +6281,7 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
             }
             
             // Resultados Femeninos
+            console.log('📊 DEBUG PDF - Datos femeninos disponibles:', allSheetData.femenino.length);
             if (allSheetData.femenino.length > 0) {
                 pdf.setFont("helvetica", "bold");
                 pdf.setFontSize(12);
@@ -6242,6 +6289,7 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
                 pdf.text("CLASIFICACIÓN GENERAL FEMENINA", 20, yPosition);
                 yPosition += 12;
                 
+                console.log('📊 PDF: Procesando datos femeninos, primera fila:', allSheetData.femenino[0]);
                 const tableData = allSheetData.femenino.map((row, index) => {
                     // Mapear columnas A-I: A=Pos, B=Atleta, C=Equipo, D=Edad, E=Categoría, F=Pts Totales, G=Pts 200m, H=Pts 50m, I=Pts 100m
                     const [pos, athlete, team, age, category, totalPoints, points200m, points50m, points100m] = row;
@@ -6260,6 +6308,13 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
                 });
                 
                 yPosition = drawProfessionalTable(pdf, tableData, yPosition, 'gender');
+            } else {
+                console.warn('⚠️ PDF: No hay datos femeninos para mostrar');
+                pdf.setFont("helvetica", "normal");
+                pdf.setFontSize(10);
+                pdf.setTextColor(128, 128, 128);
+                pdf.text("No se encontraron datos de clasificación femenina", 20, yPosition);
+                yPosition += 20;
             }
             
             return yPosition;
@@ -6276,8 +6331,10 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
             pdf.text("CLASIFICACIÓN GENERAL POR EQUIPOS", 20, yPosition);
             yPosition += 20;
             
+            console.log('📊 DEBUG PDF - Datos de equipos disponibles:', allSheetData.equipos.length);
             if (allSheetData.equipos.length > 0) {
                 // Crear tabla con todos los equipos - Columnas A-E
+                console.log('📊 PDF: Procesando datos de equipos, primera fila:', allSheetData.equipos[0]);
                 const tableData = allSheetData.equipos.map((row, index) => {
                     // Mapear columnas A-E: A=Pos, B=Equipo, C=Pts Totales, D=Pts Femeninos, E=Pts Masculinos
                     const [pos, team, totalPoints, femalePoints, malePoints] = row;
@@ -6292,6 +6349,7 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
                 
                 yPosition = drawProfessionalTable(pdf, tableData, yPosition, 'team');
             } else {
+                console.warn('⚠️ PDF: No hay datos de equipos para mostrar');
                 pdf.setFont("helvetica", "normal");
                 pdf.setFontSize(10);
                 pdf.setTextColor(128, 128, 128);
