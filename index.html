@@ -4926,21 +4926,23 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
                 // RESULTADOS POR PRUEBAS
                 yPosition = await addEventResultsBoxesToPDF(pdf, yPosition, allSheetData);
                 
-                // Verificar si necesitamos nueva página para resultados por género
-                if (yPosition > 180) {
-                    pdf.addPage();
-                    addCompetitionLogo(pdf);
-                    yPosition = 30;
-                }
-                yPosition = await addGenderResultsBoxesToPDF(pdf, yPosition, allSheetData);
+                // CLASIFICACIÓN GENERAL MASCULINA (nueva página)
+                pdf.addPage();
+                addCompetitionLogo(pdf);
+                yPosition = 30;
+                yPosition = await addMasculinoResultsToPDF(pdf, yPosition, allSheetData);
                 
-                // Verificar si necesitamos nueva página para resultados por equipos
-                if (yPosition > 180) {
-                    pdf.addPage();
-                    addCompetitionLogo(pdf);
-                    yPosition = 30;
-                }
-                await addTeamResultsBoxesToPDF(pdf, yPosition, allSheetData);
+                // CLASIFICACIÓN GENERAL FEMENINA (nueva página)
+                pdf.addPage();
+                addCompetitionLogo(pdf);
+                yPosition = 30;
+                yPosition = await addFemeninoResultsToPDF(pdf, yPosition, allSheetData);
+                
+                // CLASIFICACIÓN POR EQUIPOS (nueva página)
+                pdf.addPage();
+                addCompetitionLogo(pdf);
+                yPosition = 30;
+                await addEquiposResultsToPDF(pdf, yPosition, allSheetData);
                 
                 // Guardar el PDF
                 const fileName = `Resultados_IV_Championship_${new Date().toISOString().split('T')[0]}.pdf`;
@@ -6259,7 +6261,8 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
             return currentY + (currentPageRows * rowHeight) + 10;
         }
 
-        // Nueva función para agregar resultados por género con formato profesional
+        // FUNCIÓN ANTIGUA - DEPRECADA - Usar addMasculinoResultsToPDF y addFemeninoResultsToPDF por separado
+        /*
         async function addGenderResultsBoxesToPDF(pdf, startY, allSheetData) {
             let yPosition = startY;
             
@@ -6359,8 +6362,10 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
             
             return yPosition;
         }
+        */
 
-        // Nueva función para agregar resultados por equipos con formato profesional
+        // FUNCIÓN ANTIGUA - DEPRECADA - Usar addEquiposResultsToPDF en su lugar
+        /*
         async function addTeamResultsBoxesToPDF(pdf, startY, allSheetData) {
             let yPosition = startY;
             
@@ -6386,6 +6391,158 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
                     console.error('⚠️ ERROR: Los datos de equipos parecen ser datos de atletas (muchas columnas)');
                     console.log('📊 Datos sospechosos:', allSheetData.equipos.slice(0, 3));
                 }
+                const tableData = allSheetData.equipos.map((row, index) => {
+                    // Mapear columnas A-E: A=Pos, B=Equipo, C=Pts Totales, D=Pts Femeninos, E=Pts Masculinos
+                    const [pos, team, totalPoints, femalePoints, malePoints] = row;
+                    return {
+                        position: pos || (index + 1).toString(),
+                        team: team || '',
+                        totalPoints: totalPoints || '',
+                        femalePoints: femalePoints || '',
+                        malePoints: malePoints || ''
+                    };
+                });
+                
+                yPosition = drawProfessionalTable(pdf, tableData, yPosition, 'team');
+            } else {
+                console.warn('⚠️ PDF: No hay datos de equipos para mostrar');
+                pdf.setFont("helvetica", "normal");
+                pdf.setFontSize(10);
+                pdf.setTextColor(128, 128, 128);
+                pdf.text("No se encontraron datos de equipos", 20, yPosition);
+                yPosition += 20;
+            }
+            
+            return yPosition;
+        }
+        */
+
+        // Función independiente para agregar resultados masculinos al PDF
+        async function addMasculinoResultsToPDF(pdf, startY, allSheetData) {
+            let yPosition = startY;
+            
+            // Título de sección
+            pdf.setFont("helvetica", "bold");
+            pdf.setFontSize(16);
+            pdf.setTextColor(11, 16, 57);
+            pdf.text("CLASIFICACIÓN GENERAL MASCULINA", 20, yPosition);
+            yPosition += 20;
+            
+            console.log('📊 DEBUG PDF - Datos masculinos disponibles:', allSheetData.masculino.length);
+            if (allSheetData.masculino.length > 0) {
+                console.log('📊 PDF: Procesando datos masculinos, primera fila:', allSheetData.masculino[0]);
+                const tableData = allSheetData.masculino.map((row, index) => {
+                    // Mapear columnas A-I: A=Pos, B=Atleta, C=Equipo, D=Edad, E=Categoría, F=Pts Totales, G=Pts 200m, H=Pts 50m, I=Pts 100m
+                    const [pos, athlete, team, age, category, totalPoints, points200m, points50m, points100m] = row;
+                    return {
+                        position: pos || (index + 1).toString(),
+                        athlete: athlete || '',
+                        team: team || '',
+                        age: age || '',
+                        category: category || '',
+                        totalPoints: totalPoints || '',
+                        points200m: points200m || '',
+                        points50m: points50m || '',
+                        points100m: points100m || '',
+                        genderType: 'masculino'
+                    };
+                });
+                
+                yPosition = drawProfessionalTable(pdf, tableData, yPosition, 'gender');
+            } else {
+                console.warn('⚠️ PDF: No hay datos masculinos para mostrar');
+                pdf.setFont("helvetica", "normal");
+                pdf.setFontSize(10);
+                pdf.setTextColor(128, 128, 128);
+                pdf.text("No se encontraron datos de clasificación masculina", 20, yPosition);
+                yPosition += 20;
+            }
+            
+            return yPosition;
+        }
+
+        // Función independiente para agregar resultados femeninos al PDF
+        async function addFemeninoResultsToPDF(pdf, startY, allSheetData) {
+            let yPosition = startY;
+            
+            // Título de sección
+            pdf.setFont("helvetica", "bold");
+            pdf.setFontSize(16);
+            pdf.setTextColor(11, 16, 57);
+            pdf.text("CLASIFICACIÓN GENERAL FEMENINA", 20, yPosition);
+            yPosition += 20;
+            
+            console.log('📊 DEBUG PDF - Datos femeninos disponibles:', allSheetData.femenino.length);
+            if (allSheetData.femenino.length > 0) {
+                console.log('📊 PDF: Procesando datos femeninos, primera fila:', allSheetData.femenino[0]);
+                console.log('📊 PDF: Verificando tipo de datos femeninos:', {
+                    totalRows: allSheetData.femenino.length,
+                    firstAthlete: allSheetData.femenino[0] ? allSheetData.femenino[0][1] : 'N/A',
+                    columnCount: allSheetData.femenino[0] ? allSheetData.femenino[0].length : 0
+                });
+                
+                // VALIDACIÓN: Verificar si los datos son realmente de atletas femeninos
+                if (allSheetData.femenino[0] && allSheetData.femenino[0].length <= 5) {
+                    console.error('⚠️ ERROR: Los datos femeninos parecen ser datos de equipos (pocas columnas)');
+                    console.log('📊 Datos sospechosos:', allSheetData.femenino.slice(0, 3));
+                }
+                
+                const tableData = allSheetData.femenino.map((row, index) => {
+                    // Mapear columnas A-I: A=Pos, B=Atleta, C=Equipo, D=Edad, E=Categoría, F=Pts Totales, G=Pts 200m, H=Pts 50m, I=Pts 100m
+                    const [pos, athlete, team, age, category, totalPoints, points200m, points50m, points100m] = row;
+                    return {
+                        position: pos || (index + 1).toString(),
+                        athlete: athlete || '',
+                        team: team || '',
+                        age: age || '',
+                        category: category || '',
+                        totalPoints: totalPoints || '',
+                        points200m: points200m || '',
+                        points50m: points50m || '',
+                        points100m: points100m || '',
+                        genderType: 'femenino'
+                    };
+                });
+                
+                yPosition = drawProfessionalTable(pdf, tableData, yPosition, 'gender');
+            } else {
+                console.warn('⚠️ PDF: No hay datos femeninos para mostrar');
+                pdf.setFont("helvetica", "normal");
+                pdf.setFontSize(10);
+                pdf.setTextColor(128, 128, 128);
+                pdf.text("No se encontraron datos de clasificación femenina", 20, yPosition);
+                yPosition += 20;
+            }
+            
+            return yPosition;
+        }
+
+        // Función independiente para agregar resultados de equipos al PDF
+        async function addEquiposResultsToPDF(pdf, startY, allSheetData) {
+            let yPosition = startY;
+            
+            // Título de sección
+            pdf.setFont("helvetica", "bold");
+            pdf.setFontSize(16);
+            pdf.setTextColor(11, 16, 57);
+            pdf.text("CLASIFICACIÓN GENERAL POR EQUIPOS", 20, yPosition);
+            yPosition += 20;
+            
+            console.log('📊 DEBUG PDF - Datos de equipos disponibles:', allSheetData.equipos.length);
+            if (allSheetData.equipos.length > 0) {
+                console.log('📊 PDF: Procesando datos de equipos, primera fila:', allSheetData.equipos[0]);
+                console.log('📊 PDF: Verificando tipo de datos de equipos:', {
+                    totalRows: allSheetData.equipos.length,
+                    firstTeam: allSheetData.equipos[0] ? allSheetData.equipos[0][1] : 'N/A',
+                    columnCount: allSheetData.equipos[0] ? allSheetData.equipos[0].length : 0
+                });
+                
+                // VALIDACIÓN: Verificar si los datos son realmente de equipos
+                if (allSheetData.equipos[0] && allSheetData.equipos[0].length > 7) {
+                    console.error('⚠️ ERROR: Los datos de equipos parecen ser datos de atletas (muchas columnas)');
+                    console.log('📊 Datos sospechosos:', allSheetData.equipos.slice(0, 3));
+                }
+                
                 const tableData = allSheetData.equipos.map((row, index) => {
                     // Mapear columnas A-E: A=Pos, B=Equipo, C=Pts Totales, D=Pts Femeninos, E=Pts Masculinos
                     const [pos, team, totalPoints, femalePoints, malePoints] = row;
