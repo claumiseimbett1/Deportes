@@ -3948,6 +3948,15 @@
             const tbody = table.querySelector('tbody');
             if (!tbody) return;
             
+            // DEBUG: Verificar qué datos se están pasando a la tabla femenina
+            if (table.id === 'resultsTableFemeninoGeneral') {
+                console.log('🔍 DEBUG: updateGenderTableContent para tabla femenina');
+                console.log('📊 Datos recibidos:', data ? data.length + ' filas' : 'null/undefined');
+                console.log('📊 Primera fila (headers):', data ? data[0] : 'n/a');
+                console.log('📊 Segunda fila (primer dato):', data && data[1] ? data[1] : 'n/a');
+                console.log('📊 genderLabel:', genderLabel);
+            }
+            
             let htmlContent = '';
             let currentCategory = '';
             
@@ -6659,14 +6668,16 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
                 const tablaFemeninaHTML = document.getElementById('resultsTableFemeninoGeneral');
                 
                 if (tablaFemeninaHTML) {
-                    const filas = tablaFemeninaHTML.querySelectorAll('tbody tr:not(.loading-row)');
+                    const filas = tablaFemeninaHTML.querySelectorAll('tbody tr:not(.loading-row):not(.category-header)');
                     console.log('🔍 Filas encontradas en tabla HTML femenina:', filas.length);
                     console.log('🔍 Contenido de la primera fila:', filas[0] ? filas[0].innerHTML : 'No hay filas');
+                    console.log('🔍 Contenido del tbody completo:', tablaFemeninaHTML.querySelector('tbody') ? tablaFemeninaHTML.querySelector('tbody').innerHTML.substring(0, 500) + '...' : 'No tbody');
                     
                     if (filas.length > 0) {
                         const datosDeHTML = [];
                         filas.forEach((fila, index) => {
                             const celdas = fila.querySelectorAll('td');
+                            console.log(`🔍 Fila ${index}: ${celdas.length} celdas`, celdas.length > 0 ? Array.from(celdas).map(c => c.textContent.trim().substring(0, 20)) : 'sin celdas');
                             if (celdas.length >= 6) {
                                 datosDeHTML.push([
                                     celdas[0].textContent.trim() || (index + 1).toString(), // Pos
