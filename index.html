@@ -5077,6 +5077,35 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
             return sheetTitle;
         }
 
+        // Función auxiliar para intentar cargar datos por nombre de hoja como fallback
+        async function tryLoadByName(sheetInfo, allData, dataKey, possibleNames) {
+            for (const sheet of sheetInfo) {
+                const titleUpper = sheet.title.toUpperCase();
+                const matchFound = possibleNames.some(name => titleUpper.includes(name.toUpperCase()));
+                
+                if (matchFound) {
+                    console.log(`🔄 Fallback: Intentando cargar "${dataKey}" desde hoja "${sheet.title}"`);
+                    try {
+                        const data = await loadSheetByGid(sheet.gid);
+                        if (data && data.length > 1) {
+                            const dataRows = data.slice(1).filter(row => 
+                                row && row.length > 0 && row.some(cell => cell && cell.trim() !== '')
+                            );
+                            if (dataRows.length > 0) {
+                                allData[dataKey] = dataRows;
+                                console.log(`✅ Fallback exitoso: ${dataKey} cargado con ${dataRows.length} filas desde "${sheet.title}"`);
+                                return true;
+                            }
+                        }
+                    } catch (error) {
+                        console.warn(`⚠️ Error en fallback para ${dataKey} desde "${sheet.title}":`, error);
+                    }
+                }
+            }
+            console.warn(`❌ Fallback fallido: No se pudo cargar ${dataKey} por nombre`);
+            return false;
+        }
+
         // Función para cargar todas las hojas por posición
         async function getAllSheetData() {
             try {
@@ -5146,9 +5175,10 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
                     }
                 }
                 
+                // Cargar hoja femenina (índice 9 si hay suficientes hojas)
                 if (sheetInfo.length > 9) {
                     const femaleSheet = sheetInfo[9];
-                    console.log(`📄 Cargando femenino: ${femaleSheet.title}`);
+                    console.log(`📄 Cargando femenino desde índice 9: ${femaleSheet.title}`);
                     try {
                         const femaleData = await loadSheetByGid(femaleSheet.gid);
                         if (femaleData && femaleData.length > 1) {
@@ -5162,13 +5192,33 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
                     } catch (error) {
                         console.warn(`⚠️ Error cargando femenino:`, error);
                     }
+                } else {
+                    console.warn(`⚠️ No hay suficientes hojas para clasificación femenina. Total hojas: ${sheetInfo.length}`);
                 }
                 
-                // Cargar última hoja (equipos)
-                console.log('🏆 Cargando hoja de equipos (última)...');
-                if (sheetInfo.length > 10) {
-                    const teamSheet = sheetInfo[sheetInfo.length - 1];
-                    console.log(`📄 Cargando equipos: ${teamSheet.title}`);
+                // Cargar hoja de equipos (índice 10 o la última disponible)
+                console.log('🏆 Cargando hoja de equipos...');
+                let teamSheetIndex = -1;
+                
+                // Determinar índice correcto para equipos
+                if (sheetInfo.length >= 11) {
+                    // Si hay 11 o más hojas, equipos está en índice 10
+                    teamSheetIndex = 10;
+                    console.log(`📊 Configuración estándar: equipos en índice 10`);
+                } else if (sheetInfo.length === 10) {
+                    // Si hay exactamente 10 hojas, equipos sería el último pero hay conflicto con femenino
+                    // En este caso, equipos no está disponible como hoja separada
+                    console.warn(`⚠️ Configuración de 10 hojas detectada - posible conflicto entre femenino y equipos`);
+                    console.warn(`⚠️ Equipos podría estar en la misma hoja que femenino o no disponible`);
+                } else {
+                    // Menos de 10 hojas - equipos podría estar en la última disponible
+                    teamSheetIndex = sheetInfo.length - 1;
+                    console.log(`📊 Configuración reducida: equipos en última hoja disponible (índice ${teamSheetIndex})`);
+                }
+                
+                if (teamSheetIndex >= 0 && teamSheetIndex < sheetInfo.length) {
+                    const teamSheet = sheetInfo[teamSheetIndex];
+                    console.log(`📄 Intentando cargar equipos desde índice ${teamSheetIndex}: ${teamSheet.title}`);
                     try {
                         const teamData = await loadSheetByGid(teamSheet.gid);
                         if (teamData && teamData.length > 1) {
@@ -5176,19 +5226,37 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
                             const dataRows = teamData.slice(1).filter(row => 
                                 row && row.length > 0 && row.some(cell => cell && cell.trim() !== '')
                             );
-                            console.log(`✅ Equipos: ${dataRows.length} filas de datos`);
+                            console.log(`✅ Equipos: ${dataRows.length} filas de datos desde "${teamSheet.title}"`);
                             allData.equipos = dataRows;
                         }
                     } catch (error) {
-                        console.warn(`⚠️ Error cargando equipos:`, error);
+                        console.warn(`⚠️ Error cargando equipos desde índice ${teamSheetIndex}:`, error);
                     }
+                } else {
+                    console.warn(`⚠️ No se pudo determinar la hoja de equipos. Total hojas disponibles: ${sheetInfo.length}`);
                 }
                 
-                console.log('📊 Resumen final:', {
+                console.log('📊 Resumen final de carga de datos:', {
                     eventos: allData.eventos.length,
                     masculino: allData.masculino.length,
                     femenino: allData.femenino.length,
                     equipos: allData.equipos.length
+                });
+                
+                // Debugging adicional para las últimas hojas
+                if (allData.femenino.length === 0) {
+                    console.warn('⚠️ PROBLEMA: No se cargaron datos femeninos - intentando fallback por nombre');
+                    await tryLoadByName(sheetInfo, allData, 'femenino', ['FEMENINO', 'RESULTADOS-FEMENINO', 'RESULTADOS FEMENINO']);
+                }
+                if (allData.equipos.length === 0) {
+                    console.warn('⚠️ PROBLEMA: No se cargaron datos de equipos - intentando fallback por nombre');
+                    await tryLoadByName(sheetInfo, allData, 'equipos', ['EQUIPOS', 'EQUIPO', 'CLASIFICACION EQUIPOS', 'TEAM']);
+                }
+                
+                // Log de información de todas las hojas para debugging
+                console.log('📋 Información completa de hojas disponibles:');
+                sheetInfo.forEach((sheet, index) => {
+                    console.log(`  ${index}: "${sheet.title}" (GID: ${sheet.gid})`);
                 });
                 
                 return allData;
