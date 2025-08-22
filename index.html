@@ -6513,11 +6513,11 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
             return yPosition;
         }
 
-        // Función independiente para agregar resultados femeninos al PDF
+        // Función independiente para agregar resultados femeninos al PDF (SIMPLIFICADA COMO MASCULINO)
         async function addFemeninoResultsToPDF(pdf, startY, allSheetData) {
             let yPosition = startY;
             
-            // DEBUG: Estado inicial de los datos
+            // Título de sección
             console.log('🚀 INICIO addFemeninoResultsToPDF - Estado de datos:');
             console.log('📊 allSheetData:', allSheetData ? 'existe' : 'null/undefined');
             console.log('📊 allSheetData.femenino:', allSheetData?.femenino ? allSheetData.femenino.length + ' registros' : 'vacío/undefined');
