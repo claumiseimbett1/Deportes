@@ -4926,16 +4926,20 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
                 // RESULTADOS POR PRUEBAS
                 yPosition = await addEventResultsBoxesToPDF(pdf, yPosition, allSheetData);
                 
-                // Nueva página para resultados por género
-                pdf.addPage();
-                addCompetitionLogo(pdf);
-                yPosition = 30;
+                // Verificar si necesitamos nueva página para resultados por género
+                if (yPosition > 180) {
+                    pdf.addPage();
+                    addCompetitionLogo(pdf);
+                    yPosition = 30;
+                }
                 yPosition = await addGenderResultsBoxesToPDF(pdf, yPosition, allSheetData);
                 
-                // Nueva página para resultados por equipos
-                pdf.addPage();
-                addCompetitionLogo(pdf);
-                yPosition = 30;
+                // Verificar si necesitamos nueva página para resultados por equipos
+                if (yPosition > 180) {
+                    pdf.addPage();
+                    addCompetitionLogo(pdf);
+                    yPosition = 30;
+                }
                 await addTeamResultsBoxesToPDF(pdf, yPosition, allSheetData);
                 
                 // Guardar el PDF
@@ -5226,10 +5230,19 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
                     teamSheetIndex = 10;
                     console.log(`📊 Configuración estándar: equipos en índice 10`);
                 } else if (sheetInfo.length === 10) {
-                    // Si hay exactamente 10 hojas, equipos sería el último pero hay conflicto con femenino
-                    // En este caso, equipos no está disponible como hoja separada
-                    console.warn(`⚠️ Configuración de 10 hojas detectada - posible conflicto entre femenino y equipos`);
-                    console.warn(`⚠️ Equipos podría estar en la misma hoja que femenino o no disponible`);
+                    // Si hay exactamente 10 hojas, necesitamos determinar cuál es cuál
+                    console.warn(`⚠️ Configuración de 10 hojas detectada - determinando distribución`);
+                    
+                    // Verificar si ya cargamos datos femeninos
+                    if (allData.femenino.length > 0) {
+                        // Si ya tenemos datos femeninos, no usar el índice 9 para equipos
+                        console.log(`📊 Femenino ya cargado, equipos no disponible como hoja separada`);
+                        teamSheetIndex = -1;
+                    } else {
+                        // Si no hay datos femeninos, usar la hoja 9 para equipos
+                        teamSheetIndex = 9;
+                        console.log(`📊 Configuración especial: usando hoja 9 para equipos (sin datos femeninos)`);
+                    }
                 } else {
                     // Menos de 10 hojas - equipos podría estar en la última disponible
                     teamSheetIndex = sheetInfo.length - 1;
@@ -6147,7 +6160,20 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
                         pdf.setFont("helvetica", "bold");
                         pdf.setFontSize(12);
                         pdf.setTextColor(11, 16, 57);
-                        const genderTitle = data[0] && data[0].genderType === 'masculino' ? 'MASCULINA' : 'FEMENINA';
+                        // Determinar título basándose en los datos disponibles
+                        let genderTitle = 'GENERAL';
+                        if (data[0] && data[0].genderType) {
+                            genderTitle = data[0].genderType === 'masculino' ? 'MASCULINA' : 'FEMENINA';
+                        } else {
+                            // Fallback: analizar el contenido para determinar el género
+                            const sampleData = data.slice(0, 3);
+                            const hasMaleNames = sampleData.some(row => 
+                                row.athlete && (row.athlete.toLowerCase().includes('carlos') || 
+                                               row.athlete.toLowerCase().includes('juan') ||
+                                               row.athlete.toLowerCase().includes('miguel'))
+                            );
+                            genderTitle = hasMaleNames ? 'MASCULINA' : 'FEMENINA';
+                        }
                         pdf.text(`CLASIFICACIÓN GENERAL ${genderTitle} (continuación)`, 20, currentY);
                         currentY += 15;
                     } else if (type === 'team') {
@@ -6273,8 +6299,11 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
                 yPosition += 15;
             }
             
-            // Nueva página para femeninos si es necesario
-            if (yPosition > 150) {
+            // Espacio entre secciones masculina y femenina
+            yPosition += 10;
+            
+            // Nueva página para femeninos solo si realmente es necesario
+            if (yPosition > 200) {
                 pdf.addPage();
                 addCompetitionLogo(pdf);
                 yPosition = 30;
@@ -6290,6 +6319,17 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
                 yPosition += 12;
                 
                 console.log('📊 PDF: Procesando datos femeninos, primera fila:', allSheetData.femenino[0]);
+                console.log('📊 PDF: Verificando tipo de datos femeninos:', {
+                    totalRows: allSheetData.femenino.length,
+                    firstAthlete: allSheetData.femenino[0] ? allSheetData.femenino[0][1] : 'N/A',
+                    columnCount: allSheetData.femenino[0] ? allSheetData.femenino[0].length : 0
+                });
+                // VALIDACIÓN: Verificar si los datos son realmente de atletas femeninos o si son datos de equipos
+                if (allSheetData.femenino[0] && allSheetData.femenino[0].length <= 5) {
+                    console.error('⚠️ ERROR: Los datos femeninos parecen ser datos de equipos (pocas columnas)');
+                    console.log('📊 Datos sospechosos:', allSheetData.femenino.slice(0, 3));
+                }
+                
                 const tableData = allSheetData.femenino.map((row, index) => {
                     // Mapear columnas A-I: A=Pos, B=Atleta, C=Equipo, D=Edad, E=Categoría, F=Pts Totales, G=Pts 200m, H=Pts 50m, I=Pts 100m
                     const [pos, athlete, team, age, category, totalPoints, points200m, points50m, points100m] = row;
@@ -6335,6 +6375,17 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
             if (allSheetData.equipos.length > 0) {
                 // Crear tabla con todos los equipos - Columnas A-E
                 console.log('📊 PDF: Procesando datos de equipos, primera fila:', allSheetData.equipos[0]);
+                console.log('📊 PDF: Verificando tipo de datos de equipos:', {
+                    totalRows: allSheetData.equipos.length,
+                    firstTeam: allSheetData.equipos[0] ? allSheetData.equipos[0][1] : 'N/A',
+                    columnCount: allSheetData.equipos[0] ? allSheetData.equipos[0].length : 0
+                });
+                
+                // VALIDACIÓN: Verificar si los datos son realmente de equipos o si son datos de atletas
+                if (allSheetData.equipos[0] && allSheetData.equipos[0].length > 7) {
+                    console.error('⚠️ ERROR: Los datos de equipos parecen ser datos de atletas (muchas columnas)');
+                    console.log('📊 Datos sospechosos:', allSheetData.equipos.slice(0, 3));
+                }
                 const tableData = allSheetData.equipos.map((row, index) => {
                     // Mapear columnas A-E: A=Pos, B=Equipo, C=Pts Totales, D=Pts Femeninos, E=Pts Masculinos
                     const [pos, team, totalPoints, femalePoints, malePoints] = row;
