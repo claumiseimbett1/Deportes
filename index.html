@@ -6515,7 +6515,12 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
             pdf.text("CLASIFICACIÓN GENERAL FEMENINA", 20, yPosition);
             yPosition += 20;
             
-            console.log('📊 DEBUG PDF - Datos femeninos disponibles:', allSheetData.femenino.length);
+            console.log('📊 DEBUG PDF FEMENINO - Estado inicial:', {
+                datosFemeniniosDisponibles: allSheetData.femenino.length,
+                intercambioYaCorregido: !!allSheetData._intercambioCorregido,
+                primeraFilaFemenino: allSheetData.femenino.length > 0 ? allSheetData.femenino[0] : 'SIN DATOS'
+            });
+            
             if (allSheetData.femenino.length > 0) {
                 console.log('📊 PDF: Procesando datos femeninos, primera fila:', allSheetData.femenino[0]);
                 console.log('📊 PDF: Verificando tipo de datos femeninos:', {
@@ -6582,11 +6587,58 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
                 
                 yPosition = drawProfessionalTable(pdf, tableData, yPosition, 'gender');
             } else {
-                console.warn('⚠️ PDF: No hay datos femeninos para mostrar');
+                console.error('❌ PDF FEMENINO: No hay datos femeninos disponibles');
+                
+                // VERIFICACIÓN ESPECIAL: Si equipos ya corrigió, tal vez los datos están intercambiados
+                if (allSheetData._intercambioCorregido) {
+                    console.log('🔍 VERIFICACIÓN POST-CORRECCIÓN: Revisando todas las variables para encontrar datos femeninos');
+                    console.log('🔍 Estado actual de todas las variables:', {
+                        masculino: allSheetData.masculino ? allSheetData.masculino.length + ' filas' : 'sin datos',
+                        femenino: allSheetData.femenino ? allSheetData.femenino.length + ' filas' : 'sin datos',
+                        equipos: allSheetData.equipos ? allSheetData.equipos.length + ' filas' : 'sin datos'
+                    });
+                    
+                    // Buscar datos de atletas en cualquier variable (deberían ser femeninos)
+                    let datosAtletasEncontrados = null;
+                    if (allSheetData.equipos && allSheetData.equipos.length > 0 && allSheetData.equipos[0] && allSheetData.equipos[0].length > 7) {
+                        datosAtletasEncontrados = allSheetData.equipos;
+                        console.log('🔍 Datos de atletas encontrados en variable equipos');
+                    } else if (allSheetData.masculino && allSheetData.masculino.length > 0 && allSheetData.masculino[0] && allSheetData.masculino[0].length > 7) {
+                        // Verificar si masculino tiene datos diferentes (podrían ser femeninos)
+                        console.log('🔍 Verificando si masculino contiene datos femeninos...');
+                    }
+                    
+                    if (datosAtletasEncontrados) {
+                        console.log('🔄 RECUPERACIÓN FEMENINO: Usando datos encontrados para femenino');
+                        allSheetData.femenino = datosAtletasEncontrados;
+                        allSheetData.equipos = []; // Limpiar equipos para evitar duplicados
+                        
+                        const tableData = allSheetData.femenino.map((row, index) => {
+                            const [pos, athlete, team, age, category, totalPoints, points200m, points50m, points100m] = row;
+                            return {
+                                position: pos || (index + 1).toString(),
+                                athlete: athlete || '',
+                                team: team || '',
+                                age: age || '',
+                                category: category || '',
+                                totalPoints: totalPoints || '',
+                                points200m: points200m || '',
+                                points50m: points50m || '',
+                                points100m: points100m || '',
+                                genderType: 'femenino'
+                            };
+                        });
+                        
+                        yPosition = drawProfessionalTable(pdf, tableData, yPosition, 'gender');
+                        return yPosition;
+                    }
+                }
+                
+                console.warn('⚠️ PDF: No se encontraron datos femeninos válidos en ninguna variable');
                 pdf.setFont("helvetica", "normal");
                 pdf.setFontSize(10);
-                pdf.setTextColor(128, 128, 128);
-                pdf.text("No se encontraron datos de clasificación femenina", 20, yPosition);
+                pdf.setTextColor(255, 0, 0);
+                pdf.text("ERROR: No se encontraron datos de clasificación femenina", 20, yPosition);
                 yPosition += 20;
             }
             
