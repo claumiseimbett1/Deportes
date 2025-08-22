@@ -6508,6 +6508,22 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
         async function addFemeninoResultsToPDF(pdf, startY, allSheetData) {
             let yPosition = startY;
             
+            // DEBUG: Estado inicial de los datos
+            console.log('🚀 INICIO addFemeninoResultsToPDF - Estado de datos:');
+            console.log('📊 allSheetData:', allSheetData ? 'existe' : 'null/undefined');
+            console.log('📊 allSheetData.femenino:', allSheetData?.femenino ? allSheetData.femenino.length + ' registros' : 'vacío/undefined');
+            console.log('📊 allSheetData.masculino:', allSheetData?.masculino ? allSheetData.masculino.length + ' registros' : 'vacío/undefined');
+            console.log('📊 allSheetData.equipos:', allSheetData?.equipos ? allSheetData.equipos.length + ' registros' : 'vacío/undefined');
+            console.log('📊 Global allData.femenino:', typeof allData !== 'undefined' && allData?.femenino ? allData.femenino.length + ' registros' : 'no disponible');
+            
+            // NUEVO: Intentar usar allData global si allSheetData no tiene datos femeninos
+            if ((!allSheetData?.femenino || allSheetData.femenino.length === 0) && typeof allData !== 'undefined' && allData?.femenino && allData.femenino.length > 0) {
+                console.log('🔄 USANDO allData GLOBAL: Transfiriendo datos femeninos de allData global');
+                allSheetData = allSheetData || {};
+                allSheetData.femenino = allData.femenino;
+                console.log('✅ Datos femeninos transferidos:', allSheetData.femenino.length + ' registros');
+            }
+            
             // Título de sección
             pdf.setFont("helvetica", "bold");
             pdf.setFontSize(16);
@@ -6634,7 +6650,65 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
                     }
                 }
                 
-                console.warn('⚠️ PDF: No se encontraron datos femeninos válidos en ninguna variable');
+                // ÚLTIMO RECURSO: Intentar cargar desde la tabla HTML
+                console.log('🆘 ÚLTIMO RECURSO: Intentando cargar datos femeninos desde tabla HTML');
+                console.log('📊 Estado actual de allData.femenino antes del fallback:', allData.femenino ? allData.femenino.length : 'undefined');
+                console.log('📊 Estado actual de allData.masculino:', allData.masculino ? allData.masculino.length : 'undefined');
+                console.log('📊 Estado actual de allData.equipos:', allData.equipos ? allData.equipos.length : 'undefined');
+                
+                const tablaFemeninaHTML = document.getElementById('resultsTableFemeninoGeneral');
+                
+                if (tablaFemeninaHTML) {
+                    const filas = tablaFemeninaHTML.querySelectorAll('tbody tr:not(.loading-row)');
+                    console.log('🔍 Filas encontradas en tabla HTML femenina:', filas.length);
+                    console.log('🔍 Contenido de la primera fila:', filas[0] ? filas[0].innerHTML : 'No hay filas');
+                    
+                    if (filas.length > 0) {
+                        const datosDeHTML = [];
+                        filas.forEach((fila, index) => {
+                            const celdas = fila.querySelectorAll('td');
+                            if (celdas.length >= 6) {
+                                datosDeHTML.push([
+                                    celdas[0].textContent.trim() || (index + 1).toString(), // Pos
+                                    celdas[1].textContent.trim() || '', // Atleta
+                                    celdas[2].textContent.trim() || '', // Equipo
+                                    celdas[3].textContent.trim() || '', // Edad
+                                    celdas[4].textContent.trim() || '', // Categoría
+                                    celdas[5].textContent.trim() || '', // Puntos Totales
+                                    celdas[6] ? celdas[6].textContent.trim() : '', // P. 200m Libre
+                                    celdas[7] ? celdas[7].textContent.trim() : '', // P. 50m Libre
+                                    celdas[8] ? celdas[8].textContent.trim() : ''  // P. 100m Libre
+                                ]);
+                            }
+                        });
+                        
+                        if (datosDeHTML.length > 0) {
+                            console.log('✅ DATOS RECUPERADOS DE HTML:', datosDeHTML.length + ' atletas femeninas');
+                            console.log('📊 Primera atleta:', datosDeHTML[0]);
+                            
+                            const tableData = datosDeHTML.map((row, index) => {
+                                const [pos, athlete, team, age, category, totalPoints, points200m, points50m, points100m] = row;
+                                return {
+                                    position: pos || (index + 1).toString(),
+                                    athlete: athlete || '',
+                                    team: team || '',
+                                    age: age || '',
+                                    category: category || '',
+                                    totalPoints: totalPoints || '',
+                                    points200m: points200m || '',
+                                    points50m: points50m || '',
+                                    points100m: points100m || '',
+                                    genderType: 'femenino'
+                                };
+                            });
+                            
+                            yPosition = drawProfessionalTable(pdf, tableData, yPosition, 'gender');
+                            return yPosition;
+                        }
+                    }
+                }
+                
+                console.error('❌ CRÍTICO: No se encontraron datos femeninos en ningún lugar');
                 pdf.setFont("helvetica", "normal");
                 pdf.setFontSize(10);
                 pdf.setTextColor(255, 0, 0);
