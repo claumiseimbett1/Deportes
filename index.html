@@ -4891,11 +4891,25 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
                 });
                 
                 // VALIDACIÓN CRÍTICA: Detectar intercambio de datos femenino/equipos
+                console.log('🔍 ANÁLISIS PREVIO AL PDF:', {
+                    tieneDataFemenino: !!(allSheetData.femenino && allSheetData.femenino.length > 0),
+                    tieneDataEquipos: !!(allSheetData.equipos && allSheetData.equipos.length > 0),
+                    columnasFemenino: allSheetData.femenino && allSheetData.femenino[0] ? allSheetData.femenino[0].length : 'N/A',
+                    columnasEquipos: allSheetData.equipos && allSheetData.equipos[0] ? allSheetData.equipos[0].length : 'N/A'
+                });
+                
                 if (allSheetData.femenino && allSheetData.femenino.length > 0 && 
                     allSheetData.equipos && allSheetData.equipos.length > 0) {
                     
                     const femeninoParecenEquipos = allSheetData.femenino[0].length <= 5;
                     const equiposParecenAtletas = allSheetData.equipos[0].length > 7;
+                    
+                    console.log('🔍 ANÁLISIS DE INTERCAMBIO:', {
+                        femeninoParecenEquipos: femeninoParecenEquipos,
+                        equiposParecenAtletas: equiposParecenAtletas,
+                        primeraFilaFemenino: allSheetData.femenino[0],
+                        primeraFilaEquipos: allSheetData.equipos[0]
+                    });
                     
                     if (femeninoParecenEquipos && equiposParecenAtletas) {
                         console.error('❌ INTERCAMBIO DETECTADO: Datos femeninos y equipos están intercambiados');
@@ -4912,7 +4926,11 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
                         
                         // Marcar que ya se hizo la corrección global
                         allSheetData._intercambioCorregido = true;
+                    } else {
+                        console.log('ℹ️ No se detectó intercambio en validación global');
                     }
+                } else {
+                    console.warn('⚠️ Faltan datos para validar intercambio global');
                 }
                 
                 // Validación adicional: Si falta alguna sección crítica, mostrar advertencia
@@ -6507,6 +6525,13 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
                 });
                 
                 // VALIDACIÓN CRÍTICA: Verificar si los datos son realmente de atletas femeninos
+                console.log('🔍 VALIDACIÓN FEMENINO:', {
+                    intercambioYaCorregido: !!allSheetData._intercambioCorregido,
+                    tieneDataFemenino: !!(allSheetData.femenino && allSheetData.femenino[0]),
+                    columnasFemenino: allSheetData.femenino && allSheetData.femenino[0] ? allSheetData.femenino[0].length : 'N/A',
+                    esMenorOIgualA5: allSheetData.femenino && allSheetData.femenino[0] ? allSheetData.femenino[0].length <= 5 : false
+                });
+                
                 if (!allSheetData._intercambioCorregido && allSheetData.femenino[0] && allSheetData.femenino[0].length <= 5) {
                     console.error('❌ DATOS INCORRECTOS: Los datos femeninos son datos de equipos!');
                     console.log('📊 Datos incorrectos recibidos:', allSheetData.femenino.slice(0, 3));
@@ -6589,34 +6614,46 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
                 });
                 
                 // VALIDACIÓN CRÍTICA: Verificar si los datos son realmente de equipos
+                console.log('🔍 VALIDACIÓN EQUIPOS:', {
+                    intercambioYaCorregido: !!allSheetData._intercambioCorregido,
+                    tieneDataEquipos: !!(allSheetData.equipos && allSheetData.equipos[0]),
+                    columnasEquipos: allSheetData.equipos && allSheetData.equipos[0] ? allSheetData.equipos[0].length : 'N/A',
+                    esMayorA7: allSheetData.equipos && allSheetData.equipos[0] ? allSheetData.equipos[0].length > 7 : false
+                });
+                
                 if (!allSheetData._intercambioCorregido && allSheetData.equipos[0] && allSheetData.equipos[0].length > 7) {
                     console.error('❌ DATOS INCORRECTOS: Los datos de equipos son datos de atletas!');
                     console.log('📊 Datos incorrectos recibidos:', allSheetData.equipos.slice(0, 3));
                     
-                    // CORRECCIÓN AUTOMÁTICA: Intentar intercambiar con femenino
+                    // CORRECCIÓN AUTOMÁTICA: Forzar intercambio con femenino
+                    console.log('🔄 CORRECCIÓN FORZADA: Intercambiando datos equipos y femeninos');
+                    console.log('📊 Antes del intercambio:', {
+                        equipos: 'Datos incorrectos (' + allSheetData.equipos[0].length + ' columnas): ' + JSON.stringify(allSheetData.equipos[0]),
+                        femenino: allSheetData.femenino && allSheetData.femenino[0] ? 
+                            'Datos disponibles (' + allSheetData.femenino[0].length + ' columnas): ' + JSON.stringify(allSheetData.femenino[0]) : 
+                            'Sin datos femeninos'
+                    });
+                    
                     if (allSheetData.femenino && allSheetData.femenino.length > 0) {
-                        console.log('🔄 CORRECCIÓN: Intercambiando datos equipos y femeninos automáticamente');
-                        console.log('📊 Antes del intercambio:', {
-                            equipos: 'Datos de atletas (' + allSheetData.equipos[0].length + ' columnas)',
-                            femenino: 'Datos de equipos (' + (allSheetData.femenino[0] ? allSheetData.femenino[0].length : 0) + ' columnas)'
-                        });
-                        
                         const temp = allSheetData.equipos;
                         allSheetData.equipos = allSheetData.femenino;
                         allSheetData.femenino = temp;
                         
-                        console.log('✅ Intercambio realizado:', {
-                            equipos: 'Ahora datos correctos (' + allSheetData.equipos[0].length + ' columnas)',
-                            femenino: 'Ahora datos correctos (' + allSheetData.femenino[0].length + ' columnas)'
+                        console.log('✅ INTERCAMBIO FORZADO COMPLETADO:', {
+                            equipos: 'Nuevos datos (' + allSheetData.equipos[0].length + ' columnas): ' + JSON.stringify(allSheetData.equipos[0]),
+                            femenino: 'Nuevos datos (' + allSheetData.femenino[0].length + ' columnas): ' + JSON.stringify(allSheetData.femenino[0])
                         });
-                        console.log('📊 Nuevos datos equipos (primeras filas):', allSheetData.equipos.slice(0, 2));
+                        
+                        // Marcar corrección para evitar bucles
+                        allSheetData._intercambioCorregido = true;
+                        
+                        // Continuar con los datos corregidos
+                        console.log('🔄 Reintentando procesamiento con datos corregidos...');
                     } else {
-                        console.error('❌ No hay datos femeninos para intercambiar.');
-                        pdf.setFont("helvetica", "normal");
-                        pdf.setFontSize(10);
-                        pdf.setTextColor(255, 0, 0);
-                        pdf.text("ERROR: Los datos de equipos están intercambiados pero no se pueden corregir", 20, yPosition);
-                        return yPosition + 20;
+                        console.error('❌ CRÍTICO: No hay datos femeninos disponibles para intercambiar');
+                        // Crear datos de equipos vacíos para evitar error
+                        allSheetData.equipos = [];
+                        console.log('🔄 Configurando datos equipos como vacíos para evitar crash');
                     }
                 }
                 
