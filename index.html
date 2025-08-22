@@ -4890,6 +4890,28 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
                     equipos: allSheetData.equipos?.length || 0
                 });
                 
+                // VALIDACIÓN CRÍTICA: Detectar intercambio de datos femenino/equipos
+                if (allSheetData.femenino && allSheetData.femenino.length > 0 && 
+                    allSheetData.equipos && allSheetData.equipos.length > 0) {
+                    
+                    const femeninoParecenEquipos = allSheetData.femenino[0].length <= 5;
+                    const equiposParecenAtletas = allSheetData.equipos[0].length > 7;
+                    
+                    if (femeninoParecenEquipos && equiposParecenAtletas) {
+                        console.error('❌ INTERCAMBIO DETECTADO: Datos femeninos y equipos están intercambiados');
+                        console.log('🔄 CORRECCIÓN GLOBAL: Intercambiando datos antes de generar PDF');
+                        
+                        const temp = allSheetData.femenino;
+                        allSheetData.femenino = allSheetData.equipos;
+                        allSheetData.equipos = temp;
+                        
+                        console.log('✅ Corrección aplicada:', {
+                            femeninoCorregido: allSheetData.femenino.length + ' filas, ' + (allSheetData.femenino[0] ? allSheetData.femenino[0].length : 0) + ' columnas',
+                            equiposCorregido: allSheetData.equipos.length + ' filas, ' + (allSheetData.equipos[0] ? allSheetData.equipos[0].length : 0) + ' columnas'
+                        });
+                    }
+                }
+                
                 // Validación adicional: Si falta alguna sección crítica, mostrar advertencia
                 if (!allSheetData.femenino || allSheetData.femenino.length === 0) {
                     console.warn('⚠️ ADVERTENCIA PDF: No hay datos de clasificación femenina');
@@ -6481,10 +6503,26 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
                     columnCount: allSheetData.femenino[0] ? allSheetData.femenino[0].length : 0
                 });
                 
-                // VALIDACIÓN: Verificar si los datos son realmente de atletas femeninos
+                // VALIDACIÓN CRÍTICA: Verificar si los datos son realmente de atletas femeninos
                 if (allSheetData.femenino[0] && allSheetData.femenino[0].length <= 5) {
-                    console.error('⚠️ ERROR: Los datos femeninos parecen ser datos de equipos (pocas columnas)');
-                    console.log('📊 Datos sospechosos:', allSheetData.femenino.slice(0, 3));
+                    console.error('❌ DATOS INCORRECTOS: Los datos femeninos son datos de equipos!');
+                    console.log('📊 Datos incorrectos recibidos:', allSheetData.femenino.slice(0, 3));
+                    
+                    // CORRECCIÓN AUTOMÁTICA: Intentar intercambiar con equipos
+                    if (allSheetData.equipos && allSheetData.equipos.length > 0 && allSheetData.equipos[0].length > 7) {
+                        console.log('🔄 CORRECCIÓN: Intercambiando datos femeninos y equipos automáticamente');
+                        const temp = allSheetData.femenino;
+                        allSheetData.femenino = allSheetData.equipos;
+                        allSheetData.equipos = temp;
+                        console.log('✅ Intercambio realizado. Nuevos datos femeninos:', allSheetData.femenino.slice(0, 2));
+                    } else {
+                        console.error('❌ No se puede corregir automáticamente. Mostrando mensaje de error.');
+                        pdf.setFont("helvetica", "normal");
+                        pdf.setFontSize(10);
+                        pdf.setTextColor(255, 0, 0);
+                        pdf.text("ERROR: Los datos femeninos están intercambiados con equipos", 20, yPosition);
+                        return yPosition + 20;
+                    }
                 }
                 
                 const tableData = allSheetData.femenino.map((row, index) => {
@@ -6537,10 +6575,26 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
                     columnCount: allSheetData.equipos[0] ? allSheetData.equipos[0].length : 0
                 });
                 
-                // VALIDACIÓN: Verificar si los datos son realmente de equipos
+                // VALIDACIÓN CRÍTICA: Verificar si los datos son realmente de equipos
                 if (allSheetData.equipos[0] && allSheetData.equipos[0].length > 7) {
-                    console.error('⚠️ ERROR: Los datos de equipos parecen ser datos de atletas (muchas columnas)');
-                    console.log('📊 Datos sospechosos:', allSheetData.equipos.slice(0, 3));
+                    console.error('❌ DATOS INCORRECTOS: Los datos de equipos son datos de atletas!');
+                    console.log('📊 Datos incorrectos recibidos:', allSheetData.equipos.slice(0, 3));
+                    
+                    // CORRECCIÓN AUTOMÁTICA: Intentar intercambiar con femenino
+                    if (allSheetData.femenino && allSheetData.femenino.length > 0 && allSheetData.femenino[0].length <= 5) {
+                        console.log('🔄 CORRECCIÓN: Intercambiando datos equipos y femeninos automáticamente');
+                        const temp = allSheetData.equipos;
+                        allSheetData.equipos = allSheetData.femenino;
+                        allSheetData.femenino = temp;
+                        console.log('✅ Intercambio realizado. Nuevos datos equipos:', allSheetData.equipos.slice(0, 2));
+                    } else {
+                        console.error('❌ No se puede corregir automáticamente. Mostrando mensaje de error.');
+                        pdf.setFont("helvetica", "normal");
+                        pdf.setFontSize(10);
+                        pdf.setTextColor(255, 0, 0);
+                        pdf.text("ERROR: Los datos de equipos están intercambiados con atletas", 20, yPosition);
+                        return yPosition + 20;
+                    }
                 }
                 
                 const tableData = allSheetData.equipos.map((row, index) => {
