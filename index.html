@@ -5947,158 +5947,147 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
             return yPosition;
         }
 
-        // Función para dibujar tabla profesional
+        // Función mejorada para dibujar tabla profesional con paginación automática
         function drawProfessionalTable(pdf, data, startY, type) {
             let yPosition = startY;
             const boxX = 20;
             const boxWidth = 170;
             const headerHeight = 10;
             const rowHeight = 8;
-            const maxRows = Math.min(data.length, 20); // Mostrar máximo 20 resultados
-            const boxHeight = headerHeight + (maxRows * rowHeight);
+            const maxRowsPerPage = 25; // Máximo de filas por página
+            const headerColor = [11, 16, 57]; // Azul corporativo
             
-            // Usar solo el color corporativo de la página
-            const headerColor = [11, 16, 57];    // Azul corporativo
-            const accentColor = [25, 118, 210];  // Azul más claro
+            let processedRows = 0;
+            let currentPageRows = 0;
+            let currentY = yPosition;
             
-            // Marco principal discreto estilo Excel para todas las tablas
-            pdf.setDrawColor(180, 180, 180);
-            pdf.setLineWidth(0.5);
-            pdf.rect(boxX, yPosition, boxWidth, boxHeight);
-            
-            // Header simplificado estilo Excel para todas las tablas
-            pdf.setFillColor(248, 249, 250); // Gris muy claro
-            pdf.rect(boxX, yPosition, boxWidth, headerHeight, 'F');
-            
-            // Línea sutil debajo del header
-            pdf.setDrawColor(200, 200, 200);
-            pdf.setLineWidth(0.3);
-            pdf.line(boxX, yPosition + headerHeight, boxX + boxWidth, yPosition + headerHeight);
-            
-            // Configurar headers según el tipo
-            pdf.setFont("helvetica", "bold");
-            pdf.setFontSize(8);
-            
-            // Color de texto del header - azul corporativo para todas las tablas
-            pdf.setTextColor(...headerColor);
-            
-            if (type === 'event') {
-                // Headers para eventos A-G: Pos, Atleta, Equipo, Edad, Categoría, Tiempo, Puntos
-                pdf.text("POS", boxX + 2, yPosition + 7);
-                pdf.text("ATLETA", boxX + 15, yPosition + 7);
-                pdf.text("EQUIPO", boxX + 55, yPosition + 7);
-                pdf.text("EDAD", boxX + 85, yPosition + 7);
-                pdf.text("CAT", boxX + 105, yPosition + 7);
-                pdf.text("TIEMPO", boxX + 125, yPosition + 7);
-                pdf.text("PTS", boxX + 155, yPosition + 7);
-            } else if (type === 'gender') {
-                // Headers para género A-I: Pos, Atleta, Equipo, Edad, Categoría, Pts Totales, Pts 200m, Pts 50m, Pts 100m
-                pdf.text("POS", boxX + 2, yPosition + 7);
-                pdf.text("ATLETA", boxX + 15, yPosition + 7);
-                pdf.text("EQUIPO", boxX + 50, yPosition + 7);
-                pdf.text("EDAD", boxX + 75, yPosition + 7);
-                pdf.text("CAT", boxX + 90, yPosition + 7);
-                pdf.text("TOT", boxX + 105, yPosition + 7);
-                pdf.text("200", boxX + 120, yPosition + 7);
-                pdf.text("50", boxX + 135, yPosition + 7);
-                pdf.text("100", boxX + 150, yPosition + 7);
-            } else if (type === 'team') {
-                // Headers para equipos A-E: Pos, Equipo, Pts Totales, Pts Femeninos, Pts Masculinos
-                pdf.text("POS", boxX + 3, yPosition + 7);
-                pdf.text("EQUIPO", boxX + 20, yPosition + 7);
-                pdf.text("TOTAL", boxX + 90, yPosition + 7);
-                pdf.text("FEM", boxX + 120, yPosition + 7);
-                pdf.text("MAS", boxX + 145, yPosition + 7);
+            // Función para dibujar encabezados
+            function drawHeaders(y) {
+                // Marco y fondo del header
+                pdf.setDrawColor(180, 180, 180);
+                pdf.setLineWidth(0.5);
+                pdf.setFillColor(248, 249, 250);
+                pdf.rect(boxX, y, boxWidth, headerHeight, 'F');
+                pdf.rect(boxX, y, boxWidth, headerHeight);
+                
+                // Línea debajo del header
+                pdf.setDrawColor(200, 200, 200);
+                pdf.setLineWidth(0.3);
+                pdf.line(boxX, y + headerHeight, boxX + boxWidth, y + headerHeight);
+                
+                // Configurar texto del header
+                pdf.setFont("helvetica", "bold");
+                pdf.setFontSize(8);
+                pdf.setTextColor(...headerColor);
+                
+                if (type === 'event') {
+                    pdf.text("POS", boxX + 2, y + 7);
+                    pdf.text("ATLETA", boxX + 15, y + 7);
+                    pdf.text("EQUIPO", boxX + 55, y + 7);
+                    pdf.text("EDAD", boxX + 85, y + 7);
+                    pdf.text("CAT", boxX + 105, y + 7);
+                    pdf.text("TIEMPO", boxX + 125, y + 7);
+                    pdf.text("PTS", boxX + 155, y + 7);
+                } else if (type === 'gender') {
+                    pdf.text("POS", boxX + 2, y + 7);
+                    pdf.text("ATLETA", boxX + 15, y + 7);
+                    pdf.text("EQUIPO", boxX + 50, y + 7);
+                    pdf.text("EDAD", boxX + 75, y + 7);
+                    pdf.text("CAT", boxX + 90, y + 7);
+                    pdf.text("TOT", boxX + 105, y + 7);
+                    pdf.text("200", boxX + 120, y + 7);
+                    pdf.text("50", boxX + 135, y + 7);
+                    pdf.text("100", boxX + 150, y + 7);
+                } else if (type === 'team') {
+                    pdf.text("POS", boxX + 3, y + 7);
+                    pdf.text("EQUIPO", boxX + 20, y + 7);
+                    pdf.text("TOTAL", boxX + 90, y + 7);
+                    pdf.text("FEM", boxX + 120, y + 7);
+                    pdf.text("MAS", boxX + 145, y + 7);
+                }
+                return y + headerHeight;
             }
             
-            yPosition += headerHeight;
+            // Dibujar encabezados iniciales
+            currentY = drawHeaders(currentY);
             
-            // Datos
-            pdf.setFont("helvetica", "normal");
-            pdf.setFontSize(8);
-            pdf.setTextColor(0, 0, 0);
-            
-            data.slice(0, maxRows).forEach((row, index) => {
-                const rowY = yPosition + (index * rowHeight);
+            // Procesar datos con paginación automática
+            for (let i = 0; i < data.length; i++) {
+                const row = data[i];
                 
-                // Fondo alternado con color corporativo suave
-                if (index % 2 === 0) {
-                    pdf.setFillColor(240, 248, 255); // Azul muy claro
+                // Verificar si necesitamos nueva página
+                if (currentPageRows >= maxRowsPerPage && i < data.length - 1) {
+                    // Nueva página
+                    pdf.addPage();
+                    addCompetitionLogo(pdf);
+                    currentY = 30;
+                    
+                    // Repetir título de sección si es necesario
+                    if (type === 'event') {
+                        pdf.setFont("helvetica", "bold");
+                        pdf.setFontSize(12);
+                        pdf.setTextColor(11, 16, 57);
+                        pdf.text("RESULTADOS POR PRUEBAS (continuación)", 20, currentY);
+                        currentY += 15;
+                    } else if (type === 'gender') {
+                        pdf.setFont("helvetica", "bold");
+                        pdf.setFontSize(12);
+                        pdf.setTextColor(11, 16, 57);
+                        const genderTitle = data[0] && data[0].genderType === 'masculino' ? 'MASCULINA' : 'FEMENINA';
+                        pdf.text(`CLASIFICACIÓN GENERAL ${genderTitle} (continuación)`, 20, currentY);
+                        currentY += 15;
+                    } else if (type === 'team') {
+                        pdf.setFont("helvetica", "bold");
+                        pdf.setFontSize(12);
+                        pdf.setTextColor(11, 16, 57);
+                        pdf.text("CLASIFICACIÓN POR EQUIPOS (continuación)", 20, currentY);
+                        currentY += 15;
+                    }
+                    
+                    // Redibujar encabezados
+                    currentY = drawHeaders(currentY);
+                    currentPageRows = 0;
+                }
+                
+                const rowY = currentY + (currentPageRows * rowHeight);
+                
+                // Fondo alternado
+                if (currentPageRows % 2 === 0) {
+                    pdf.setFillColor(240, 248, 255);
                     pdf.rect(boxX, rowY, boxWidth, rowHeight, 'F');
                 }
                 
-                // Destacar podio con colores corporativos discretos para todas las tablas
-                if (index < 3) {
-                    // Usar variaciones sutiles del color corporativo
+                // Destacar podio (solo para los primeros 3 registros globales)
+                if (processedRows < 3) {
                     const podiumShades = [
-                        [240, 248, 255], // Azul muy claro para 1er lugar
-                        [248, 250, 252], // Gris muy claro para 2do lugar  
-                        [250, 250, 250]  // Blanco roto para 3er lugar
+                        [240, 248, 255], // 1er lugar
+                        [248, 250, 252], // 2do lugar  
+                        [250, 250, 250]  // 3er lugar
                     ];
-                    pdf.setFillColor(...podiumShades[index]);
+                    pdf.setFillColor(...podiumShades[processedRows]);
                     pdf.rect(boxX, rowY, boxWidth, rowHeight, 'F');
                     
-                    // Borde discreto con color corporativo
                     pdf.setDrawColor(...headerColor);
                     pdf.setLineWidth(0.5);
                     pdf.rect(boxX, rowY, boxWidth, rowHeight);
                 }
                 
+                // Configurar texto de datos
+                pdf.setFont("helvetica", "normal");
+                pdf.setFontSize(8);
+                pdf.setTextColor(0, 0, 0);
+                
+                // Escribir datos según el tipo
                 if (type === 'event') {
-                    // Líneas separadoras discretas estilo Excel para eventos
-                    pdf.setDrawColor(220, 220, 220); // Gris muy claro
-                    pdf.setLineWidth(0.2);
-                    
-                    // Solo líneas verticales principales para separar secciones
-                    pdf.line(boxX + 12, yPosition, boxX + 12, yPosition + (maxRows * rowHeight));
-                    pdf.line(boxX + 52, yPosition, boxX + 52, yPosition + (maxRows * rowHeight));
-                    pdf.line(boxX + 82, yPosition, boxX + 82, yPosition + (maxRows * rowHeight));
-                    pdf.line(boxX + 102, yPosition, boxX + 102, yPosition + (maxRows * rowHeight));
-                    pdf.line(boxX + 122, yPosition, boxX + 122, yPosition + (maxRows * rowHeight));
-                    pdf.line(boxX + 152, yPosition, boxX + 152, yPosition + (maxRows * rowHeight));
-                    
-                    // Línea horizontal discreta entre filas
-                    if (index < maxRows - 1) {
-                        pdf.setDrawColor(240, 240, 240); // Gris aún más claro
-                        pdf.setLineWidth(0.1);
-                        pdf.line(boxX, rowY + rowHeight, boxX + boxWidth, rowY + rowHeight);
-                    }
-                    
-                    // Texto para eventos A-G
-                    pdf.setTextColor(0, 0, 0);
-                    pdf.text(row.position, boxX + 2, rowY + 5.5);
+                    pdf.text(row.position || '', boxX + 2, rowY + 5.5);
                     pdf.text((row.athlete || '').substring(0, 18), boxX + 14, rowY + 5.5);
                     pdf.text((row.team || '').substring(0, 12), boxX + 54, rowY + 5.5);
                     pdf.text(row.age || '', boxX + 84, rowY + 5.5);
                     pdf.text((row.category || '').substring(0, 8), boxX + 104, rowY + 5.5);
                     pdf.text(row.time || '', boxX + 124, rowY + 5.5);
                     pdf.text(row.points || '', boxX + 154, rowY + 5.5);
-                    
                 } else if (type === 'gender') {
-                    // Líneas separadoras discretas estilo Excel para género
-                    pdf.setDrawColor(220, 220, 220); // Gris muy claro
-                    pdf.setLineWidth(0.2);
-                    
-                    // Solo líneas verticales principales para separar secciones
-                    pdf.line(boxX + 12, yPosition, boxX + 12, yPosition + (maxRows * rowHeight));
-                    pdf.line(boxX + 47, yPosition, boxX + 47, yPosition + (maxRows * rowHeight));
-                    pdf.line(boxX + 72, yPosition, boxX + 72, yPosition + (maxRows * rowHeight));
-                    pdf.line(boxX + 87, yPosition, boxX + 87, yPosition + (maxRows * rowHeight));
-                    pdf.line(boxX + 102, yPosition, boxX + 102, yPosition + (maxRows * rowHeight));
-                    pdf.line(boxX + 117, yPosition, boxX + 117, yPosition + (maxRows * rowHeight));
-                    pdf.line(boxX + 132, yPosition, boxX + 132, yPosition + (maxRows * rowHeight));
-                    pdf.line(boxX + 147, yPosition, boxX + 147, yPosition + (maxRows * rowHeight));
-                    
-                    // Línea horizontal discreta entre filas
-                    if (index < maxRows - 1) {
-                        pdf.setDrawColor(240, 240, 240); // Gris aún más claro
-                        pdf.setLineWidth(0.1);
-                        pdf.line(boxX, rowY + rowHeight, boxX + boxWidth, rowY + rowHeight);
-                    }
-                    
-                    // Texto para género A-I
-                    pdf.setTextColor(0, 0, 0);
-                    pdf.text(row.position, boxX + 2, rowY + 5.5);
+                    pdf.text(row.position || '', boxX + 2, rowY + 5.5);
                     pdf.text((row.athlete || '').substring(0, 15), boxX + 14, rowY + 5.5);
                     pdf.text((row.team || '').substring(0, 10), boxX + 49, rowY + 5.5);
                     pdf.text(row.age || '', boxX + 74, rowY + 5.5);
@@ -6107,36 +6096,27 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
                     pdf.text(row.points200m || '', boxX + 119, rowY + 5.5);
                     pdf.text(row.points50m || '', boxX + 134, rowY + 5.5);
                     pdf.text(row.points100m || '', boxX + 149, rowY + 5.5);
-                    
                 } else if (type === 'team') {
-                    // Líneas separadoras discretas estilo Excel para equipos
-                    pdf.setDrawColor(220, 220, 220); // Gris muy claro
-                    pdf.setLineWidth(0.2);
-                    
-                    // Solo líneas verticales principales para separar secciones
-                    pdf.line(boxX + 17, yPosition, boxX + 17, yPosition + (maxRows * rowHeight));
-                    pdf.line(boxX + 87, yPosition, boxX + 87, yPosition + (maxRows * rowHeight));
-                    pdf.line(boxX + 117, yPosition, boxX + 117, yPosition + (maxRows * rowHeight));
-                    pdf.line(boxX + 142, yPosition, boxX + 142, yPosition + (maxRows * rowHeight));
-                    
-                    // Línea horizontal discreta entre filas
-                    if (index < maxRows - 1) {
-                        pdf.setDrawColor(240, 240, 240); // Gris aún más claro
-                        pdf.setLineWidth(0.1);
-                        pdf.line(boxX, rowY + rowHeight, boxX + boxWidth, rowY + rowHeight);
-                    }
-                    
-                    // Texto para equipos A-E
-                    pdf.setTextColor(0, 0, 0);
-                    pdf.text(row.position, boxX + 3, rowY + 5.5);
+                    pdf.text(row.position || '', boxX + 3, rowY + 5.5);
                     pdf.text((row.team || '').substring(0, 25), boxX + 19, rowY + 5.5);
                     pdf.text(row.totalPoints || '', boxX + 89, rowY + 5.5);
                     pdf.text(row.femalePoints || '', boxX + 119, rowY + 5.5);
                     pdf.text(row.malePoints || '', boxX + 144, rowY + 5.5);
                 }
-            });
+                
+                // Línea horizontal sutil entre filas
+                if (i < data.length - 1) {
+                    pdf.setDrawColor(240, 240, 240);
+                    pdf.setLineWidth(0.1);
+                    pdf.line(boxX, rowY + rowHeight, boxX + boxWidth, rowY + rowHeight);
+                }
+                
+                currentPageRows++;
+                processedRows++;
+            }
             
-            return yPosition + (maxRows * rowHeight) + 5;
+            // Retornar la posición Y final
+            return currentY + (currentPageRows * rowHeight) + 10;
         }
 
         // Nueva función para agregar resultados por género con formato profesional
@@ -6170,7 +6150,8 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
                         totalPoints: totalPoints || '',
                         points200m: points200m || '',
                         points50m: points50m || '',
-                        points100m: points100m || ''
+                        points100m: points100m || '',
+                        genderType: 'masculino' // Marcador para identificación
                     };
                 });
                 
@@ -6205,7 +6186,8 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
                         totalPoints: totalPoints || '',
                         points200m: points200m || '',
                         points50m: points50m || '',
-                        points100m: points100m || ''
+                        points100m: points100m || '',
+                        genderType: 'femenino' // Marcador para identificación
                     };
                 });
                 
