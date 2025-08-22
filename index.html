@@ -5139,7 +5139,7 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
                                 row && row.length > 0 && row.some(cell => cell && cell.trim() !== '')
                             );
                             console.log(`✅ Masculino: ${dataRows.length} filas de datos`);
-                            allData.femenino = dataRows; // Fixed: was masculino, should be femenino
+                            allData.masculino = dataRows; // Fixed: masculino data should go to masculino
                         }
                     } catch (error) {
                         console.warn(`⚠️ Error cargando masculino:`, error);
@@ -5157,7 +5157,7 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
                                 row && row.length > 0 && row.some(cell => cell && cell.trim() !== '')
                             );
                             console.log(`✅ Femenino: ${dataRows.length} filas de datos`);
-                            allData.masculino = dataRows; // Fixed: was femenino, should be masculino
+                            allData.femenino = dataRows; // Fixed: femenino data should go to femenino
                         }
                     } catch (error) {
                         console.warn(`⚠️ Error cargando femenino:`, error);
