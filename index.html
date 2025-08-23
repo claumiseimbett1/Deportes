@@ -6546,12 +6546,12 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
             yPosition += 20;
             
             console.log('📊 DEBUG PDF FEMENINO - Estado inicial:', {
-                datosFemeniniosDisponibles: allSheetData.femenino.length,
+                datosFemeniniosDisponibles: allSheetData.femenino ? allSheetData.femenino.length : 0,
                 intercambioYaCorregido: !!allSheetData._intercambioCorregido,
-                primeraFilaFemenino: allSheetData.femenino.length > 0 ? allSheetData.femenino[0] : 'SIN DATOS'
+                primeraFilaFemenino: allSheetData.femenino && allSheetData.femenino.length > 0 ? allSheetData.femenino[0] : 'SIN DATOS'
             });
             
-            if (allSheetData.femenino.length > 0) {
+            if (allSheetData.femenino && allSheetData.femenino.length > 0) {
                 console.log('📊 PDF: Procesando datos femeninos, primera fila:', allSheetData.femenino[0]);
                 console.log('📊 PDF: Verificando tipo de datos femeninos:', {
                     totalRows: allSheetData.femenino.length,
