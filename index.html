@@ -4979,11 +4979,30 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
                 // RESULTADOS POR PRUEBAS
                 yPosition = await addEventResultsBoxesToPDF(pdf, yPosition, allSheetData);
                 
-                // CLASIFICACIÓN GENERAL MASCULINA (nueva página)
+                // RESULTADOS POR GÉNERO (nueva página)
                 pdf.addPage();
                 addCompetitionLogo(pdf);
                 yPosition = 30;
+                
+                // Título de sección
+                pdf.setFont("helvetica", "bold");
+                pdf.setFontSize(16);
+                pdf.setTextColor(11, 16, 57);
+                pdf.text("RESULTADOS POR GÉNERO", 20, yPosition);
+                yPosition += 20;
+                
+                // Clasificación masculina
                 yPosition = await addMasculinoResultsToPDF(pdf, yPosition, allSheetData);
+                
+                // Verificar espacio para sección femenina
+                if (yPosition > 200) {
+                    pdf.addPage();
+                    addCompetitionLogo(pdf);
+                    yPosition = 30;
+                }
+                
+                // Clasificación femenina
+                yPosition = await addFemeninoResultsToPDF(pdf, yPosition, allSheetData);
                 
                 
                 // Guardar el PDF
@@ -6465,12 +6484,12 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
         async function addMasculinoResultsToPDF(pdf, startY, allSheetData) {
             let yPosition = startY;
             
-            // Título de sección
+            // Subtítulo de clasificación masculina
             pdf.setFont("helvetica", "bold");
-            pdf.setFontSize(16);
+            pdf.setFontSize(14);
             pdf.setTextColor(11, 16, 57);
             pdf.text("CLASIFICACIÓN GENERAL MASCULINA", 20, yPosition);
-            yPosition += 20;
+            yPosition += 15;
             
             console.log('📊 DEBUG PDF - Datos masculinos disponibles:', allSheetData.masculino.length);
             console.log('📊 DEBUG PDF - Primera fila masculina:', allSheetData.masculino[0]);
@@ -6527,12 +6546,12 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
                 console.log('✅ Datos femeninos transferidos:', allSheetData.femenino.length + ' registros');
             }
             
-            // Título de sección
+            // Subtítulo de clasificación femenina
             pdf.setFont("helvetica", "bold");
-            pdf.setFontSize(16);
+            pdf.setFontSize(14);
             pdf.setTextColor(11, 16, 57);
             pdf.text("CLASIFICACIÓN GENERAL FEMENINA", 20, yPosition);
-            yPosition += 20;
+            yPosition += 15;
             
             console.log('📊 DEBUG PDF FEMENINO - Estado inicial:', {
                 datosFemeniniosDisponibles: allSheetData.femenino ? allSheetData.femenino.length : 0,
