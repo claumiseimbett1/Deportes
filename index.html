@@ -6920,69 +6920,6 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
             }
         }
         
-        async function addGenderResultsToPDF(pdf, startY) {
-            let yPosition = startY;
-            
-            // Título de sección
-            pdf.setFont("helvetica", "bold");
-            pdf.setFontSize(14);
-            pdf.setTextColor(11, 16, 57);
-            pdf.text("RESULTADOS POR GÉNERO", 20, yPosition);
-            yPosition += 15;
-            
-            // Resultados Masculinos
-            const maleTable = document.getElementById('resultsTableMasculinoGeneral');
-            if (maleTable) {
-                pdf.setFont("helvetica", "bold");
-                pdf.setFontSize(12);
-                pdf.text("CLASIFICACIÓN GENERAL MASCULINA", 20, yPosition);
-                yPosition += 10;
-                
-                const maleRows = maleTable.querySelectorAll('tbody tr:not(.loading-row)');
-                const allMaleResults = Array.from(maleRows); // TODOS los resultados masculinos
-                
-                pdf.setFont("helvetica", "normal");
-                pdf.setFontSize(8);
-                
-                allMaleResults.forEach((row, index) => {
-                    const cells = row.querySelectorAll('td');
-                    if (cells.length > 5) {
-                        // Verificar si necesitamos nueva página
-                        if (yPosition > 270) {
-                            pdf.addPage();
-                            addCompetitionLogo(pdf);
-                            yPosition = 20;
-                            
-                            // Repetir título en nueva página
-                            pdf.setFont("helvetica", "bold");
-                            pdf.setFontSize(12);
-                            pdf.text("CLASIFICACIÓN GENERAL MASCULINA (continuación)", 20, yPosition);
-                            yPosition += 10;
-                            pdf.setFont("helvetica", "normal");
-                            pdf.setFontSize(8);
-                        }
-                        
-                        const pos = cells[0]?.textContent?.trim() || (index + 1);
-                        const name = cells[1]?.textContent?.trim() || 'N/A';
-                        const team = cells[2]?.textContent?.trim() || 'N/A';
-                        const age = cells[3]?.textContent?.trim() || 'N/A';
-                        const category = cells[4]?.textContent?.trim() || 'N/A';
-                        const totalPoints = cells[5]?.textContent?.trim() || '0';
-                        const points200 = cells[6]?.textContent?.trim() || '0';
-                        const points50 = cells[7]?.textContent?.trim() || '0';
-                        const points100 = cells[8]?.textContent?.trim() || '0';
-                        
-                        pdf.text(`${pos}. ${name} (${team}) - ${age} años - ${category}`, 25, yPosition);
-                        yPosition += 4;
-                        pdf.text(`   Total: ${totalPoints} pts (200m: ${points200}, 50m: ${points50}, 100m: ${points100})`, 25, yPosition);
-                        yPosition += 6;
-                    }
-                });
-            }
-            
-            yPosition += 15;
-            
-        }
         
         
         // Función de respaldo para generar un PDF simple
