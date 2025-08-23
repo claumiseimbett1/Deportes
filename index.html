@@ -6475,20 +6475,37 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
             yPosition += 20;
             
             try {
-                // Obtener GIDs de las hojas
+                // Obtener GIDs de las hojas usando la función existente
+                console.log('Obteniendo información de pestañas de Google Sheets...');
                 const sheets = await getSheetTabs();
-                const sheetMasculino = sheets.find(sheet => 
-                    sheet.title.toUpperCase().includes('RESULTADOS') && 
-                    sheet.title.toUpperCase().includes('MASCULINO')
-                );
-                const sheetFemenino = sheets.find(sheet => 
-                    sheet.title.toUpperCase().includes('RESULTADOS') && 
-                    sheet.title.toUpperCase().includes('FEMENINO')
-                );
+                console.log('Pestañas encontradas:', sheets.map(s => s.title));
+                
+                // Buscar hojas con diferentes patrones
+                let sheetMasculino = sheets.find(sheet => {
+                    const title = sheet.title.toUpperCase();
+                    return title.includes('RESULTADOS') && title.includes('MASCULINO');
+                });
+                
+                let sheetFemenino = sheets.find(sheet => {
+                    const title = sheet.title.toUpperCase();
+                    return title.includes('RESULTADOS') && title.includes('FEMENINO');
+                });
+                
+                // Si no se encuentran, buscar solo por MASCULINO/FEMENINO
+                if (!sheetMasculino) {
+                    sheetMasculino = sheets.find(sheet => sheet.title.toUpperCase().includes('MASCULINO'));
+                }
+                if (!sheetFemenino) {
+                    sheetFemenino = sheets.find(sheet => sheet.title.toUpperCase().includes('FEMENINO'));
+                }
+                
+                console.log('Hoja masculina encontrada:', sheetMasculino?.title);
+                console.log('Hoja femenina encontrada:', sheetFemenino?.title);
                 
                 // Cargar datos masculinos desde Google Sheets
                 console.log('Cargando datos masculinos desde Google Sheets...');
-                const datosMasculinos = sheetMasculino ? await loadDirectSheetData(sheetMasculino.gid, 'RESULTADOS-MASCULINO') : null;
+                const datosMasculinos = sheetMasculino ? await loadDirectSheetData(sheetMasculino.gid, sheetMasculino.title) : null;
+                console.log('Datos masculinos cargados:', datosMasculinos ? datosMasculinos.length + ' filas' : 'null');
                 
                 if (datosMasculinos && datosMasculinos.length > 0) {
                     pdf.setFont("helvetica", "bold");
@@ -6559,7 +6576,8 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
                 
                 // Cargar datos femeninos desde Google Sheets
                 console.log('Cargando datos femeninos desde Google Sheets...');
-                const datosFemeninos = sheetFemenino ? await loadDirectSheetData(sheetFemenino.gid, 'RESULTADOS-FEMENINO') : null;
+                const datosFemeninos = sheetFemenino ? await loadDirectSheetData(sheetFemenino.gid, sheetFemenino.title) : null;
+                console.log('Datos femeninos cargados:', datosFemeninos ? datosFemeninos.length + ' filas' : 'null');
                 
                 if (datosFemeninos && datosFemeninos.length > 0) {
                     // Verificar espacio
@@ -6638,7 +6656,9 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
                 pdf.setFont("helvetica", "normal");
                 pdf.setFontSize(10);
                 pdf.setTextColor(255, 0, 0);
-                pdf.text("Error cargando resultados por género", 20, yPosition);
+                pdf.text("Error cargando resultados por género: " + error.message, 20, yPosition);
+                yPosition += 10;
+                pdf.text("Verifica la consola del navegador para más detalles", 20, yPosition);
                 yPosition += 15;
             }
             
