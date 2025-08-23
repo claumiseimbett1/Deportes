@@ -6480,24 +6480,9 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
                 const sheets = await getSheetTabs();
                 console.log('Pestañas encontradas:', sheets.map(s => s.title));
                 
-                // Buscar hojas con diferentes patrones
-                let sheetMasculino = sheets.find(sheet => {
-                    const title = sheet.title.toUpperCase();
-                    return title.includes('RESULTADOS') && title.includes('MASCULINO');
-                });
-                
-                let sheetFemenino = sheets.find(sheet => {
-                    const title = sheet.title.toUpperCase();
-                    return title.includes('RESULTADOS') && title.includes('FEMENINO');
-                });
-                
-                // Si no se encuentran, buscar solo por MASCULINO/FEMENINO
-                if (!sheetMasculino) {
-                    sheetMasculino = sheets.find(sheet => sheet.title.toUpperCase().includes('MASCULINO'));
-                }
-                if (!sheetFemenino) {
-                    sheetFemenino = sheets.find(sheet => sheet.title.toUpperCase().includes('FEMENINO'));
-                }
+                // Buscar hojas con nombres exactos
+                const sheetMasculino = sheets.find(sheet => sheet.title === 'RESULTADOS-MASCULINO');
+                const sheetFemenino = sheets.find(sheet => sheet.title === 'RESULTADOS-FEMENINO');
                 
                 console.log('Hoja masculina encontrada:', sheetMasculino?.title);
                 console.log('Hoja femenina encontrada:', sheetFemenino?.title);
