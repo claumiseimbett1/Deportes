@@ -3071,7 +3071,7 @@
                 '200m-libre-masculino': ['200M-MASCULINO', '200M MASCULINO', '200M-MAS', '200M MAS', '200 MAS', 'MASCULINO 200M'],
                 '4x50m-libre-mixto': ['4X50M-MIXTO', '4X50M MIXTO', '4X50M-MIX', '4X50M MIX', '4X50 MIX', 'MIXTO 4X50M'],
                 // Segunda sesión: Resultado por género
-                'resultados-femenino': ['RESULTADOS-FEMENINO', 'RESULTADOS FEMENINO', 'RESULTADOS FEM'],
+                'resultados-femenino': ['CLASIFICACIÓN GENERAL FEMENINA', 'RESULTADOS-FEMENINO', 'RESULTADOS FEMENINO', 'RESULTADOS FEM'],
                 'resultados-masculino': ['RESULTADOS-MASCULINO', 'RESULTADOS MASCULINO', 'RESULTADOS MAS'],
                 // Tercera sesión: Resultado por equipo
                 'resultados-equipo': ['EQUIPO', 'EQUIPOS', 'TEAM', 'TEAMS', 'CLASIFICACION EQUIPOS', 'RESULTADOS EQUIPOS']
@@ -3340,7 +3340,7 @@
                     // Resultados por género
                     'resultados-femenino': {
                         keywords: ['RESULTADOS', 'FEMENINO'],
-                        alternativeNames: ['RESULTADOS-FEMENINO', 'RESULTADOS FEMENINO'],
+                        alternativeNames: ['CLASIFICACIÓN GENERAL FEMENINA', 'RESULTADOS-FEMENINO', 'RESULTADOS FEMENINO'],
                         tableId: 'resultsTableFemeninoGeneral',
                         genderColumn: 'Nadadora'
                     },
@@ -5334,7 +5334,7 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
                 // Debugging adicional para las últimas hojas
                 if (allData.femenino.length === 0) {
                     console.warn('⚠️ PROBLEMA: No se cargaron datos femeninos - intentando fallback por nombre');
-                    await tryLoadByName(sheetInfo, allData, 'femenino', ['FEMENINO', 'RESULTADOS-FEMENINO', 'RESULTADOS FEMENINO']);
+                    await tryLoadByName(sheetInfo, allData, 'femenino', ['CLASIFICACIÓN GENERAL FEMENINA', 'FEMENINO', 'RESULTADOS-FEMENINO', 'RESULTADOS FEMENINO']);
                 }
                 if (allData.equipos.length === 0) {
                     console.warn('⚠️ PROBLEMA: No se cargaron datos de equipos - intentando fallback por nombre');
@@ -5363,7 +5363,7 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
                         const estructuradoHTML = {
                             eventos: [],
                             masculino: htmlData['RESULTADOS-MASCULINO'] || htmlData['RESULTADOS MASCULINO'] || htmlData['MASCULINO'] || [],
-                            femenino: htmlData['RESULTADOS-FEMENINO'] || htmlData['RESULTADOS FEMENINO'] || htmlData['FEMENINO'] || [],
+                            femenino: htmlData['CLASIFICACIÓN GENERAL FEMENINA'] || htmlData['RESULTADOS-FEMENINO'] || htmlData['RESULTADOS FEMENINO'] || htmlData['FEMENINO'] || [],
                             equipos: htmlData['EQUIPOS'] || htmlData['EQUIPO'] || htmlData['TEAMS'] || []
                         };
                         
@@ -5450,7 +5450,7 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
             // Agregar datos por género con múltiples nombres
             const genderTables = [
                 { id: 'resultsTableMasculinoGeneral', names: ['RESULTADOS-MASCULINO', 'RESULTADOS MASCULINO', 'MASCULINO'] },
-                { id: 'resultsTableFemeninoGeneral', names: ['RESULTADOS-FEMENINO', 'RESULTADOS FEMENINO', 'FEMENINO'] }
+                { id: 'resultsTableFemeninoGeneral', names: ['CLASIFICACIÓN GENERAL FEMENINA', 'RESULTADOS-FEMENINO', 'RESULTADOS FEMENINO', 'FEMENINO'] }
             ];
             
             genderTables.forEach(({ id, names }) => {
