@@ -4984,25 +4984,8 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
                 addCompetitionLogo(pdf);
                 yPosition = 30;
                 
-                // Título de sección
-                pdf.setFont("helvetica", "bold");
-                pdf.setFontSize(16);
-                pdf.setTextColor(11, 16, 57);
-                pdf.text("RESULTADOS POR GÉNERO", 20, yPosition);
-                yPosition += 20;
-                
-                // Clasificación masculina
-                yPosition = await addMasculinoResultsToPDF(pdf, yPosition, allSheetData);
-                
-                // Verificar espacio para sección femenina
-                if (yPosition > 200) {
-                    pdf.addPage();
-                    addCompetitionLogo(pdf);
-                    yPosition = 30;
-                }
-                
-                // Clasificación femenina
-                yPosition = await addFemeninoResultsToPDF(pdf, yPosition, allSheetData);
+                // Agregar resultados por género leyendo directamente de las tablas HTML
+                yPosition = await addGenderResultsFromHTMLTables(pdf, yPosition);
                 
                 
                 // Guardar el PDF
@@ -6480,6 +6463,185 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
         }
         */
 
+        // Función simple que lee directamente de las tablas HTML de la página web
+        async function addGenderResultsFromHTMLTables(pdf, startY) {
+            let yPosition = startY;
+            
+            // Título principal
+            pdf.setFont("helvetica", "bold");
+            pdf.setFontSize(16);
+            pdf.setTextColor(11, 16, 57);
+            pdf.text("RESULTADOS POR GÉNERO", 20, yPosition);
+            yPosition += 20;
+            
+            // CLASIFICACIÓN GENERAL MASCULINA - Leer de tabla HTML
+            const tablaHombres = document.getElementById('resultsTableMasculinoGeneral');
+            if (tablaHombres) {
+                pdf.setFont("helvetica", "bold");
+                pdf.setFontSize(14);
+                pdf.setTextColor(11, 16, 57);
+                pdf.text("CLASIFICACIÓN GENERAL MASCULINA", 20, yPosition);
+                yPosition += 15;
+                
+                // Encabezados
+                pdf.setFont("helvetica", "bold");
+                pdf.setFontSize(8);
+                pdf.setTextColor(0, 0, 0);
+                pdf.text("POS", 20, yPosition);
+                pdf.text("ATLETA", 35, yPosition);
+                pdf.text("EQUIPO", 80, yPosition);
+                pdf.text("EDAD", 120, yPosition);
+                pdf.text("CAT", 135, yPosition);
+                pdf.text("TOT", 150, yPosition);
+                pdf.text("200", 165, yPosition);
+                pdf.text("50", 180, yPosition);
+                pdf.text("100", 195, yPosition);
+                yPosition += 8;
+                
+                // Datos masculinos
+                const filasHombres = tablaHombres.querySelectorAll('tbody tr:not(.loading-row):not(.category-header)');
+                pdf.setFont("helvetica", "normal");
+                pdf.setFontSize(7);
+                
+                filasHombres.forEach((fila, index) => {
+                    if (yPosition > 270) {
+                        pdf.addPage();
+                        addCompetitionLogo(pdf);
+                        yPosition = 30;
+                        
+                        // Repetir encabezados
+                        pdf.setFont("helvetica", "bold");
+                        pdf.setFontSize(8);
+                        pdf.text("POS", 20, yPosition);
+                        pdf.text("ATLETA", 35, yPosition);
+                        pdf.text("EQUIPO", 80, yPosition);
+                        pdf.text("EDAD", 120, yPosition);
+                        pdf.text("CAT", 135, yPosition);
+                        pdf.text("TOT", 150, yPosition);
+                        pdf.text("200", 165, yPosition);
+                        pdf.text("50", 180, yPosition);
+                        pdf.text("100", 195, yPosition);
+                        yPosition += 8;
+                        pdf.setFont("helvetica", "normal");
+                        pdf.setFontSize(7);
+                    }
+                    
+                    const celdas = fila.querySelectorAll('td');
+                    if (celdas.length >= 8) {
+                        const pos = celdas[0]?.textContent?.trim() || (index + 1);
+                        const atleta = celdas[1]?.textContent?.trim() || 'N/A';
+                        const equipo = celdas[2]?.textContent?.trim() || 'N/A';
+                        const edad = celdas[3]?.textContent?.trim() || 'N/A';
+                        const categoria = celdas[4]?.textContent?.trim() || 'N/A';
+                        const total = celdas[5]?.textContent?.trim() || '0';
+                        const pts200 = celdas[6]?.textContent?.trim() || '0';
+                        const pts50 = celdas[7]?.textContent?.trim() || '0';
+                        const pts100 = celdas[8]?.textContent?.trim() || '0';
+                        
+                        pdf.text(pos.toString(), 20, yPosition);
+                        pdf.text(atleta.substring(0, 20), 35, yPosition);
+                        pdf.text(equipo.substring(0, 15), 80, yPosition);
+                        pdf.text(edad.toString(), 120, yPosition);
+                        pdf.text(categoria.substring(0, 8), 135, yPosition);
+                        pdf.text(total.toString(), 150, yPosition);
+                        pdf.text(pts200.toString(), 165, yPosition);
+                        pdf.text(pts50.toString(), 180, yPosition);
+                        pdf.text(pts100.toString(), 195, yPosition);
+                        yPosition += 6;
+                    }
+                });
+                
+                yPosition += 10;
+            }
+            
+            // CLASIFICACIÓN GENERAL FEMENINA - Leer de tabla HTML
+            const tablaMujeres = document.getElementById('resultsTableFemeninoGeneral');
+            if (tablaMujeres) {
+                // Verificar espacio
+                if (yPosition > 200) {
+                    pdf.addPage();
+                    addCompetitionLogo(pdf);
+                    yPosition = 30;
+                }
+                
+                pdf.setFont("helvetica", "bold");
+                pdf.setFontSize(14);
+                pdf.setTextColor(11, 16, 57);
+                pdf.text("CLASIFICACIÓN GENERAL FEMENINA", 20, yPosition);
+                yPosition += 15;
+                
+                // Encabezados
+                pdf.setFont("helvetica", "bold");
+                pdf.setFontSize(8);
+                pdf.setTextColor(0, 0, 0);
+                pdf.text("POS", 20, yPosition);
+                pdf.text("ATLETA", 35, yPosition);
+                pdf.text("EQUIPO", 80, yPosition);
+                pdf.text("EDAD", 120, yPosition);
+                pdf.text("CAT", 135, yPosition);
+                pdf.text("TOT", 150, yPosition);
+                pdf.text("200", 165, yPosition);
+                pdf.text("50", 180, yPosition);
+                pdf.text("100", 195, yPosition);
+                yPosition += 8;
+                
+                // Datos femeninos
+                const filasMujeres = tablaMujeres.querySelectorAll('tbody tr:not(.loading-row):not(.category-header)');
+                pdf.setFont("helvetica", "normal");
+                pdf.setFontSize(7);
+                
+                filasMujeres.forEach((fila, index) => {
+                    if (yPosition > 270) {
+                        pdf.addPage();
+                        addCompetitionLogo(pdf);
+                        yPosition = 30;
+                        
+                        // Repetir encabezados
+                        pdf.setFont("helvetica", "bold");
+                        pdf.setFontSize(8);
+                        pdf.text("POS", 20, yPosition);
+                        pdf.text("ATLETA", 35, yPosition);
+                        pdf.text("EQUIPO", 80, yPosition);
+                        pdf.text("EDAD", 120, yPosition);
+                        pdf.text("CAT", 135, yPosition);
+                        pdf.text("TOT", 150, yPosition);
+                        pdf.text("200", 165, yPosition);
+                        pdf.text("50", 180, yPosition);
+                        pdf.text("100", 195, yPosition);
+                        yPosition += 8;
+                        pdf.setFont("helvetica", "normal");
+                        pdf.setFontSize(7);
+                    }
+                    
+                    const celdas = fila.querySelectorAll('td');
+                    if (celdas.length >= 8) {
+                        const pos = celdas[0]?.textContent?.trim() || (index + 1);
+                        const atleta = celdas[1]?.textContent?.trim() || 'N/A';
+                        const equipo = celdas[2]?.textContent?.trim() || 'N/A';
+                        const edad = celdas[3]?.textContent?.trim() || 'N/A';
+                        const categoria = celdas[4]?.textContent?.trim() || 'N/A';
+                        const total = celdas[5]?.textContent?.trim() || '0';
+                        const pts200 = celdas[6]?.textContent?.trim() || '0';
+                        const pts50 = celdas[7]?.textContent?.trim() || '0';
+                        const pts100 = celdas[8]?.textContent?.trim() || '0';
+                        
+                        pdf.text(pos.toString(), 20, yPosition);
+                        pdf.text(atleta.substring(0, 20), 35, yPosition);
+                        pdf.text(equipo.substring(0, 15), 80, yPosition);
+                        pdf.text(edad.toString(), 120, yPosition);
+                        pdf.text(categoria.substring(0, 8), 135, yPosition);
+                        pdf.text(total.toString(), 150, yPosition);
+                        pdf.text(pts200.toString(), 165, yPosition);
+                        pdf.text(pts50.toString(), 180, yPosition);
+                        pdf.text(pts100.toString(), 195, yPosition);
+                        yPosition += 6;
+                    }
+                });
+            }
+            
+            return yPosition;
+        }
+        
         // Función independiente para agregar resultados masculinos al PDF
         async function addMasculinoResultsToPDF(pdf, startY, allSheetData) {
             let yPosition = startY;
