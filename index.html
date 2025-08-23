@@ -6475,21 +6475,13 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
             yPosition += 20;
             
             try {
-                // Obtener GIDs de las hojas usando la función existente
-                console.log('Obteniendo información de pestañas de Google Sheets...');
-                const sheets = await getSheetTabs();
-                console.log('Pestañas encontradas:', sheets.map(s => s.title));
-                
-                // Buscar hojas con nombres exactos
-                const sheetMasculino = sheets.find(sheet => sheet.title === 'RESULTADOS-MASCULINO');
-                const sheetFemenino = sheets.find(sheet => sheet.title === 'RESULTADOS-FEMENINO');
-                
-                console.log('Hoja masculina encontrada:', sheetMasculino?.title);
-                console.log('Hoja femenina encontrada:', sheetFemenino?.title);
+                // GIDs específicos de las hojas
+                const gidFemenino = '1083700705'; // RESULTADOS-FEMENINO
+                const gidMasculino = '1681548039'; // RESULTADOS-MASCULINO
                 
                 // Cargar datos masculinos desde Google Sheets
-                console.log('Cargando datos masculinos desde Google Sheets...');
-                const datosMasculinos = sheetMasculino ? await loadDirectSheetData(sheetMasculino.gid, sheetMasculino.title) : null;
+                console.log('Cargando datos masculinos desde Google Sheets (GID:', gidMasculino, ')...');
+                const datosMasculinos = await loadDirectSheetData(gidMasculino, 'RESULTADOS-MASCULINO');
                 console.log('Datos masculinos cargados:', datosMasculinos ? datosMasculinos.length + ' filas' : 'null');
                 
                 if (datosMasculinos && datosMasculinos.length > 0) {
@@ -6560,8 +6552,8 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
                 }
                 
                 // Cargar datos femeninos desde Google Sheets
-                console.log('Cargando datos femeninos desde Google Sheets...');
-                const datosFemeninos = sheetFemenino ? await loadDirectSheetData(sheetFemenino.gid, sheetFemenino.title) : null;
+                console.log('Cargando datos femeninos desde Google Sheets (GID:', gidFemenino, ')...');
+                const datosFemeninos = await loadDirectSheetData(gidFemenino, 'RESULTADOS-FEMENINO');
                 console.log('Datos femeninos cargados:', datosFemeninos ? datosFemeninos.length + ' filas' : 'null');
                 
                 if (datosFemeninos && datosFemeninos.length > 0) {
