@@ -6981,14 +6981,9 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
         document.addEventListener('DOMContentLoaded', function() {
             const downloadBtn = document.getElementById('downloadPdfBtn');
             if (downloadBtn) {
-                // Intentar primero el PDF completo, si falla usar el simple
+                // Solo usar el PDF completo
                 downloadBtn.addEventListener('click', async function() {
-                    try {
-                        await downloadResultsPDF();
-                    } catch (error) {
-                        console.log('PDF completo falló, intentando versión simple...');
-                        await downloadSimplePDF();
-                    }
+                    await downloadResultsPDF();
                 });
             }
         });
