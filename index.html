@@ -4985,17 +4985,6 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
                 yPosition = 30;
                 yPosition = await addMasculinoResultsToPDF(pdf, yPosition, allSheetData);
                 
-                // CLASIFICACIÓN GENERAL FEMENINA (nueva página)
-                pdf.addPage();
-                addCompetitionLogo(pdf);
-                yPosition = 30;
-                yPosition = await addFemeninoResultsToPDF(pdf, yPosition, allSheetData);
-                
-                // CLASIFICACIÓN POR EQUIPOS (nueva página)
-                pdf.addPage();
-                addCompetitionLogo(pdf);
-                yPosition = 30;
-                await addEquiposResultsToPDF(pdf, yPosition, allSheetData);
                 
                 // Guardar el PDF
                 const fileName = `Resultados_IV_Championship_${new Date().toISOString().split('T')[0]}.pdf`;
