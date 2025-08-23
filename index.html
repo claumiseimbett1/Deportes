@@ -6235,7 +6235,7 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
                         pdf.setFont("helvetica", "bold");
                         pdf.setFontSize(12);
                         pdf.setTextColor(11, 16, 57);
-                        pdf.text("CLASIFICACIÓN POR EQUIPOS (continuación)", 20, currentY);
+                        pdf.text("EQUIPOS (continuación)", 20, currentY);
                         currentY += 15;
                     }
                     
@@ -6747,7 +6747,7 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
             pdf.setFont("helvetica", "bold");
             pdf.setFontSize(16);
             pdf.setTextColor(11, 16, 57);
-            pdf.text("CLASIFICACIÓN GENERAL POR EQUIPOS", 20, yPosition);
+            pdf.text("EQUIPOS", 20, yPosition);
             yPosition += 20;
             
             console.log('📊 DEBUG PDF - Datos de equipos disponibles:', allSheetData.equipos.length);
