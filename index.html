@@ -2574,7 +2574,7 @@
             <!-- Search Container for Pruebas -->
             <div class="search-container">
                 <div class="search-box">
-                    <span class="search-icon">🔍</span>
+                    <span class="search-icon"></span>
                     <label for="searchPruebas" class="visually-hidden">Buscar participante por nombre en resultados por pruebas</label>
                     <input type="text" class="search-input" id="searchPruebas" placeholder="Buscar participante por nombre...">
                     <button type="button" class="clear-search clear-search-hidden" onclick="clearSearch('searchPruebas')">✕</button>
@@ -2796,7 +2796,7 @@
             <!-- Search Container for Gender -->
             <div class="search-container">
                 <div class="search-box">
-                    <span class="search-icon">🔍</span>
+                    <span class="search-icon"></span>
                     <label for="searchGender" class="visually-hidden">Buscar participante por nombre en clasificación general</label>
                     <input type="text" class="search-input" id="searchGender" placeholder="Buscar participante por nombre...">
                     <button class="clear-search clear-search-hidden" onclick="clearSearch('searchGender')">✕</button>
@@ -3206,7 +3206,7 @@
                 return detectedGids[competitionKey];
             }
             
-            console.log(`🔍 Buscando pestaña para: ${competitionKey}`);
+            console.log(` Buscando pestaña para: ${competitionKey}`);
             console.log(`📋 Pestañas disponibles en Google Sheet:`, sheetInfo.map(s => s.title));
             
             const possibleNames = CONFIG.COMPETITION_SHEETS[competitionKey] || [];
@@ -3241,7 +3241,7 @@
                 });
                 
                 if (sheet) {
-                    console.log(`✅ Encontrada pestaña para ${competitionKey}: "${sheet.title}" (GID: ${sheet.gid})`);
+                    console.log(` Encontrada pestaña para ${competitionKey}: "${sheet.title}" (GID: ${sheet.gid})`);
                     // Guardar en cache para futuros usos
                     detectedGids[competitionKey] = sheet.gid;
                     return sheet.gid;
@@ -3267,7 +3267,7 @@
             updateStatus('loading', '🔄 Cargando resultados...');
             
             try {
-                console.log('🔍 Obteniendo lista de pestañas...');
+                console.log(' Obteniendo lista de pestañas...');
                 const sheetInfo = await getSheetInfo();
                 
                 if (!sheetInfo) {
@@ -3361,9 +3361,9 @@
                 
                 // Buscar y cargar cada competencia con lógica de búsqueda inteligente
                 for (const [competitionKey, config] of Object.entries(competitions)) {
-                    console.log(`🔍 Buscando coincidencias para ${competitionKey}...`);
+                    console.log(` Buscando coincidencias para ${competitionKey}...`);
                     console.log(`🎯 Palabras clave: ${config.keywords.join(', ')}`);
-                    console.log(`🔍 Nombres alternativos: ${config.alternativeNames.join(', ')}`);
+                    console.log(` Nombres alternativos: ${config.alternativeNames.join(', ')}`);
                     
                     let foundSheet = null;
                     
@@ -3374,7 +3374,7 @@
                             title === altName.toUpperCase().trim()
                         );
                         if (exactMatch) {
-                            console.log(`✅ Coincidencia exacta encontrada: "${sheet.title}"`);
+                            console.log(` Coincidencia exacta encontrada: "${sheet.title}"`);
                         }
                         return exactMatch;
                     });
@@ -3387,7 +3387,7 @@
                                 title.includes(keyword.toUpperCase())
                             );
                             if (hasAllKeywords) {
-                                console.log(`✅ Coincidencia por palabras clave: "${sheet.title}" contiene todas las palabras clave`);
+                                console.log(` Coincidencia por palabras clave: "${sheet.title}" contiene todas las palabras clave`);
                             }
                             return hasAllKeywords;
                         });
@@ -3401,7 +3401,7 @@
                                 title.includes(altName.toUpperCase()) || altName.toUpperCase().includes(title)
                             );
                             if (partialMatch) {
-                                console.log(`✅ Coincidencia parcial encontrada: "${sheet.title}"`);
+                                console.log(` Coincidencia parcial encontrada: "${sheet.title}"`);
                             }
                             return partialMatch;
                         });
@@ -3415,7 +3415,7 @@
                                 title.includes(keyword.toUpperCase())
                             );
                             if (hasKeyword) {
-                                console.log(`✅ Coincidencia simple encontrada: "${sheet.title}" contiene palabra clave`);
+                                console.log(` Coincidencia simple encontrada: "${sheet.title}" contiene palabra clave`);
                             }
                             return hasKeyword;
                         });
@@ -3426,7 +3426,7 @@
                         const data = await loadSheetByGid(foundSheet.gid, foundSheet.title);
                         
                         if (data && data.length > 0) {
-                            console.log(`✅ Datos cargados: ${data.length} filas`);
+                            console.log(` Datos cargados: ${data.length} filas`);
                             
                             const table = document.getElementById(config.tableId);
                             if (table) {
@@ -3443,7 +3443,7 @@
                                 
                                 table.classList.remove('loading');
                                 hasData = true;
-                                console.log(`✅ Tabla ${competitionKey} actualizada`);
+                                console.log(` Tabla ${competitionKey} actualizada`);
                             }
                         } else {
                             console.log(`❌ No se pudieron cargar datos de "${foundSheet.title}"`);
@@ -3467,7 +3467,7 @@
                 
                 // Actualizar estado final (siempre completar, aunque solo se carguen algunas pestañas)
                 if (hasData) {
-                    updateStatus('success', '✅ Resultados actualizados');
+                    updateStatus('success', ' Resultados actualizados');
                     updateLastUpdateTime();
                     
                     // Actualizar también tiempo de género si se cargaron tablas de género
@@ -3541,7 +3541,7 @@
                 }
                 
                 if (data && data.length > 0) {
-                    console.log(`✅ Datos cargados para ${identifier}: ${data.length} filas`);
+                    console.log(` Datos cargados para ${identifier}: ${data.length} filas`);
                     logDataSample(data);
                 }
                 
@@ -3585,7 +3585,7 @@
             for (const apiRange of ranges) {
                 try {
                     const url = `https://sheets.googleapis.com/v4/spreadsheets/${CONFIG.SHEET_ID}/values/${apiRange}?key=${CONFIG.API_KEY}`;
-                    console.log(`🔍 Probando rango: ${apiRange}`);
+                    console.log(` Probando rango: ${apiRange}`);
                     
                     const response = await fetch(url, {
                         method: 'GET',
@@ -3598,7 +3598,7 @@
                     if (response.ok) {
                         const responseData = await response.json();
                         if (responseData.values && responseData.values.length > 0) {
-                            console.log(`✅ Datos encontrados: ${responseData.values.length} filas`);
+                            console.log(` Datos encontrados: ${responseData.values.length} filas`);
                             return responseData.values;
                         }
                     }
@@ -3612,9 +3612,9 @@
         // Helper function to log data samples
         function logDataSample(data) {
             if (data.length > 0) {
-                console.log(`🔍 Primera fila (encabezados):`, data[0]);
-                if (data.length > 1) console.log(`🔍 Segunda fila:`, data[1]);
-                console.log(`🔍 Última fila:`, data[data.length - 1]);
+                console.log(` Primera fila (encabezados):`, data[0]);
+                if (data.length > 1) console.log(` Segunda fila:`, data[1]);
+                console.log(` Última fila:`, data[data.length - 1]);
             }
         }
 
@@ -3950,11 +3950,11 @@
             
             // DEBUG: Verificar qué datos se están pasando a la tabla femenina
             if (table.id === 'resultsTableFemeninoGeneral') {
-                console.log('🔍 DEBUG: updateGenderTableContent para tabla femenina');
-                console.log('📊 Datos recibidos:', data ? data.length + ' filas' : 'null/undefined');
-                console.log('📊 Primera fila (headers):', data ? data[0] : 'n/a');
-                console.log('📊 Segunda fila (primer dato):', data && data[1] ? data[1] : 'n/a');
-                console.log('📊 genderLabel:', genderLabel);
+                console.log(' DEBUG: updateGenderTableContent para tabla femenina');
+                console.log(' Datos recibidos:', data ? data.length + ' filas' : 'null/undefined');
+                console.log(' Primera fila (headers):', data ? data[0] : 'n/a');
+                console.log(' Segunda fila (primer dato):', data && data[1] ? data[1] : 'n/a');
+                console.log(' genderLabel:', genderLabel);
             }
             
             let htmlContent = '';
@@ -4112,14 +4112,14 @@
                     });
                     
                     // 2. Buscar coincidencias para 100m-femenino
-                    console.log('🔍 Buscando coincidencias para 100M-FEMENINO...');
+                    console.log(' Buscando coincidencias para 100M-FEMENINO...');
                     const possibleNames = ['100M-FEMENINO', '100M FEMENINO', '100m-femenino', '100MFEMENINO', '100M-FEM'];
                     
                     let foundSheet = null;
                     for (const name of possibleNames) {
                         foundSheet = sheetInfo.find(s => s.title.toUpperCase().includes(name.toUpperCase()));
                         if (foundSheet) {
-                            console.log(`✅ Encontrada: "${foundSheet.title}" con GID: ${foundSheet.gid}`);
+                            console.log(` Encontrada: "${foundSheet.title}" con GID: ${foundSheet.gid}`);
                             break;
                         }
                     }
@@ -4135,8 +4135,8 @@
                     const data = await loadSheetByGid(foundSheet.gid, foundSheet.title);
                     
                     if (data && data.length > 0) {
-                        console.log(`✅ Datos cargados: ${data.length} filas`);
-                        console.log('📊 TODOS LOS DATOS:');
+                        console.log(` Datos cargados: ${data.length} filas`);
+                        console.log(' TODOS LOS DATOS:');
                         data.forEach((row, index) => {
                             if (index === 0) {
                                 console.log(`  🏷️ ENCABEZADOS (Fila ${index + 1}):`, row);
@@ -4151,7 +4151,7 @@
                         if (table100mFem) {
                             console.log('🔄 Actualizando tabla 100m femenino...');
                             updateTableContent(table100mFem, data, 'Nadadora');
-                            console.log('✅ Tabla actualizada');
+                            console.log(' Tabla actualizada');
                         }
                     } else {
                         console.log('❌ No se pudieron cargar datos de la pestaña');
@@ -4218,7 +4218,7 @@
                 loadSheetData();
             }, 180000);
             
-            console.log('✅ Sistema de recarga automática configurado (cada 3 minutos)');
+            console.log(' Sistema de recarga automática configurado (cada 3 minutos)');
         }
 
         // Event listeners
@@ -4246,7 +4246,7 @@
                 .then(response => {
                     console.log('📡 Respuesta del servidor:', response.status, response.statusText);
                     if (response.ok) {
-                        console.log('✅ Google Sheet es accesible');
+                        console.log(' Google Sheet es accesible');
                         console.log('🎯 Iniciando sistema de recarga automática...');
                         startAutoReload();
                     } else {
@@ -4685,7 +4685,7 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
                         <button class="close-modal" onclick="closeInstagramInstructions()">&times;</button>
                     </div>
                     <div class="share-content-padding">
-                        <div class="share-icon-large">📋✅</div>
+                        <div class="share-icon-large">📋</div>
                         <p class="share-description">
                             <strong>¡Texto copiado al portapapeles!</strong>
                         </p>
@@ -4891,8 +4891,8 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
                 
                 // Obtener datos frescos directamente del Google Sheet
                 const allSheetData = await getAllSheetData();
-                console.log('📊 Datos obtenidos para PDF:', Object.keys(allSheetData));
-                console.log('📊 DEBUG PDF - Conteo de datos:', {
+                console.log(' Datos obtenidos para PDF:', Object.keys(allSheetData));
+                console.log(' DEBUG PDF - Conteo de datos:', {
                     eventos: allSheetData.eventos?.length || 0,
                     masculino: allSheetData.masculino?.length || 0,
                     femenino: allSheetData.femenino?.length || 0,
@@ -4900,7 +4900,7 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
                 });
                 
                 // VALIDACIÓN CRÍTICA: Detectar intercambio de datos femenino/equipos
-                console.log('🔍 ANÁLISIS PREVIO AL PDF:', {
+                console.log(' ANÁLISIS PREVIO AL PDF:', {
                     tieneDataFemenino: !!(allSheetData.femenino && allSheetData.femenino.length > 0),
                     tieneDataEquipos: !!(allSheetData.equipos && allSheetData.equipos.length > 0),
                     columnasFemenino: allSheetData.femenino && allSheetData.femenino[0] ? allSheetData.femenino[0].length : 'N/A',
@@ -4913,7 +4913,7 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
                     const femeninoParecenEquipos = allSheetData.femenino[0].length <= 5;
                     const equiposParecenAtletas = allSheetData.equipos[0].length > 7;
                     
-                    console.log('🔍 ANÁLISIS DE INTERCAMBIO:', {
+                    console.log(' ANÁLISIS DE INTERCAMBIO:', {
                         femeninoParecenEquipos: femeninoParecenEquipos,
                         equiposParecenAtletas: equiposParecenAtletas,
                         primeraFilaFemenino: allSheetData.femenino[0],
@@ -4929,7 +4929,7 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
                         // allSheetData.femenino = allSheetData.equipos;
                         // allSheetData.equipos = temp;
                         
-                        console.log('✅ Corrección aplicada:', {
+                        console.log(' Corrección aplicada:', {
                             femeninoCorregido: allSheetData.femenino.length + ' filas, ' + (allSheetData.femenino[0] ? allSheetData.femenino[0].length : 0) + ' columnas',
                             equiposCorregido: allSheetData.equipos.length + ' filas, ' + (allSheetData.equipos[0] ? allSheetData.equipos[0].length : 0) + ' columnas'
                         });
@@ -4945,10 +4945,10 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
                 
                 // Validación adicional: Si falta alguna sección crítica, mostrar advertencia
                 if (!allSheetData.femenino || allSheetData.femenino.length === 0) {
-                    console.warn('⚠️ ADVERTENCIA PDF: No hay datos de clasificación femenina');
+                    console.warn('ADVERTENCIA PDF: No hay datos de clasificación femenina');
                 }
                 if (!allSheetData.equipos || allSheetData.equipos.length === 0) {
-                    console.warn('⚠️ ADVERTENCIA PDF: No hay datos de clasificación de equipos');
+                    console.warn('ADVERTENCIA PDF: No hay datos de clasificación de equipos');
                 }
                 
                 // Asegurar que las estructuras existan aunque estén vacías
@@ -5022,9 +5022,9 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
             
             const upperName = sheetName.toUpperCase();
             
-            // Clasificación general - necesitan hasta columna J (ACTIVADOR)
+            // Clasificación general - necesitan hasta columna I
             if (upperName.includes('RESULTADOS')) {
-                return 'A:J';
+                return 'A:I';
             }
             
             // Equipos - solo hasta columna F
@@ -5163,7 +5163,7 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
                             );
                             if (dataRows.length > 0) {
                                 allData[dataKey] = dataRows;
-                                console.log(`✅ Fallback exitoso: ${dataKey} cargado con ${dataRows.length} filas desde "${sheet.title}"`);
+                                console.log(` Fallback exitoso: ${dataKey} cargado con ${dataRows.length} filas desde "${sheet.title}"`);
                                 return true;
                             }
                         }
@@ -5179,7 +5179,7 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
         // Función para cargar todas las hojas por posición
         async function getAllSheetData() {
             try {
-                console.log('🔍 Cargando hojas del Google Sheet por posición...');
+                console.log(' Cargando hojas del Google Sheet por posición...');
                 
                 // Primero obtener información de todas las hojas disponibles
                 const sheetInfo = await getSheetInfo();
@@ -5214,7 +5214,7 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
                             const dataRows = data.slice(1).filter(row => 
                                 row && row.length > 0 && row.some(cell => cell && cell.trim() !== '')
                             );
-                            console.log(`✅ ${sheet.title}: ${dataRows.length} filas de datos (salteando headers)`);
+                            console.log(` ${sheet.title}: ${dataRows.length} filas de datos (salteando headers)`);
                             allData.eventos.push({
                                 name: mapSheetTitleToDisplayName(sheet.title),
                                 data: dataRows
@@ -5237,7 +5237,7 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
                             const dataRows = maleData.slice(1).filter(row => 
                                 row && row.length > 0 && row.some(cell => cell && cell.trim() !== '')
                             );
-                            console.log(`✅ Masculino: ${dataRows.length} filas de datos`);
+                            console.log(` Masculino: ${dataRows.length} filas de datos`);
                             allData.masculino = dataRows; // Fixed: masculino data should go to masculino
                         }
                     } catch (error) {
@@ -5256,7 +5256,7 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
                             const dataRows = femaleData.slice(1).filter(row => 
                                 row && row.length > 0 && row.some(cell => cell && cell.trim() !== '')
                             );
-                            console.log(`✅ Femenino: ${dataRows.length} filas de datos`);
+                            console.log(` Femenino: ${dataRows.length} filas de datos`);
                             allData.femenino = dataRows; // Fixed: femenino data should go to femenino
                         }
                     } catch (error) {
@@ -5274,7 +5274,7 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
                 if (sheetInfo.length >= 11) {
                     // Si hay 11 o más hojas, equipos está en índice 10
                     teamSheetIndex = 10;
-                    console.log(`📊 Configuración estándar: equipos en índice 10`);
+                    console.log(` Configuración estándar: equipos en índice 10`);
                 } else if (sheetInfo.length === 10) {
                     // Si hay exactamente 10 hojas, necesitamos determinar cuál es cuál
                     console.warn(`⚠️ Configuración de 10 hojas detectada - determinando distribución`);
@@ -5282,17 +5282,17 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
                     // Verificar si ya cargamos datos femeninos
                     if (allData.femenino.length > 0) {
                         // Si ya tenemos datos femeninos, no usar el índice 9 para equipos
-                        console.log(`📊 Femenino ya cargado, equipos no disponible como hoja separada`);
+                        console.log(` Femenino ya cargado, equipos no disponible como hoja separada`);
                         teamSheetIndex = -1;
                     } else {
                         // Si no hay datos femeninos, usar la hoja 9 para equipos
                         teamSheetIndex = 9;
-                        console.log(`📊 Configuración especial: usando hoja 9 para equipos (sin datos femeninos)`);
+                        console.log(` Configuración especial: usando hoja 9 para equipos (sin datos femeninos)`);
                     }
                 } else {
                     // Menos de 10 hojas - equipos podría estar en la última disponible
                     teamSheetIndex = sheetInfo.length - 1;
-                    console.log(`📊 Configuración reducida: equipos en última hoja disponible (índice ${teamSheetIndex})`);
+                    console.log(` Configuración reducida: equipos en última hoja disponible (índice ${teamSheetIndex})`);
                 }
                 
                 if (teamSheetIndex >= 0 && teamSheetIndex < sheetInfo.length) {
@@ -5305,7 +5305,7 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
                             const dataRows = teamData.slice(1).filter(row => 
                                 row && row.length > 0 && row.some(cell => cell && cell.trim() !== '')
                             );
-                            console.log(`✅ Equipos: ${dataRows.length} filas de datos desde "${teamSheet.title}"`);
+                            console.log(` Equipos: ${dataRows.length} filas de datos desde "${teamSheet.title}"`);
                             allData.equipos = dataRows;
                         }
                     } catch (error) {
@@ -5315,7 +5315,7 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
                     console.warn(`⚠️ No se pudo determinar la hoja de equipos. Total hojas disponibles: ${sheetInfo.length}`);
                 }
                 
-                console.log('📊 Resumen final de carga de datos:', {
+                console.log(' Resumen final de carga de datos:', {
                     eventos: allData.eventos.length,
                     masculino: allData.masculino.length,
                     femenino: allData.femenino.length,
@@ -5348,7 +5348,7 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
                 try {
                     const htmlData = getDataFromHTMLTables();
                     if (htmlData && Object.keys(htmlData).length > 0) {
-                        console.log('✅ Fallback exitoso desde HTML');
+                        console.log(' Fallback exitoso desde HTML');
                         
                         // Mapear correctamente los datos HTML a la estructura esperada
                         const estructuradoHTML = {
@@ -5358,7 +5358,7 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
                             equipos: htmlData['EQUIPOS'] || htmlData['EQUIPO'] || htmlData['TEAMS'] || []
                         };
                         
-                        console.log('📊 Fallback HTML - Datos estructurados:', {
+                        console.log(' Fallback HTML - Datos estructurados:', {
                             masculino: estructuradoHTML.masculino.length,
                             femenino: estructuradoHTML.femenino.length,
                             equipos: estructuradoHTML.equipos.length
@@ -5375,7 +5375,7 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
                 try {
                     const fallbackData = await loadSheetByGid(0);
                     if (fallbackData && fallbackData.length > 0) {
-                        console.log('✅ Fallback exitoso:', fallbackData.length, 'filas');
+                        console.log(' Fallback exitoso:', fallbackData.length, 'filas');
                         return {
                             eventos: [{ name: 'Resultados Generales', data: fallbackData }],
                             masculino: [],
@@ -5621,7 +5621,7 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
                         diplomaTemplateWidth = diplomaImg.width;
                         diplomaTemplateHeight = diplomaImg.height;
                         
-                        console.log('✅ Plantilla de diploma cargada correctamente');
+                        console.log(' Plantilla de diploma cargada correctamente');
                         console.log(`📐 Dimensiones plantilla: ${diplomaTemplateWidth}x${diplomaTemplateHeight}px`);
                     } catch (error) {
                         console.warn('Error procesando plantilla de diploma:', error);
@@ -5660,7 +5660,7 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
                         recordDiplomaTemplateWidth = recordDiplomaImg.width;
                         recordDiplomaTemplateHeight = recordDiplomaImg.height;
                         
-                        console.log('✅ Plantilla de diploma de récord cargada correctamente');
+                        console.log(' Plantilla de diploma de récord cargada correctamente');
                         console.log(`📐 Dimensiones: ${recordDiplomaTemplateWidth}x${recordDiplomaTemplateHeight}px`);
                     } catch (error) {
                         console.warn('Error procesando plantilla de diploma de récord:', error);
@@ -5780,7 +5780,7 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
                 
                 pdf.save(filename);
                 
-                console.log('✅ Diploma de récord generado exitosamente');
+                console.log(' Diploma de récord generado exitosamente');
 
             } catch (error) {
                 console.error('❌ Error generando diploma de récord:', error);
@@ -5809,7 +5809,7 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
                         teamDiplomaTemplateWidth = teamDiplomaImg.width;
                         teamDiplomaTemplateHeight = teamDiplomaImg.height;
                         
-                        console.log('✅ Plantilla de diploma de equipo cargada correctamente');
+                        console.log(' Plantilla de diploma de equipo cargada correctamente');
                         console.log(`📐 Dimensiones: ${teamDiplomaTemplateWidth}x${teamDiplomaTemplateHeight}px`);
                     } catch (error) {
                         console.warn('Error procesando plantilla de diploma de equipo:', error);
@@ -5903,7 +5903,7 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
                 
                 pdf.save(filename);
                 
-                console.log('✅ Diploma de equipo generado exitosamente');
+                console.log(' Diploma de equipo generado exitosamente');
 
             } catch (error) {
                 console.error('❌ Error generando diploma de equipo:', error);
@@ -5934,7 +5934,7 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
                         logoOriginalWidth = logoImg.width * 0.264583;
                         logoOriginalHeight = logoImg.height * 0.264583;
                         
-                        console.log('✅ Logo cargado correctamente para PDFs');
+                        console.log(' Logo cargado correctamente para PDFs');
                         console.log(`📐 Dimensiones originales: ${logoImg.width}x${logoImg.height}px (${logoOriginalWidth.toFixed(1)}x${logoOriginalHeight.toFixed(1)}mm)`);
                     } catch (error) {
                         console.warn('Error procesando logo:', error);
@@ -6052,7 +6052,7 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
                 }
             }
             
-            console.log('📊 Secciones parseadas:', {
+            console.log(' Secciones parseadas:', {
                 eventos: sections.eventos.length,
                 masculino: sections.masculino.length,
                 femenino: sections.femenino.length,
@@ -6357,9 +6357,9 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
             }
             
             // Resultados Femeninos
-            console.log('📊 DEBUG PDF - allSheetData completo:', allSheetData);
-            console.log('📊 DEBUG PDF - allSheetData.femenino existe?:', !!allSheetData.femenino);
-            console.log('📊 DEBUG PDF - Datos femeninos disponibles:', allSheetData.femenino ? allSheetData.femenino.length : 'UNDEFINED/NULL');
+            console.log(' DEBUG PDF - allSheetData completo:', allSheetData);
+            console.log(' DEBUG PDF - allSheetData.femenino existe?:', !!allSheetData.femenino);
+            console.log(' DEBUG PDF - Datos femeninos disponibles:', allSheetData.femenino ? allSheetData.femenino.length : 'UNDEFINED/NULL');
             if (allSheetData.femenino && allSheetData.femenino.length > 0) {
                 pdf.setFont("helvetica", "bold");
                 pdf.setFontSize(12);
@@ -6367,8 +6367,8 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
                 pdf.text("CLASIFICACIÓN GENERAL FEMENINA", 20, yPosition);
                 yPosition += 12;
                 
-                console.log('📊 PDF: Procesando datos femeninos, primera fila:', allSheetData.femenino[0]);
-                console.log('📊 PDF: Verificando tipo de datos femeninos:', {
+                console.log(' PDF: Procesando datos femeninos, primera fila:', allSheetData.femenino[0]);
+                console.log(' PDF: Verificando tipo de datos femeninos:', {
                     totalRows: allSheetData.femenino.length,
                     firstAthlete: allSheetData.femenino[0] ? allSheetData.femenino[0][1] : 'N/A',
                     columnCount: allSheetData.femenino[0] ? allSheetData.femenino[0].length : 0
@@ -6376,7 +6376,7 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
                 // VALIDACIÓN: Verificar si los datos son realmente de atletas femeninos o si son datos de equipos
                 if (allSheetData.femenino[0] && allSheetData.femenino[0].length <= 5) {
                     console.error('⚠️ ERROR: Los datos femeninos parecen ser datos de equipos (pocas columnas)');
-                    console.log('📊 Datos sospechosos:', allSheetData.femenino.slice(0, 3));
+                    console.log(' Datos sospechosos:', allSheetData.femenino.slice(0, 3));
                 }
                 
                 const tableData = allSheetData.femenino.map((row, index) => {
@@ -6422,11 +6422,11 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
             pdf.text("CLASIFICACIÓN GENERAL POR EQUIPOS", 20, yPosition);
             yPosition += 20;
             
-            console.log('📊 DEBUG PDF - Datos de equipos disponibles:', allSheetData.equipos.length);
+            console.log(' DEBUG PDF - Datos de equipos disponibles:', allSheetData.equipos.length);
             if (allSheetData.equipos.length > 0) {
                 // Crear tabla con todos los equipos - Columnas A-E
-                console.log('📊 PDF: Procesando datos de equipos, primera fila:', allSheetData.equipos[0]);
-                console.log('📊 PDF: Verificando tipo de datos de equipos:', {
+                console.log(' PDF: Procesando datos de equipos, primera fila:', allSheetData.equipos[0]);
+                console.log(' PDF: Verificando tipo de datos de equipos:', {
                     totalRows: allSheetData.equipos.length,
                     firstTeam: allSheetData.equipos[0] ? allSheetData.equipos[0][1] : 'N/A',
                     columnCount: allSheetData.equipos[0] ? allSheetData.equipos[0].length : 0
@@ -6435,7 +6435,7 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
                 // VALIDACIÓN: Verificar si los datos son realmente de equipos o si son datos de atletas
                 if (allSheetData.equipos[0] && allSheetData.equipos[0].length > 7) {
                     console.error('⚠️ ERROR: Los datos de equipos parecen ser datos de atletas (muchas columnas)');
-                    console.log('📊 Datos sospechosos:', allSheetData.equipos.slice(0, 3));
+                    console.log(' Datos sospechosos:', allSheetData.equipos.slice(0, 3));
                 }
                 const tableData = allSheetData.equipos.map((row, index) => {
                     // Mapear columnas A-E: A=Pos, B=Equipo, C=Pts Totales, D=Pts Femeninos, E=Pts Masculinos
@@ -6463,7 +6463,7 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
         }
         */
 
-        // Función simple que lee directamente de las tablas HTML de la página web
+        // Función que lee directamente de Google Sheets para resultados por género
         async function addGenderResultsFromHTMLTables(pdf, startY) {
             let yPosition = startY;
             
@@ -6474,169 +6474,172 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
             pdf.text("RESULTADOS POR GÉNERO", 20, yPosition);
             yPosition += 20;
             
-            // CLASIFICACIÓN GENERAL MASCULINA - Leer de tabla HTML
-            const tablaHombres = document.getElementById('resultsTableMasculinoGeneral');
-            if (tablaHombres) {
-                pdf.setFont("helvetica", "bold");
-                pdf.setFontSize(14);
-                pdf.setTextColor(11, 16, 57);
-                pdf.text("CLASIFICACIÓN GENERAL MASCULINA", 20, yPosition);
-                yPosition += 15;
+            try {
+                // Obtener GIDs de las hojas
+                const sheets = await getSheetTabs();
+                const sheetMasculino = sheets.find(sheet => 
+                    sheet.title.toUpperCase().includes('RESULTADOS') && 
+                    sheet.title.toUpperCase().includes('MASCULINO')
+                );
+                const sheetFemenino = sheets.find(sheet => 
+                    sheet.title.toUpperCase().includes('RESULTADOS') && 
+                    sheet.title.toUpperCase().includes('FEMENINO')
+                );
                 
-                // Encabezados
-                pdf.setFont("helvetica", "bold");
-                pdf.setFontSize(8);
-                pdf.setTextColor(0, 0, 0);
-                pdf.text("POS", 20, yPosition);
-                pdf.text("ATLETA", 35, yPosition);
-                pdf.text("EQUIPO", 80, yPosition);
-                pdf.text("EDAD", 120, yPosition);
-                pdf.text("CAT", 135, yPosition);
-                pdf.text("TOT", 150, yPosition);
-                pdf.text("200", 165, yPosition);
-                pdf.text("50", 180, yPosition);
-                pdf.text("100", 195, yPosition);
-                yPosition += 8;
+                // Cargar datos masculinos desde Google Sheets
+                console.log('Cargando datos masculinos desde Google Sheets...');
+                const datosMasculinos = sheetMasculino ? await loadDirectSheetData(sheetMasculino.gid, 'RESULTADOS-MASCULINO') : null;
                 
-                // Datos masculinos
-                const filasHombres = tablaHombres.querySelectorAll('tbody tr:not(.loading-row):not(.category-header)');
-                pdf.setFont("helvetica", "normal");
-                pdf.setFontSize(7);
-                
-                filasHombres.forEach((fila, index) => {
-                    if (yPosition > 270) {
-                        pdf.addPage();
-                        addCompetitionLogo(pdf);
-                        yPosition = 30;
-                        
-                        // Repetir encabezados
-                        pdf.setFont("helvetica", "bold");
-                        pdf.setFontSize(8);
-                        pdf.text("POS", 20, yPosition);
-                        pdf.text("ATLETA", 35, yPosition);
-                        pdf.text("EQUIPO", 80, yPosition);
-                        pdf.text("EDAD", 120, yPosition);
-                        pdf.text("CAT", 135, yPosition);
-                        pdf.text("TOT", 150, yPosition);
-                        pdf.text("200", 165, yPosition);
-                        pdf.text("50", 180, yPosition);
-                        pdf.text("100", 195, yPosition);
-                        yPosition += 8;
-                        pdf.setFont("helvetica", "normal");
-                        pdf.setFontSize(7);
-                    }
+                if (datosMasculinos && datosMasculinos.length > 0) {
+                    pdf.setFont("helvetica", "bold");
+                    pdf.setFontSize(14);
+                    pdf.setTextColor(11, 16, 57);
+                    pdf.text("CLASIFICACIÓN GENERAL MASCULINA", 20, yPosition);
+                    yPosition += 15;
                     
-                    const celdas = fila.querySelectorAll('td');
-                    if (celdas.length >= 8) {
-                        const pos = celdas[0]?.textContent?.trim() || (index + 1);
-                        const atleta = celdas[1]?.textContent?.trim() || 'N/A';
-                        const equipo = celdas[2]?.textContent?.trim() || 'N/A';
-                        const edad = celdas[3]?.textContent?.trim() || 'N/A';
-                        const categoria = celdas[4]?.textContent?.trim() || 'N/A';
-                        const total = celdas[5]?.textContent?.trim() || '0';
-                        const pts200 = celdas[6]?.textContent?.trim() || '0';
-                        const pts50 = celdas[7]?.textContent?.trim() || '0';
-                        const pts100 = celdas[8]?.textContent?.trim() || '0';
+                    // Encabezados
+                    pdf.setFont("helvetica", "bold");
+                    pdf.setFontSize(8);
+                    pdf.setTextColor(0, 0, 0);
+                    pdf.text("POS", 20, yPosition);
+                    pdf.text("ATLETA", 35, yPosition);
+                    pdf.text("EQUIPO", 80, yPosition);
+                    pdf.text("EDAD", 120, yPosition);
+                    pdf.text("CAT", 135, yPosition);
+                    pdf.text("TOT", 150, yPosition);
+                    pdf.text("200", 165, yPosition);
+                    pdf.text("50", 180, yPosition);
+                    pdf.text("100", 195, yPosition);
+                    yPosition += 8;
+                    
+                    // Datos masculinos (columnas A-I)
+                    pdf.setFont("helvetica", "normal");
+                    pdf.setFontSize(7);
+                    
+                    datosMasculinos.forEach((row, index) => {
+                        if (yPosition > 270) {
+                            pdf.addPage();
+                            addCompetitionLogo(pdf);
+                            yPosition = 30;
+                            
+                            // Repetir encabezados
+                            pdf.setFont("helvetica", "bold");
+                            pdf.setFontSize(8);
+                            pdf.text("POS", 20, yPosition);
+                            pdf.text("ATLETA", 35, yPosition);
+                            pdf.text("EQUIPO", 80, yPosition);
+                            pdf.text("EDAD", 120, yPosition);
+                            pdf.text("CAT", 135, yPosition);
+                            pdf.text("TOT", 150, yPosition);
+                            pdf.text("200", 165, yPosition);
+                            pdf.text("50", 180, yPosition);
+                            pdf.text("100", 195, yPosition);
+                            yPosition += 8;
+                            pdf.setFont("helvetica", "normal");
+                            pdf.setFontSize(7);
+                        }
                         
-                        pdf.text(pos.toString(), 20, yPosition);
-                        pdf.text(atleta.substring(0, 20), 35, yPosition);
-                        pdf.text(equipo.substring(0, 15), 80, yPosition);
-                        pdf.text(edad.toString(), 120, yPosition);
-                        pdf.text(categoria.substring(0, 8), 135, yPosition);
-                        pdf.text(total.toString(), 150, yPosition);
-                        pdf.text(pts200.toString(), 165, yPosition);
-                        pdf.text(pts50.toString(), 180, yPosition);
-                        pdf.text(pts100.toString(), 195, yPosition);
+                        // Mapear columnas A-I
+                        const [pos, atleta, equipo, edad, categoria, total, pts200, pts50, pts100] = row;
+                        
+                        pdf.text((pos || (index + 1)).toString(), 20, yPosition);
+                        pdf.text((atleta || 'N/A').substring(0, 20), 35, yPosition);
+                        pdf.text((equipo || 'N/A').substring(0, 15), 80, yPosition);
+                        pdf.text((edad || 'N/A').toString(), 120, yPosition);
+                        pdf.text((categoria || 'N/A').substring(0, 8), 135, yPosition);
+                        pdf.text((total || '0').toString(), 150, yPosition);
+                        pdf.text((pts200 || '0').toString(), 165, yPosition);
+                        pdf.text((pts50 || '0').toString(), 180, yPosition);
+                        pdf.text((pts100 || '0').toString(), 195, yPosition);
                         yPosition += 6;
-                    }
-                });
-                
-                yPosition += 10;
-            }
-            
-            // CLASIFICACIÓN GENERAL FEMENINA - Leer de tabla HTML
-            const tablaMujeres = document.getElementById('resultsTableFemeninoGeneral');
-            if (tablaMujeres) {
-                // Verificar espacio
-                if (yPosition > 200) {
-                    pdf.addPage();
-                    addCompetitionLogo(pdf);
-                    yPosition = 30;
+                    });
+                    
+                    yPosition += 10;
                 }
                 
-                pdf.setFont("helvetica", "bold");
-                pdf.setFontSize(14);
-                pdf.setTextColor(11, 16, 57);
-                pdf.text("CLASIFICACIÓN GENERAL FEMENINA", 20, yPosition);
-                yPosition += 15;
+                // Cargar datos femeninos desde Google Sheets
+                console.log('Cargando datos femeninos desde Google Sheets...');
+                const datosFemeninos = sheetFemenino ? await loadDirectSheetData(sheetFemenino.gid, 'RESULTADOS-FEMENINO') : null;
                 
-                // Encabezados
-                pdf.setFont("helvetica", "bold");
-                pdf.setFontSize(8);
-                pdf.setTextColor(0, 0, 0);
-                pdf.text("POS", 20, yPosition);
-                pdf.text("ATLETA", 35, yPosition);
-                pdf.text("EQUIPO", 80, yPosition);
-                pdf.text("EDAD", 120, yPosition);
-                pdf.text("CAT", 135, yPosition);
-                pdf.text("TOT", 150, yPosition);
-                pdf.text("200", 165, yPosition);
-                pdf.text("50", 180, yPosition);
-                pdf.text("100", 195, yPosition);
-                yPosition += 8;
-                
-                // Datos femeninos
-                const filasMujeres = tablaMujeres.querySelectorAll('tbody tr:not(.loading-row):not(.category-header)');
-                pdf.setFont("helvetica", "normal");
-                pdf.setFontSize(7);
-                
-                filasMujeres.forEach((fila, index) => {
-                    if (yPosition > 270) {
+                if (datosFemeninos && datosFemeninos.length > 0) {
+                    // Verificar espacio
+                    if (yPosition > 200) {
                         pdf.addPage();
                         addCompetitionLogo(pdf);
                         yPosition = 30;
-                        
-                        // Repetir encabezados
-                        pdf.setFont("helvetica", "bold");
-                        pdf.setFontSize(8);
-                        pdf.text("POS", 20, yPosition);
-                        pdf.text("ATLETA", 35, yPosition);
-                        pdf.text("EQUIPO", 80, yPosition);
-                        pdf.text("EDAD", 120, yPosition);
-                        pdf.text("CAT", 135, yPosition);
-                        pdf.text("TOT", 150, yPosition);
-                        pdf.text("200", 165, yPosition);
-                        pdf.text("50", 180, yPosition);
-                        pdf.text("100", 195, yPosition);
-                        yPosition += 8;
-                        pdf.setFont("helvetica", "normal");
-                        pdf.setFontSize(7);
                     }
                     
-                    const celdas = fila.querySelectorAll('td');
-                    if (celdas.length >= 8) {
-                        const pos = celdas[0]?.textContent?.trim() || (index + 1);
-                        const atleta = celdas[1]?.textContent?.trim() || 'N/A';
-                        const equipo = celdas[2]?.textContent?.trim() || 'N/A';
-                        const edad = celdas[3]?.textContent?.trim() || 'N/A';
-                        const categoria = celdas[4]?.textContent?.trim() || 'N/A';
-                        const total = celdas[5]?.textContent?.trim() || '0';
-                        const pts200 = celdas[6]?.textContent?.trim() || '0';
-                        const pts50 = celdas[7]?.textContent?.trim() || '0';
-                        const pts100 = celdas[8]?.textContent?.trim() || '0';
+                    pdf.setFont("helvetica", "bold");
+                    pdf.setFontSize(14);
+                    pdf.setTextColor(11, 16, 57);
+                    pdf.text("CLASIFICACIÓN GENERAL FEMENINA", 20, yPosition);
+                    yPosition += 15;
+                    
+                    // Encabezados
+                    pdf.setFont("helvetica", "bold");
+                    pdf.setFontSize(8);
+                    pdf.setTextColor(0, 0, 0);
+                    pdf.text("POS", 20, yPosition);
+                    pdf.text("ATLETA", 35, yPosition);
+                    pdf.text("EQUIPO", 80, yPosition);
+                    pdf.text("EDAD", 120, yPosition);
+                    pdf.text("CAT", 135, yPosition);
+                    pdf.text("TOT", 150, yPosition);
+                    pdf.text("200", 165, yPosition);
+                    pdf.text("50", 180, yPosition);
+                    pdf.text("100", 195, yPosition);
+                    yPosition += 8;
+                    
+                    // Datos femeninos (columnas A-I)
+                    pdf.setFont("helvetica", "normal");
+                    pdf.setFontSize(7);
+                    
+                    datosFemeninos.forEach((row, index) => {
+                        if (yPosition > 270) {
+                            pdf.addPage();
+                            addCompetitionLogo(pdf);
+                            yPosition = 30;
+                            
+                            // Repetir encabezados
+                            pdf.setFont("helvetica", "bold");
+                            pdf.setFontSize(8);
+                            pdf.text("POS", 20, yPosition);
+                            pdf.text("ATLETA", 35, yPosition);
+                            pdf.text("EQUIPO", 80, yPosition);
+                            pdf.text("EDAD", 120, yPosition);
+                            pdf.text("CAT", 135, yPosition);
+                            pdf.text("TOT", 150, yPosition);
+                            pdf.text("200", 165, yPosition);
+                            pdf.text("50", 180, yPosition);
+                            pdf.text("100", 195, yPosition);
+                            yPosition += 8;
+                            pdf.setFont("helvetica", "normal");
+                            pdf.setFontSize(7);
+                        }
                         
-                        pdf.text(pos.toString(), 20, yPosition);
-                        pdf.text(atleta.substring(0, 20), 35, yPosition);
-                        pdf.text(equipo.substring(0, 15), 80, yPosition);
-                        pdf.text(edad.toString(), 120, yPosition);
-                        pdf.text(categoria.substring(0, 8), 135, yPosition);
-                        pdf.text(total.toString(), 150, yPosition);
-                        pdf.text(pts200.toString(), 165, yPosition);
-                        pdf.text(pts50.toString(), 180, yPosition);
-                        pdf.text(pts100.toString(), 195, yPosition);
+                        // Mapear columnas A-I
+                        const [pos, atleta, equipo, edad, categoria, total, pts200, pts50, pts100] = row;
+                        
+                        pdf.text((pos || (index + 1)).toString(), 20, yPosition);
+                        pdf.text((atleta || 'N/A').substring(0, 20), 35, yPosition);
+                        pdf.text((equipo || 'N/A').substring(0, 15), 80, yPosition);
+                        pdf.text((edad || 'N/A').toString(), 120, yPosition);
+                        pdf.text((categoria || 'N/A').substring(0, 8), 135, yPosition);
+                        pdf.text((total || '0').toString(), 150, yPosition);
+                        pdf.text((pts200 || '0').toString(), 165, yPosition);
+                        pdf.text((pts50 || '0').toString(), 180, yPosition);
+                        pdf.text((pts100 || '0').toString(), 195, yPosition);
                         yPosition += 6;
-                    }
-                });
+                    });
+                }
+                
+            } catch (error) {
+                console.error('Error cargando datos de género desde Google Sheets:', error);
+                pdf.setFont("helvetica", "normal");
+                pdf.setFontSize(10);
+                pdf.setTextColor(255, 0, 0);
+                pdf.text("Error cargando resultados por género", 20, yPosition);
+                yPosition += 15;
             }
             
             return yPosition;
@@ -6653,11 +6656,11 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
             pdf.text("CLASIFICACIÓN GENERAL MASCULINA", 20, yPosition);
             yPosition += 15;
             
-            console.log('📊 DEBUG PDF - Datos masculinos disponibles:', allSheetData.masculino.length);
-            console.log('📊 DEBUG PDF - Primera fila masculina:', allSheetData.masculino[0]);
-            console.log('📊 DEBUG PDF - Datos femeninos también disponibles:', allSheetData.femenino ? allSheetData.femenino.length : 'NO');
+            console.log('DEBUG PDF - Datos masculinos disponibles:', allSheetData.masculino.length);
+            console.log(' DEBUG PDF - Primera fila masculina:', allSheetData.masculino[0]);
+            console.log(' DEBUG PDF - Datos femeninos también disponibles:', allSheetData.femenino ? allSheetData.femenino.length : 'NO');
             if (allSheetData.masculino.length > 0) {
-                console.log('📊 PDF: Procesando datos masculinos, primera fila:', allSheetData.masculino[0]);
+                console.log(' PDF: Procesando datos masculinos, primera fila:', allSheetData.masculino[0]);
                 const tableData = allSheetData.masculino.map((row, index) => {
                     // Mapear columnas A-I: A=Pos, B=Atleta, C=Equipo, D=Edad, E=Categoría, F=Pts Totales, G=Pts 200m, H=Pts 50m, I=Pts 100m
                     const [pos, athlete, team, age, category, totalPoints, points200m, points50m, points100m] = row;
@@ -6677,7 +6680,7 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
                 
                 yPosition = drawProfessionalTable(pdf, tableData, yPosition, 'gender');
             } else {
-                console.warn('⚠️ PDF: No hay datos masculinos para mostrar');
+                console.warn('PDF: No hay datos masculinos para mostrar');
                 pdf.setFont("helvetica", "normal");
                 pdf.setFontSize(10);
                 pdf.setTextColor(128, 128, 128);
@@ -6693,19 +6696,19 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
             let yPosition = startY;
             
             // Título de sección
-            console.log('🚀 INICIO addFemeninoResultsToPDF - Estado de datos:');
-            console.log('📊 allSheetData:', allSheetData ? 'existe' : 'null/undefined');
-            console.log('📊 allSheetData.femenino:', allSheetData?.femenino ? allSheetData.femenino.length + ' registros' : 'vacío/undefined');
-            console.log('📊 allSheetData.masculino:', allSheetData?.masculino ? allSheetData.masculino.length + ' registros' : 'vacío/undefined');
-            console.log('📊 allSheetData.equipos:', allSheetData?.equipos ? allSheetData.equipos.length + ' registros' : 'vacío/undefined');
-            console.log('📊 Global allData.femenino:', typeof allData !== 'undefined' && allData?.femenino ? allData.femenino.length + ' registros' : 'no disponible');
+            console.log('INICIO addFemeninoResultsToPDF - Estado de datos:');
+            console.log(' allSheetData:', allSheetData ? 'existe' : 'null/undefined');
+            console.log(' allSheetData.femenino:', allSheetData?.femenino ? allSheetData.femenino.length + ' registros' : 'vacío/undefined');
+            console.log(' allSheetData.masculino:', allSheetData?.masculino ? allSheetData.masculino.length + ' registros' : 'vacío/undefined');
+            console.log(' allSheetData.equipos:', allSheetData?.equipos ? allSheetData.equipos.length + ' registros' : 'vacío/undefined');
+            console.log(' Global allData.femenino:', typeof allData !== 'undefined' && allData?.femenino ? allData.femenino.length + ' registros' : 'no disponible');
             
             // NUEVO: Intentar usar allData global si allSheetData no tiene datos femeninos
             if ((!allSheetData?.femenino || allSheetData.femenino.length === 0) && typeof allData !== 'undefined' && allData?.femenino && allData.femenino.length > 0) {
                 console.log('🔄 USANDO allData GLOBAL: Transfiriendo datos femeninos de allData global');
                 allSheetData = allSheetData || {};
                 allSheetData.femenino = allData.femenino;
-                console.log('✅ Datos femeninos transferidos:', allSheetData.femenino.length + ' registros');
+                console.log(' Datos femeninos transferidos:', allSheetData.femenino.length + ' registros');
             }
             
             // Subtítulo de clasificación femenina
@@ -6715,22 +6718,22 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
             pdf.text("CLASIFICACIÓN GENERAL FEMENINA", 20, yPosition);
             yPosition += 15;
             
-            console.log('📊 DEBUG PDF FEMENINO - Estado inicial:', {
+            console.log(' DEBUG PDF FEMENINO - Estado inicial:', {
                 datosFemeniniosDisponibles: allSheetData.femenino ? allSheetData.femenino.length : 0,
                 intercambioYaCorregido: !!allSheetData._intercambioCorregido,
                 primeraFilaFemenino: allSheetData.femenino && allSheetData.femenino.length > 0 ? allSheetData.femenino[0] : 'SIN DATOS'
             });
             
             if (allSheetData.femenino && allSheetData.femenino.length > 0) {
-                console.log('📊 PDF: Procesando datos femeninos, primera fila:', allSheetData.femenino[0]);
-                console.log('📊 PDF: Verificando tipo de datos femeninos:', {
+                console.log(' PDF: Procesando datos femeninos, primera fila:', allSheetData.femenino[0]);
+                console.log(' PDF: Verificando tipo de datos femeninos:', {
                     totalRows: allSheetData.femenino.length,
                     firstAthlete: allSheetData.femenino[0] ? allSheetData.femenino[0][1] : 'N/A',
                     columnCount: allSheetData.femenino[0] ? allSheetData.femenino[0].length : 0
                 });
                 
                 // VALIDACIÓN CRÍTICA: Verificar si los datos son realmente de atletas femeninos
-                console.log('🔍 VALIDACIÓN FEMENINO:', {
+                console.log(' VALIDACIÓN FEMENINO:', {
                     intercambioYaCorregido: !!allSheetData._intercambioCorregido,
                     tieneDataFemenino: !!(allSheetData.femenino && allSheetData.femenino[0]),
                     columnasFemenino: allSheetData.femenino && allSheetData.femenino[0] ? allSheetData.femenino[0].length : 'N/A',
@@ -6738,16 +6741,16 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
                 });
                 
                 if (!allSheetData._intercambioCorregido && allSheetData.femenino[0] && allSheetData.femenino[0].length <= 5) {
-                    console.warn('⚠️ POSIBLE PROBLEMA: Los datos femeninos parecen ser datos de equipos');
-                    console.log('📊 Datos recibidos:', allSheetData.femenino.slice(0, 3));
+                    console.warn('POSIBLE PROBLEMA: Los datos femeninos parecen ser datos de equipos');
+                    console.log(' Datos recibidos:', allSheetData.femenino.slice(0, 3));
                     
                     // DESHABILITADO: No hacer intercambio automático en función individual
-                    console.log('ℹ️ INTERCAMBIO DESHABILITADO: Usando datos como vienen del servidor');
+                    console.log('INTERCAMBIO DESHABILITADO: Usando datos como vienen del servidor');
                     /*
                     // CORRECCIÓN AUTOMÁTICA DESHABILITADA: Intentar intercambiar con equipos
                     if (allSheetData.equipos && allSheetData.equipos.length > 0) {
                         console.log('🔄 CORRECCIÓN: Intercambiando datos femeninos y equipos automáticamente');
-                        console.log('📊 Antes del intercambio:', {
+                        console.log(' Antes del intercambio:', {
                             femenino: 'Datos de equipos (' + allSheetData.femenino[0].length + ' columnas)',
                             equipos: 'Datos de atletas (' + (allSheetData.equipos[0] ? allSheetData.equipos[0].length : 0) + ' columnas)'
                         });
@@ -6756,11 +6759,11 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
                         allSheetData.femenino = allSheetData.equipos;
                         allSheetData.equipos = temp;
                         
-                        console.log('✅ Intercambio realizado:', {
+                        console.log(' Intercambio realizado:', {
                             femenino: 'Ahora datos correctos (' + allSheetData.femenino[0].length + ' columnas)',
                             equipos: 'Ahora datos correctos (' + allSheetData.equipos[0].length + ' columnas)'
                         });
-                        console.log('📊 Nuevos datos femeninos (primeras filas):', allSheetData.femenino.slice(0, 2));
+                        console.log(' Nuevos datos femeninos (primeras filas):', allSheetData.femenino.slice(0, 2));
                     } else {
                         console.error('❌ No hay datos de equipos para intercambiar.');
                         pdf.setFont("helvetica", "normal");
@@ -6795,8 +6798,8 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
                 
                 // VERIFICACIÓN ESPECIAL: Si equipos ya corrigió, tal vez los datos están intercambiados
                 if (allSheetData._intercambioCorregido) {
-                    console.log('🔍 VERIFICACIÓN POST-CORRECCIÓN: Revisando todas las variables para encontrar datos femeninos');
-                    console.log('🔍 Estado actual de todas las variables:', {
+                    console.log(' VERIFICACIÓN POST-CORRECCIÓN: Revisando todas las variables para encontrar datos femeninos');
+                    console.log(' Estado actual de todas las variables:', {
                         masculino: allSheetData.masculino ? allSheetData.masculino.length + ' filas' : 'sin datos',
                         femenino: allSheetData.femenino ? allSheetData.femenino.length + ' filas' : 'sin datos',
                         equipos: allSheetData.equipos ? allSheetData.equipos.length + ' filas' : 'sin datos'
@@ -6806,10 +6809,10 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
                     let datosAtletasEncontrados = null;
                     if (allSheetData.equipos && allSheetData.equipos.length > 0 && allSheetData.equipos[0] && allSheetData.equipos[0].length > 7) {
                         datosAtletasEncontrados = allSheetData.equipos;
-                        console.log('🔍 Datos de atletas encontrados en variable equipos');
+                        console.log(' Datos de atletas encontrados en variable equipos');
                     } else if (allSheetData.masculino && allSheetData.masculino.length > 0 && allSheetData.masculino[0] && allSheetData.masculino[0].length > 7) {
                         // Verificar si masculino tiene datos diferentes (podrían ser femeninos)
-                        console.log('🔍 Verificando si masculino contiene datos femeninos...');
+                        console.log(' Verificando si masculino contiene datos femeninos...');
                     }
                     
                     if (datosAtletasEncontrados) {
@@ -6839,24 +6842,24 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
                 }
                 
                 // ÚLTIMO RECURSO: Intentar cargar desde la tabla HTML
-                console.log('🆘 ÚLTIMO RECURSO: Intentando cargar datos femeninos desde tabla HTML');
-                console.log('📊 Estado actual de allData.femenino antes del fallback:', allData.femenino ? allData.femenino.length : 'undefined');
-                console.log('📊 Estado actual de allData.masculino:', allData.masculino ? allData.masculino.length : 'undefined');
-                console.log('📊 Estado actual de allData.equipos:', allData.equipos ? allData.equipos.length : 'undefined');
+                console.log('ÚLTIMO RECURSO: Intentando cargar datos femeninos desde tabla HTML');
+                console.log(' Estado actual de allData.femenino antes del fallback:', allData.femenino ? allData.femenino.length : 'undefined');
+                console.log(' Estado actual de allData.masculino:', allData.masculino ? allData.masculino.length : 'undefined');
+                console.log(' Estado actual de allData.equipos:', allData.equipos ? allData.equipos.length : 'undefined');
                 
                 const tablaFemeninaHTML = document.getElementById('resultsTableFemeninoGeneral');
                 
                 if (tablaFemeninaHTML) {
                     const filas = tablaFemeninaHTML.querySelectorAll('tbody tr:not(.loading-row):not(.category-header)');
-                    console.log('🔍 Filas encontradas en tabla HTML femenina:', filas.length);
-                    console.log('🔍 Contenido de la primera fila:', filas[0] ? filas[0].innerHTML : 'No hay filas');
-                    console.log('🔍 Contenido del tbody completo:', tablaFemeninaHTML.querySelector('tbody') ? tablaFemeninaHTML.querySelector('tbody').innerHTML.substring(0, 500) + '...' : 'No tbody');
+                    console.log(' Filas encontradas en tabla HTML femenina:', filas.length);
+                    console.log(' Contenido de la primera fila:', filas[0] ? filas[0].innerHTML : 'No hay filas');
+                    console.log(' Contenido del tbody completo:', tablaFemeninaHTML.querySelector('tbody') ? tablaFemeninaHTML.querySelector('tbody').innerHTML.substring(0, 500) + '...' : 'No tbody');
                     
                     if (filas.length > 0) {
                         const datosDeHTML = [];
                         filas.forEach((fila, index) => {
                             const celdas = fila.querySelectorAll('td');
-                            console.log(`🔍 Fila ${index}: ${celdas.length} celdas`, celdas.length > 0 ? Array.from(celdas).map(c => c.textContent.trim().substring(0, 20)) : 'sin celdas');
+                            console.log(` Fila ${index}: ${celdas.length} celdas`, celdas.length > 0 ? Array.from(celdas).map(c => c.textContent.trim().substring(0, 20)) : 'sin celdas');
                             if (celdas.length >= 6) {
                                 datosDeHTML.push([
                                     celdas[0].textContent.trim() || (index + 1).toString(), // Pos
@@ -6873,8 +6876,8 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
                         });
                         
                         if (datosDeHTML.length > 0) {
-                            console.log('✅ DATOS RECUPERADOS DE HTML:', datosDeHTML.length + ' atletas femeninas');
-                            console.log('📊 Primera atleta:', datosDeHTML[0]);
+                            console.log(' DATOS RECUPERADOS DE HTML:', datosDeHTML.length + ' atletas femeninas');
+                            console.log(' Primera atleta:', datosDeHTML[0]);
                             
                             const tableData = datosDeHTML.map((row, index) => {
                                 const [pos, athlete, team, age, category, totalPoints, points200m, points50m, points100m] = row;
@@ -6920,17 +6923,17 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
             pdf.text("EQUIPOS", 20, yPosition);
             yPosition += 20;
             
-            console.log('📊 DEBUG PDF - Datos de equipos disponibles:', allSheetData.equipos.length);
+            console.log(' DEBUG PDF - Datos de equipos disponibles:', allSheetData.equipos.length);
             if (allSheetData.equipos.length > 0) {
-                console.log('📊 PDF: Procesando datos de equipos, primera fila:', allSheetData.equipos[0]);
-                console.log('📊 PDF: Verificando tipo de datos de equipos:', {
+                console.log(' PDF: Procesando datos de equipos, primera fila:', allSheetData.equipos[0]);
+                console.log(' PDF: Verificando tipo de datos de equipos:', {
                     totalRows: allSheetData.equipos.length,
                     firstTeam: allSheetData.equipos[0] ? allSheetData.equipos[0][1] : 'N/A',
                     columnCount: allSheetData.equipos[0] ? allSheetData.equipos[0].length : 0
                 });
                 
                 // VALIDACIÓN CRÍTICA: Verificar si los datos son realmente de equipos
-                console.log('🔍 VALIDACIÓN EQUIPOS:', {
+                console.log(' VALIDACIÓN EQUIPOS:', {
                     intercambioYaCorregido: !!allSheetData._intercambioCorregido,
                     tieneDataEquipos: !!(allSheetData.equipos && allSheetData.equipos[0]),
                     columnasEquipos: allSheetData.equipos && allSheetData.equipos[0] ? allSheetData.equipos[0].length : 'N/A',
@@ -6939,11 +6942,11 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
                 
                 if (!allSheetData._intercambioCorregido && allSheetData.equipos[0] && allSheetData.equipos[0].length > 7) {
                     console.error('❌ DATOS INCORRECTOS: Los datos de equipos son datos de atletas!');
-                    console.log('📊 Datos incorrectos recibidos:', allSheetData.equipos.slice(0, 3));
+                    console.log(' Datos incorrectos recibidos:', allSheetData.equipos.slice(0, 3));
                     
                     // DESHABILITADO: No hacer intercambio automático
-                    console.log('ℹ️ INTERCAMBIO DESHABILITADO: Usando datos como vienen del servidor');
-                    console.log('📊 Antes del intercambio:', {
+                    console.log('INTERCAMBIO DESHABILITADO: Usando datos como vienen del servidor');
+                    console.log(' Antes del intercambio:', {
                         equipos: 'Datos incorrectos (' + allSheetData.equipos[0].length + ' columnas): ' + JSON.stringify(allSheetData.equipos[0]),
                         femenino: allSheetData.femenino && allSheetData.femenino[0] ? 
                             'Datos disponibles (' + allSheetData.femenino[0].length + ' columnas): ' + JSON.stringify(allSheetData.femenino[0]) : 
@@ -6957,7 +6960,7 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
                         allSheetData.equipos = allSheetData.femenino;
                         allSheetData.femenino = temp;
                         
-                        console.log('✅ INTERCAMBIO FORZADO COMPLETADO:', {
+                        console.log(' INTERCAMBIO FORZADO COMPLETADO:', {
                             equipos: 'Nuevos datos (' + allSheetData.equipos[0].length + ' columnas): ' + JSON.stringify(allSheetData.equipos[0]),
                             femenino: 'Nuevos datos (' + allSheetData.femenino[0].length + ' columnas): ' + JSON.stringify(allSheetData.femenino[0])
                         });
@@ -7224,7 +7227,7 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
                 // Descargar el PDF
                 pdf.save("Terminos_y_Condiciones_IV_Championship_2025.pdf");
                 
-                console.log("✅ Términos y condiciones descargados exitosamente");
+                console.log(" Términos y condiciones descargados exitosamente");
                 
             } catch (error) {
                 console.error("❌ Error generando términos y condiciones:", error);
@@ -7259,7 +7262,7 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
                             document.body.removeChild(link);
                             
                             // Mensaje de éxito
-                            button.innerHTML = '<span class="button-success-text">✅</span>Descargado';
+                            button.innerHTML = '<span class="button-success-text"></span>Descargado';
                             setTimeout(() => {
                                 button.innerHTML = originalText;
                                 button.disabled = false;
@@ -7377,7 +7380,7 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
                             document.body.removeChild(link);
                             
                             // Mensaje de éxito
-                            button.innerHTML = '<span class="button-privacy-icon">✅</span>Descargado';
+                            button.innerHTML = '<span class="button-privacy-icon"></span>Descargado';
                             setTimeout(() => {
                                 button.innerHTML = originalText;
                                 button.disabled = false;
@@ -7571,7 +7574,7 @@ Organizadores:
                         <button class="close-modal" onclick="closeInstagramThankYouInstructions()">&times;</button>
                     </div>
                     <div class="share-content-padding">
-                        <div class="share-icon-large">📋✅</div>
+                        <div class="share-icon-large">📋</div>
                         <h4 class="share-icon-title">¡Mensaje copiado exitosamente!</h4>
                         <div class="share-instructions-text">
                             <p><strong>Paso 1:</strong> Abre Instagram en tu dispositivo</p>
