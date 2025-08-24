@@ -3728,8 +3728,8 @@
                 
                 // Detectar el tipo de tabla por el número de columnas o el contenido
                 if (row.length >= 9) {
-                    // Tabla de clasificación general (10 columnas)
-                    const [pos, nombre, equipo, edad, categoria, puntos, p200, p50, p100] = row;
+                    // Tabla de clasificación general (10 columnas incluyendo certificado)
+                    const [pos, nombre, equipo, edad, categoria, puntos, p200, p50, p100, certificado] = row;
                     
                     return `<tr>
                         <td class="rank">${pos || index}</td>
@@ -3743,9 +3743,15 @@
                         <td>${p100 || ''}</td>
                         <td><button onclick="shareResult('${nombre}', '${pos || index}', 'N/A', '${categoria}')" class="share-btn">📱</button></td>
                         <td class="diploma-cell">
-                            <button class="diploma-btn disabled" disabled title="Diploma no disponible para clasificación general">
-                                🏆
-                            </button>
+                            ${(() => {
+                                const isDiplomaEnabled = certificado && certificado.toString().toUpperCase().trim() === 'SI';
+                                const diplomaClass = isDiplomaEnabled ? 'diploma-btn enabled' : 'diploma-btn disabled';
+                                const diplomaClick = isDiplomaEnabled ? `onclick="downloadDiploma('${(nombre || '').replace(/'/g, '\\\'')}'', '${pos || index}', '${(equipo || '').replace(/'/g, '\\\'')}'', '${(categoria || '').replace(/'/g, '\\\'')}'')"` : '';
+                                const diplomaDisabled = isDiplomaEnabled ? '' : 'disabled';
+                                const diplomaTitle = isDiplomaEnabled ? 'Descargar diploma' : 'Diploma no disponible (certificado requerido)';
+                                
+                                return `<button class="${diplomaClass}" ${diplomaClick} ${diplomaDisabled} title="${diplomaTitle}" data-status="${certificado || 'N/A'}">🏆</button>`;
+                            })()}
                         </td>
                     </tr>`;
                 } else {
