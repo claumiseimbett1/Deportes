@@ -4991,6 +4991,13 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
                 // Agregar resultados por género leyendo directamente de las tablas HTML
                 yPosition = await addGenderResultsFromHTMLTables(pdf, yPosition);
                 
+                // EQUIPOS (nueva página)
+                pdf.addPage();
+                addCompetitionLogo(pdf);
+                yPosition = 30;
+                
+                // Agregar resultados de equipos directamente desde Google Sheets
+                yPosition = await addEquiposFromGoogleSheets(pdf, yPosition);
                 
                 // Guardar el PDF
                 const fileName = `Resultados_IV_Championship_${new Date().toISOString().split('T')[0]}.pdf`;
@@ -6640,6 +6647,110 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
                 pdf.text("Error cargando resultados por género: " + error.message, 20, yPosition);
                 yPosition += 10;
                 pdf.text("Verifica la consola del navegador para más detalles", 20, yPosition);
+                yPosition += 15;
+            }
+            
+            return yPosition;
+        }
+
+        // Función para agregar resultados de equipos directamente desde Google Sheets
+        async function addEquiposFromGoogleSheets(pdf, startY) {
+            let yPosition = startY;
+            
+            try {
+                // Título principal
+                pdf.setFont("helvetica", "bold");
+                pdf.setFontSize(16);
+                pdf.setTextColor(11, 16, 57);
+                pdf.text("EQUIPOS", 20, yPosition);
+                yPosition += 20;
+                
+                // Cargar datos directamente de Google Sheets
+                console.log('Cargando datos de equipos desde Google Sheets...');
+                const gidEquipos = '2036627092'; // GID de la hoja EQUIPOS
+                const datosEquipos = await loadDirectSheetData(gidEquipos, 'EQUIPOS');
+                console.log('Datos de equipos cargados:', datosEquipos ? datosEquipos.length + ' filas' : 'null');
+                
+                if (datosEquipos && datosEquipos.length > 0) {
+                    // Encabezados de la tabla
+                    pdf.setFont("helvetica", "bold");
+                    pdf.setFontSize(8);
+                    pdf.setTextColor(0, 0, 0);
+                    pdf.text("POS", 20, yPosition);
+                    pdf.text("EQUIPO", 35, yPosition);
+                    pdf.text("PTS TOTALES", 100, yPosition);
+                    pdf.text("PTS FEM", 140, yPosition);
+                    pdf.text("PTS MAS", 175, yPosition);
+                    yPosition += 8;
+                    
+                    // Línea separadora
+                    pdf.setDrawColor(200, 200, 200);
+                    pdf.line(20, yPosition - 2, 200, yPosition - 2);
+                    yPosition += 5;
+                    
+                    // Datos de equipos (columnas A-E)
+                    pdf.setFont("helvetica", "normal");
+                    pdf.setFontSize(7);
+                    
+                    datosEquipos.forEach((row, index) => {
+                        if (yPosition > 270) {
+                            pdf.addPage();
+                            addCompetitionLogo(pdf);
+                            yPosition = 30;
+                            
+                            // Repetir título
+                            pdf.setFont("helvetica", "bold");
+                            pdf.setFontSize(16);
+                            pdf.setTextColor(11, 16, 57);
+                            pdf.text("EQUIPOS (continuación)", 20, yPosition);
+                            yPosition += 15;
+                            
+                            // Repetir encabezados
+                            pdf.setFont("helvetica", "bold");
+                            pdf.setFontSize(8);
+                            pdf.setTextColor(0, 0, 0);
+                            pdf.text("POS", 20, yPosition);
+                            pdf.text("EQUIPO", 35, yPosition);
+                            pdf.text("PTS TOTALES", 100, yPosition);
+                            pdf.text("PTS FEM", 140, yPosition);
+                            pdf.text("PTS MAS", 175, yPosition);
+                            yPosition += 8;
+                            pdf.setFont("helvetica", "normal");
+                            pdf.setFontSize(7);
+                        }
+                        
+                        // Mapear columnas A-E del Google Sheet
+                        const [pos, equipo, ptsTotales, ptsFemeninos, ptsMasculinos] = row;
+                        
+                        // Formatear posición
+                        let displayPos = pos || (index + 1);
+                        if (displayPos === '1' || displayPos === 1) displayPos = '🥇 1°';
+                        else if (displayPos === '2' || displayPos === 2) displayPos = '🥈 2°';
+                        else if (displayPos === '3' || displayPos === 3) displayPos = '🥉 3°';
+                        else if (displayPos && displayPos !== '-') displayPos = `${displayPos}°`;
+                        
+                        pdf.text((displayPos || '-').toString(), 20, yPosition);
+                        pdf.text((equipo || 'N/A').substring(0, 25), 35, yPosition);
+                        pdf.text((ptsTotales || '0').toString(), 100, yPosition);
+                        pdf.text((ptsFemeninos || '0').toString(), 140, yPosition);
+                        pdf.text((ptsMasculinos || '0').toString(), 175, yPosition);
+                        yPosition += 6;
+                    });
+                    
+                } else {
+                    pdf.setFont("helvetica", "normal");
+                    pdf.setFontSize(10);
+                    pdf.setTextColor(128, 128, 128);
+                    pdf.text("No se encontraron datos de equipos", 20, yPosition);
+                    yPosition += 20;
+                }
+                
+            } catch (error) {
+                console.error('Error cargando datos de equipos desde Google Sheets:', error);
+                pdf.setFont("helvetica", "normal");
+                pdf.setFontSize(10);
+                pdf.setTextColor(255, 0, 0);
+                pdf.text("Error cargando datos de equipos: " + error.message, 20, yPosition);
                 yPosition += 15;
             }
             
