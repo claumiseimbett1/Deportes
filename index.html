@@ -3977,11 +3977,11 @@
                     }
                 } else if (row.length >= 6) {
                     // Es un resultado - Esperar al menos 6 columnas: LUGAR, ATLETA, EQUIPO, EDAD, CATEGORIA, PUNTOS TOTALES
-                    const [lugar, atleta, equipo, edad, categoria, puntosTotales, puntos200m, puntos50m, puntos100m, diplomaStatus] = row;
+                    const [lugar, atleta, equipo, edad, categoria, puntosTotales, puntos200m, puntos50m, puntos100m, certificado] = row;
                     
-                    // Debug: verificar datos de diploma (reducido)
+                    // Debug: verificar datos de certificado (reducido)
                     if (atleta && atleta !== 'Sin atletas') {
-                        console.log(`🎓 ${atleta}: Columna J="${row[9] || 'VACÍA'}" (${row[9] === 'SI' ? 'HABILITADO' : 'DESHABILITADO'})`);
+                        console.log(`🎓 ${atleta}: Certificado="${certificado || 'VACÍO'}" (${certificado === 'SI' ? 'HABILITADO' : 'DESHABILITADO'})`);
                     }
                     
                     // Skip si no hay atleta válido
@@ -4012,10 +4012,8 @@
                     else if (lugar === '3' || lugar === 3) displayPos = '🥉 3°';
                     else if (lugar && lugar !== '-' && lugar !== '') displayPos = `${lugar}°`;
                     
-                    // Determine if diploma download should be enabled - Column J is at index 9
-                    const finalDiplomaStatus = row[9] || diplomaStatus || '';
-                    
-                    const isDiplomaEnabled = finalDiplomaStatus && finalDiplomaStatus.toString().toUpperCase().trim() === 'SI';
+                    // Determine if diploma download should be enabled - usar columna Certificado
+                    const isDiplomaEnabled = certificado && certificado.toString().toUpperCase().trim() === 'SI';
                     const diplomaButtonClass = isDiplomaEnabled ? 'diploma-btn enabled' : 'diploma-btn disabled';
                     const diplomaButtonClick = isDiplomaEnabled ? `downloadDiploma('${(atleta || '').replace(/'/g, '\\\'')
                     }', '${lugar || ''}', '${(equipo || '').replace(/'/g, '\\\'')
@@ -4037,7 +4035,7 @@
                                 <button class="share-btn" onclick="shareResult('${atleta || ''}', '${lugar || ''}', 'N/A', '${categoria || currentCategory || ''}')">📱</button>
                             </td>
                             <td data-label="Diploma" class="diploma-cell">
-                                <button class="${diplomaButtonClass}" ${isDiplomaEnabled ? `onclick="${diplomaButtonClick}"` : ''} ${!isDiplomaEnabled ? 'disabled' : ''} title="${isDiplomaEnabled ? 'Descargar diploma' : 'Diploma no disponible'}" data-status="${finalDiplomaStatus || 'N/A'}">
+                                <button class="${diplomaButtonClass}" ${isDiplomaEnabled ? `onclick="${diplomaButtonClick}"` : ''} ${!isDiplomaEnabled ? 'disabled' : ''} title="${isDiplomaEnabled ? 'Descargar diploma' : 'Diploma no disponible'}" data-status="${certificado || 'N/A'}">
                                     🎓
                                 </button>
                             </td>
