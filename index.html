@@ -5026,9 +5026,9 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
             
             const upperName = sheetName.toUpperCase();
             
-            // Clasificación general - necesitan hasta columna I
+            // Clasificación general - necesitan hasta columna J (incluye certificado)
             if (upperName.includes('RESULTADOS')) {
-                return 'A:I';
+                return 'A:J';
             }
             
             // Equipos - solo hasta columna F
