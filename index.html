@@ -6722,12 +6722,8 @@ Ver resultados completos: https://ivchampionship.netlify.app`;
                         // Mapear columnas A-E del Google Sheet
                         const [pos, equipo, ptsTotales, ptsFemeninos, ptsMasculinos] = row;
                         
-                        // Formatear posición
+                        // Solo usar el valor original del Google Sheet
                         let displayPos = pos || (index + 1);
-                        if (displayPos === '1' || displayPos === 1) displayPos = '🥇 1°';
-                        else if (displayPos === '2' || displayPos === 2) displayPos = '🥈 2°';
-                        else if (displayPos === '3' || displayPos === 3) displayPos = '🥉 3°';
-                        else if (displayPos && displayPos !== '-') displayPos = `${displayPos}°`;
                         
                         pdf.text((displayPos || '-').toString(), 20, yPosition);
                         pdf.text((equipo || 'N/A').substring(0, 25), 35, yPosition);
