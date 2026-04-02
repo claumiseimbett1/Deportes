@@ -571,12 +571,57 @@
 
         .sponsors-grid {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
+            grid-template-columns: repeat(2, 1fr);
             gap: 40px;
             margin-top: 50px;
-            max-width: 1200px;
+            max-width: 1100px;
             margin-left: auto;
             margin-right: auto;
+        }
+
+        @media (min-width: 960px) {
+            .sponsors-grid {
+                grid-template-columns: repeat(4, 1fr);
+                gap: 28px;
+            }
+        }
+
+        .sponsor-logo--pending {
+            border: 2px dashed #c5d4eb;
+            border-radius: 12px;
+            min-height: 80px;
+            width: 100%;
+            max-width: 220px;
+            margin: 0 auto;
+            background: #f8fbff;
+        }
+
+        .sponsor-logo-slot-text {
+            font-size: 0.8rem;
+            color: #7a8aa3;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+
+        .sponsor-card--static {
+            cursor: default;
+        }
+
+        .sponsor-card--static:hover {
+            transform: none;
+            box-shadow: none;
+            border-color: #f0f6ff;
+        }
+
+        .results-section .section-title-note {
+            text-align: center;
+            color: #5a6a85;
+            font-size: 1.05rem;
+            font-weight: 500;
+            margin: -0.25rem auto 2rem;
+            max-width: 640px;
+            line-height: 1.5;
         }
 
         .sponsor-card {
@@ -2375,9 +2420,9 @@
                             <rect x="11.5" y="11" width="1" height="1" fill="#0b5079" rx="0.5"/>
                         </svg>
                     </div>
-                    <h3 class="stat-number" id="swimmerCount">35</h3>
-                    <p class="stat-label">Nadadores Inscritos</p>
-                    <p class="stat-description">Atletas de élite</p>
+                    <h3 class="stat-number" id="swimmerCount">?</h3>
+                    <p class="stat-label">Nadadores inscritos</p>
+                    <p class="stat-description">Cifra próximamente</p>
                 </div>
                 
                 <!-- Clubes Participantes -->
@@ -2398,8 +2443,8 @@
                             <rect x="16" y="7" width="1.5" height="4" stroke="#0b5079" stroke-width="1.5"/>
                         </svg>
                     </div>
-                    <h3 class="stat-number" id="clubCount">3</h3>
-                    <p class="stat-label">Clubes Participantes</p>
+                    <h3 class="stat-number" id="clubCount">+?</h3>
+                    <p class="stat-label">Clubes participantes</p>
                     <p class="stat-description">De Córdoba</p>
                 </div>
                 
@@ -2415,7 +2460,7 @@
                             <circle cx="12" cy="12" r="1.2" fill="#ffffff" opacity="0.4"/>
                         </svg>
                     </div>
-                    <h3 class="stat-number" id="sponsorCount">6</h3>
+                    <h3 class="stat-number" id="sponsorCount">+4</h3>
                     <p class="stat-label">Patrocinadores</p>
                     <p class="stat-description">Empresas aliadas</p>
                 </div>
@@ -2459,7 +2504,6 @@
                     </div>
                     <h3>Premios</h3>
                     <p>Medallas de participación, premiación por categoría y sexo por acumulación de puntos, trofeos a los tres primeros equipos</p>
-                    </p>
                 </div>
             </div>
         </div>
@@ -2570,6 +2614,7 @@
     <section class="results-section" id="resultados">
         <div class="container">
             <h2 class="section-title">Resultados por Pruebas</h2>
+            <p class="section-title-note">Muestra de cómo se visualizará el día del evento.</p>
             
             <!-- Search Container for Pruebas -->
             <div class="search-container">
@@ -2943,30 +2988,26 @@
         <div class="container">
             <h2 class="section-title">Nuestros Patrocinadores</h2>
             <div class="sponsors-grid">
-                <a href="https://www.instagram.com/techfucol/" target="_blank" class="sponsor-card">
-                    <div class="sponsor-logo"><img src="/img/techfucol.png" alt="Patrocinador 1"></div>
-                    <div class="sponsor-name">TechFuCol</div>
+                <a href="https://top4race.netlify.app/" target="_blank" rel="noopener noreferrer" class="sponsor-card">
+                    <div class="sponsor-logo sponsor-logo--pending" aria-label="Espacio para logo de Top4Race">
+                        <span class="sponsor-logo-slot-text">Logo Top4Race</span>
+                    </div>
+                    <div class="sponsor-name">Top4Race · AquaTEN</div>
                 </a>
-                <a href="https://www.instagram.com/konkretescol" target="_blank" class="sponsor-card">
-                    <div class="sponsor-logo"><img src="/img/konkretes.png" alt="Patrocinador 2"></div>
-                    <div class="sponsor-name">Konkretes</div>
-                </a>
-                <a href="https://www.instagram.com/hypersatelliteapp/" target="_blank" class="sponsor-card">
-                    <div class="sponsor-logo"><img src="/img/dr-innova.png" alt="Patrocinador 3"></div>
+                <div class="sponsor-card sponsor-card--static">
+                    <div class="sponsor-logo sponsor-logo--pending" aria-label="Espacio para logo de Almacén La Elegancia">
+                        <span class="sponsor-logo-slot-text">Logo</span>
+                    </div>
+                    <div class="sponsor-name">Almacén La Elegancia</div>
+                </div>
+                <a href="https://www.instagram.com/hypersatelliteapp/" target="_blank" rel="noopener noreferrer" class="sponsor-card">
+                    <div class="sponsor-logo"><img src="img/dr-innova.png" alt="Logo DR-Innova"></div>
                     <div class="sponsor-name">DR-Innova</div>
                 </a>
-                    <a href="#" target="_blank" class="sponsor-card">
-                    <div class="sponsor-logo"><img src="/img/michanchito.png" alt="Patrocinador 4"></div>
+                <div class="sponsor-card sponsor-card--static" aria-label="Mi Chanchito">
+                    <div class="sponsor-logo"><img src="img/michanchito.png" alt="Logo Mi Chanchito"></div>
                     <div class="sponsor-name">Mi Chanchito</div>
-                </a>
-                <a href="https://www.instagram.com/quiropediaemma/" target="_blank" class="sponsor-card">
-                    <div class="sponsor-logo"><img src="/img/emma-quiropedia.png" alt="Patrocinador 5"></div>
-                    <div class="sponsor-name">Emma Quiropedia</div>
-                </a>
-                <a href="https://www.instagram.com/bambinotiendadelujo__89/" target="_blank" class="sponsor-card">
-                    <div class="sponsor-logo"><img src="/img/bambino.png" alt="Patrocinador 6"></div>
-                    <div class="sponsor-name">Bambino - Tienda de Lujo</div>
-                </a>
+                </div>
             </div>
             
             <!-- Thank You Message Section -->
@@ -3002,7 +3043,7 @@
     <section class="cta-section">
         <div class="container">
             <h2>¿Listo para competir?</h2>
-            <p>Únete a los 35 nadadores en esta emocionante competencia, con la participación de 3 clubes de Córdoba y el apoyo de 6 patrocinadores, en esta V versión del Championship Master Swimming organizada por los Clubes Deportivos AQUATEN y ELYANASNATACION</p>
+            <p>Únete a esta emocionante competencia: la V versión del Championship Master Swimming, organizada por los Clubes Deportivos AQUATEN y ELYANASNATACION. Pronto compartiremos más detalles sobre inscripciones, clubes participantes y aliados que hacen posible el evento.</p>
             <a href="#" class="cta-button">Más Información</a>
         </div>
     </section>
@@ -3059,6 +3100,13 @@
             SHEET_ID: '1EfjpkKEEi8rLxF9BwXCyyPHEcbBZJK71BijpUP1uEPI',
             SHEET_NAME: 'RESULTADOS',
             USE_API_KEY: true,
+            /**
+             * Si la API de metadatos falla (p. ej. clave con restricción HTTP y dominio nuevo en Netlify),
+             * puedes mapear aquí el nombre exacto de cada pestaña del Sheet → su gid (número de la URL al abrir la pestaña).
+             * Ejemplo: { 'FEMENINO': 0, 'MASCULINO': 2016301649, '100M-FEMENINO': 1234567890 }
+             * Deja null para usar solo la API automática.
+             */
+            MANUAL_SHEET_GIDS: null,
             // Mapeo automático de pestañas - detecta GIDs automáticamente
             COMPETITION_SHEETS: {
                 // Primera sesión: Resultados por prueba
@@ -3182,7 +3230,7 @@
         // Función para obtener información de todas las pestañas del Google Sheet automáticamente
         async function getSheetInfo() {
             try {
-                const url = `https://sheets.googleapis.com/v4/spreadsheets/${CONFIG.SHEET_ID}?key=${CONFIG.API_KEY}`;
+                const url = `https://sheets.googleapis.com/v4/spreadsheets/${CONFIG.SHEET_ID}?fields=properties.title,sheets.properties(title,sheetId)&key=${CONFIG.API_KEY}`;
                 const response = await fetch(url);
                 if (response.ok) {
                     const data = await response.json();
@@ -3191,8 +3239,37 @@
                         gid: sheet.properties.sheetId
                     }));
                 }
+                let apiMessage = response.statusText;
+                try {
+                    const errBody = await response.json();
+                    if (errBody.error && errBody.error.message) {
+                        apiMessage = errBody.error.message;
+                    }
+                } catch (e) { /* ignore */ }
+                console.error(`❌ Google Sheets API (metadatos) ${response.status}:`, apiMessage);
+                if (response.status === 403) {
+                    console.error('💡 Muy frecuente al cambiar dominio Netlify: Google Cloud Console → Credenciales → tu clave API → Restricciones de aplicación → Sitios web → añade https://vchampionship.netlify.app/* (y localhost si pruebas en local).');
+                    console.error('💡 Comprueba también que la API "Google Sheets API" esté activada en el proyecto y que el documento sea accesible (p. ej. “Cualquiera con el enlace” como lector).');
+                }
             } catch (error) {
-                console.log('⚠️ No se pudo obtener info automática de pestañas:', error.message);
+                console.error('⚠️ No se pudo obtener info automática de pestañas:', error.message);
+            }
+            return null;
+        }
+
+        /** Lista de pestañas: API automática, o CONFIG.MANUAL_SHEET_GIDS si la API falla */
+        async function resolveSheetInfo() {
+            const fromApi = await getSheetInfo();
+            if (fromApi && fromApi.length) {
+                return fromApi;
+            }
+            const manual = CONFIG.MANUAL_SHEET_GIDS;
+            if (manual && typeof manual === 'object' && Object.keys(manual).length) {
+                console.warn('⚠️ Usando MANUAL_SHEET_GIDS: la API de metadatos no respondió; asegúrate de que el Sheet sea público o exportable para que CSV funcione.');
+                return Object.entries(manual).map(([title, gid]) => ({
+                    title,
+                    gid: typeof gid === 'string' ? parseInt(gid, 10) : gid
+                }));
             }
             return null;
         }
@@ -3268,7 +3345,7 @@
             
             try {
                 console.log(' Obteniendo lista de pestañas...');
-                const sheetInfo = await getSheetInfo();
+                const sheetInfo = await resolveSheetInfo();
                 
                 if (!sheetInfo) {
                     console.log('❌ No se pudo obtener información de las pestañas');
@@ -4071,7 +4148,8 @@
                     <td colspan="7" class="error-message-cell">
                         ❌ No se pudieron cargar los datos desde Google Sheets<br>
                         <small class="error-subtitle">
-                            Verifica que el Google Sheet sea público o intenta recargar la página
+                            Si cambiaste el sitio en Netlify: en Google Cloud Console → Credenciales → tu clave API → restricciones de sitio web, añade <strong>https://vchampionship.netlify.app/*</strong>.
+                            El documento debe permitir lectura (p. ej. “Cualquiera con el enlace”). Abre la consola del navegador (F12) para ver el error exacto de Google.
                         </small>
                         <button onclick="retryLoad()" class="retry-button">
                             🔄 Reintentar
@@ -4107,7 +4185,7 @@
             try {
                 // 1. Obtener información de todas las pestañas
                 console.log('📋 Obteniendo lista de pestañas...');
-                const sheetInfo = await getSheetInfo();
+                    const sheetInfo = await resolveSheetInfo();
                 
                 if (sheetInfo) {
                     console.log('📋 Pestañas encontradas:');
@@ -5193,7 +5271,7 @@ Ver resultados completos: https://vchampionship.netlify.app`;
                 console.log(' Cargando hojas del Google Sheet por posición...');
                 
                 // Primero obtener información de todas las hojas disponibles
-                const sheetInfo = await getSheetInfo();
+                const sheetInfo = await resolveSheetInfo();
                 
                 // Validar que se obtuvieron los datos del sheet
                 if (!sheetInfo || !Array.isArray(sheetInfo)) {
@@ -7581,27 +7659,12 @@ Ver resultados completos: https://vchampionship.netlify.app`;
 
         // Función para animar las estadísticas del evento (opcional)
         function animateEventStats() {
-            const stats = [
-                { id: 'swimmerCount', target: 35, suffix: '+', duration: 2000 },
-                { id: 'clubCount', target: 3, suffix: '+', duration: 1800 },
-                { id: 'sponsorCount', target: 6, suffix: '+', duration: 1600 }
-            ];
-
-            stats.forEach(stat => {
-                const element = document.getElementById(stat.id);
-                if (!element) return;
-
-                let current = 0;
-                const increment = stat.target / (stat.duration / 50);
-                const timer = setInterval(() => {
-                    current += increment;
-                    if (current >= stat.target) {
-                        current = stat.target;
-                        clearInterval(timer);
-                    }
-                    element.textContent = Math.floor(current) + stat.suffix;
-                }, 50);
-            });
+            const swimmerEl = document.getElementById('swimmerCount');
+            if (swimmerEl) swimmerEl.textContent = '?';
+            const clubEl = document.getElementById('clubCount');
+            if (clubEl) clubEl.textContent = '+?';
+            const sponsorEl = document.getElementById('sponsorCount');
+            if (sponsorEl) sponsorEl.textContent = '+4';
         }
 
         // Intersection Observer para animar cuando sea visible (optimizado para móvil)
@@ -7637,11 +7700,9 @@ Ver resultados completos: https://vchampionship.netlify.app`;
         function shareThankYouMessage(platform) {
             const thankYouMessage = `🙏 ¡Gracias infinitas a nuestros increíbles patrocinadores y organizadores del V Championship Master Swimming 2026! 🏊‍♂️🏊‍♀️
 🤝 Nuestros patrocinadores:
-@techfucol
-@quiropediaemma  
-@bambinotiendadelujo__89
-@konkretescol
-@hypersatellite
+Top4Race · https://top4race.netlify.app/
+Almacén La Elegancia
+DR-Innova · @hypersatellite
 #criaderomichanchito
 
 Organizadores:
