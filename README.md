@@ -12,19 +12,36 @@ Landing estática del **V Championship Master Swimming 2026** (AquaTEN y Elyanas
 - Secciones de resultados por distancia (50 m, 100 m, 200 m, relevos) y vista por género; clasificación por equipos.
 - Indicador de carga y búsqueda por nombre en tablas.
 - Diplomas descargables y mensajes para compartir resultados.
-- Diseño responsive, video hero y bloque de patrocinadores y contacto.
+- **Cinco patrocinadores** en la sección `#patrocinadores`, con texto introductorio que lo indica explícitamente.
+- **Resultados:** las tablas pueden mostrar **datos de muestra del IV Championship 2025** hasta el día del V Championship 2026; el copy bajo “Resultados por Pruebas” lo aclara para visitantes y buscadores.
+- **Subsección Top4Race** (`#top4race`): texto dedicado al aliado tecnológico — cronometraje y medición con **chips** en **Córdoba** para **aguas abiertas**, **atletismo** y **patinaje**, con enlace a [Top4Race](https://top4race.netlify.app/).
+- Diseño responsive, video hero, patrocinadores y contacto.
+
+## SEO (resumen)
+
+El `index.html` incluye, entre otras medidas:
+
+- **`<title>` y meta description** orientados a búsquedas locales (Montería, Córdoba) y palabras clave del evento y Top4Race.
+- **`link rel="canonical"`** a la URL de producción en Netlify.
+- **Open Graph** (`og:*`) y **Twitter Card** para vista previa al compartir.
+- **`robots`** `index, follow` y `max-image-preview:large`.
+- **JSON-LD** (`application/ld+json`) con `SportsEvent`, `WebSite` y `ProfessionalService` (Top4Race).
+- **Microdatos** (`itemscope` / `itemprop`) en el bloque visible de Top4Race.
+- Enlaces de patrocinio con **`rel="sponsored"`** donde aplica (recomendación de Google para enlaces pagados/patrocinados).
+
+Tras cambiar dominio o imagen social principal, actualiza canonical, `og:url`, `og:image` y el bloque JSON-LD.
 
 ## Estructura del proyecto
 
 | Ruta | Descripción |
 |------|-------------|
-| `index.html` | Página única: marcado, estilos embebidos y lógica (fetch a Sheets, tablas, PDF). |
+| `index.html` | Página única: marcado, estilos embebidos, SEO, JSON-LD y lógica (Sheets, tablas, PDF). |
 | `style.css` | Hoja de estilos adicional (el layout principal vive en `index.html`). |
-| `img/` | Logos e imágenes del evento. |
+| `img/` | Logos e imágenes del evento (p. ej. `LogoChampion2026.png` para `og:image`). |
 | `video/` | Vídeo promocional del hero. |
 | `documentos/` | PDF de términos (`Terminos_y_Condiciones_V_Championship_2026.pdf`) y política de datos. |
 | `archive/iv-championship/` | Copia de respaldo de la edición IV; no se publica en la raíz del sitio. |
-| `sitemap.xml` | Mapa del sitio para buscadores. |
+| `sitemap.xml` | Mapa del sitio para buscadores (URL canónica y `lastmod`). |
 | `robots.txt` | Permite rastreo e indica la URL del sitemap. |
 
 ## Mapa del sitio (anclas en la misma página)
@@ -34,6 +51,7 @@ Landing estática del **V Championship Master Swimming 2026** (AquaTEN y Elyanas
 - `#terminos` — Términos y condiciones
 - `#resultados` — Resultados y tablas
 - `#patrocinadores` — Patrocinadores
+- `#top4race` — Destacado Top4Race (chips, Córdoba, aguas abiertas / atletismo / patinaje)
 - `#contacto` — Contacto e Instagram
 
 Ejemplo: `https://vchampionship.netlify.app/#resultados`
@@ -48,4 +66,4 @@ npx --yes serve .
 
 ## Despliegue (Netlify)
 
-Publica la **raíz** del repositorio (donde está `index.html`). Si cambias de dominio, actualiza `sitemap.xml`, `robots.txt` y las URLs en los textos para compartir / PDF dentro de `index.html`.
+Publica la **raíz** del repositorio (donde está `index.html`). Si cambias de dominio, actualiza `sitemap.xml`, `robots.txt`, el **canonical**, las meta **Open Graph** y las URLs en los textos para compartir / PDF dentro de `index.html`.

@@ -3,11 +3,82 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>V Championship Master - AquaTEN&Elyanasnatacion</title>
-    <meta name="description" content="V Championship Master Swimming 2026 (AquaTEN y Elyanas Natación) — sábado 18 de abril de 2026, Montería. Resultados en tiempo real, diplomas y clasificaciones.">
-    <meta name="keywords" content="natación, championship, master, AquaTEN, competencia, resultados, 2026, V Championship">
+    <title>V Championship Master Swimming 2026 | Natación Montería Córdoba | AquaTEN</title>
+    <meta name="description" content="V Championship Master Swimming 2026 en Montería, Córdoba. Tablas de resultados (muestra con datos del IV Championship 2025 hasta el evento), diplomas y clasificaciones. Cinco patrocinadores y Top4Race: cronometraje con chips en Córdoba.">
+    <meta name="keywords" content="natación, championship master, IV Championship 2025, V Championship 2026, natación Montería, Córdoba, AquaTEN, Elyanas natación, resultados natación, Top4Race, cronometraje chips, aguas abiertas Córdoba, atletismo Córdoba, patinaje Córdoba, 5 patrocinadores">
+    <meta name="robots" content="index, follow, max-image-preview:large">
+    <meta name="author" content="Club Deportivo AquaTEN">
+    <link rel="canonical" href="https://vchampionship.netlify.app/">
+    <meta property="og:type" content="website">
+    <meta property="og:locale" content="es_CO">
+    <meta property="og:locale:alternate" content="es_ES">
+    <meta property="og:url" content="https://vchampionship.netlify.app/">
+    <meta property="og:site_name" content="V Championship Master Swimming">
+    <meta property="og:title" content="V Championship Master Swimming 2026 | Montería, Córdoba">
+    <meta property="og:description" content="V Championship 2026 en Montería. Vista previa de resultados (IV Championship 2025). Cinco patrocinadores. Top4Race: chips en aguas abiertas, atletismo y patinaje en Córdoba.">
+    <meta property="og:image" content="https://vchampionship.netlify.app/img/LogoChampion2026.png">
+    <meta property="og:image:alt" content="Logo V Championship Master Swimming 2026">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="V Championship Master Swimming 2026">
+    <meta name="twitter:description" content="V Championship 2026, Montería. Muestra de resultados (IV 2025). 5 patrocinadores. Top4Race y chips en Córdoba.">
+    <meta name="twitter:image" content="https://vchampionship.netlify.app/img/LogoChampion2026.png">
     <!-- theme-color: PWA feature for mobile browsers -->
     <meta name="theme-color" content="#0b1039">
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "SportsEvent",
+          "name": "V Championship Master Swimming 2026",
+          "description": "Competencia de natación master organizada por AquaTEN y Elyanas Natación. Resultados en tiempo real y diplomas digitales.",
+          "startDate": "2026-04-18",
+          "eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode",
+          "eventStatus": "https://schema.org/EventScheduled",
+          "url": "https://vchampionship.netlify.app/",
+          "image": "https://vchampionship.netlify.app/img/LogoChampion2026.png",
+          "location": {
+            "@type": "Place",
+            "name": "Piscina de la Villa Olímpica",
+            "address": {
+              "@type": "PostalAddress",
+              "addressLocality": "Montería",
+              "addressRegion": "Córdoba",
+              "addressCountry": "CO"
+            }
+          },
+          "organizer": {
+            "@type": "SportsOrganization",
+            "name": "Club Deportivo AquaTEN",
+            "url": "https://www.instagram.com/aquaten.cd"
+          }
+        },
+        {
+          "@type": "WebSite",
+          "@id": "https://vchampionship.netlify.app/#website",
+          "name": "V Championship Master Swimming",
+          "url": "https://vchampionship.netlify.app/",
+          "inLanguage": "es-CO",
+          "description": "Sitio del V Championship Master 2026: resultados vía Google Sheets (vista previa con datos del IV Championship 2025). Cinco patrocinadores."
+        },
+        {
+          "@type": "ProfessionalService",
+          "name": "Top4Race",
+          "url": "https://top4race.netlify.app/",
+          "description": "Sistema de gestión de eventos y medición deportiva con chips electrónicos en Córdoba: aguas abiertas, atletismo y patinaje.",
+          "areaServed": {
+            "@type": "AdministrativeArea",
+            "name": "Córdoba",
+            "containedInPlace": { "@type": "Country", "name": "CO" }
+          },
+          "parentOrganization": {
+            "@type": "Organization",
+            "name": "Club Deportivo AquaTEN"
+          }
+        }
+      ]
+    }
+    </script>
     
     <!-- Performance optimizations -->
     <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" as="script">
@@ -574,15 +645,22 @@
             grid-template-columns: repeat(2, 1fr);
             gap: 40px;
             margin-top: 50px;
-            max-width: 1100px;
+            max-width: 1280px;
             margin-left: auto;
             margin-right: auto;
         }
 
-        @media (min-width: 960px) {
+        @media (min-width: 700px) {
             .sponsors-grid {
-                grid-template-columns: repeat(4, 1fr);
+                grid-template-columns: repeat(3, 1fr);
                 gap: 28px;
+            }
+        }
+
+        @media (min-width: 1100px) {
+            .sponsors-grid {
+                grid-template-columns: repeat(5, 1fr);
+                gap: 22px;
             }
         }
 
@@ -614,14 +692,150 @@
             border-color: #f0f6ff;
         }
 
+        /* Top4Race — subsección destacada (SEO + patrocinio) */
+        .top4race-spotlight {
+            margin-top: 56px;
+            padding: 36px 40px 40px;
+            border-radius: var(--border-radius-large);
+            background: linear-gradient(135deg, #f0f7ff 0%, #ffffff 55%, #e8f4fc 100%);
+            border: 2px solid #c8e6f5;
+            box-shadow: var(--box-shadow);
+            max-width: 900px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .top4race-spotlight-header {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: flex-start;
+            gap: 16px 24px;
+            margin-bottom: 18px;
+        }
+
+        .top4race-spotlight-badge {
+            display: inline-block;
+            padding: 6px 14px;
+            border-radius: 999px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            color: var(--text-white);
+            background: var(--background-gradient);
+        }
+
+        .top4race-spotlight-title {
+            font-size: 1.55rem;
+            color: var(--primary-color);
+            margin: 0;
+            font-weight: 700;
+            line-height: 1.25;
+            flex: 1;
+            min-width: 220px;
+        }
+
+        .top4race-spotlight-lead {
+            color: #3d4a63;
+            font-size: 1.05rem;
+            line-height: 1.65;
+            margin: 0 0 20px;
+        }
+
+        .top4race-spotlight-list-title {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin: 0 0 10px;
+        }
+
+        .top4race-spotlight-list {
+            list-style: none;
+            margin: 0 0 22px;
+            padding: 0;
+            display: grid;
+            gap: 10px;
+        }
+
+        @media (min-width: 560px) {
+            .top4race-spotlight-list {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        .top4race-spotlight-list li {
+            margin: 0;
+            padding: 12px 14px;
+            background: var(--text-white);
+            border-radius: var(--border-radius-small);
+            border: 1px solid #dbe8f5;
+            font-weight: 600;
+            color: var(--primary-color);
+            font-size: 0.95rem;
+        }
+
+        .top4race-spotlight-list li::before {
+            content: "✓ ";
+            color: var(--secondary-color);
+            font-weight: 800;
+        }
+
+        .top4race-spotlight-cta {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 14px 26px;
+            border-radius: 999px;
+            font-weight: 600;
+            font-size: 1rem;
+            text-decoration: none;
+            color: var(--text-white);
+            background: var(--background-gradient);
+            transition: var(--transition);
+            box-shadow: 0 4px 18px rgba(11, 16, 57, 0.2);
+        }
+
+        .top4race-spotlight-cta:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(11, 16, 57, 0.25);
+            color: var(--text-white);
+        }
+
+        .top4race-spotlight-note {
+            margin: 14px 0 0;
+            font-size: 0.88rem;
+            color: var(--text-gray);
+            line-height: 1.5;
+        }
+
+        @media (max-width: 768px) {
+            .top4race-spotlight {
+                padding: 28px 22px 32px;
+                margin-top: 40px;
+            }
+            .top4race-spotlight-title {
+                font-size: 1.3rem;
+            }
+        }
+
         .results-section .section-title-note {
             text-align: center;
             color: #5a6a85;
             font-size: 1.05rem;
             font-weight: 500;
             margin: -0.25rem auto 2rem;
+            max-width: 720px;
+            line-height: 1.55;
+        }
+
+        .sponsors-section-intro {
+            text-align: center;
+            color: #5a6a85;
+            font-size: 1.02rem;
+            font-weight: 500;
+            margin: -0.35rem auto 1.25rem;
             max-width: 640px;
-            line-height: 1.5;
+            line-height: 1.45;
         }
 
         .sponsor-card {
@@ -2300,6 +2514,7 @@
                     <li><a href="#terminos" onclick="scrollToSection('terms-section')">Términos</a></li>
                     <li><a href="#resultados" onclick="scrollToSection('results-section')">Resultados</a></li>
                     <li><a href="#patrocinadores" onclick="scrollToSection('sponsors-section')">Patrocinadores</a></li>
+                    <li><a href="#top4race" onclick="scrollToSection('top4race')">Top4Race</a></li>
                     <li><a href="#contacto" onclick="scrollToSection('contact-section')">Contacto</a></li>
                 </ul>
             </div>
@@ -2460,7 +2675,7 @@
                             <circle cx="12" cy="12" r="1.2" fill="#ffffff" opacity="0.4"/>
                         </svg>
                     </div>
-                    <h3 class="stat-number" id="sponsorCount">+4</h3>
+                    <h3 class="stat-number" id="sponsorCount">+5</h3>
                     <p class="stat-label">Patrocinadores</p>
                     <p class="stat-description">Empresas aliadas</p>
                 </div>
@@ -2611,10 +2826,10 @@
     </section>
 
     <!-- Results Section -->
-    <section class="results-section" id="resultados">
+    <section class="results-section" id="resultados" aria-describedby="results-demo-note">
         <div class="container">
             <h2 class="section-title">Resultados por Pruebas</h2>
-            <p class="section-title-note">Muestra de cómo se visualizará el día del evento.</p>
+            <p id="results-demo-note" class="section-title-note">Muestra de cómo se visualizará el día del evento <strong>(resultados del pasado IV Championship 2025)</strong>.</p>
             
             <!-- Search Container for Pruebas -->
             <div class="search-container">
@@ -2986,14 +3201,13 @@
     <!-- Sponsors Section -->
     <section class="sponsors-section" id="patrocinadores">
         <div class="container">
-            <h2 class="section-title">Nuestros Patrocinadores</h2>
+            <h2 class="section-title">Nuestros patrocinadores</h2>
+            <p class="sponsors-section-intro">Esta edición cuenta con el apoyo de <strong>5 empresas</strong> aliadas.</p>
             <div class="sponsors-grid">
-                <a href="https://top4race.netlify.app/" target="_blank" rel="noopener noreferrer" class="sponsor-card">
-                    <div class="sponsor-logo sponsor-logo--pending" aria-label="Espacio para logo de Top4Race">
-                        <span class="sponsor-logo-slot-text">Logo Top4Race</span>
-                    </div>
-                    <div class="sponsor-name">Top4Race · AquaTEN</div>
-                </a>
+                <div class="sponsor-card sponsor-card--static" aria-label="Criadero Mi Chanchito">
+                    <div class="sponsor-logo"><img src="img/michanchito.png" alt="Logo Criadero Mi Chanchito"></div>
+                    <div class="sponsor-name">Criadero Mi Chanchito</div>
+                </div>
                 <div class="sponsor-card sponsor-card--static">
                     <div class="sponsor-logo sponsor-logo--pending" aria-label="Espacio para logo de Almacén La Elegancia">
                         <span class="sponsor-logo-slot-text">Logo</span>
@@ -3004,11 +3218,37 @@
                     <div class="sponsor-logo"><img src="img/dr-innova.png" alt="Logo DR-Innova"></div>
                     <div class="sponsor-name">DR-Innova</div>
                 </a>
-                <div class="sponsor-card sponsor-card--static" aria-label="Mi Chanchito">
-                    <div class="sponsor-logo"><img src="img/michanchito.png" alt="Logo Mi Chanchito"></div>
-                    <div class="sponsor-name">Mi Chanchito</div>
+                <a href="https://top4race.netlify.app/" target="_blank" rel="noopener noreferrer" class="sponsor-card">
+                    <div class="sponsor-logo sponsor-logo--pending" aria-label="Espacio para logo de Top4Race">
+                        <span class="sponsor-logo-slot-text">Logo Top4Race</span>
+                    </div>
+                    <div class="sponsor-name">Top4Race · AquaTEN</div>
+                </a>
+                <div class="sponsor-card sponsor-card--static">
+                    <div class="sponsor-logo sponsor-logo--pending" aria-label="Espacio para logo de Jose Carlos Villegas - Eventos">
+                        <span class="sponsor-logo-slot-text">Logo</span>
+                    </div>
+                    <div class="sponsor-name">Jose Carlos Villegas - Eventos</div>
                 </div>
             </div>
+
+            <article id="top4race" class="top4race-spotlight" itemscope itemtype="https://schema.org/ProfessionalService">
+                <div class="top4race-spotlight-header">
+                    <span class="top4race-spotlight-badge">Aliado tecnológico</span>
+                    <h3 class="top4race-spotlight-title" itemprop="name">Top4Race — medición deportiva con chips en Córdoba</h3>
+                </div>
+                <p class="top4race-spotlight-lead" itemprop="description">
+                    <strong>Top4Race</strong>, del <strong>Club Deportivo AquaTEN</strong>, es el sistema digital de gestión de eventos con <strong>cronometraje electrónico por chips</strong> para competencias en la región de <strong>Córdoba</strong>: precisión en tiempo real, mesa técnica y publicación de resultados en línea para organizadores y atletas.
+                </p>
+                <p class="top4race-spotlight-list-title">Disciplinas con solución de chips y medición profesional</p>
+                <ul class="top4race-spotlight-list" aria-label="Disciplinas Top4Race en Córdoba">
+                    <li>Aguas abiertas</li>
+                    <li>Atletismo</li>
+                    <li>Patinaje</li>
+                </ul>
+                <a href="https://top4race.netlify.app/" class="top4race-spotlight-cta" target="_blank" rel="sponsored noopener noreferrer" itemprop="url">Visitar sitio Top4Race</a>
+                <p class="top4race-spotlight-note">Ideal para federaciones, clubes y comités que buscan tiempos oficiales confiables en Montería y el departamento de Córdoba.</p>
+            </article>
             
             <!-- Thank You Message Section -->
             <div class="sponsor-thank-you-section">
@@ -4375,7 +4615,7 @@
 
         // Smooth Scroll Function
         function scrollToSection(sectionClass) {
-            const element = document.querySelector('.' + sectionClass);
+            const element = document.querySelector('.' + sectionClass) || document.getElementById(sectionClass);
             if (element) {
                 element.scrollIntoView({
                     behavior: 'smooth',
@@ -7664,7 +7904,7 @@ Ver resultados completos: https://vchampionship.netlify.app`;
             const clubEl = document.getElementById('clubCount');
             if (clubEl) clubEl.textContent = '+?';
             const sponsorEl = document.getElementById('sponsorCount');
-            if (sponsorEl) sponsorEl.textContent = '+4';
+            if (sponsorEl) sponsorEl.textContent = '+5';
         }
 
         // Intersection Observer para animar cuando sea visible (optimizado para móvil)
@@ -7699,11 +7939,12 @@ Ver resultados completos: https://vchampionship.netlify.app`;
         // Función para compartir mensaje de agradecimiento a patrocinadores
         function shareThankYouMessage(platform) {
             const thankYouMessage = `🙏 ¡Gracias infinitas a nuestros increíbles patrocinadores y organizadores del V Championship Master Swimming 2026! 🏊‍♂️🏊‍♀️
-🤝 Nuestros patrocinadores:
-Top4Race · https://top4race.netlify.app/
+🤝 Nuestros patrocinadores (5 empresas):
+Criadero Mi Chanchito · #criaderomichanchito
 Almacén La Elegancia
 DR-Innova · @hypersatellite
-#criaderomichanchito
+Top4Race · https://top4race.netlify.app/
+Jose Carlos Villegas - Eventos
 
 Organizadores:
 @aquaten.cd
