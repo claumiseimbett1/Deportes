@@ -66,7 +66,7 @@
           "name": "Top4Race",
           "url": "https://top4race.netlify.app/",
           "image": "https://vchampionship.netlify.app/img/top4race.jpg",
-          "description": "Sistema de gestión de eventos y medición deportiva con chips electrónicos en Córdoba: aguas abiertas, atletismo y patinaje.",
+          "description": "Top4Race, del Club Deportivo AquaTEN: solución de chips y medición profesional en Córdoba para aguas abiertas, atletismo y patinaje, con cronometraje electrónico y difusión de resultados.",
           "areaServed": {
             "@type": "AdministrativeArea",
             "name": "Córdoba",
@@ -751,17 +751,6 @@
             gap: 4px;
         }
 
-        .top4race-ad-tag {
-            font-size: 0.62rem;
-            font-weight: 800;
-            letter-spacing: 0.18em;
-            text-transform: uppercase;
-            padding: 5px 12px;
-            border-radius: 4px;
-            border: 1px solid rgba(255, 255, 255, 0.45);
-            background: rgba(0, 0, 0, 0.15);
-        }
-
         .top4race-ad-main {
             font-size: clamp(1.05rem, 2.8vw, 1.45rem);
             font-weight: 800;
@@ -779,43 +768,11 @@
             padding: 28px 40px 34px;
         }
 
-        .top4race-spotlight-list-title {
-            font-size: 0.98rem;
-            font-weight: 700;
-            color: var(--primary-color);
-            margin: 0 0 14px;
-            line-height: 1.4;
-        }
-
-        .top4race-spotlight-list {
-            list-style: none;
+        .top4race-spotlight-desc {
             margin: 0;
-            padding: 0;
-            display: grid;
-            gap: 10px;
-        }
-
-        @media (min-width: 560px) {
-            .top4race-spotlight-list {
-                grid-template-columns: repeat(3, 1fr);
-            }
-        }
-
-        .top4race-spotlight-list li {
-            margin: 0;
-            padding: 12px 14px;
-            background: var(--text-white);
-            border-radius: var(--border-radius-small);
-            border: 1px solid #dbe8f5;
-            font-weight: 600;
-            color: var(--primary-color);
-            font-size: 0.95rem;
-        }
-
-        .top4race-spotlight-list li::before {
-            content: "✓ ";
-            color: var(--secondary-color);
-            font-weight: 800;
+            font-size: 1.02rem;
+            line-height: 1.65;
+            color: #3d4a63;
         }
 
         @media (max-width: 768px) {
@@ -3244,17 +3201,12 @@
             <article id="top4race" class="top4race-spotlight" itemscope itemtype="https://schema.org/ProfessionalService">
                 <meta itemprop="name" content="Top4Race">
                 <link itemprop="url" href="https://top4race.netlify.app/">
-                <meta itemprop="description" content="Disciplinas con solución de chips y medición profesional: aguas abiertas, atletismo, patinaje.">
                 <div class="top4race-spotlight-body">
-                    <p class="top4race-spotlight-list-title">Disciplinas con solución de chips y medición profesional</p>
-                    <ul class="top4race-spotlight-list" aria-label="Disciplinas con chips Top4Race">
-                        <li>Aguas abiertas</li>
-                        <li>Atletismo</li>
-                        <li>Patinaje</li>
-                    </ul>
+                    <p class="top4race-spotlight-desc" itemprop="description">
+                        <strong>Top4Race</strong>, del Club Deportivo AquaTEN, aporta <strong>solución de chips y medición profesional</strong> para eventos deportivos en Córdoba: cronometraje electrónico y gestión técnica en <strong>aguas abiertas</strong>, <strong>atletismo</strong> y <strong>patinaje</strong>, con tiempos confiables y difusión de resultados para organizadores y participantes.
+                    </p>
                 </div>
-                <div class="top4race-ad-banner" role="complementary" aria-label="Publicidad: aliado tecnológico Top4Race">
-                    <span class="top4race-ad-tag">Publicidad</span>
+                <div class="top4race-ad-banner" role="complementary" aria-label="Aliado tecnológico Top4Race">
                     <a href="https://top4race.netlify.app/" class="top4race-ad-logo-link" target="_blank" rel="sponsored noopener noreferrer" aria-label="Top4Race — abrir sitio web">
                         <img src="img/top4race.jpg" alt="Logo Top4Race" class="top4race-ad-logo" width="180" height="64" loading="lazy">
                     </a>
