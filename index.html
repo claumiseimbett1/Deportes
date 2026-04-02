@@ -65,6 +65,7 @@
           "@type": "ProfessionalService",
           "name": "Top4Race",
           "url": "https://top4race.netlify.app/",
+          "image": "https://vchampionship.netlify.app/img/top4race.jpg",
           "description": "Sistema de gestión de eventos y medición deportiva con chips electrónicos en Córdoba: aguas abiertas, atletismo y patinaje.",
           "areaServed": {
             "@type": "AdministrativeArea",
@@ -692,12 +693,13 @@
             border-color: #f0f6ff;
         }
 
-        /* Top4Race — subsección destacada (SEO + patrocinio) */
+        /* Top4Race — franja publicitaria + listado breve */
         .top4race-spotlight {
             margin-top: 56px;
-            padding: 36px 40px 40px;
+            padding: 0;
+            overflow: hidden;
             border-radius: var(--border-radius-large);
-            background: linear-gradient(135deg, #f0f7ff 0%, #ffffff 55%, #e8f4fc 100%);
+            background: linear-gradient(180deg, #f5faff 0%, #ffffff 45%);
             border: 2px solid #c8e6f5;
             box-shadow: var(--box-shadow);
             max-width: 900px;
@@ -705,53 +707,89 @@
             margin-right: auto;
         }
 
-        .top4race-spotlight-header {
+        .top4race-ad-banner {
             display: flex;
             flex-wrap: wrap;
-            align-items: flex-start;
-            gap: 16px 24px;
-            margin-bottom: 18px;
-        }
-
-        .top4race-spotlight-badge {
-            display: inline-block;
-            padding: 6px 14px;
-            border-radius: 999px;
-            font-size: 0.75rem;
-            font-weight: 700;
-            letter-spacing: 0.06em;
-            text-transform: uppercase;
+            align-items: center;
+            justify-content: center;
+            gap: 14px 22px;
+            padding: 18px 20px;
+            background: linear-gradient(90deg, #070b2e 0%, #0b1039 35%, #0b5079 70%, #00ADEF 100%);
             color: var(--text-white);
-            background: var(--background-gradient);
+            text-align: center;
         }
 
-        .top4race-spotlight-title {
-            font-size: 1.55rem;
-            color: var(--primary-color);
-            margin: 0;
-            font-weight: 700;
-            line-height: 1.25;
-            flex: 1;
-            min-width: 220px;
+        .top4race-ad-logo-link {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 8px 14px;
+            background: rgba(255, 255, 255, 0.14);
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.28);
+            line-height: 0;
+            transition: var(--transition);
         }
 
-        .top4race-spotlight-lead {
-            color: #3d4a63;
-            font-size: 1.05rem;
-            line-height: 1.65;
-            margin: 0 0 20px;
+        .top4race-ad-logo-link:hover {
+            background: rgba(255, 255, 255, 0.22);
+            transform: scale(1.02);
+        }
+
+        .top4race-ad-logo {
+            max-height: 46px;
+            max-width: 180px;
+            width: auto;
+            height: auto;
+            object-fit: contain;
+        }
+
+        .top4race-ad-text-col {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .top4race-ad-tag {
+            font-size: 0.62rem;
+            font-weight: 800;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            padding: 5px 12px;
+            border-radius: 4px;
+            border: 1px solid rgba(255, 255, 255, 0.45);
+            background: rgba(0, 0, 0, 0.15);
+        }
+
+        .top4race-ad-main {
+            font-size: clamp(1.05rem, 2.8vw, 1.45rem);
+            font-weight: 800;
+            letter-spacing: 0.03em;
+            text-transform: uppercase;
+        }
+
+        .top4race-ad-brand {
+            font-size: 0.95rem;
+            font-weight: 600;
+            opacity: 0.95;
+        }
+
+        .top4race-spotlight-body {
+            padding: 28px 40px 34px;
         }
 
         .top4race-spotlight-list-title {
-            font-size: 0.95rem;
+            font-size: 0.98rem;
             font-weight: 700;
             color: var(--primary-color);
-            margin: 0 0 10px;
+            margin: 0 0 14px;
+            line-height: 1.4;
         }
 
         .top4race-spotlight-list {
             list-style: none;
-            margin: 0 0 22px;
+            margin: 0;
             padding: 0;
             display: grid;
             gap: 10px;
@@ -780,41 +818,12 @@
             font-weight: 800;
         }
 
-        .top4race-spotlight-cta {
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
-            padding: 14px 26px;
-            border-radius: 999px;
-            font-weight: 600;
-            font-size: 1rem;
-            text-decoration: none;
-            color: var(--text-white);
-            background: var(--background-gradient);
-            transition: var(--transition);
-            box-shadow: 0 4px 18px rgba(11, 16, 57, 0.2);
-        }
-
-        .top4race-spotlight-cta:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 24px rgba(11, 16, 57, 0.25);
-            color: var(--text-white);
-        }
-
-        .top4race-spotlight-note {
-            margin: 14px 0 0;
-            font-size: 0.88rem;
-            color: var(--text-gray);
-            line-height: 1.5;
-        }
-
         @media (max-width: 768px) {
             .top4race-spotlight {
-                padding: 28px 22px 32px;
                 margin-top: 40px;
             }
-            .top4race-spotlight-title {
-                font-size: 1.3rem;
+            .top4race-spotlight-body {
+                padding: 22px 22px 28px;
             }
         }
 
@@ -3218,9 +3227,9 @@
                     <div class="sponsor-logo"><img src="img/dr-innova.png" alt="Logo DR-Innova"></div>
                     <div class="sponsor-name">DR-Innova</div>
                 </a>
-                <a href="https://top4race.netlify.app/" target="_blank" rel="noopener noreferrer" class="sponsor-card">
-                    <div class="sponsor-logo sponsor-logo--pending" aria-label="Espacio para logo de Top4Race">
-                        <span class="sponsor-logo-slot-text">Logo Top4Race</span>
+                <a href="https://top4race.netlify.app/" target="_blank" rel="sponsored noopener noreferrer" class="sponsor-card">
+                    <div class="sponsor-logo">
+                        <img src="img/top4race.jpg" alt="Logo Top4Race · AquaTEN" width="180" height="80" loading="lazy">
                     </div>
                     <div class="sponsor-name">Top4Race · AquaTEN</div>
                 </a>
@@ -3233,21 +3242,27 @@
             </div>
 
             <article id="top4race" class="top4race-spotlight" itemscope itemtype="https://schema.org/ProfessionalService">
-                <div class="top4race-spotlight-header">
-                    <span class="top4race-spotlight-badge">Aliado tecnológico</span>
-                    <h3 class="top4race-spotlight-title" itemprop="name">Top4Race — medición deportiva con chips en Córdoba</h3>
+                <meta itemprop="name" content="Top4Race">
+                <link itemprop="url" href="https://top4race.netlify.app/">
+                <meta itemprop="description" content="Disciplinas con solución de chips y medición profesional: aguas abiertas, atletismo, patinaje.">
+                <div class="top4race-spotlight-body">
+                    <p class="top4race-spotlight-list-title">Disciplinas con solución de chips y medición profesional</p>
+                    <ul class="top4race-spotlight-list" aria-label="Disciplinas con chips Top4Race">
+                        <li>Aguas abiertas</li>
+                        <li>Atletismo</li>
+                        <li>Patinaje</li>
+                    </ul>
                 </div>
-                <p class="top4race-spotlight-lead" itemprop="description">
-                    <strong>Top4Race</strong>, del <strong>Club Deportivo AquaTEN</strong>, es el sistema digital de gestión de eventos con <strong>cronometraje electrónico por chips</strong> para competencias en la región de <strong>Córdoba</strong>: precisión en tiempo real, mesa técnica y publicación de resultados en línea para organizadores y atletas.
-                </p>
-                <p class="top4race-spotlight-list-title">Disciplinas con solución de chips y medición profesional</p>
-                <ul class="top4race-spotlight-list" aria-label="Disciplinas Top4Race en Córdoba">
-                    <li>Aguas abiertas</li>
-                    <li>Atletismo</li>
-                    <li>Patinaje</li>
-                </ul>
-                <a href="https://top4race.netlify.app/" class="top4race-spotlight-cta" target="_blank" rel="sponsored noopener noreferrer" itemprop="url">Visitar sitio Top4Race</a>
-                <p class="top4race-spotlight-note">Ideal para federaciones, clubes y comités que buscan tiempos oficiales confiables en Montería y el departamento de Córdoba.</p>
+                <div class="top4race-ad-banner" role="complementary" aria-label="Publicidad: aliado tecnológico Top4Race">
+                    <span class="top4race-ad-tag">Publicidad</span>
+                    <a href="https://top4race.netlify.app/" class="top4race-ad-logo-link" target="_blank" rel="sponsored noopener noreferrer" aria-label="Top4Race — abrir sitio web">
+                        <img src="img/top4race.jpg" alt="Logo Top4Race" class="top4race-ad-logo" width="180" height="64" loading="lazy">
+                    </a>
+                    <div class="top4race-ad-text-col">
+                        <span class="top4race-ad-main">Aliado tecnológico</span>
+                        <span class="top4race-ad-brand">Top4Race</span>
+                    </div>
+                </div>
             </article>
             
             <!-- Thank You Message Section -->
