@@ -2606,7 +2606,7 @@
                             <rect x="16" y="7" width="1.5" height="4" stroke="#0b5079" stroke-width="1.5"/>
                         </svg>
                     </div>
-                    <h3 class="stat-number" id="clubCount">+?</h3>
+                    <h3 class="stat-number" id="clubCount">4</h3>
                     <p class="stat-label">Clubes participantes</p>
                     <p class="stat-description">De Córdoba</p>
                 </div>
@@ -3165,6 +3165,10 @@
                 <div class="sponsor-card sponsor-card--static" aria-label="Konkretes">
                     <div class="sponsor-logo"><img src="img/konkretes.png" alt="Logo Konkretes"></div>
                     <div class="sponsor-name">Konkretes</div>
+                </div>
+                <div class="sponsor-card sponsor-card--static" aria-label="Unidad Radiovascular">
+                    <div class="sponsor-logo"><img src="img/unidad-radiovascular.jpg" alt="Logo Unidad Radiovascular"></div>
+                    <div class="sponsor-name">Unidad Radiovascular</div>
                 </div>
                 <a href="https://www.instagram.com/hypersatelliteapp/" target="_blank" rel="noopener noreferrer" class="sponsor-card">
                     <div class="sponsor-logo"><img src="img/dr-innova.png" alt="Logo DR-Innova"></div>
@@ -7853,11 +7857,11 @@ Ver resultados completos: https://vchampionship.netlify.app`;
         // Función para animar las estadísticas del evento (opcional)
         function animateEventStats() {
             const swimmerEl = document.getElementById('swimmerCount');
-            if (swimmerEl) swimmerEl.textContent = '?';
+            if (swimmerEl) swimmerEl.textContent = '18';
             const clubEl = document.getElementById('clubCount');
-            if (clubEl) clubEl.textContent = '+?';
+            if (clubEl) clubEl.textContent = '4';
             const sponsorEl = document.getElementById('sponsorCount');
-            if (sponsorEl) sponsorEl.textContent = '+5';
+            if (sponsorEl) sponsorEl.textContent = '+7';
         }
 
         // Intersection Observer para animar cuando sea visible (optimizado para móvil)
@@ -7896,6 +7900,7 @@ Ver resultados completos: https://vchampionship.netlify.app`;
 Criadero Mi Chanchito · #criaderomichanchito
 Almacén La Elegancia
 Konkretes
+Unidad Radiovascular
 DR-Innova · @hypersatellite
 Top4Race · https://top4race.netlify.app/
 Jose Carlos Villegas - Eventos
