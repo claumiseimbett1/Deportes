@@ -820,6 +820,12 @@
             transition: filter 0.3s ease;
         }
 
+        .sponsor-logo img.sponsor-logo--center {
+            display: block;
+            margin: 0 auto;
+            object-position: center;
+        }
+
         .sponsor-card:hover .sponsor-logo img {
             filter: grayscale(0%);
         }
@@ -2491,7 +2497,7 @@
     <section class="video-hero" id="inicio">
         <div class="video-container">
             <!-- playsinline: Required for iOS Safari inline video playback -->
-            <video autoplay muted loop playsinline="true" src="video/promocional.mp4">
+            <video autoplay muted loop playsinline="true" src="video/promocional3.mp4">
                 Tu navegador no soporta la etiqueta de video.
             </video>
         </div>
@@ -2623,7 +2629,7 @@
                             <circle cx="12" cy="12" r="1.2" fill="#ffffff" opacity="0.4"/>
                         </svg>
                     </div>
-                    <h3 class="stat-number" id="sponsorCount">+7</h3>
+                    <h3 class="stat-number" id="sponsorCount">7</h3>
                     <p class="stat-label">Patrocinadores</p>
                     <p class="stat-description">Empresas aliadas</p>
                 </div>
@@ -3156,21 +3162,21 @@
                     <div class="sponsor-logo"><img src="img/michanchito.png" alt="Logo Criadero Mi Chanchito"></div>
                     <div class="sponsor-name">Criadero Mi Chanchito</div>
                 </div>
-                <div class="sponsor-card sponsor-card--static" aria-label="Almacén La Elegancia">
+                <a href="https://www.instagram.com/almacen.elegancia/" target="_blank" rel="noopener noreferrer" class="sponsor-card" aria-label="Almacén La Elegancia">
                     <div class="sponsor-logo">
                         <img src="img/Almacen-La-Elegancia.jpg" alt="Logo Almacén La Elegancia" width="180" height="80" loading="lazy">
                     </div>
                     <div class="sponsor-name">Almacén La Elegancia</div>
-                </div>
-                <div class="sponsor-card sponsor-card--static" aria-label="Konkretes">
+                </a>
+                <a href="https://www.instagram.com/konkretescol/" target="_blank" rel="noopener noreferrer" class="sponsor-card" aria-label="Konkretes">
                     <div class="sponsor-logo"><img src="img/konkretes.png" alt="Logo Konkretes"></div>
                     <div class="sponsor-name">Konkretes</div>
-                </div>
+                </a>
                 <div class="sponsor-card sponsor-card--static" aria-label="Unidad Radiovascular">
                     <div class="sponsor-logo"><img src="img/unidad-radiovascular.jpg" alt="Logo Unidad Radiovascular"></div>
                     <div class="sponsor-name">Unidad Radiovascular</div>
                 </div>
-                <a href="https://www.instagram.com/hypersatelliteapp/" target="_blank" rel="noopener noreferrer" class="sponsor-card">
+                <a href="https://www.instagram.com/agtech_program/" target="_blank" rel="noopener noreferrer" class="sponsor-card">
                     <div class="sponsor-logo"><img src="img/dr-innova.png" alt="Logo DR-Innova"></div>
                     <div class="sponsor-name">DR-Innova</div>
                 </a>
@@ -3180,12 +3186,12 @@
                     </div>
                     <div class="sponsor-name">Top4Race · AquaTEN</div>
                 </a>
-                <div class="sponsor-card sponsor-card--static" aria-label="Jose Carlos Villegas - Eventos">
+                <a href="https://www.instagram.com/josecarvillegas/" target="_blank" rel="noopener noreferrer" class="sponsor-card" aria-label="Jose Carlos Villegas - Eventos">
                     <div class="sponsor-logo">
-                        <img src="img/Jose-Villegas-Eventos.png" alt="Logo Jose Carlos Villegas - Eventos" width="180" height="80" loading="lazy">
+                        <img src="img/Jose-Villegas-Eventos.png" alt="Logo Jose Carlos Villegas - Eventos" width="180" height="80" loading="lazy" class="sponsor-logo--center">
                     </div>
                     <div class="sponsor-name">Jose Carlos Villegas - Eventos</div>
-                </div>
+                </a>
             </div>
 
             <article id="top4race" class="top4race-spotlight" itemscope itemtype="https://schema.org/ProfessionalService">
@@ -7861,7 +7867,7 @@ Ver resultados completos: https://vchampionship.netlify.app`;
             const clubEl = document.getElementById('clubCount');
             if (clubEl) clubEl.textContent = '4';
             const sponsorEl = document.getElementById('sponsorCount');
-            if (sponsorEl) sponsorEl.textContent = '+7';
+            if (sponsorEl) sponsorEl.textContent = '7';
         }
 
         // Intersection Observer para animar cuando sea visible (optimizado para móvil)
