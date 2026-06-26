@@ -191,6 +191,34 @@
             color: #e97239;
         }
 
+        .hero-clubs {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: center;
+            gap: 0.35em;
+        }
+
+        .hero-content .club-organizer-index {
+            display: inline-block;
+            font-weight: 700;
+            color: #e97239;
+            margin-right: 0.2em;
+        }
+
+        .hero-content .club-name-badge {
+            background: #0f4ebc;
+            color: #e97239;
+            font-weight: 700;
+            padding: 0.12em 0.55em;
+            border-radius: 8px;
+        }
+
+        .hero-content .club-separator {
+            color: #e9ecef;
+            font-weight: 300;
+        }
+
         .hero-brand-link,
         .brand-link-vibrant {
             color: #00f0ff;
@@ -635,21 +663,17 @@
             text-transform: uppercase;
             letter-spacing: 2px;
             font-size: 0.75rem;
-            color: var(--primary-color);
+            color: var(--text-gray);
             font-weight: 700;
             margin-bottom: 14px;
         }
 
         .contact-section h2 {
             font-size: clamp(1.6rem, 3vw, 2.2rem);
-            color: var(--primary-color);
+            color: #555;
             margin-bottom: 16px;
             font-weight: 700;
             line-height: 1.25;
-        }
-
-        .contact-section h2 .brand-text-vibrant {
-            color: #00f0ff;
         }
 
         .contact-section .contact-intro,
@@ -697,7 +721,7 @@
             border: 1px solid #e8eef8;
             font-weight: 600;
             text-decoration: none;
-            color: var(--primary-color);
+            color: #555;
             background: #ffffff;
             transition: transform var(--transition), box-shadow var(--transition), border-color var(--transition), background var(--transition);
             cursor: pointer;
@@ -708,27 +732,29 @@
         .contact-whatsapp .btn.ghost:hover,
         .contact-form .btn.ghost:hover {
             border-color: #ced4da;
-            color: #0a3d94;
+            color: #333;
             box-shadow: 0 8px 18px rgba(0, 0, 0, 0.1);
             background: #f8f9fa;
         }
 
-        .contact-section .inline-link {
-            color: var(--primary-color);
+        .contact-section .inline-link,
+        .contact-section .contact-info a {
+            color: #555;
+            font-weight: 600;
+            text-decoration: none;
+            transition: color 0.2s ease;
         }
 
         .contact-section .inline-link:hover,
-        .contact-section .inline-link:focus {
-            color: #0a3d94;
+        .contact-section .inline-link:focus,
+        .contact-section .contact-info a:hover,
+        .contact-section .contact-info a:focus {
+            color: #333;
+            text-decoration: underline;
         }
 
-        .contact-section .brand-link-vibrant {
-            color: #00f0ff;
-        }
-
-        .contact-section .brand-link-vibrant:hover,
-        .contact-section .brand-link-vibrant:focus {
-            color: #00b8d4;
+        .contact-section .contact-item > div > span:not(.contact-label) {
+            color: #555;
         }
 
         .contact-info {
@@ -781,7 +807,7 @@
             display: grid;
             gap: 8px;
             font-weight: 600;
-            color: var(--primary-color);
+            color: #555;
         }
 
         .contact-form input,
@@ -791,7 +817,7 @@
             padding: 12px 14px;
             font-size: 0.95rem;
             font-family: inherit;
-            color: var(--primary-color);
+            color: #333;
             background: #ffffff;
         }
 
@@ -817,14 +843,14 @@
 
         .contact-form .btn.primary {
             background: #ffffff;
-            color: var(--primary-color);
+            color: #555;
             border: 2px solid #dee2e6;
             box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
         }
 
         .contact-form .btn.primary:hover {
             transform: translateY(-1px);
-            color: #0a3d94;
+            color: #333;
             border-color: #dee2e6;
             box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12);
         }
@@ -842,15 +868,118 @@
             padding: 50px 30px;
             text-align: center;
             box-shadow: 0 5px 25px rgba(0, 0, 0, 0.08);
-            transition: var(--transition);
             text-decoration: none;
             color: inherit;
+            position: relative;
+            overflow: hidden;
+            isolation: isolate;
+            transition:
+                transform 0.35s cubic-bezier(0.34, 1.2, 0.64, 1),
+                box-shadow 0.35s ease,
+                border-color 0.35s ease;
+        }
+
+        .info-card::before,
+        .stat-card::before,
+        .event-goal-card::before,
+        .terms-main-card::before,
+        .privacy-main-card::before,
+        .results-cta-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -120%;
+            width: 80%;
+            height: 100%;
+            background: linear-gradient(105deg, transparent 0%, rgba(233, 114, 57, 0.12) 45%, rgba(233, 114, 57, 0.22) 50%, rgba(233, 114, 57, 0.12) 55%, transparent 100%);
+            transform: skewX(-18deg);
+            transition: left 0.65s ease;
+            pointer-events: none;
+        }
+
+        .info-card::after,
+        .stat-card::after,
+        .event-goal-card::after,
+        .terms-main-card::after,
+        .privacy-main-card::after,
+        .results-cta-card::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: inherit;
+            opacity: 0;
+            pointer-events: none;
+            box-shadow:
+                inset 0 0 0 1px rgba(233, 114, 57, 0.35),
+                inset 0 1px 0 rgba(255, 255, 255, 0.6);
+            transition: opacity 0.35s ease;
         }
 
         .info-card:hover, .contact-card-link:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
-            border-color: #ced4da;
+            transform: translateY(-10px) scale(1.02);
+            border-color: rgba(233, 114, 57, 0.55);
+            box-shadow:
+                0 22px 48px rgba(233, 114, 57, 0.2),
+                0 0 32px rgba(233, 114, 57, 0.14);
+        }
+
+        .info-card:hover::before,
+        .stat-card:hover::before,
+        .event-goal-card:hover::before,
+        .terms-main-card:hover::before,
+        .privacy-main-card:hover::before,
+        .results-cta-card:hover::before {
+            left: 140%;
+        }
+
+        .info-card:hover::after,
+        .stat-card:hover::after,
+        .event-goal-card:hover::after,
+        .terms-main-card:hover::after,
+        .privacy-main-card:hover::after,
+        .results-cta-card:hover::after {
+            opacity: 1;
+        }
+
+        .info-card:hover h3,
+        .contact-card-link:hover h3 {
+            color: var(--secondary-color);
+            transition: color 0.35s ease;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .info-card,
+            .stat-card,
+            .event-goal-card,
+            .terms-main-card,
+            .privacy-main-card,
+            .results-cta-card,
+            .contact-card-link {
+                transition: box-shadow 0.2s ease, border-color 0.2s ease;
+            }
+
+            .info-card::before,
+            .stat-card::before,
+            .event-goal-card::before,
+            .terms-main-card::before,
+            .privacy-main-card::before,
+            .results-cta-card::before {
+                display: none;
+            }
+
+            .info-card:hover,
+            .stat-card:hover,
+            .event-goal-card:hover,
+            .terms-main-card:hover,
+            .privacy-main-card:hover,
+            .results-cta-card:hover,
+            .contact-card-link:hover {
+                transform: none;
+            }
+
+            .results-cta-card:hover .results-cta-arrow {
+                transform: none;
+            }
         }
 
         /* Iconos SVG minimalistas */
@@ -1044,6 +1173,19 @@
             line-height: 1.55;
         }
 
+        .results-section .section-title-note a {
+            color: inherit;
+            font-weight: 600;
+            text-decoration: none;
+            transition: color 0.2s ease;
+        }
+
+        .results-section .section-title-note a:hover,
+        .results-section .section-title-note a:focus {
+            color: #333;
+            text-decoration: underline;
+        }
+
         /* CTA Section */
         .cta-section {
             padding: 100px 20px;
@@ -1072,13 +1214,17 @@
             color: #e97239;
         }
 
-        .cta-section .brand-link-vibrant {
-            color: #00f0ff;
+        .cta-section p a {
+            color: inherit;
+            font-weight: 600;
+            text-decoration: none;
+            transition: color 0.2s ease;
         }
 
-        .cta-section .brand-link-vibrant:hover,
-        .cta-section .brand-link-vibrant:focus {
-            color: #00b8d4;
+        .cta-section p a:hover,
+        .cta-section p a:focus {
+            color: #333;
+            text-decoration: underline;
         }
 
         .cta-button {
@@ -1822,6 +1968,7 @@
             font-size: 3rem;
             font-weight: bold;
             margin: 0 0 10px 0;
+            transition: color 0.35s ease, text-shadow 0.35s ease;
         }
         
         .stat-label {
@@ -1860,12 +2007,31 @@
             text-align: center;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
             border: 2px solid #e5edf8;
-            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            isolation: isolate;
+            transition:
+                transform 0.35s cubic-bezier(0.34, 1.2, 0.64, 1),
+                box-shadow 0.35s ease,
+                border-color 0.35s ease;
         }
         
         .stat-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+            transform: translateY(-12px) scale(1.03);
+            border-color: rgba(233, 114, 57, 0.55);
+            box-shadow:
+                0 24px 50px rgba(233, 114, 57, 0.22),
+                0 0 36px rgba(233, 114, 57, 0.15);
+        }
+
+        .stat-card:hover .stat-number {
+            color: var(--secondary-color);
+            text-shadow: 0 0 24px rgba(233, 114, 57, 0.35);
+            transition: color 0.35s ease, text-shadow 0.35s ease;
+        }
+
+        .stat-card:hover .stat-label {
+            color: #444;
         }
 
         /* Layouts de botones - SEGUROS */
@@ -2008,6 +2174,27 @@
             padding: 30px;
             margin-top: 50px;
             text-align: center;
+            position: relative;
+            overflow: hidden;
+            isolation: isolate;
+            transition:
+                transform 0.35s cubic-bezier(0.34, 1.2, 0.64, 1),
+                box-shadow 0.35s ease,
+                border-color 0.35s ease,
+                border-left-color 0.35s ease;
+        }
+
+        .event-goal-card:hover {
+            transform: translateY(-6px) scale(1.01);
+            border-color: rgba(233, 114, 57, 0.45);
+            border-left-color: #e97239;
+            box-shadow:
+                0 18px 40px rgba(233, 114, 57, 0.18),
+                0 0 28px rgba(233, 114, 57, 0.12);
+        }
+
+        .event-goal-card:hover .goal-card-title {
+            color: var(--secondary-color);
         }
         
         .goal-card-title {
@@ -2015,6 +2202,7 @@
             margin: 0 0 15px 0;
             font-size: 1.4rem;
             font-weight: bold;
+            transition: color 0.35s ease;
         }
         
         .goal-card-text {
@@ -2066,6 +2254,21 @@
             padding: 40px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
             border: 2px solid #e5edf8;
+            position: relative;
+            overflow: hidden;
+            isolation: isolate;
+            transition:
+                transform 0.35s cubic-bezier(0.34, 1.2, 0.64, 1),
+                box-shadow 0.35s ease,
+                border-color 0.35s ease;
+        }
+
+        .terms-main-card:hover {
+            transform: translateY(-8px) scale(1.01);
+            border-color: rgba(233, 114, 57, 0.5);
+            box-shadow:
+                0 20px 44px rgba(233, 114, 57, 0.2),
+                0 0 30px rgba(233, 114, 57, 0.12);
         }
         
         .terms-header-row {
@@ -2119,6 +2322,21 @@
             padding: 30px;
             box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
             border: 1px solid #e5edf8;
+            position: relative;
+            overflow: hidden;
+            isolation: isolate;
+            transition:
+                transform 0.35s cubic-bezier(0.34, 1.2, 0.64, 1),
+                box-shadow 0.35s ease,
+                border-color 0.35s ease;
+        }
+
+        .privacy-main-card:hover {
+            transform: translateY(-8px) scale(1.01);
+            border-color: rgba(233, 114, 57, 0.5);
+            box-shadow:
+                0 18px 40px rgba(233, 114, 57, 0.18),
+                0 0 28px rgba(233, 114, 57, 0.12);
         }
         
         .privacy-header-row {
@@ -2146,6 +2364,30 @@
             padding: 50px;
             text-align: center;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            position: relative;
+            overflow: hidden;
+            isolation: isolate;
+            transition:
+                transform 0.35s cubic-bezier(0.34, 1.2, 0.64, 1),
+                box-shadow 0.35s ease,
+                border-color 0.35s ease;
+        }
+
+        .results-cta-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            border-color: rgba(233, 114, 57, 0.55);
+            box-shadow:
+                0 22px 48px rgba(233, 114, 57, 0.2),
+                0 0 32px rgba(233, 114, 57, 0.14);
+        }
+
+        .results-cta-card:hover .results-cta-title {
+            color: var(--secondary-color);
+        }
+
+        .results-cta-card:hover .results-cta-arrow {
+            transform: translateY(4px) scale(1.1);
+            filter: drop-shadow(0 0 10px rgba(233, 114, 57, 0.45));
         }
         
         .results-cta-title {
@@ -2153,12 +2395,14 @@
             margin-bottom: 20px;
             font-size: 1.8em;
             font-weight: 600;
+            transition: color 0.35s ease;
         }
         
         .results-cta-arrow {
             font-size: 2.5em;
             margin: 20px 0;
             color: var(--secondary-color);
+            transition: transform 0.35s ease, filter 0.35s ease;
         }
         
         .results-cta-text {
@@ -2684,7 +2928,7 @@
             <div class="hero-content">
                 <h1>FESTI-TORNEO REGIONAL DEL SINÚ</h1>
                 <p class="subtitle hero-date">5 de julio de 2026</p>
-                <p class="subtitle"><span class="club-name">Club Delfines Córdoba y Sport</span> y <span class="club-name">Club Deportivo Ávatar</span></p>
+                <p class="subtitle hero-clubs"><span class="club-name"><span class="club-organizer-index">I</span> Club Delfines Córdoba y Sport</span><span class="club-separator">y</span><span class="club-name club-name-badge">Club Deportivo Ávatar</span></p>
                 <p class="subtitle hero-location">Montería, Córdoba</p>
             </div>
         </div>
@@ -2978,7 +3222,7 @@
     <section class="results-section" id="resultados">
         <div class="container">
             <h2 class="section-title">Resultados por Pruebas</h2>
-            <p class="section-title-note">Clasificación oficial del Festi-Torneo Regional del Sinú en Montería, Córdoba. Los tiempos se publican en esta página deportiva diseñada por <a class="brand-link-vibrant" href="https://top4race.netlify.app/" target="_blank" rel="noopener noreferrer">Top4Race</a>, sistema del <a class="brand-link-vibrant" href="https://top4race.netlify.app/" target="_blank" rel="noopener noreferrer">Club Deportivo AquaTEN</a>, para visualización de los resultados de tu competencia de natación.</p>
+            <p class="section-title-note">Clasificación oficial del Festi-Torneo Regional del Sinú en Montería, Córdoba. Los tiempos se publican en esta página deportiva diseñada por <a href="https://top4race.netlify.app/" target="_blank" rel="noopener noreferrer">Top4Race</a>, sistema del <a href="https://top4race.netlify.app/" target="_blank" rel="noopener noreferrer">Club Deportivo AquaTEN</a>, para visualización de los resultados de tu competencia de natación.</p>
             
             <!-- Search Container for Pruebas -->
             <div class="search-container">
@@ -3351,7 +3595,7 @@
     <section class="cta-section">
         <div class="container">
             <h2>¿Listo para competir?</h2>
-            <p>Únete a los <strong>19</strong> nadadores en esta emocionante competencia, con la participación de <strong>4</strong> clubes de Córdoba, en el <strong>FESTI-TORNEO REGIONAL DEL SINÚ</strong> organizado por <span class="club-name">Club Delfines Córdoba y Sport</span> y <span class="club-name">Club Deportivo Ávatar</span>, con el apoyo tecnológico de <a class="brand-link-vibrant" href="https://top4race.netlify.app/" target="_blank" rel="noopener">Top4Race</a> del <a class="brand-link-vibrant" href="https://top4race.netlify.app/" target="_blank" rel="noopener">Club Deportivo AquaTEN</a>.</p>
+            <p>Únete a los <strong>19</strong> nadadores en esta emocionante competencia, con la participación de <strong>4</strong> clubes de Córdoba, en el <strong>FESTI-TORNEO REGIONAL DEL SINÚ</strong> organizado por <span class="club-name">Club Delfines Córdoba y Sport</span> y <span class="club-name">Club Deportivo Ávatar</span>, con el apoyo tecnológico de <a href="https://top4race.netlify.app/" target="_blank" rel="noopener">Top4Race</a> del <a href="https://top4race.netlify.app/" target="_blank" rel="noopener">Club Deportivo AquaTEN</a>.</p>
             <a href="#" class="cta-button">Más Información</a>
         </div>
     </section>
@@ -3361,7 +3605,7 @@
         <div class="container contact-grid">
             <div>
                 <p class="eyebrow">Contacto</p>
-                <h2>Contacto de Sistema <span class="brand-text-vibrant">Top4Race</span></h2>
+                <h2>Contacto de Sistema Top4Race</h2>
                 <p>Escríbenos para conocer más sobre cronometraje con chips, páginas web de eventos, diplomas descargables y compartir resultados en redes sociales.</p>
                 <div class="contact-info">
                     <div class="contact-item">
@@ -3423,7 +3667,7 @@
                         </span>
                         <div>
                             <span class="contact-label">Web Top4Race</span>
-                            <a class="brand-link-vibrant" href="https://top4race.netlify.app/" target="_blank" rel="noopener">top4race.netlify.app</a>
+                            <a class="inline-link" href="https://top4race.netlify.app/" target="_blank" rel="noopener">top4race.netlify.app</a>
                         </div>
                     </div>
                     <div class="contact-item">
@@ -3437,7 +3681,7 @@
                         </span>
                         <div>
                             <span class="contact-label">Web AquaTEN</span>
-                            <a class="brand-link-vibrant" href="https://www.aquatencd.com/" target="_blank" rel="noopener">www.aquatencd.com</a>
+                            <a class="inline-link" href="https://www.aquatencd.com/" target="_blank" rel="noopener">www.aquatencd.com</a>
                         </div>
                     </div>
                 </div>
