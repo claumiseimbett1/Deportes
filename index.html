@@ -156,6 +156,10 @@
             --primary-color: #0f4ebc;
             --secondary-color: #e97239;
             --accent-hover: #c55a28;
+            --btn-bg: #e97239;
+            --btn-bg-hover: #d9642f;
+            --btn-text: #0f4ebc;
+            --btn-text-hover: #08336e;
             --surface-dark: #2d3748;
             --surface-muted: #f8f9fa;
             --background-light: #f8f9fa;
@@ -212,6 +216,15 @@
             font-weight: 700;
             padding: 0.12em 0.55em;
             border-radius: 8px;
+        }
+
+        .hero-content .club-name-badge-dark {
+            background: #08336e;
+        }
+
+        .hero-content .club-name-badge-orange {
+            background: #e97239;
+            color: #0f4ebc;
         }
 
         .hero-content .club-separator {
@@ -1189,25 +1202,30 @@
         /* CTA Section */
         .cta-section {
             padding: 100px 20px;
-            background: #f8f9fa;
+            background-color: var(--surface-dark);
+            color: #e2e8f0;
             text-align: center;
             position: relative;
         }
 
         .cta-section h2 {
-            color: var(--primary-color);
+            color: #ffffff;
             font-size: 3em;
             margin-bottom: 25px;
             font-weight: 700;
         }
 
         .cta-section p {
-            color: #555;
+            color: #e2e8f0;
             font-size: 1.3em;
             margin-bottom: 40px;
             max-width: 600px;
             margin-left: auto;
             margin-right: auto;
+        }
+
+        .cta-section p strong {
+            color: #ffffff;
         }
 
         .cta-section .club-name {
@@ -1223,38 +1241,39 @@
 
         .cta-section p a:hover,
         .cta-section p a:focus {
-            color: #333;
+            color: #ffffff;
             text-decoration: underline;
         }
 
         .cta-button {
             display: inline-block;
-            background: #ffffff;
-            color: var(--secondary-color);
-            border: 2px solid #dee2e6;
+            background: transparent;
+            color: #ffffff;
+            border: 2px solid rgba(255, 255, 255, 0.35);
             padding: 18px 50px;
             border-radius: 50px;
             text-decoration: none;
             font-weight: 600;
             font-size: 1.2em;
             transition: var(--transition);
-            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+            box-shadow: none;
         }
 
         .cta-button:hover {
             transform: translateY(-3px);
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
-            color: var(--primary-color);
-            border-color: #dee2e6;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+            color: #ffffff;
+            border-color: #e97239;
+            background: rgba(233, 114, 57, 0.15);
         }
 
         .cta-section .inline-link {
-            color: var(--primary-color);
+            color: #e2e8f0;
         }
 
         .cta-section .inline-link:hover,
         .cta-section .inline-link:focus {
-            color: var(--secondary-color);
+            color: #ffffff;
         }
 
         /* Footer */
@@ -2866,6 +2885,75 @@
                 margin-top: 20px;
             }
         }
+
+        /* Tema botones: fondo naranja, texto azul */
+        .cta-button,
+        .main-download-btn,
+        .download-btn,
+        a.document-download-btn,
+        button.document-download-btn,
+        .contact-form .btn.primary,
+        .contact-form .btn.ghost,
+        .contact-whatsapp .btn.ghost,
+        .retry-button,
+        .share-btn,
+        .diploma-btn.enabled,
+        .share-option,
+        .share-option.whatsapp,
+        .share-option.instagram,
+        .clear-search,
+        .close-modal {
+            background: var(--btn-bg);
+            color: var(--btn-text);
+            border-color: var(--btn-bg);
+            font-weight: 600;
+        }
+
+        .cta-button:hover,
+        .main-download-btn:hover,
+        .download-btn:hover,
+        a.document-download-btn:hover,
+        button.document-download-btn:hover,
+        .contact-form .btn.primary:hover,
+        .contact-form .btn.ghost:hover,
+        .contact-whatsapp .btn.ghost:hover,
+        .retry-button:hover,
+        .share-btn:hover,
+        .diploma-btn.enabled:hover,
+        .share-option:hover,
+        .share-option.whatsapp:hover,
+        .share-option.instagram:hover,
+        .clear-search:hover,
+        .close-modal:hover {
+            background: var(--btn-bg-hover);
+            color: var(--btn-text-hover);
+            border-color: var(--btn-bg-hover);
+        }
+
+        .tab-button:hover,
+        .tab-button.active {
+            background: var(--btn-bg);
+            color: var(--btn-text);
+            border-bottom-color: var(--btn-bg);
+        }
+
+        .tab-button.active {
+            font-weight: 600;
+        }
+
+        .diploma-btn.disabled {
+            background: #e9ecef;
+            color: #999;
+            border: none;
+            cursor: not-allowed;
+            opacity: 0.75;
+        }
+
+        .diploma-btn.disabled:hover {
+            background: #e9ecef;
+            color: #999;
+            transform: none;
+        }
     </style>
 </head>
 <body>
@@ -2926,9 +3014,9 @@
         </div>
         <div class="video-overlay">
             <div class="hero-content">
-                <h1>FESTI-TORNEO REGIONAL DEL SINÚ</h1>
+                <h1><span class="club-organizer-index">I</span> FESTI-TORNEO REGIONAL DEL SINÚ</h1>
                 <p class="subtitle hero-date">5 de julio de 2026</p>
-                <p class="subtitle hero-clubs"><span class="club-name"><span class="club-organizer-index">I</span> Club Delfines Córdoba y Sport</span><span class="club-separator">y</span><span class="club-name club-name-badge">Club Deportivo Ávatar</span></p>
+                <p class="subtitle hero-clubs"><span class="club-name club-name-badge"><span class="club-organizer-index">I</span> Club Delfines Córdoba, Sport</span><span class="club-separator">y</span><span class="club-name club-name-badge club-name-badge-orange">Club Deportivo Ávatar</span></p>
                 <p class="subtitle hero-location">Montería, Córdoba</p>
             </div>
         </div>
@@ -3739,7 +3827,7 @@
         <div class="container">
             <p>&copy; 2026 <a class="brand-link-vibrant" href="https://top4race.netlify.app/" target="_blank" rel="noopener noreferrer">Top4Race</a> · <a class="brand-link-vibrant" href="https://top4race.netlify.app/" target="_blank" rel="noopener noreferrer">Club Deportivo AquaTEN</a> — gestión de páginas deportivas, chips y mesas técnicas de natación en Montería</p>
             <p class="footer-event-line">FESTI-TORNEO REGIONAL DEL SINÚ — <span class="club-name">Club Delfines Córdoba y Sport</span> y <span class="club-name">Club Deportivo Ávatar</span>. Todos los derechos reservados.</p>
-            <p class="footer-credits">Visualización de resultados, cronometraje y mesa técnica con <a class="brand-link-vibrant" href="https://top4race.netlify.app/" target="_blank" rel="noopener noreferrer">Top4Race</a> de <a class="brand-link-vibrant" href="https://top4race.netlify.app/" target="_blank" rel="noopener noreferrer">AquaTEN</a>. <a class="inline-link" href="https://top4race.netlify.app/" target="_blank" rel="noopener noreferrer">Conoce el sistema para tu evento en Montería</a>.</p>
+            <p class="footer-credits">Visualización de resultados, cronometraje y mesa técnica con <a class="brand-link-vibrant" href="https://top4race.netlify.app/" target="_blank" rel="noopener noreferrer">Top4Race</a> de <a class="brand-link-vibrant" href="https://top4race.netlify.app/" target="_blank" rel="noopener noreferrer">AquaTEN</a>. · <a class="inline-link" href="https://top4race.netlify.app/" target="_blank" rel="noopener noreferrer">Conoce el sistema para tu evento en Montería</a>.</p>
         </div>
     </footer>
 
