@@ -40,7 +40,8 @@ Tras cambiar dominio o imagen social principal, actualiza canonical, `og:url`, `
 | `img/` | Logos e imágenes del evento (p. ej. `LogoChampion2026.png` para `og:image`). |
 | `video/` | Vídeo promocional del hero. |
 | `documentos/` | PDF de términos (`Terminos_y_Condiciones_V_Championship_2026.pdf`) y política de datos. |
-| `archive/iv-championship/` | Copia de respaldo de la edición IV; no se publica en la raíz del sitio. |
+| `archive/iv-championship/` | Respaldo de la edición **IV** (`index.html`, `img/`, `documentos/`). No se despliega. |
+| `archive/v-championship/` | Respaldo congelado de la edición **V 2026** actual (misma estructura: `index.html`, `img/`, `documentos/`). No se despliega. |
 | `sitemap.xml` | Mapa del sitio para buscadores (URL canónica y `lastmod`). |
 | `robots.txt` | Permite rastreo e indica la URL del sitemap. |
 
@@ -67,3 +68,19 @@ npx --yes serve .
 ## Despliegue (Netlify)
 
 Publica la **raíz** del repositorio (donde está `index.html`). Si cambias de dominio, actualiza `sitemap.xml`, `robots.txt`, el **canonical**, las meta **Open Graph** y las URLs en los textos para compartir / PDF dentro de `index.html`.
+
+## Respaldos en `archive/`
+
+Cada edición guardada sigue el mismo esquema:
+
+```
+archive/<nombre-edición>/
+  index.html      # copia de la página en ese momento
+  img/            # logos y plantillas usadas por esa copia
+  documentos/     # PDFs de términos y política de esa edición
+```
+
+- **`archive/iv-championship/`** — IV Championship 2025.
+- **`archive/v-championship/`** — snapshot del V Championship 2026 (sitio activo en la raíz).
+
+Para actualizar el respaldo de la V, vuelve a copiar `index.html`, `img/` y `documentos/` desde la raíz a `archive/v-championship/` antes de cambios mayores en producción. La carpeta `video/` no se incluye en el archivo (igual que en IV); el hero del respaldo local puede no reproducir vídeo si abres el `index.html` solo desde `archive/`.
