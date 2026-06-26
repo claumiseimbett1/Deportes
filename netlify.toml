@@ -1,0 +1,6 @@
+# Sitio estático: publica la raíz del repo (index.html, gracias.html, assets).
+[build]
+  publish = "."
+
+# Los formularios se registran al desplegar si el <form> incluye netlify / data-netlify="true".
+# Activar correo en Netlify: Forms → contacto-festi-torneo-sinu → Notifications → aquatencd@gmail.com
