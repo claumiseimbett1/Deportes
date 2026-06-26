@@ -1,6 +1,6 @@
-# V Championship Master – sitio web (2026)
+# Festi-Torneo Regional del Sinú – sitio web (2026)
 
-Landing estática del **V Championship Master Swimming 2026** (AquaTEN y Elyanas Natación): resultados enlazados a Google Sheets, tablas por prueba y género, ranking por equipos y descarga de diplomas en PDF (jsPDF).
+Landing estática del **FESTI-TORNEO REGIONAL DEL SINÚ 2026**, organizado por **Club Delfines Córdoba** y **Sport y Club Deportivo Ávatar**: resultados enlazados a Google Sheets, tablas por prueba y género, ranking por equipos y descarga de diplomas en PDF (jsPDF).
 
 **Evento:** sábado 18 de abril de 2026 · Piscina de la Villa Olímpica, Montería (Córdoba).
 
@@ -12,22 +12,21 @@ Landing estática del **V Championship Master Swimming 2026** (AquaTEN y Elyanas
 - Secciones de resultados por distancia (50 m, 100 m, 200 m, relevos) y vista por género; clasificación por equipos.
 - Indicador de carga y búsqueda por nombre en tablas.
 - Diplomas descargables y mensajes para compartir resultados.
-- **Cinco patrocinadores** en la sección `#patrocinadores`, con texto introductorio que lo indica explícitamente.
-- **Resultados:** las tablas pueden mostrar **datos de muestra del IV Championship 2025** hasta el día del V Championship 2026; el copy bajo “Resultados por Pruebas” lo aclara para visitantes y buscadores.
-- **Subsección Top4Race** (`#top4race`): texto dedicado al aliado tecnológico — cronometraje y medición con **chips** en **Córdoba** para **aguas abiertas**, **atletismo** y **patinaje**, con enlace a [Top4Race](https://top4race.netlify.app/).
+- **Siete patrocinadores** en la sección `#patrocinadores`.
+- Identidad visual con logos de **Delfines Córdoba** y **Club Ávatar** (azul, cian y naranja).
+- **Subsección Top4Race** (`#top4race`): espacio publicitario deshabilitado por defecto (código conservado; reactivar quitando `hidden` y `data-ad-disabled`).
 - Diseño responsive, video hero, patrocinadores y contacto.
 
 ## SEO (resumen)
 
 El `index.html` incluye, entre otras medidas:
 
-- **`<title>` y meta description** orientados a búsquedas locales (Montería, Córdoba) y palabras clave del evento y Top4Race.
+- **`<title>` y meta description** orientados a búsquedas locales (Montería, Córdoba) y palabras clave del evento.
 - **`link rel="canonical"`** a la URL de producción en Netlify.
 - **Open Graph** (`og:*`) y **Twitter Card** para vista previa al compartir.
 - **`robots`** `index, follow` y `max-image-preview:large`.
 - **JSON-LD** (`application/ld+json`) con `SportsEvent`, `WebSite` y `ProfessionalService` (Top4Race).
-- **Microdatos** (`itemscope` / `itemprop`) en el bloque visible de Top4Race.
-- Enlaces de patrocinio con **`rel="sponsored"`** donde aplica (recomendación de Google para enlaces pagados/patrocinados).
+- Enlaces de patrocinio con **`rel="sponsored"`** donde aplica.
 
 Tras cambiar dominio o imagen social principal, actualiza canonical, `og:url`, `og:image` y el bloque JSON-LD.
 
@@ -37,11 +36,11 @@ Tras cambiar dominio o imagen social principal, actualiza canonical, `og:url`, `
 |------|-------------|
 | `index.html` | Página única: marcado, estilos embebidos, SEO, JSON-LD y lógica (Sheets, tablas, PDF). |
 | `style.css` | Hoja de estilos adicional (el layout principal vive en `index.html`). |
-| `img/` | Logos e imágenes del evento (p. ej. `LogoChampion2026.png` para `og:image`). |
+| `img/` | Logos de clubes, patrocinadores y plantillas de diplomas. |
 | `video/` | Vídeo promocional del hero. |
-| `documentos/` | PDF de términos (`Terminos_y_Condiciones_V_Championship_2026.pdf`) y política de datos. |
-| `archive/iv-championship/` | Respaldo de la edición **IV** (`index.html`, `img/`, `documentos/`). No se despliega. |
-| `archive/v-championship/` | Respaldo congelado de la edición **V 2026** actual (misma estructura: `index.html`, `img/`, `documentos/`). No se despliega. |
+| `documentos/` | PDF de convocatoria (`I FESTITORNEO-2026 (1).pdf`), programa y política de datos. |
+| `archive/iv-championship/` | Respaldo histórico del **IV Championship** (`index.html`, `img/`, `documentos/`). No se despliega. |
+| `archive/v-championship/` | Respaldo histórico del **V Championship 2026** (`index.html`, `img/`, `documentos/`). No se despliega. |
 | `sitemap.xml` | Mapa del sitio para buscadores (URL canónica y `lastmod`). |
 | `robots.txt` | Permite rastreo e indica la URL del sitemap. |
 
@@ -52,8 +51,8 @@ Tras cambiar dominio o imagen social principal, actualiza canonical, `og:url`, `
 - `#terminos` — Términos y condiciones
 - `#resultados` — Resultados y tablas
 - `#patrocinadores` — Patrocinadores
-- `#top4race` — Destacado Top4Race (chips, Córdoba, aguas abiertas / atletismo / patinaje)
-- `#contacto` — Contacto e Instagram
+- `#top4race` — Destacado Top4Race (oculto por defecto)
+- `#contacto` — Contacto
 
 Ejemplo: `https://vchampionship.netlify.app/#resultados`
 
@@ -71,7 +70,9 @@ Publica la **raíz** del repositorio (donde está `index.html`). Si cambias de d
 
 ## Respaldos en `archive/`
 
-Cada edición guardada sigue el mismo esquema:
+Solo guardan ediciones pasadas del **Championship**. El **Festi-Torneo Regional del Sinú** es el sitio activo en la **raíz** del repo (`index.html`, `img/`, `documentos/`, `video/`) y **no** tiene carpeta en `archive/`.
+
+Cada respaldo de Championship sigue el mismo esquema:
 
 ```
 archive/<nombre-edición>/
@@ -81,6 +82,6 @@ archive/<nombre-edición>/
 ```
 
 - **`archive/iv-championship/`** — IV Championship 2025.
-- **`archive/v-championship/`** — snapshot del V Championship 2026 (sitio activo en la raíz).
+- **`archive/v-championship/`** — V Championship Master 2026.
 
-Para actualizar el respaldo de la V, vuelve a copiar `index.html`, `img/` y `documentos/` desde la raíz a `archive/v-championship/` antes de cambios mayores en producción. La carpeta `video/` no se incluye en el archivo (igual que en IV); el hero del respaldo local puede no reproducir vídeo si abres el `index.html` solo desde `archive/`.
+Para congelar una edición Championship antes de un cambio mayor, copia `index.html`, `img/` y `documentos/` desde la raíz (en su momento) a la carpeta correspondiente en `archive/`. La carpeta `video/` no se incluye en los respaldos; al abrir un `index.html` solo desde `archive/` el hero puede no reproducir vídeo.
