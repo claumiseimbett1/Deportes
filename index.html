@@ -187,6 +187,10 @@
             font-weight: 600;
         }
 
+        .hero-content .club-name {
+            color: #e97239;
+        }
+
         .hero-brand-link,
         .brand-link-vibrant {
             color: #00f0ff;
@@ -195,10 +199,15 @@
             transition: color 0.2s ease;
         }
 
-        .hero-brand-link:hover,
-        .hero-brand-link:focus,
         .brand-link-vibrant:hover,
         .brand-link-vibrant:focus {
+            color: #00b8d4;
+        }
+
+        .hero-content .hero-brand-link:hover,
+        .hero-content .hero-brand-link:focus,
+        .footer .brand-link-vibrant:hover,
+        .footer .brand-link-vibrant:focus {
             color: #ffffff;
         }
 
@@ -1035,6 +1044,19 @@
             max-width: 600px;
             margin-left: auto;
             margin-right: auto;
+        }
+
+        .cta-section .club-name {
+            color: #e97239;
+        }
+
+        .cta-section .brand-link-vibrant {
+            color: #00f0ff;
+        }
+
+        .cta-section .brand-link-vibrant:hover,
+        .cta-section .brand-link-vibrant:focus {
+            color: #00b8d4;
         }
 
         .cta-button {
@@ -1877,7 +1899,7 @@
         
         .quotes-track-animated {
             display: flex;
-            animation: slideQuotes 35s infinite linear;
+            animation: slideQuotes 18s infinite linear;
             will-change: transform;
         }
         
@@ -2639,9 +2661,8 @@
         <div class="video-overlay">
             <div class="hero-content">
                 <h1>FESTI-TORNEO REGIONAL DEL SINÚ</h1>
-                <p class="subtitle">Resultados en vivo — plataforma <a class="hero-brand-link" href="https://top4race.netlify.app/" target="_blank" rel="noopener noreferrer">Top4Race</a> del <a class="hero-brand-link" href="https://top4race.netlify.app/" target="_blank" rel="noopener noreferrer">Club Deportivo AquaTEN</a></p>
-                <p class="subtitle hero-location">Montería, Córdoba</p>
                 <p class="subtitle">FESTI-TORNEO REGIONAL DEL SINÚ · <span class="club-name">Club Delfines Córdoba y Sport</span> y <span class="club-name">Club Deportivo Ávatar</span></p>
+                <p class="subtitle hero-location">Montería, Córdoba</p>
             </div>
         </div>
     </section>
@@ -2934,7 +2955,7 @@
     <section class="results-section" id="resultados">
         <div class="container">
             <h2 class="section-title">Resultados por Pruebas</h2>
-            <p class="section-title-note">Clasificación oficial del Festi-Torneo Regional del Sinú en Montería, Córdoba. Los tiempos se publican en esta página deportiva con <a class="inline-link" href="https://top4race.netlify.app/" target="_blank" rel="noopener noreferrer">Top4Race</a>, sistema del <a class="inline-link" href="https://top4race.netlify.app/" target="_blank" rel="noopener noreferrer">Club Deportivo AquaTEN</a> para gestión y visualización de resultados de natación.</p>
+            <p class="section-title-note">Clasificación oficial del Festi-Torneo Regional del Sinú en Montería, Córdoba. Los tiempos se publican en esta página deportiva diseñada por <a class="brand-link-vibrant" href="https://top4race.netlify.app/" target="_blank" rel="noopener noreferrer">Top4Race</a>, sistema del <a class="brand-link-vibrant" href="https://top4race.netlify.app/" target="_blank" rel="noopener noreferrer">Club Deportivo AquaTEN</a>, para visualización de los resultados de tu competencia de natación.</p>
             
             <!-- Search Container for Pruebas -->
             <div class="search-container">
@@ -3307,7 +3328,7 @@
     <section class="cta-section">
         <div class="container">
             <h2>¿Listo para competir?</h2>
-            <p>Únete a los <strong>19</strong> nadadores en esta emocionante competencia, con la participación de <strong>4</strong> clubes de Córdoba, en el <strong>FESTI-TORNEO REGIONAL DEL SINÚ</strong> organizado por <span class="club-name">Club Delfines Córdoba y Sport</span> y <span class="club-name">Club Deportivo Ávatar</span>, con el apoyo tecnológico de <a class="inline-link" href="https://top4race.netlify.app/" target="_blank" rel="noopener">Top4Race</a> del Club Deportivo AquaTEN.</p>
+            <p>Únete a los <strong>19</strong> nadadores en esta emocionante competencia, con la participación de <strong>4</strong> clubes de Córdoba, en el <strong>FESTI-TORNEO REGIONAL DEL SINÚ</strong> organizado por <span class="club-name">Club Delfines Córdoba y Sport</span> y <span class="club-name">Club Deportivo Ávatar</span>, con el apoyo tecnológico de <a class="brand-link-vibrant" href="https://top4race.netlify.app/" target="_blank" rel="noopener">Top4Race</a> del <a class="brand-link-vibrant" href="https://top4race.netlify.app/" target="_blank" rel="noopener">Club Deportivo AquaTEN</a>.</p>
             <a href="#" class="cta-button">Más Información</a>
         </div>
     </section>
@@ -3379,7 +3400,7 @@
                         </span>
                         <div>
                             <span class="contact-label">Web Top4Race</span>
-                            <a class="inline-link" href="https://top4race.netlify.app/" target="_blank" rel="noopener">top4race.netlify.app</a>
+                            <a class="brand-link-vibrant" href="https://top4race.netlify.app/" target="_blank" rel="noopener">top4race.netlify.app</a>
                         </div>
                     </div>
                     <div class="contact-item">
