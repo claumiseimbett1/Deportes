@@ -172,6 +172,25 @@
             --box-shadow-hover: 0 10px 30px rgba(0, 0, 0, 0.1);
             --font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
             --transition: all 0.3s ease;
+            --header-offset: 90px;
+            --space-section: clamp(3.25rem, 4vw + 1.5rem, 5.5rem);
+            --space-section-tight: clamp(2rem, 2.5vw + 1rem, 3.25rem);
+            --space-title: clamp(1.75rem, 2.5vw + 0.75rem, 3rem);
+            --space-stack: clamp(1rem, 1.5vw + 0.5rem, 1.75rem);
+            --space-inline: clamp(1rem, 2.5vw, 1.5rem);
+            --space-card: clamp(1.75rem, 3vw, 2.75rem);
+        }
+
+        /* Ritmo vertical y anclas con header fijo */
+        .video-hero,
+        .quotes-slider-section,
+        .info-section,
+        .event-stats-section,
+        .terms-section,
+        .results-section,
+        .cta-section,
+        .contact-section {
+            scroll-margin-top: var(--header-offset);
         }
 
         .inline-link {
@@ -252,7 +271,8 @@
             flex-wrap: wrap;
             align-items: center;
             justify-content: center;
-            gap: 0.35em;
+            gap: 0.5em;
+            margin-top: 0.15em;
         }
 
         .hero-content .club-organizer-index {
@@ -287,15 +307,6 @@
             color: #ffffff;
         }
 
-        .hero-date {
-            margin-bottom: 0.35em;
-            font-weight: 400;
-        }
-
-        .hero-location {
-            margin-top: 0.35em;
-        }
-
         .footer-event-line {
             color: #e2e8f0;
             line-height: 1.7;
@@ -318,6 +329,10 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
         }
 
         body {
@@ -651,15 +666,18 @@
         .hero-content {
             text-align: center;
             z-index: 1;
-            padding: 0 20px;
+            padding: 0 var(--space-inline);
+            max-width: 960px;
+            margin: 0 auto;
         }
 
         .hero-content h1 {
-            font-size: 4em;
+            font-size: clamp(2rem, 5vw + 0.5rem, 4em);
             color: #ffffff;
-            margin-bottom: 20px;
+            margin-bottom: 0.35em;
             font-weight: 700;
             letter-spacing: -1px;
+            line-height: 1.1;
         }
 
         .hero-content h1 .club-organizer-index {
@@ -667,48 +685,63 @@
         }
 
         .hero-content .subtitle {
-            font-size: 1.5em;
+            font-size: clamp(1.05rem, 1.5vw + 0.65rem, 1.5em);
             color: #e9ecef;
             font-weight: 300;
+            line-height: 1.45;
+        }
+
+        .hero-date {
+            margin-bottom: 0.45em;
+            font-weight: 400;
+        }
+
+        .hero-location {
+            margin-top: 0.45em;
         }
 
         /* Info & Contact Section */
         .info-section {
-            padding: 100px 20px;
+            padding-top: var(--space-section);
+            padding-bottom: var(--space-section);
             background-color: #ffffff;
         }
 
         .contact-section {
-            padding: 100px 20px;
+            padding-top: var(--space-section);
+            padding-bottom: var(--space-section);
             background-color: #ffffff;
         }
 
         .container {
             max-width: 1200px;
             margin: 0 auto;
+            padding-left: var(--space-inline);
+            padding-right: var(--space-inline);
         }
 
         .section-title {
             text-align: center;
-            font-size: 2.8em;
+            font-size: clamp(1.85rem, 3vw + 0.75rem, 2.8em);
             color: var(--primary-color);
-            margin-bottom: 60px;
+            margin-bottom: var(--space-title);
             font-weight: 700;
+            line-height: 1.2;
         }
 
         .cards-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 40px;
-            margin-bottom: 60px;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: var(--space-card);
+            margin-bottom: var(--space-stack);
         }
         
         .contact-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 40px;
+            grid-template-columns: 1fr;
+            gap: var(--space-card);
             align-items: start;
-            max-width: 1100px;
+            max-width: 720px;
             margin: 0 auto;
         }
 
@@ -791,6 +824,40 @@
             box-shadow: 0 16px 30px rgba(0, 0, 0, 0.08);
         }
 
+        .contact-whatsapp-primary {
+            margin: var(--space-stack) 0;
+        }
+
+        .contact-whatsapp-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 14px 28px;
+            border-radius: 999px;
+            border: 1px solid #e8eef8;
+            font-weight: 600;
+            text-decoration: none;
+            color: #555;
+            background: #ffffff;
+            transition: transform var(--transition), box-shadow var(--transition), border-color var(--transition), background var(--transition), color 0.2s ease;
+            font-size: 1.05rem;
+        }
+
+        .contact-whatsapp-btn:hover,
+        .contact-whatsapp-btn:focus {
+            border-color: #ced4da;
+            color: #333;
+            box-shadow: 0 8px 18px rgba(0, 0, 0, 0.1);
+            background: #f8f9fa;
+            transform: translateY(-1px);
+        }
+
+        .contact-whatsapp-note {
+            color: var(--text-gray);
+            margin: 0.85rem 0 0;
+            font-size: 0.95rem;
+        }
+
         .contact-whatsapp p {
             color: var(--text-gray);
             margin-bottom: 14px;
@@ -857,8 +924,8 @@
 
         .contact-info {
             display: grid;
-            gap: 14px;
-            margin-top: 24px;
+            gap: var(--space-stack);
+            margin-top: var(--space-stack);
         }
 
         .contact-item {
@@ -887,10 +954,10 @@
 
         .contact-form {
             display: grid;
-            gap: 16px;
+            gap: var(--space-stack);
             background: #ffffff;
             border-radius: 20px;
-            padding: 26px;
+            padding: clamp(1.25rem, 3vw, 1.75rem);
             border: 1px solid #e9ecef;
             box-shadow: 0 16px 30px rgba(0, 0, 0, 0.08);
             transition: transform var(--transition), box-shadow var(--transition);
@@ -963,7 +1030,7 @@
             background: #ffffff;
             border: 1px solid #e9ecef;
             border-radius: 20px;
-            padding: 50px 30px;
+            padding: clamp(2rem, 4vw, 3rem) clamp(1.25rem, 3vw, 2rem);
             text-align: center;
             box-shadow: 0 5px 25px rgba(0, 0, 0, 0.08);
             text-decoration: none;
@@ -1110,14 +1177,15 @@
 
         /* Results Section */
         .results-section {
-            padding: 100px 20px;
+            padding-top: var(--space-section);
+            padding-bottom: var(--space-section);
             background: #f8f9fa;
         }
 
         .results-container {
             background: #ffffff;
             border-radius: 20px;
-            padding: 50px;
+            padding: clamp(1.75rem, 4vw, 3rem);
             box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
             border: 2px solid #e9ecef;
         }
@@ -1266,9 +1334,9 @@
             color: #5a6a85;
             font-size: 1.05rem;
             font-weight: 500;
-            margin: -0.25rem auto 2rem;
-            max-width: 720px;
-            line-height: 1.55;
+            margin: -0.5rem auto var(--space-title);
+            max-width: 42rem;
+            line-height: 1.6;
         }
 
         .results-section .section-title-note a {
@@ -1286,7 +1354,8 @@
 
         /* CTA Section */
         .cta-section {
-            padding: 100px 20px;
+            padding-top: var(--space-section);
+            padding-bottom: var(--space-section);
             background-color: var(--surface-dark);
             color: #e2e8f0;
             text-align: center;
@@ -1295,18 +1364,20 @@
 
         .cta-section h2 {
             color: #ffffff;
-            font-size: 3em;
-            margin-bottom: 25px;
+            font-size: clamp(2rem, 4vw + 0.5rem, 3em);
+            margin-bottom: var(--space-stack);
             font-weight: 700;
+            line-height: 1.15;
         }
 
         .cta-section p {
             color: #e2e8f0;
-            font-size: 1.3em;
-            margin-bottom: 40px;
-            max-width: 600px;
+            font-size: clamp(1.05rem, 1.2vw + 0.85rem, 1.3em);
+            margin-bottom: var(--space-title);
+            max-width: min(920px, 100%);
             margin-left: auto;
             margin-right: auto;
+            line-height: 1.65;
         }
 
         .cta-section p strong {
@@ -1361,13 +1432,15 @@
         .footer {
             background-color: var(--surface-dark);
             color: #ffffff;
-            padding: 50px 20px;
+            padding-top: var(--space-section-tight);
+            padding-bottom: var(--space-section-tight);
             text-align: center;
         }
 
         .footer p {
-            margin-bottom: 10px;
+            margin-bottom: 0.65rem;
             color: #e2e8f0;
+            line-height: 1.6;
         }
 
         .footer-credits {
@@ -1376,11 +1449,11 @@
             max-width: 42rem;
             margin-left: auto;
             margin-right: auto;
-            line-height: 1.5;
+            line-height: 1.6;
         }
 
         .footer-credits-extra {
-            margin-top: 0.65rem;
+            margin-top: 0.5rem;
         }
 
         /* Tabla de equipos responsive - usar formato estándar */
@@ -1621,7 +1694,30 @@
             }
 
             .info-section, .results-section, .cta-section, .contact-section {
-                padding: 60px 20px;
+                padding-top: var(--space-section-tight);
+                padding-bottom: var(--space-section-tight);
+            }
+
+            .event-stats-section-bg,
+            .terms-section-bg {
+                padding-top: var(--space-section-tight);
+                padding-bottom: var(--space-section-tight);
+            }
+
+            .section-title {
+                margin-bottom: var(--space-stack);
+            }
+
+            .cards-grid {
+                gap: var(--space-stack);
+            }
+
+            .contact-grid {
+                gap: var(--space-stack);
+            }
+
+            .results-container {
+                padding: 1.25rem;
             }
 
             .tabs {
@@ -2107,7 +2203,7 @@
         .stat-card {
             background: white;
             border-radius: 20px;
-            padding: 40px 30px;
+            padding: clamp(1.75rem, 3vw, 2.5rem) clamp(1.25rem, 2.5vw, 2rem);
             text-align: center;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
             border: 2px solid #e5edf8;
@@ -2203,7 +2299,7 @@
             justify-content: center;
             text-align: center;
             color: #0f4ebc;
-            padding: 0 50px;
+            padding: 0 var(--space-inline);
             box-sizing: border-box;
         }
 
@@ -2225,13 +2321,13 @@
         /* Layouts simples y centrado */
         .text-center-container {
             text-align: center;
-            margin-bottom: 50px;
+            margin-bottom: var(--space-title);
         }
         
         .stats-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 30px;
+            gap: var(--space-card);
             max-width: 1000px;
             margin: 0 auto;
         }
@@ -2248,26 +2344,29 @@
         /* Phase 5: Remaining inline style classes */
         .event-stats-section-bg {
             background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
-            padding: 80px 0;
+            padding-top: var(--space-section);
+            padding-bottom: var(--space-section);
             border-bottom: 2px solid #e9ecef;
         }
         
         .event-stats-title {
             color: #0f4ebc;
-            font-size: 2.5rem;
+            font-size: clamp(1.75rem, 3vw + 0.5rem, 2.5rem);
             font-weight: bold;
-            margin-bottom: 15px;
+            margin-bottom: var(--space-stack);
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 15px;
+            line-height: 1.2;
         }
         
         .event-stats-subtitle {
             color: #666;
-            font-size: 1.1rem;
-            max-width: 600px;
+            font-size: 1.05rem;
+            max-width: 38rem;
             margin: 0 auto;
+            line-height: 1.6;
         }
         
         .event-goal-card {
@@ -2275,8 +2374,8 @@
             border: 2px solid #dee2e6;
             border-left: 5px solid #dee2e6;
             border-radius: 15px;
-            padding: 30px;
-            margin-top: 50px;
+            padding: clamp(1.5rem, 3vw, 2rem);
+            margin-top: var(--space-title);
             text-align: center;
             position: relative;
             overflow: hidden;
@@ -2318,13 +2417,14 @@
         
         .terms-section-bg {
             background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
-            padding: 80px 0;
+            padding-top: var(--space-section);
+            padding-bottom: var(--space-section);
             border-top: 3px solid #dee2e6;
         }
         
         .terms-section-title {
             color: #0f4ebc;
-            margin-bottom: 40px;
+            margin-bottom: var(--space-title);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -2334,8 +2434,8 @@
         .sembrado-download-wrap {
             text-align: center;
             max-width: 640px;
-            margin: 0 auto 40px;
-            padding-bottom: 40px;
+            margin: 0 auto var(--space-title);
+            padding-bottom: var(--space-title);
             border-bottom: 2px solid #e5edf8;
         }
         
@@ -2411,7 +2511,8 @@
         
         .privacy-section-bg {
             background: #f8f9fa;
-            padding: 60px 0;
+            padding-top: var(--space-section-tight);
+            padding-bottom: var(--space-section-tight);
             border-bottom: 1px solid #e9ecef;
         }
         
@@ -2773,7 +2874,7 @@
         /* Final 8 validation fixes */
         .quotes-slider-background {
             background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-            padding: 30px 0;
+            padding: var(--space-section-tight) 0;
             border-top: 3px solid #dee2e6;
             border-bottom: 3px solid #dee2e6;
             position: relative;
@@ -3825,31 +3926,12 @@
             <div>
                 <p class="eyebrow contact-brand-vibrant">Contacto Top4Race</p>
                 <h2>Contacto de Sistema <span class="contact-brand-vibrant">Top4Race</span></h2>
-                <p>Escríbenos para conocer más sobre <span class="contact-highlight">cronometraje con chips</span>, <span class="contact-highlight">páginas web de eventos</span>, diplomas descargables y compartir resultados en redes sociales.</p>
+                <p>Contáctanos por <span class="contact-highlight">WhatsApp</span> para conocer más sobre <span class="contact-highlight">cronometraje con chips</span>, <span class="contact-highlight">páginas web de eventos</span>, diplomas descargables y compartir resultados en redes sociales.</p>
+                <div class="contact-whatsapp contact-whatsapp-primary">
+                    <a class="contact-whatsapp-btn" href="https://wa.me/573043499052" target="_blank" rel="noopener">Escribir por WhatsApp</a>
+                    <p class="contact-whatsapp-note">+57 304 349 9052 · Montería, Córdoba, Colombia</p>
+                </div>
                 <div class="contact-info">
-                    <div class="contact-item">
-                        <span class="contact-icon" aria-hidden="true">
-                            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M4 6h16v12H4z" />
-                                <path d="M4 7l8 6 8-6" />
-                            </svg>
-                        </span>
-                        <div>
-                            <span class="contact-label">Correo</span>
-                            <a class="inline-link" href="mailto:aquatencd@gmail.com">aquatencd@gmail.com</a>
-                        </div>
-                    </div>
-                    <div class="contact-item">
-                        <span class="contact-icon" aria-hidden="true">
-                            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M5 5h4l2 5-3 2c1.5 3 4 5.5 7 7l2-3 5 2v4c-8.5 1-15-5.5-17-14z" />
-                            </svg>
-                        </span>
-                        <div>
-                            <span class="contact-label">Teléfono</span>
-                            <a class="inline-link" href="https://wa.me/573043499052" target="_blank" rel="noopener">+57 304 349 9052</a>
-                        </div>
-                    </div>
                     <div class="contact-item contact-item--brand">
                         <span class="contact-icon" aria-hidden="true">
                             <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
@@ -3861,18 +3943,6 @@
                         <div>
                             <span class="contact-label contact-label-vibrant">Instagram AquaTEN</span>
                             <a class="brand-link-vibrant" href="https://www.instagram.com/aquaten.cd/" target="_blank" rel="noopener">@aquaten.cd</a>
-                        </div>
-                    </div>
-                    <div class="contact-item">
-                        <span class="contact-icon" aria-hidden="true">
-                            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M12 21s-6-5.2-6-10a6 6 0 1 1 12 0c0 4.8-6 10-6 10z" />
-                                <circle cx="12" cy="11" r="2.5" />
-                            </svg>
-                        </span>
-                        <div>
-                            <span class="contact-label">Ubicación</span>
-                            <span>Montería, Córdoba, Colombia</span>
                         </div>
                     </div>
                     <div class="contact-item contact-item--brand">
@@ -3903,51 +3973,6 @@
                             <a class="brand-link-vibrant" href="https://www.aquatencd.com/" target="_blank" rel="noopener">www.aquatencd.com</a>
                         </div>
                     </div>
-                </div>
-            </div>
-            <div class="contact-form-column">
-                <form
-                    name="contacto-festi-torneo-sinu"
-                    method="POST"
-                    action="/gracias"
-                    class="contact-form"
-                    id="contactForm"
-                    netlify
-                    data-netlify="true"
-                    netlify-honeypot="bot-field"
-                >
-                    <input type="hidden" name="form-name" value="contacto-festi-torneo-sinu">
-                    <input type="hidden" name="origen" value="Festi-Torneo Regional del Sinú 2026">
-                    <input type="hidden" name="subject" value="Nueva consulta desde Festi-Torneo Regional del Sinú">
-                    <p class="netlify-honeypot" aria-hidden="true">
-                        <label>No completar: <input name="bot-field" tabindex="-1" autocomplete="off"></label>
-                    </p>
-                    <label>
-                        Nombre
-                        <input type="text" name="name" placeholder="Tu nombre" required autocomplete="name">
-                    </label>
-                    <label>
-                        Correo
-                        <input type="email" name="email" placeholder="tucorreo@email.com" required autocomplete="email">
-                    </label>
-                    <label>
-                        Teléfono / WhatsApp
-                        <input type="tel" name="phone" placeholder="+57 300 000 0000" required autocomplete="tel">
-                    </label>
-                    <label>
-                        Evento
-                        <input type="text" name="event" value="Festi-Torneo Regional del Sinú 2026" placeholder="Natación, running, patinaje u otro evento">
-                    </label>
-                    <label>
-                        Mensaje
-                        <textarea name="message" rows="4" placeholder="Cuéntanos sobre tu evento y la página web que necesitas" required></textarea>
-                    </label>
-                    <button class="btn primary" type="submit">Enviar mensaje</button>
-                    <p class="form-note">Te responderemos pronto al correo o teléfono que indiques.</p>
-                </form>
-                <div class="contact-whatsapp">
-                    <p>Y si prefieres, contáctanos por WhatsApp.</p>
-                    <a class="btn ghost" href="https://wa.me/573043499052" target="_blank" rel="noopener">Escribir por WhatsApp</a>
                 </div>
             </div>
         </div>
