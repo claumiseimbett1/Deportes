@@ -211,42 +211,46 @@
         }
 
         .hero-content .club-name-badge {
-            background: #0f4ebc;
-            color: #e97239;
+            background: #ffffff;
+            color: #0f4ebc;
             font-weight: 700;
             padding: 0.12em 0.55em;
             border-radius: 8px;
+            box-shadow: 0 2px 14px rgba(0, 0, 0, 0.18);
         }
 
         .hero-content .club-name-badge-dark {
-            background: #08336e;
+            background: #ffffff;
         }
 
         .hero-content .club-name-badge-orange {
-            background: #e97239;
-            color: #0f4ebc;
+            background: #ffffff;
+            color: #e97239;
         }
 
         .hero-content .club-name-link {
             text-decoration: none;
             display: inline-block;
             cursor: pointer;
-            transition: transform 0.25s ease, box-shadow 0.25s ease, background-color 0.25s ease;
+            transition: transform 0.25s ease, box-shadow 0.25s ease, background-color 0.25s ease, color 0.25s ease;
         }
 
         .hero-content .club-name-link:hover,
         .hero-content .club-name-link:focus {
             transform: translateY(-2px);
-            box-shadow: 0 6px 18px rgba(233, 114, 57, 0.45);
-            background: #d9642f;
-            color: #08336e;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.22);
         }
 
         .hero-content .club-name-link.club-name-badge:not(.club-name-badge-orange):hover,
         .hero-content .club-name-link.club-name-badge:not(.club-name-badge-orange):focus {
-            background: #08336e;
-            color: #e97239;
-            box-shadow: 0 6px 18px rgba(15, 78, 188, 0.45);
+            background: #f0f4ff;
+            color: #08336e;
+        }
+
+        .hero-content .club-name-link.club-name-badge-orange:hover,
+        .hero-content .club-name-link.club-name-badge-orange:focus {
+            background: #fff4ec;
+            color: #c55a28;
         }
 
         .hero-content .club-name-link:focus-visible {
