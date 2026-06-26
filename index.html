@@ -181,8 +181,7 @@
         }
 
         .logo-box {
-            height: 68px;
-            max-width: 150px;
+            height: 80px;
             display: flex;
             align-items: center;
         }
@@ -190,8 +189,46 @@
         .logo-box img {
             height: 100%;
             width: auto;
-            max-width: 100%;
             object-fit: contain;
+        }
+
+        .logo-link {
+            display: flex;
+            align-items: center;
+        }
+
+        .logo-box--light {
+            padding: 6px 10px;
+            border-radius: 12px;
+            background: #ffffff;
+            box-shadow: 0 8px 18px rgba(11, 16, 57, 0.08);
+        }
+
+        .header-brand-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-shrink: 0;
+        }
+
+        .header-event-logos {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-shrink: 0;
+        }
+
+        .logo-box--event {
+            height: 54px;
+            max-width: 96px;
+        }
+
+        .logo-box--top4race {
+            max-width: 140px;
+        }
+
+        .logo-box--aquaten {
+            max-width: 120px;
         }
 
         /* Navigation Menu */
@@ -1188,13 +1225,29 @@
                 margin-bottom: 5px;
             }
 
-            .logo-box:last-child {
+            .header-event-logos {
                 order: 1;
             }
 
+            .header-brand-group {
+                gap: 6px;
+            }
+
             .logo-box {
-                height: 52px;
-                max-width: 110px;
+                height: 45px;
+            }
+
+            .logo-box--event {
+                height: 40px;
+                max-width: 72px;
+            }
+
+            .logo-box--top4race {
+                max-width: 100px;
+            }
+
+            .logo-box--aquaten {
+                max-width: 88px;
             }
 
             .video-hero {
@@ -2540,8 +2593,13 @@
     <!-- Header -->
     <header class="header">
         <nav class="nav-container">
-            <div class="logo-box">
-                <img src="img/Logo-Club-Delfines.png" alt="Club Delfines Córdoba Sport">
+            <div class="header-brand-group">
+                <a class="logo-box logo-box--light logo-box--top4race logo-link" href="https://top4race.netlify.app/" target="_blank" rel="noopener" aria-label="Top4Race">
+                    <img src="img/logoTop4Race.png" alt="Logo Top4Race">
+                </a>
+                <div class="logo-box logo-box--light logo-box--aquaten">
+                    <img src="img/AQUATEN_LogoTransparenteGRANDE.png" alt="Logo AquaTEN">
+                </div>
             </div>
             
             <!-- Navigation Menu -->
@@ -2564,8 +2622,13 @@
                 <span></span>
             </div>
             
-            <div class="logo-box">
-                <img src="img/Logo-Club-Avatar.png" alt="Sport y Club Deportivo Ávatar">
+            <div class="header-event-logos">
+                <div class="logo-box logo-box--light logo-box--event">
+                    <img src="img/Logo-Club-Delfines.png" alt="Club Delfines Córdoba Sport">
+                </div>
+                <div class="logo-box logo-box--light logo-box--event">
+                    <img src="img/Logo-Club-Avatar.png" alt="Sport y Club Deportivo Ávatar">
+                </div>
             </div>
         </nav>
     </header>
@@ -2581,7 +2644,7 @@
     <section class="video-hero" id="inicio">
         <div class="video-container">
             <!-- playsinline: Required for iOS Safari inline video playback -->
-            <video autoplay muted loop playsinline="true" src="video/promocional3.mp4">
+            <video autoplay muted loop playsinline="true" src="video/video_top4race.mp4">
                 Tu navegador no soporta la etiqueta de video.
             </video>
         </div>
