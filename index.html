@@ -210,7 +210,7 @@
             margin-right: 0.2em;
         }
 
-        .hero-content .club-name-badge {
+        .club-name-badge {
             background: #ffffff;
             color: #0f4ebc;
             font-weight: 700;
@@ -219,43 +219,43 @@
             box-shadow: 0 2px 14px rgba(0, 0, 0, 0.18);
         }
 
-        .hero-content .club-name-badge-dark {
-            background: #ffffff;
-        }
-
-        .hero-content .club-name-badge-orange {
+        .club-name-badge-orange {
             background: #ffffff;
             color: #e97239;
         }
 
-        .hero-content .club-name-link {
+        .club-name-link {
             text-decoration: none;
             display: inline-block;
             cursor: pointer;
             transition: transform 0.25s ease, box-shadow 0.25s ease, background-color 0.25s ease, color 0.25s ease;
         }
 
-        .hero-content .club-name-link:hover,
-        .hero-content .club-name-link:focus {
+        .club-name-link:hover,
+        .club-name-link:focus {
             transform: translateY(-2px);
             box-shadow: 0 6px 20px rgba(0, 0, 0, 0.22);
         }
 
-        .hero-content .club-name-link.club-name-badge:not(.club-name-badge-orange):hover,
-        .hero-content .club-name-link.club-name-badge:not(.club-name-badge-orange):focus {
+        .club-name-link.club-name-badge:not(.club-name-badge-orange):hover,
+        .club-name-link.club-name-badge:not(.club-name-badge-orange):focus {
             background: #f0f4ff;
             color: #08336e;
         }
 
-        .hero-content .club-name-link.club-name-badge-orange:hover,
-        .hero-content .club-name-link.club-name-badge-orange:focus {
+        .club-name-link.club-name-badge-orange:hover,
+        .club-name-link.club-name-badge-orange:focus {
             background: #fff4ec;
             color: #c55a28;
         }
 
-        .hero-content .club-name-link:focus-visible {
+        .club-name-link:focus-visible {
             outline: 2px solid #ffffff;
             outline-offset: 2px;
+        }
+
+        .cta-section .club-name-link:focus-visible {
+            outline-color: #e97239;
         }
 
         .hero-content .club-separator {
@@ -723,6 +723,38 @@
             margin-bottom: 16px;
             font-weight: 700;
             line-height: 1.25;
+        }
+
+        .contact-section .contact-brand-vibrant,
+        .contact-section .brand-link-vibrant {
+            color: #00c8e8;
+            font-weight: 700;
+        }
+
+        .contact-section .brand-link-vibrant {
+            text-decoration: none;
+            transition: color 0.2s ease;
+        }
+
+        .contact-section .brand-link-vibrant:hover,
+        .contact-section .brand-link-vibrant:focus {
+            color: #0099b8;
+            text-decoration: underline;
+        }
+
+        .contact-section .contact-label-vibrant {
+            color: #00c8e8;
+            font-weight: 700;
+        }
+
+        .contact-section .contact-highlight {
+            color: #00c8e8;
+            font-weight: 600;
+        }
+
+        .contact-item--brand .contact-icon {
+            color: #00c8e8;
+            background: rgba(0, 200, 232, 0.1);
         }
 
         .contact-section .contact-intro,
@@ -1264,19 +1296,15 @@
             color: #ffffff;
         }
 
-        .cta-section .club-name {
-            color: #e97239;
-        }
-
-        .cta-section p a {
+        .cta-section p a:not(.club-name-link) {
             color: inherit;
             font-weight: 600;
             text-decoration: none;
             transition: color 0.2s ease;
         }
 
-        .cta-section p a:hover,
-        .cta-section p a:focus {
+        .cta-section p a:not(.club-name-link):hover,
+        .cta-section p a:not(.club-name-link):focus {
             color: #ffffff;
             text-decoration: underline;
         }
@@ -3765,7 +3793,7 @@
     <section class="cta-section">
         <div class="container">
             <h2>¿Listo para competir?</h2>
-            <p>Únete a los <strong>19</strong> nadadores en esta emocionante competencia, con la participación de <strong>4</strong> clubes de Córdoba, en el <strong>FESTI-TORNEO REGIONAL DEL SINÚ</strong> organizado por <span class="club-name">Club Delfines Córdoba y Sport</span> y <span class="club-name">Club Deportivo Ávatar</span>, con el apoyo tecnológico de <a href="https://top4race.netlify.app/" target="_blank" rel="noopener">Top4Race</a> del <a href="https://top4race.netlify.app/" target="_blank" rel="noopener">Club Deportivo AquaTEN</a>.</p>
+            <p>Únete a los <strong>19</strong> nadadores en esta emocionante competencia, con la participación de <strong>4</strong> clubes de Córdoba, en el <strong>FESTI-TORNEO REGIONAL DEL SINÚ</strong> organizado por <a href="https://www.instagram.com/delfinessc/" target="_blank" rel="noopener noreferrer" class="club-name club-name-badge club-name-link">Club Delfines Córdoba y Sport</a> y <a href="https://www.instagram.com/club_avatarmtr/" target="_blank" rel="noopener noreferrer" class="club-name club-name-badge club-name-badge-orange club-name-link">Club Deportivo Ávatar</a>, con el apoyo tecnológico de <a href="https://top4race.netlify.app/" target="_blank" rel="noopener">Top4Race</a> del <a href="https://top4race.netlify.app/" target="_blank" rel="noopener">Club Deportivo AquaTEN</a>.</p>
             <a href="#" class="cta-button">Más Información</a>
         </div>
     </section>
@@ -3774,9 +3802,9 @@
     <section class="section contact contact-section" id="contacto">
         <div class="container contact-grid">
             <div>
-                <p class="eyebrow">Contacto</p>
-                <h2>Contacto de Sistema Top4Race</h2>
-                <p>Escríbenos para conocer más sobre cronometraje con chips, páginas web de eventos, diplomas descargables y compartir resultados en redes sociales.</p>
+                <p class="eyebrow contact-brand-vibrant">Contacto Top4Race</p>
+                <h2>Contacto de Sistema <span class="contact-brand-vibrant">Top4Race</span></h2>
+                <p>Escríbenos para conocer más sobre <span class="contact-highlight">cronometraje con chips</span>, <span class="contact-highlight">páginas web de eventos</span>, diplomas descargables y compartir resultados en redes sociales.</p>
                 <div class="contact-info">
                     <div class="contact-item">
                         <span class="contact-icon" aria-hidden="true">
@@ -3801,7 +3829,7 @@
                             <a class="inline-link" href="https://wa.me/573043499052" target="_blank" rel="noopener">+57 304 349 9052</a>
                         </div>
                     </div>
-                    <div class="contact-item">
+                    <div class="contact-item contact-item--brand">
                         <span class="contact-icon" aria-hidden="true">
                             <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
                                 <rect x="3" y="3" width="18" height="18" rx="5" ry="5" />
@@ -3810,8 +3838,8 @@
                             </svg>
                         </span>
                         <div>
-                            <span class="contact-label">Instagram</span>
-                            <a class="inline-link" href="https://www.instagram.com/aquaten.cd/" target="_blank" rel="noopener">@aquaten.cd</a>
+                            <span class="contact-label contact-label-vibrant">Instagram AquaTEN</span>
+                            <a class="brand-link-vibrant" href="https://www.instagram.com/aquaten.cd/" target="_blank" rel="noopener">@aquaten.cd</a>
                         </div>
                     </div>
                     <div class="contact-item">
@@ -3826,7 +3854,7 @@
                             <span>Montería, Córdoba, Colombia</span>
                         </div>
                     </div>
-                    <div class="contact-item">
+                    <div class="contact-item contact-item--brand">
                         <span class="contact-icon" aria-hidden="true">
                             <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
                                 <circle cx="12" cy="12" r="9" />
@@ -3836,11 +3864,11 @@
                             </svg>
                         </span>
                         <div>
-                            <span class="contact-label">Web Top4Race</span>
-                            <a class="inline-link" href="https://top4race.netlify.app/" target="_blank" rel="noopener">top4race.netlify.app</a>
+                            <span class="contact-label contact-label-vibrant">Web Top4Race</span>
+                            <a class="brand-link-vibrant" href="https://top4race.netlify.app/" target="_blank" rel="noopener">top4race.netlify.app</a>
                         </div>
                     </div>
-                    <div class="contact-item">
+                    <div class="contact-item contact-item--brand">
                         <span class="contact-icon" aria-hidden="true">
                             <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
                                 <circle cx="12" cy="12" r="9" />
@@ -3850,8 +3878,8 @@
                             </svg>
                         </span>
                         <div>
-                            <span class="contact-label">Web AquaTEN</span>
-                            <a class="inline-link" href="https://www.aquatencd.com/" target="_blank" rel="noopener">www.aquatencd.com</a>
+                            <span class="contact-label contact-label-vibrant">Web AquaTEN</span>
+                            <a class="brand-link-vibrant" href="https://www.aquatencd.com/" target="_blank" rel="noopener">www.aquatencd.com</a>
                         </div>
                     </div>
                 </div>
