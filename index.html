@@ -3112,7 +3112,8 @@
             DRIVE_FOLDER_NAME: 'EVENTOS',
             /** Opcional: ID de la carpeta EVENTOS (más rápido que buscar por nombre). Ej. URL: drive.google.com/drive/folders/ESTE_ID */
             DRIVE_FOLDER_ID: null,
-            USE_API_KEY: true,
+            /** CSV/gviz primero (como evento modelo); la API solo si USE_API_KEY es true */
+            USE_API_KEY: false,
             /**
              * Pestaña → gid. Usado si Sheets API / HTML público no devuelven metadatos.
              * Actualiza un gid abriendo la pestaña en Drive y copiando el número tras #gid= en la URL.
@@ -3121,8 +3122,10 @@
                 'FEMENINO': 1399902178,
                 '50M-MASCULINO': 2016301649,
                 '100M-FEMENINO': 1335187514,
+                '100M-MASCULINO': null,
                 '200M-FEMENINO': 1104131551,
                 '200M-MASCULINO': 1308244799,
+                '4x50M-MIXTO': null,
                 'RESULTADOS-FEMENINO': 1083700705,
                 'RESULTADOS-MASCULINO': 1681548039,
                 'EQUIPOS': 2036627092,
@@ -3132,7 +3135,7 @@
             COMPETITION_SHEETS: {
                 // Primera sesión: Resultados por prueba
                 'resultados-por-prueba-femenino': ['FEMENINO', 'FEM'],
-                '50m-libre-femenino': ['50M-FEMENINO', '50M FEMENINO', '50M-FEM', '50M FEM', '50 FEM'],
+                '50m-libre-femenino': ['FEMENINO', 'FEM'],
                 '50m-libre-masculino': ['50M-MASCULINO', '50M MASCULINO', '50M-MAS', '50M MAS', '50 MAS'],
                 '100m-libre-femenino': ['100M-FEMENINO', '100M FEMENINO', '100M-FEM', '100M FEM', '100 FEM', 'FEMENINO 100M'],
                 '100m-libre-masculino': ['100M-MASCULINO', '100M MASCULINO', '100M-MAS', '100M MAS', '100 MAS', 'MASCULINO 100M'],
@@ -3319,41 +3322,45 @@
             return CONFIG.SHEET_ID;
         }
 
-        /** Metadatos de pestañas desde la página pública del Sheet (sin Sheets API) */
-        async function getSheetInfoFromPublicHtml() {
+        /** Nombres de pestañas leídos del HTML público del Sheet */
+        async function getSheetTabNamesFromPublicHtml() {
             try {
                 const url = `https://docs.google.com/spreadsheets/d/${CONFIG.SHEET_ID}/edit?usp=sharing`;
                 const response = await fetch(url);
                 if (!response.ok) {
-                    return null;
+                    return [];
                 }
                 const html = await response.text();
-                const manual = CONFIG.MANUAL_SHEET_GIDS || {};
-                const manualLookup = Object.fromEntries(
-                    Object.entries(manual).map(([title, gid]) => [title.toUpperCase().trim(), gid])
-                );
-                const tabs = [];
-                const parts = html.split('docs-sheet-tab-caption">').slice(1);
-                for (const part of parts) {
-                    const title = part.split('<')[0].trim();
-                    if (!title) continue;
-                    const fromManual = manualLookup[title.toUpperCase()];
-                    const gidMatch = part.match(/\b(1\d{9}|2\d{9})\b/);
-                    const gid = fromManual != null
-                        ? (typeof fromManual === 'string' ? parseInt(fromManual, 10) : fromManual)
-                        : (gidMatch ? parseInt(gidMatch[1], 10) : null);
-                    if (gid != null) {
-                        tabs.push({ title, gid });
-                    }
-                }
-                if (tabs.length) {
-                    console.log(`📋 ${tabs.length} pestañas leídas desde la página pública del Sheet`);
-                    return tabs;
-                }
+                return html.split('docs-sheet-tab-caption">').slice(1)
+                    .map(part => part.split('<')[0].trim())
+                    .filter(Boolean);
             } catch (error) {
-                console.warn('⚠️ No se pudo leer metadatos desde HTML público:', error.message);
+                console.warn('⚠️ No se pudieron leer nombres de pestañas:', error.message);
+                return [];
             }
-            return null;
+        }
+
+        /** Metadatos de pestañas desde la página pública del Sheet (sin Sheets API) */
+        async function getSheetInfoFromPublicHtml() {
+            const tabNames = await getSheetTabNamesFromPublicHtml();
+            if (!tabNames.length) {
+                return null;
+            }
+            const manual = CONFIG.MANUAL_SHEET_GIDS || {};
+            const manualLookup = Object.fromEntries(
+                Object.entries(manual).map(([title, gid]) => [title.toUpperCase().trim(), gid])
+            );
+            const tabs = tabNames.map(title => {
+                const manualGid = manualLookup[title.toUpperCase().trim()];
+                return {
+                    title,
+                    gid: manualGid != null
+                        ? (typeof manualGid === 'string' ? parseInt(manualGid, 10) : manualGid)
+                        : null
+                };
+            });
+            console.log(`📋 ${tabs.length} pestañas leídas desde la página pública del Sheet`);
+            return tabs;
         }
 
         // Función para obtener información de todas las pestañas del Google Sheet automáticamente
@@ -3400,13 +3407,54 @@
             }
             const manual = CONFIG.MANUAL_SHEET_GIDS;
             if (manual && typeof manual === 'object' && Object.keys(manual).length) {
-                console.warn('⚠️ Usando MANUAL_SHEET_GIDS: la API de metadatos no respondió; asegúrate de que el Sheet sea público o exportable para que CSV funcione.');
+                console.warn('⚠️ Usando MANUAL_SHEET_GIDS como respaldo de metadatos.');
                 return Object.entries(manual).map(([title, gid]) => ({
                     title,
-                    gid: typeof gid === 'string' ? parseInt(gid, 10) : gid
+                    gid: gid == null ? null : (typeof gid === 'string' ? parseInt(gid, 10) : gid)
                 }));
             }
             return null;
+        }
+
+        /** Evita que "FEMENINO" coincida con "100M-FEMENINO" o "RESULTADOS-FEMENINO" */
+        function sheetMatchesCompetition(sheetTitle, competitionKey, config) {
+            const title = sheetTitle.toUpperCase().trim();
+            const exact = config.alternativeNames.some(alt => title === alt.toUpperCase().trim());
+            if (exact) {
+                return true;
+            }
+            if (competitionKey === '50m-libre-femenino' || competitionKey === 'resultados-por-prueba-femenino') {
+                return title === 'FEMENINO';
+            }
+            if (competitionKey === 'resultados-femenino') {
+                return title.includes('RESULTADOS') && title.includes('FEMENINO');
+            }
+            if (competitionKey === 'resultados-masculino') {
+                return title.includes('RESULTADOS') && title.includes('MASCULINO');
+            }
+            if (config.keywords && config.keywords.length > 1) {
+                return config.keywords.every(keyword => title.includes(keyword.toUpperCase()));
+            }
+            if (config.keywords && config.keywords.length === 1) {
+                return title.includes(config.keywords[0].toUpperCase());
+            }
+            return config.alternativeNames.some(alt => {
+                const altUp = alt.toUpperCase().trim();
+                return title.includes(altUp) || altUp.includes(title);
+            });
+        }
+
+        function findSheetForCompetition(sheetInfo, competitionKey, config) {
+            if (!sheetInfo || !sheetInfo.length) {
+                return null;
+            }
+            for (const altName of config.alternativeNames) {
+                const sheet = sheetInfo.find(s => s.title.toUpperCase().trim() === altName.toUpperCase().trim());
+                if (sheet) {
+                    return sheet;
+                }
+            }
+            return sheetInfo.find(sheet => sheetMatchesCompetition(sheet.title, competitionKey, config)) || null;
         }
 
         // Función para encontrar el GID de una competencia específica
@@ -3505,9 +3553,9 @@
                     },
                     // 50M Femenino y Masculino
                     '50m-libre-femenino': {
-                        keywords: ['50M', 'FEMENINO'],
-                        alternativeNames: ['50M-FEMENINO', '50M FEMENINO', '50M-FEM', '50M FEM'],
-                        tableId: 'resultsTable50mFem',
+                        keywords: ['FEMENINO'],
+                        alternativeNames: ['FEMENINO', 'FEM'],
+                        tableId: 'resultsTableFem',
                         genderColumn: 'Nadadora'
                     },
                     '50m-libre-masculino': {
@@ -3545,7 +3593,7 @@
                     // 4X50M Mixto
                     '4x50m-libre-mixto': {
                         keywords: ['4X50M', 'MIXTO'],
-                        alternativeNames: ['4X50M-MIXTO', '4X50M MIXTO', '4X50M-MIX', '4X50M MIX'],
+                        alternativeNames: ['4X50M-MIXTO', '4X50M MIXTO', '4x50M-MIXTO', '4x50M MIXTO', '4X50M-MIX', '4X50M MIX'],
                         tableId: 'resultsTable4x50mMixto',
                         genderColumn: 'Nadador/a'
                     },
@@ -3576,65 +3624,14 @@
                     console.log(` Buscando coincidencias para ${competitionKey}...`);
                     console.log(`🎯 Palabras clave: ${config.keywords.join(', ')}`);
                     console.log(` Nombres alternativos: ${config.alternativeNames.join(', ')}`);
-                    
-                    let foundSheet = null;
-                    
-                    // 1. Primera búsqueda: coincidencia exacta con nombres alternativos
-                    foundSheet = sheetInfo.find(sheet => {
-                        const title = sheet.title.toUpperCase().trim();
-                        const exactMatch = config.alternativeNames.some(altName => 
-                            title === altName.toUpperCase().trim()
-                        );
-                        if (exactMatch) {
-                            console.log(` Coincidencia exacta encontrada: "${sheet.title}"`);
-                        }
-                        return exactMatch;
-                    });
-                    
-                    // 2. Segunda búsqueda: pestaña que contenga todas las palabras clave
-                    if (!foundSheet) {
-                        foundSheet = sheetInfo.find(sheet => {
-                            const title = sheet.title.toUpperCase();
-                            const hasAllKeywords = config.keywords.every(keyword => 
-                                title.includes(keyword.toUpperCase())
-                            );
-                            if (hasAllKeywords) {
-                                console.log(` Coincidencia por palabras clave: "${sheet.title}" contiene todas las palabras clave`);
-                            }
-                            return hasAllKeywords;
-                        });
-                    }
-                    
-                    // 3. Tercera búsqueda: coincidencia parcial con nombres alternativos
-                    if (!foundSheet) {
-                        foundSheet = sheetInfo.find(sheet => {
-                            const title = sheet.title.toUpperCase();
-                            const partialMatch = config.alternativeNames.some(altName => 
-                                title.includes(altName.toUpperCase()) || altName.toUpperCase().includes(title)
-                            );
-                            if (partialMatch) {
-                                console.log(` Coincidencia parcial encontrada: "${sheet.title}"`);
-                            }
-                            return partialMatch;
-                        });
-                    }
-                    
-                    // 4. Cuarta búsqueda: al menos una palabra clave para casos especiales
-                    if (!foundSheet && config.keywords.length === 1) {
-                        foundSheet = sheetInfo.find(sheet => {
-                            const title = sheet.title.toUpperCase();
-                            const hasKeyword = config.keywords.some(keyword => 
-                                title.includes(keyword.toUpperCase())
-                            );
-                            if (hasKeyword) {
-                                console.log(` Coincidencia simple encontrada: "${sheet.title}" contiene palabra clave`);
-                            }
-                            return hasKeyword;
-                        });
+
+                    const foundSheet = findSheetForCompetition(sheetInfo, competitionKey, config);
+                    if (foundSheet) {
+                        console.log(` Coincidencia: "${foundSheet.title}" (GID: ${foundSheet.gid ?? 'gviz por nombre'})`);
                     }
                     
                     if (foundSheet) {
-                        console.log(`📄 Cargando datos de "${foundSheet.title}" (GID: ${foundSheet.gid})...`);
+                        console.log(`📄 Cargando datos de "${foundSheet.title}" (GID: ${foundSheet.gid ?? 'por nombre'})...`);
                         const data = await loadSheetByGid(foundSheet.gid, foundSheet.title);
                         
                         if (data && data.length > 0) {
@@ -3829,9 +3826,59 @@
             }
         }
 
+        // Convierte filas CSV completas al formato que usan las tablas (sin fila de encabezados)
+        function rowsWithoutHeader(rows) {
+            if (!rows || rows.length <= 1) {
+                return rows || null;
+            }
+            return rows.slice(1);
+        }
+
+        /** Las tablas iteran desde i=1 asumiendo una fila de encabezado en [0] */
+        function rowsForTables(rows) {
+            if (!rows || !rows.length) {
+                return rows;
+            }
+            if (rows[0] && rows[0][0] === '__header__') {
+                return rows;
+            }
+            return [['__header__'], ...rows];
+        }
+
+        async function loadSheetRowsByName(sheetName) {
+            const url = `https://docs.google.com/spreadsheets/d/${CONFIG.SHEET_ID}/gviz/tq?tqx=out:csv&sheet=${encodeURIComponent(sheetName)}`;
+            const rows = await fetchCSVData(url, sheetName);
+            return rowsWithoutHeader(rows);
+        }
+
         // Legacy function wrappers for backwards compatibility
-        async function loadSheetByGid(gid, sheetName = null) {
-            return await loadDirectSheetData(gid, sheetName);
+        async function loadSheetByGid(gid, sheetName = null, forTable = true) {
+            const range = getColumnRange(sheetName);
+            const hasGid = gid != null && gid !== '' && Number(gid) !== 0;
+            let data = null;
+
+            if (hasGid) {
+                try {
+                    const url = `https://docs.google.com/spreadsheets/d/${CONFIG.SHEET_ID}/export?format=csv&gid=${gid}&range=${range}`;
+                    const rows = await fetchCSVData(url, gid);
+                    data = rowsWithoutHeader(rows);
+                    if (data && data.length) {
+                        return forTable ? rowsForTables(data) : data;
+                    }
+                } catch (error) {
+                    console.warn(`⚠️ CSV por gid ${gid} falló:`, error.message);
+                }
+            }
+
+            if (sheetName) {
+                console.log(`📄 Fallback gviz por nombre de pestaña: ${sheetName}`);
+                data = await loadSheetRowsByName(sheetName);
+            }
+
+            if (!data || !data.length) {
+                return null;
+            }
+            return forTable ? rowsForTables(data) : data;
         }
         
         async function loadSheetByName(sheetName) {
@@ -5251,44 +5298,10 @@ Ver resultados completos: https://vchampionship.netlify.app`;
             return 'A:H';
         }
 
-        // Función para cargar datos directamente del Google Sheet
+        // Función para cargar datos directamente del Google Sheet (PDF y usos sin encabezado)
         async function loadDirectSheetData(gid, sheetName) {
-            try {
-                const range = getColumnRange(sheetName);
-                const url = `https://docs.google.com/spreadsheets/d/${CONFIG.SHEET_ID}/export?format=csv&gid=${gid}&range=${range}`;
-                const response = await fetch(url);
-                
-                if (!response.ok) {
-                    throw new Error(`HTTP ${response.status}`);
-                }
-                
-                const csvText = await response.text();
-                const rows = csvText.split('\n').map(row => {
-                    // Parse CSV properly handling commas in quotes
-                    const result = [];
-                    let current = '';
-                    let inQuotes = false;
-                    
-                    for (let i = 0; i < row.length; i++) {
-                        const char = row[i];
-                        if (char === '"') {
-                            inQuotes = !inQuotes;
-                        } else if (char === ',' && !inQuotes) {
-                            result.push(current.trim());
-                            current = '';
-                        } else {
-                            current += char;
-                        }
-                    }
-                    result.push(current.trim());
-                    return result;
-                }).filter(row => row.length > 1 && row[0]); // Filter empty rows
-                
-                return rows.slice(1); // Skip header row
-            } catch (error) {
-                console.error(`Error cargando ${sheetName}:`, error);
-                return [];
-            }
+            const data = await loadSheetByGid(gid, sheetName, false);
+            return data || [];
         }
 
         // Función para mapear títulos de hojas a nombres de display amigables
@@ -5337,8 +5350,10 @@ Ver resultados completos: https://vchampionship.netlify.app`;
                 'MASCULINO 200M': '200m Libre Masculino',
                 
                 // 4x50m libre
-                '4X50M-MIXTO': '4x50m Relevo L.Mixto',
-                '4X50M MIXTO': '4x50m Relevo L.Mixto',
+                '4x50M-MIXTO': '4x50m Relevo L.Mixto',
+                '4x50M MIXTO': '4x50m Relevo L.Mixto',
+                '4x50M-MIXTO': '4x50m Relevo L.Mixto',
+                '4x50M MIXTO': '4x50m Relevo L.Mixto',
                 '4X50M-MIX': '4x50m Relevo L.Mixto',
                 '4X50M MIX': '4x50m Relevo L.Mixto',
                 'MIXTO 4X50M': '4x50m Relevo L.Mixto'
@@ -5371,7 +5386,7 @@ Ver resultados completos: https://vchampionship.netlify.app`;
                 if (matchFound) {
                     console.log(`🔄 Fallback: Intentando cargar "${dataKey}" desde hoja "${sheet.title}"`);
                     try {
-                        const data = await loadSheetByGid(sheet.gid);
+                        const data = await loadSheetByGid(sheet.gid, sheet.title);
                         if (data && data.length > 1) {
                             const dataRows = data.slice(1).filter(row => 
                                 row && row.length > 0 && row.some(cell => cell && cell.trim() !== '')
@@ -5423,7 +5438,7 @@ Ver resultados completos: https://vchampionship.netlify.app`;
                     console.log(`📄 Cargando evento ${i + 1}: ${sheet.title}`);
                     
                     try {
-                        const data = await loadSheetByGid(sheet.gid);
+                        const data = await loadSheetByGid(sheet.gid, sheet.title);
                         if (data && data.length > 1) { // Asegurarse de que hay más que solo headers
                             // Saltear la primera fila (headers) y tomar todo lo demás
                             const dataRows = data.slice(1).filter(row => 
@@ -5446,7 +5461,7 @@ Ver resultados completos: https://vchampionship.netlify.app`;
                     const maleSheet = sheetInfo[8];
                     console.log(`📄 Cargando masculino: ${maleSheet.title}`);
                     try {
-                        const maleData = await loadSheetByGid(maleSheet.gid);
+                        const maleData = await loadSheetByGid(maleSheet.gid, maleSheet.title);
                         if (maleData && maleData.length > 1) {
                             // Saltear headers y filtrar filas vacías
                             const dataRows = maleData.slice(1).filter(row => 
@@ -5465,7 +5480,7 @@ Ver resultados completos: https://vchampionship.netlify.app`;
                     const femaleSheet = sheetInfo[9];
                     console.log(`📄 Cargando femenino desde índice 9: ${femaleSheet.title}`);
                     try {
-                        const femaleData = await loadSheetByGid(femaleSheet.gid);
+                        const femaleData = await loadSheetByGid(femaleSheet.gid, femaleSheet.title);
                         if (femaleData && femaleData.length > 1) {
                             // Saltear headers y filtrar filas vacías
                             const dataRows = femaleData.slice(1).filter(row => 
@@ -5514,7 +5529,7 @@ Ver resultados completos: https://vchampionship.netlify.app`;
                     const teamSheet = sheetInfo[teamSheetIndex];
                     console.log(`📄 Intentando cargar equipos desde índice ${teamSheetIndex}: ${teamSheet.title}`);
                     try {
-                        const teamData = await loadSheetByGid(teamSheet.gid);
+                        const teamData = await loadSheetByGid(teamSheet.gid, teamSheet.title);
                         if (teamData && teamData.length > 1) {
                             // Saltear headers y filtrar filas vacías
                             const dataRows = teamData.slice(1).filter(row => 
