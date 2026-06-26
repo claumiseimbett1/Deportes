@@ -25,7 +25,7 @@
     <meta name="twitter:description" content="Visualización de resultados en tiempo real del Festi-Torneo Regional del Sinú. Plataforma deportiva Top4Race del Club Deportivo AquaTEN en Montería.">
     <meta name="twitter:image" content="https://vchampionship.netlify.app/img/logoTop4Race.png">
     <!-- theme-color: PWA feature for mobile browsers -->
-    <meta name="theme-color" content="#0b1039">
+    <meta name="theme-color" content="#0f4ebc">
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
@@ -152,17 +152,19 @@
     <style>
         /* CSS Variables for consistency and easy maintenance */
         :root {
-            --primary-color: #0b1039;
-            --secondary-color: #00f0ff;
+            --primary-color: #0f4ebc;
+            --secondary-color: #e97239;
+            --primary-dark: #0c3d96;
+            --accent-hover: #c55a28;
             --background-light: #f4f7fb;
-            --background-gradient: linear-gradient(135deg, #0b1039, #00f0ff);
+            --background-gradient: linear-gradient(135deg, #0f4ebc, #e97239);
             --text-gray: #a5a5a5;
             --text-white: #ffffff;
             --border-radius: 15px;
             --border-radius-small: 8px;
             --border-radius-large: 25px;
-            --box-shadow: 0 5px 25px rgba(11, 16, 57, 0.08);
-            --box-shadow-hover: 0 10px 30px rgba(11, 16, 57, 0.1);
+            --box-shadow: 0 5px 25px rgba(15, 78, 188, 0.08);
+            --box-shadow-hover: 0 10px 30px rgba(15, 78, 188, 0.1);
             --font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
             --transition: all 0.3s ease;
         }
@@ -277,7 +279,7 @@
             padding: 6px 10px;
             border-radius: 12px;
             background: #ffffff;
-            box-shadow: 0 8px 18px rgba(11, 16, 57, 0.08);
+            box-shadow: 0 8px 18px rgba(15, 78, 188, 0.08);
         }
 
         .header-brand-group,
@@ -387,7 +389,7 @@
 
         .search-box:focus-within {
             border-color: var(--secondary-color);
-            box-shadow: 0 4px 15px rgba(0, 240, 255, 0.2);
+            box-shadow: 0 4px 15px rgba(233, 114, 57, 0.2);
         }
 
         .search-input {
@@ -516,7 +518,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(11, 16, 57, 0.7);
+            background: rgba(15, 78, 188, 0.7);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -538,7 +540,7 @@
 
         .hero-content .subtitle {
             font-size: 1.5em;
-            color: #f0f6ff;
+            color: #ecf1fa;
             font-weight: 300;
         }
 
@@ -550,7 +552,7 @@
 
         .contact-section {
             padding: 100px 20px;
-            background-color: #f0f6ff;
+            background-color: #ecf1fa;
         }
 
         .container {
@@ -626,7 +628,7 @@
             border-radius: 20px;
             border: 1px solid #e8eef8;
             background: #ffffff;
-            box-shadow: 0 16px 30px rgba(11, 16, 57, 0.08);
+            box-shadow: 0 16px 30px rgba(15, 78, 188, 0.08);
         }
 
         .contact-whatsapp p {
@@ -655,8 +657,8 @@
         .contact-whatsapp .btn.ghost:hover,
         .contact-form .btn.ghost:hover {
             border-color: var(--secondary-color);
-            box-shadow: 0 8px 18px rgba(0, 240, 255, 0.2);
-            background: rgba(0, 240, 255, 0.08);
+            box-shadow: 0 8px 18px rgba(233, 114, 57, 0.2);
+            background: rgba(233, 114, 57, 0.08);
         }
 
         .contact-section .inline-link {
@@ -684,7 +686,7 @@
             width: 34px;
             height: 34px;
             border-radius: 10px;
-            background: rgba(0, 240, 255, 0.12);
+            background: rgba(233, 114, 57, 0.12);
             color: var(--secondary-color);
             display: grid;
             place-items: center;
@@ -704,14 +706,14 @@
             background: #ffffff;
             border-radius: 20px;
             padding: 26px;
-            border: 1px solid #f0f6ff;
-            box-shadow: 0 16px 30px rgba(11, 16, 57, 0.08);
+            border: 1px solid #ecf1fa;
+            box-shadow: 0 16px 30px rgba(15, 78, 188, 0.08);
             transition: transform var(--transition), box-shadow var(--transition);
         }
 
         .contact-form:hover {
             transform: translateY(-4px);
-            box-shadow: 0 20px 40px rgba(11, 16, 57, 0.12);
+            box-shadow: 0 20px 40px rgba(15, 78, 188, 0.12);
         }
 
         .contact-form label {
@@ -734,7 +736,7 @@
 
         .contact-form input:focus,
         .contact-form textarea:focus {
-            outline: 2px solid rgba(0, 240, 255, 0.4);
+            outline: 2px solid rgba(233, 114, 57, 0.4);
             border-color: var(--secondary-color);
         }
 
@@ -755,12 +757,12 @@
         .contact-form .btn.primary {
             background: var(--primary-color);
             color: #ffffff;
-            box-shadow: 0 10px 30px rgba(11, 16, 57, 0.2);
+            box-shadow: 0 10px 30px rgba(15, 78, 188, 0.2);
         }
 
         .contact-form .btn.primary:hover {
             transform: translateY(-1px);
-            box-shadow: 0 14px 40px rgba(11, 16, 57, 0.35);
+            box-shadow: 0 14px 40px rgba(15, 78, 188, 0.35);
         }
 
         .form-note {
@@ -771,11 +773,11 @@
 
         .info-card, .contact-card-link {
             background: #ffffff;
-            border: 1px solid #f0f6ff;
+            border: 1px solid #ecf1fa;
             border-radius: 20px;
             padding: 50px 30px;
             text-align: center;
-            box-shadow: 0 5px 25px rgba(13, 43, 85, 0.08);
+            box-shadow: 0 5px 25px rgba(15, 78, 188, 0.08);
             transition: var(--transition);
             text-decoration: none;
             color: inherit;
@@ -783,7 +785,7 @@
 
         .info-card:hover, .contact-card-link:hover {
             transform: translateY(-8px);
-            box-shadow: 0 15px 40px rgba(11, 16, 57, 0.15);
+            box-shadow: 0 15px 40px rgba(15, 78, 188, 0.15);
             border-color: var(--secondary-color);
         }
 
@@ -818,22 +820,22 @@
         /* Results Section */
         .results-section {
             padding: 100px 20px;
-            background: #f0f6ff;
+            background: #ecf1fa;
         }
 
         .results-container {
             background: #ffffff;
             border-radius: 20px;
             padding: 50px;
-            box-shadow: 0 10px 40px rgba(13, 43, 85, 0.1);
-            border: 2px solid #f0f6ff;
+            box-shadow: 0 10px 40px rgba(15, 78, 188, 0.1);
+            border: 2px solid #ecf1fa;
         }
 
         /* Pestañas de Resultados */
         .tabs {
             display: flex;
             margin-bottom: 30px;
-            border-bottom: 2px solid #f0f6ff;
+            border-bottom: 2px solid #ecf1fa;
             flex-wrap: wrap;
             justify-content: center;
         }
@@ -854,13 +856,13 @@
 
         .tab-button:hover {
             color: var(--secondary-color);
-            background-color: rgba(0, 240, 255, 0.05);
+            background-color: rgba(233, 114, 57, 0.05);
         }
 
         .tab-button.active {
             color: var(--secondary-color);
             border-bottom: 3px solid var(--secondary-color);
-            background-color: #f0f6ff;
+            background-color: #ecf1fa;
             font-weight: 600;
         }
 
@@ -902,13 +904,13 @@
             background-color: #ffffff;
             border-radius: var(--border-radius);
             overflow: hidden;
-            box-shadow: 0 5px 25px rgba(13, 43, 85, 0.08);
+            box-shadow: 0 5px 25px rgba(15, 78, 188, 0.08);
         }
 
         .results-table th, .results-table td {
             padding: 15px 20px;
             text-align: left;
-            border-bottom: 1px solid #f0f6ff;
+            border-bottom: 1px solid #ecf1fa;
         }
 
         .results-table th {
@@ -923,7 +925,7 @@
         }
 
         .results-table tr:hover td {
-            background-color: #f0f6ff;
+            background-color: #ecf1fa;
             transition: background-color 0.3s ease;
         }
 
@@ -954,7 +956,7 @@
             text-align: center;
             font-size: 1.1em;
             font-weight: bold;
-            border-bottom: 2px solid #00BCE8 !important;
+            border-bottom: 2px solid #e97239 !important;
         }
 
         /* Loading state para la tabla */
@@ -981,7 +983,7 @@
         /* CTA Section */
         .cta-section {
             padding: 100px 20px;
-            background: linear-gradient(135deg, #0b1039 0%, #0b1039 100%);
+            background: linear-gradient(135deg, #0f4ebc 0%, #0f4ebc 100%);
             text-align: center;
             position: relative;
         }
@@ -994,7 +996,7 @@
         }
 
         .cta-section p {
-            color: #f0f6ff;
+            color: #ecf1fa;
             font-size: 1.3em;
             margin-bottom: 40px;
             max-width: 600px;
@@ -1004,7 +1006,7 @@
 
         .cta-button {
             display: inline-block;
-            background: #00f0ff;
+            background: #e97239;
             color: #ffffff;
             padding: 18px 50px;
             border-radius: 50px;
@@ -1012,13 +1014,13 @@
             font-weight: 600;
             font-size: 1.2em;
             transition: var(--transition);
-            box-shadow: 0 5px 20px rgba(0, 173, 239, 0.3);
+            box-shadow: 0 5px 20px rgba(233, 114, 57, 0.3);
         }
 
         .cta-button:hover {
             transform: translateY(-3px);
-            box-shadow: 0 8px 30px rgba(0, 173, 239, 0.5);
-            background: #00f0ff;
+            box-shadow: 0 8px 30px rgba(233, 114, 57, 0.5);
+            background: #c55a28;
         }
 
         .cta-section .inline-link {
@@ -1040,7 +1042,7 @@
 
         .footer p {
             margin-bottom: 10px;
-            color: #f0f6ff;
+            color: #ecf1fa;
         }
 
         .footer-credits {
@@ -1072,7 +1074,7 @@
         
         .mobile-team-card {
             background: white;
-            border: 2px solid #e3f2fd;
+            border: 2px solid #e5edf8;
             border-radius: 12px;
             padding: 20px;
             margin: 15px 0;
@@ -1080,7 +1082,7 @@
         }
         
         .mobile-team-card .team-position {
-            background: #00BCE8;
+            background: #e97239;
             color: white;
             padding: 8px 15px;
             border-radius: 20px;
@@ -1234,7 +1236,7 @@
                 display: none;
                 padding: 0 16px 16px;
                 background: #ffffff;
-                box-shadow: 0 8px 18px rgba(11, 16, 57, 0.08);
+                box-shadow: 0 8px 18px rgba(15, 78, 188, 0.08);
             }
 
             .nav-menu.active {
@@ -1247,7 +1249,7 @@
                 background-color: white;
                 padding: 20px;
                 border-radius: 10px;
-                box-shadow: 0 4px 15px rgba(13, 43, 85, 0.1);
+                box-shadow: 0 4px 15px rgba(15, 78, 188, 0.1);
             }
 
             .nav-links li a {
@@ -1304,8 +1306,8 @@
             }
 
             .tab-button.active {
-                border-left: 3px solid #00BCE8;
-                border-bottom: 1px solid #f0f6ff;
+                border-left: 3px solid #e97239;
+                border-bottom: 1px solid #ecf1fa;
             }
 
             .results-table th, .results-table td {
@@ -1320,7 +1322,7 @@
             .results-table tr {
                 display: block;
                 margin-bottom: 10px;
-                border: 1px solid #f0f6ff;
+                border: 1px solid #ecf1fa;
                 border-radius: 6px;
                 background-color: #ffffff;
             }
@@ -1393,7 +1395,7 @@
         }
 
         .share-btn {
-            background: linear-gradient(135deg, #004AAD, #00BCE8);
+            background: linear-gradient(135deg, #0f4ebc, #e97239);
             color: white;
             border: none;
             padding: 8px 12px;
@@ -1401,7 +1403,7 @@
             cursor: pointer;
             font-size: 16px;
             transition: var(--transition);
-            box-shadow: 0 2px 5px rgba(30, 136, 229, 0.3);
+            box-shadow: 0 2px 5px rgba(15, 78, 188, 0.3);
             display: inline-flex;
             align-items: center;
             justify-content: center;
@@ -1410,9 +1412,9 @@
         }
 
         .share-btn:hover {
-            background: linear-gradient(135deg, #1976d2, #0099cc);
+            background: linear-gradient(135deg, #0f4ebc, #e97239);
             transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(30, 136, 229, 0.4);
+            box-shadow: 0 4px 12px rgba(233, 114, 57, 0.35);
         }
 
         .share-btn:active {
@@ -1513,7 +1515,7 @@
         }
 
         .share-modal-header {
-            background: linear-gradient(135deg, #004AAD, #00BCE8);
+            background: linear-gradient(135deg, #0f4ebc, #e97239);
             color: white;
             padding: 20px;
             display: flex;
@@ -1656,7 +1658,7 @@
             /* Añadir indicador visual para récords en móvil */
             .obs-cell {
                 font-weight: bold;
-                color: #1976d2;
+                color: #0f4ebc;
             }
             
             /* Destacar filas con récord en móvil */
@@ -1719,7 +1721,7 @@
             font-weight: 600;
             margin: 0;
             font-style: italic;
-            color: #0D2B55;
+            color: #0f4ebc;
         }
         
         .quote-author {
@@ -1773,14 +1775,14 @@
             border-radius: 20px;
             padding: 40px 30px;
             text-align: center;
-            box-shadow: 0 10px 30px rgba(11, 16, 57, 0.1);
-            border: 2px solid #e3f2fd;
+            box-shadow: 0 10px 30px rgba(15, 78, 188, 0.1);
+            border: 2px solid #e5edf8;
             transition: all 0.3s ease;
         }
         
         .stat-card:hover {
             transform: translateY(-10px);
-            box-shadow: 0 20px 40px rgba(11, 16, 57, 0.15);
+            box-shadow: 0 20px 40px rgba(15, 78, 188, 0.15);
         }
 
         /* Layouts de botones - SEGUROS */
@@ -1801,20 +1803,20 @@
 
         /* Títulos de sección - SEGUROS */
         .section-subtitle {
-            color: #0D2B55;
+            color: #0f4ebc;
             margin: 0 0 10px 0;
             font-size: 1.8rem;
             font-weight: bold;
         }
         
         .info-title {
-            color: #0D2B55;
+            color: #0f4ebc;
             margin: 0 0 15px 0;
             font-size: 1.3rem;
         }
         
         .policy-title {
-            color: #0D2B55;
+            color: #0f4ebc;
             margin: 0 0 8px 0;
             font-size: 1.4rem;
             font-weight: bold;
@@ -1847,7 +1849,7 @@
             align-items: center;
             justify-content: center;
             text-align: center;
-            color: #0b1039;
+            color: #0f4ebc;
             padding: 0 50px;
             box-sizing: border-box;
         }
@@ -1898,7 +1900,7 @@
         }
         
         .event-stats-title {
-            color: #0D2B55;
+            color: #0f4ebc;
             font-size: 2.5rem;
             font-weight: bold;
             margin-bottom: 15px;
@@ -1916,7 +1918,7 @@
         }
         
         .event-goal-card {
-            background: linear-gradient(135deg, #0b1039, #00f0ff);
+            background: linear-gradient(135deg, #0f4ebc, #e97239);
             border-radius: 15px;
             padding: 30px;
             margin-top: 50px;
@@ -1941,11 +1943,11 @@
         .terms-section-bg {
             background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
             padding: 80px 0;
-            border-top: 3px solid #0b1039;
+            border-top: 3px solid #0f4ebc;
         }
         
         .terms-section-title {
-            color: #0D2B55;
+            color: #0f4ebc;
             margin-bottom: 40px;
             display: flex;
             align-items: center;
@@ -1958,13 +1960,13 @@
             max-width: 640px;
             margin: 0 auto 40px;
             padding-bottom: 40px;
-            border-bottom: 2px solid #e3f2fd;
+            border-bottom: 2px solid #e5edf8;
         }
         
         .sembrado-section-title {
             font-size: 2rem;
             margin-bottom: 22px;
-            color: #0b1039;
+            color: #0f4ebc;
         }
         
         a.document-download-btn {
@@ -1978,8 +1980,8 @@
             background: white;
             border-radius: 20px;
             padding: 40px;
-            box-shadow: 0 10px 30px rgba(13, 43, 85, 0.1);
-            border: 2px solid #e3f2fd;
+            box-shadow: 0 10px 30px rgba(15, 78, 188, 0.1);
+            border: 2px solid #e5edf8;
         }
         
         .terms-header-row {
@@ -1990,7 +1992,7 @@
         }
         
         .terms-icon-box {
-            background: linear-gradient(135deg, #0b1039, #00f0ff);
+            background: linear-gradient(135deg, #0f4ebc, #e97239);
             width: 80px;
             height: 80px;
             border-radius: 20px;
@@ -2030,8 +2032,8 @@
             background: white;
             border-radius: 15px;
             padding: 30px;
-            box-shadow: 0 8px 25px rgba(13, 43, 85, 0.08);
-            border: 1px solid #e3f2fd;
+            box-shadow: 0 8px 25px rgba(15, 78, 188, 0.08);
+            border: 1px solid #e5edf8;
         }
         
         .privacy-header-row {
@@ -2053,12 +2055,12 @@
         }
         
         .results-cta-card {
-            background: linear-gradient(135deg, #0b1039 0%, #00f0ff 100%);
+            background: linear-gradient(135deg, #0f4ebc 0%, #e97239 100%);
             border-radius: 20px;
             padding: 50px;
             text-align: center;
             color: white;
-            box-shadow: 0 15px 40px rgba(13, 43, 85, 0.4);
+            box-shadow: 0 15px 40px rgba(15, 78, 188, 0.4);
         }
         
         .results-cta-title {
@@ -2090,7 +2092,7 @@
         }
         
         .general-section-title {
-            color: #0D2B55;
+            color: #0f4ebc;
             margin-bottom: 30px;
             text-align: center;
             font-size: 1.8em;
@@ -2099,11 +2101,11 @@
         
         .results-section-bg {
             background: #f8f9fa;
-            border-top: 3px solid #0D2B55;
+            border-top: 3px solid #0f4ebc;
         }
         
         .results-main-title {
-            color: #0D2B55;
+            color: #0f4ebc;
         }
         
         .download-container-center {
@@ -2124,7 +2126,7 @@
         }
         
         .pdf-status-text {
-            color: #0D2B55;
+            color: #0f4ebc;
             font-weight: 500;
         }
         
@@ -2166,12 +2168,12 @@
         
         .athlete-name-cell {
             font-weight: 600;
-            color: #0D2B55;
+            color: #0f4ebc;
         }
         
         .total-points-cell {
             font-weight: bold;
-            color: #00BCE8;
+            color: #e97239;
             font-size: 1.1em;
         }
         
@@ -2189,7 +2191,7 @@
         
         .team-name-cell {
             font-weight: 600;
-            color: #0D2B55;
+            color: #0f4ebc;
         }
         
         .female-points-cell {
@@ -2223,7 +2225,7 @@
         .retry-button {
             margin-top: 15px;
             padding: 10px 20px;
-            background: #00BCE8;
+            background: #e97239;
             color: white;
             border: none;
             border-radius: 5px;
@@ -2267,7 +2269,7 @@
         }
         
         .status-loading-text {
-            color: #0D2B55;
+            color: #0f4ebc;
             font-weight: 500;
         }
         
@@ -2300,13 +2302,13 @@
         }
         
         .unavailable-doc-icon {
-            color: #0D2B55;
+            color: #0f4ebc;
             margin-bottom: 15px;
             font-size: 2rem;
         }
         
         .unavailable-doc-title {
-            color: #0D2B55;
+            color: #0f4ebc;
             margin: 0 0 10px 0;
         }
         
@@ -2323,7 +2325,7 @@
         }
         
         .privacy-unavailable-title {
-            color: #0D2B55;
+            color: #0f4ebc;
             margin: 0 0 10px 0;
         }
         
@@ -2338,14 +2340,14 @@
         .quotes-slider-background {
             background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
             padding: 30px 0;
-            border-top: 3px solid #00f0ff;
-            border-bottom: 3px solid #0b1039;
+            border-top: 3px solid #e97239;
+            border-bottom: 3px solid #0f4ebc;
             position: relative;
             overflow: hidden;
         }
         
         .main-download-btn {
-            background: linear-gradient(135deg, #0b1039, #00f0ff);
+            background: linear-gradient(135deg, #0f4ebc, #e97239);
             color: white;
             border: none;
             padding: 15px 40px;
@@ -2354,7 +2356,7 @@
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s ease;
-            box-shadow: 0 5px 20px rgba(13, 43, 85, 0.3);
+            box-shadow: 0 5px 20px rgba(15, 78, 188, 0.3);
             display: flex;
             align-items: center;
             gap: 10px;
@@ -2363,11 +2365,11 @@
         
         .main-download-btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 8px 30px rgba(11, 16, 57, 0.4);
+            box-shadow: 0 8px 30px rgba(15, 78, 188, 0.4);
         }
         
         .document-download-btn {
-            background: linear-gradient(135deg, #00f0ff, #00f0ff);
+            background: linear-gradient(135deg, #e97239, #e97239);
             color: white;
             border: none;
             padding: 12px 30px;
@@ -2382,7 +2384,7 @@
         }
         
         .document-download-btn:hover {
-            background: linear-gradient(135deg, #00f0ff, #0088c7);
+            background: linear-gradient(135deg, #e97239, #c55a28);
             transform: translateY(-1px);
         }
         
@@ -2677,7 +2679,7 @@
             <div class="text-center-container">
                 <h2 class="event-stats-title">
                     <svg width="40" height="40" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M3 3V21H21V19H5V3H3ZM19 17H17V10H19V17ZM15 17H13V7H15V17ZM11 17H9V13H11V17ZM7 17H5V15H7V17Z" fill="#0D2B55"/>
+                        <path d="M3 3V21H21V19H5V3H3ZM19 17H17V10H19V17ZM15 17H13V7H15V17ZM11 17H9V13H11V17ZM7 17H5V15H7V17Z" fill="#0f4ebc"/>
                     </svg>
                     Estadísticas del Evento
                 </h2>
@@ -2693,13 +2695,13 @@
                     <div class="sticker-icon">
                         <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <!-- Head -->
-                            <circle cx="12" cy="12" r="6" fill="#004AAD"/>
+                            <circle cx="12" cy="12" r="6" fill="#0f4ebc"/>
                             <!-- Swimming cap -->
-                            <path d="M6 12C6 8 8.5 5 12 5S18 8 18 12V15C18 16 17 17 16 17H8C7 17 6 16 6 15V12Z" fill="#00BCE8"/>
+                            <path d="M6 12C6 8 8.5 5 12 5S18 8 18 12V15C18 16 17 17 16 17H8C7 17 6 16 6 15V12Z" fill="#e97239"/>
                             <!-- Goggles -->
-                            <circle cx="9.5" cy="11.5" r="2" fill="#ffffff" stroke="#004AAD" stroke-width="1"/>
-                            <circle cx="14.5" cy="11.5" r="2" fill="#ffffff" stroke="#004AAD" stroke-width="1"/>
-                            <rect x="11.5" y="11" width="1" height="1" fill="#004AAD" rx="0.5"/>
+                            <circle cx="9.5" cy="11.5" r="2" fill="#ffffff" stroke="#0f4ebc" stroke-width="1"/>
+                            <circle cx="14.5" cy="11.5" r="2" fill="#ffffff" stroke="#0f4ebc" stroke-width="1"/>
+                            <rect x="11.5" y="11" width="1" height="1" fill="#0f4ebc" rx="0.5"/>
                         </svg>
                     </div>
                     <h3 class="stat-number" id="swimmerCount">19</h3>
@@ -2712,17 +2714,17 @@
                     <div class="sticker-icon">
                         <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <!-- House roof -->
-                            <path d="M3 12L12 3L21 12" stroke="#00BCE8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M3 12L12 3L21 12" stroke="#e97239" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
                             <!-- House body -->
-                            <path d="M5 12V19C5 19.5523 5.44772 20 6 20H18C18.5523 20 19 19.5523 19 19V12" stroke="#004AAD" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M5 12V19C5 19.5523 5.44772 20 6 20H18C18.5523 20 19 19.5523 19 19V12" stroke="#0f4ebc" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                             <!-- Door -->
-                            <rect x="10" y="15" width="4" height="5" stroke="#00BCE8" stroke-width="1.8" rx="0.5"/>
-                            <circle cx="12.8" cy="17.5" r="0.3" fill="#004AAD"/>
+                            <rect x="10" y="15" width="4" height="5" stroke="#e97239" stroke-width="1.8" rx="0.5"/>
+                            <circle cx="12.8" cy="17.5" r="0.3" fill="#0f4ebc"/>
                             <!-- Windows -->
-                            <rect x="7" y="13" width="2.5" height="2.5" stroke="#004AAD" stroke-width="1.5" rx="0.2"/>
-                            <rect x="14.5" y="13" width="2.5" height="2.5" stroke="#004AAD" stroke-width="1.5" rx="0.2"/>
+                            <rect x="7" y="13" width="2.5" height="2.5" stroke="#0f4ebc" stroke-width="1.5" rx="0.2"/>
+                            <rect x="14.5" y="13" width="2.5" height="2.5" stroke="#0f4ebc" stroke-width="1.5" rx="0.2"/>
                             <!-- Chimney -->
-                            <rect x="16" y="7" width="1.5" height="4" stroke="#004AAD" stroke-width="1.5"/>
+                            <rect x="16" y="7" width="1.5" height="4" stroke="#0f4ebc" stroke-width="1.5"/>
                         </svg>
                     </div>
                     <h3 class="stat-number" id="clubCount">4</h3>
@@ -2751,21 +2753,21 @@
             <div class="cards-grid">
                 <div class="info-card">
                     <div class="sticker-icon">
-                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2Z" stroke="#00BCE8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M12 6V12L16 14" stroke="#00BCE8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2Z" stroke="#e97239" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M12 6V12L16 14" stroke="#e97239" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
                     </div>
                     <h3>Categorías</h3>
                     <p>Competencias para categorías desde infantil B hasta Máster </p>
                 </div>
                 <div class="info-card">
                     <div class="sticker-icon">
-                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="3" y="4" width="18" height="18" rx="2" ry="2" stroke="#004AAD" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><line x1="16" y1="2" x2="16" y2="6" stroke="#004AAD" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><line x1="8" y1="2" x2="8" y2="6" stroke="#004AAD" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><line x1="3" y1="10" x2="21" y2="10" stroke="#004AAD" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="3" y="4" width="18" height="18" rx="2" ry="2" stroke="#0f4ebc" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><line x1="16" y1="2" x2="16" y2="6" stroke="#0f4ebc" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><line x1="8" y1="2" x2="8" y2="6" stroke="#0f4ebc" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><line x1="3" y1="10" x2="21" y2="10" stroke="#0f4ebc" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
                     </div>
                     <h3>Fecha</h3>
                     <p>sábado 18 de abril de 2026 en Piscina de la Villa Olímpica en Montería - Córdoba</p>
                 </div>
                 <div class="info-card">
                     <div class="sticker-icon">
-                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 8V12L14.5 14.5" stroke="#00BCE8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M20.9998 12C20.9998 16.9706 16.9704 21 11.9998 21C7.02926 21 2.99982 16.9706 2.99982 12C2.99982 7.02944 7.02926 3 11.9998 3C13.8837 3 15.6265 3.58628 17.0615 4.61538" stroke="#00BCE8" stroke-width="2" stroke-linecap="round"/><path d="M18 5.5L21 2.5M21 2.5L18 2.5M21 2.5V5.5" stroke="#00BCE8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 8V12L14.5 14.5" stroke="#e97239" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M20.9998 12C20.9998 16.9706 16.9704 21 11.9998 21C7.02926 21 2.99982 16.9706 2.99982 12C2.99982 7.02944 7.02926 3 11.9998 3C13.8837 3 15.6265 3.58628 17.0615 4.61538" stroke="#e97239" stroke-width="2" stroke-linecap="round"/><path d="M18 5.5L21 2.5M21 2.5L18 2.5M21 2.5V5.5" stroke="#e97239" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
                     </div>
                     <h3>Premios</h3>
                     <p>Medallas de participación, premiación por categoría y sexo por acumulación de puntos, trofeos a los tres primeros equipos</p>
@@ -2786,7 +2788,7 @@
             </div>
             <h2 class="section-title terms-section-title">
                 <svg width="35" height="35" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M14 2H6C4.9 2 4 2.9 4 4V20C4 21.1 4.9 22 6 22H18C19.1 22 20 21.1 20 20V8L14 2ZM18 20H6V4H13V9H18V20ZM8 12V14H16V12H8ZM8 16V18H13V16H8Z" fill="#0D2B55"/>
+                    <path d="M14 2H6C4.9 2 4 2.9 4 4V20C4 21.1 4.9 22 6 22H18C19.1 22 20 21.1 20 20V8L14 2ZM18 20H6V4H13V9H18V20ZM8 12V14H16V12H8ZM8 16V18H13V16H8Z" fill="#0f4ebc"/>
                 </svg>
                 Documentos de la Convocatoria
             </h2>
@@ -7945,7 +7947,7 @@ Ver resultados completos: https://vchampionship.netlify.app`;
                 left: 50%;
                 transform: translate(-50%, -50%);
                 background: white;
-                border: 2px solid #0D2B55;
+                border: 2px solid #0f4ebc;
                 border-radius: var(--border-radius);
                 padding: 30px;
                 box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
