@@ -191,25 +191,6 @@
             font-weight: 600;
         }
 
-        .hero-content .club-name:not(.club-name-badge) {
-            color: #e97239;
-        }
-
-        .hero-clubs {
-            display: flex;
-            flex-wrap: wrap;
-            align-items: center;
-            justify-content: center;
-            gap: 0.35em;
-        }
-
-        .hero-content .club-organizer-index {
-            display: inline-block;
-            font-weight: 700;
-            color: #e97239;
-            margin-right: 0.2em;
-        }
-
         .club-name-badge {
             background: #ffffff;
             color: #0f4ebc;
@@ -219,15 +200,23 @@
             box-shadow: 0 2px 14px rgba(0, 0, 0, 0.18);
         }
 
-        .club-name-badge-blue,
-        .club-name-link.club-name-badge-blue,
-        .hero-content .club-name-badge,
-        .hero-content .club-name-badge.club-name-link {
+        .club-name-badge-blue {
             color: #0f4ebc;
         }
 
-        .club-name-badge-orange,
-        .club-name-link.club-name-badge-orange {
+        .club-name-badge-orange {
+            color: #e97239;
+        }
+
+        a.club-name-badge-blue,
+        a.club-name-badge-blue:link,
+        a.club-name-badge-blue:visited {
+            color: #0f4ebc;
+        }
+
+        a.club-name-badge-orange,
+        a.club-name-badge-orange:link,
+        a.club-name-badge-orange:visited {
             color: #e97239;
         }
 
@@ -245,9 +234,7 @@
         }
 
         .club-name-link.club-name-badge-blue:hover,
-        .club-name-link.club-name-badge-blue:focus,
-        .club-name-link.club-name-badge:not(.club-name-badge-orange):hover,
-        .club-name-link.club-name-badge:not(.club-name-badge-orange):focus {
+        .club-name-link.club-name-badge-blue:focus {
             background: #f0f4ff;
             color: #08336e;
         }
@@ -265,6 +252,21 @@
 
         .cta-section .club-name-link:focus-visible {
             outline-color: #e97239;
+        }
+
+        .hero-clubs {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: center;
+            gap: 0.35em;
+        }
+
+        .hero-content .club-organizer-index {
+            display: inline-block;
+            font-weight: 700;
+            color: #e97239;
+            margin-right: 0.2em;
         }
 
         .hero-content .club-separator {
@@ -3148,7 +3150,7 @@
             <div class="hero-content">
                 <h1><span class="club-organizer-index">I</span> FESTI-TORNEO REGIONAL DEL SINÚ</h1>
                 <p class="subtitle hero-date">5 de julio de 2026</p>
-                <p class="subtitle hero-clubs"><a href="https://www.instagram.com/delfinessc/" target="_blank" rel="noopener noreferrer" class="club-name club-name-badge club-name-badge-blue club-name-link">Club Delfines Córdoba y Sport</a><span class="club-separator">y</span><a href="https://www.instagram.com/club_avatarmtr/" target="_blank" rel="noopener noreferrer" class="club-name club-name-badge club-name-badge-orange club-name-link">Club Deportivo Ávatar</a></p>
+                <p class="subtitle hero-clubs"><a href="https://www.instagram.com/delfinessc/" target="_blank" rel="noopener noreferrer" class="club-name-badge club-name-badge-blue club-name-link">Club Delfines Córdoba y Sport</a><span class="club-separator">y</span><a href="https://www.instagram.com/club_avatarmtr/" target="_blank" rel="noopener noreferrer" class="club-name-badge club-name-badge-orange club-name-link">Club Deportivo Ávatar</a></p>
                 <p class="subtitle hero-location">Montería, Córdoba</p>
             </div>
         </div>
@@ -3815,7 +3817,7 @@
     <section class="cta-section">
         <div class="container">
             <h2>¿Listo para competir?</h2>
-            <p>Únete a los <strong>19</strong> nadadores en esta emocionante competencia, con la participación de <strong>4</strong> clubes de Córdoba, en el <strong>FESTI-TORNEO REGIONAL DEL SINÚ</strong> organizado por <a href="https://www.instagram.com/delfinessc/" target="_blank" rel="noopener noreferrer" class="club-name club-name-badge club-name-badge-blue club-name-link">Club Delfines Córdoba y Sport</a> y <a href="https://www.instagram.com/club_avatarmtr/" target="_blank" rel="noopener noreferrer" class="club-name club-name-badge club-name-badge-orange club-name-link">Club Deportivo Ávatar</a>, con el apoyo tecnológico de <a href="https://top4race.netlify.app/" target="_blank" rel="noopener">Top4Race</a> del <a href="https://top4race.netlify.app/" target="_blank" rel="noopener">Club Deportivo AquaTEN</a>.</p>
+            <p>Únete a los <strong>19</strong> nadadores en esta emocionante competencia, con la participación de <strong>4</strong> clubes de Córdoba, en el <strong>FESTI-TORNEO REGIONAL DEL SINÚ</strong> organizado por <a href="https://www.instagram.com/delfinessc/" target="_blank" rel="noopener noreferrer" class="club-name-badge club-name-badge-blue club-name-link">Club Delfines Córdoba y Sport</a> y <a href="https://www.instagram.com/club_avatarmtr/" target="_blank" rel="noopener noreferrer" class="club-name-badge club-name-badge-orange club-name-link">Club Deportivo Ávatar</a>, con el apoyo tecnológico de <a href="https://top4race.netlify.app/" target="_blank" rel="noopener">Top4Race</a> del <a href="https://top4race.netlify.app/" target="_blank" rel="noopener">Club Deportivo AquaTEN</a>.</p>
             <a href="#" class="cta-button">Más Información</a>
         </div>
     </section>
@@ -3958,7 +3960,7 @@
     <footer class="footer">
         <div class="container">
             <p>&copy; 2026 <a class="brand-link-vibrant" href="https://top4race.netlify.app/" target="_blank" rel="noopener noreferrer">Top4Race</a> · <a class="brand-link-vibrant" href="https://top4race.netlify.app/" target="_blank" rel="noopener noreferrer">Club Deportivo AquaTEN</a> — gestión de páginas deportivas, chips y mesas técnicas de natación en Montería</p>
-            <p class="footer-event-line">FESTI-TORNEO REGIONAL DEL SINÚ — <a href="https://www.instagram.com/delfinessc/" target="_blank" rel="noopener noreferrer" class="club-name club-name-badge club-name-badge-blue club-name-link">Club Delfines Córdoba y Sport</a> y <a href="https://www.instagram.com/club_avatarmtr/" target="_blank" rel="noopener noreferrer" class="club-name club-name-badge club-name-badge-orange club-name-link">Club Deportivo Ávatar</a>. Todos los derechos reservados.</p>
+            <p class="footer-event-line">FESTI-TORNEO REGIONAL DEL SINÚ — <a href="https://www.instagram.com/delfinessc/" target="_blank" rel="noopener noreferrer" class="club-name-badge club-name-badge-blue club-name-link">Club Delfines Córdoba y Sport</a> y <a href="https://www.instagram.com/club_avatarmtr/" target="_blank" rel="noopener noreferrer" class="club-name-badge club-name-badge-orange club-name-link">Club Deportivo Ávatar</a>. Todos los derechos reservados.</p>
             <p class="footer-credits">Visualización de resultados, cronometraje y mesa técnica con <a class="brand-link-vibrant" href="https://top4race.netlify.app/" target="_blank" rel="noopener noreferrer">Top4Race</a> de <a class="brand-link-vibrant" href="https://top4race.netlify.app/" target="_blank" rel="noopener noreferrer">AquaTEN</a>. · <a class="inline-link" href="https://top4race.netlify.app/" target="_blank" rel="noopener noreferrer">Conoce el sistema para tu evento en Montería</a>.</p>
         </div>
     </footer>
