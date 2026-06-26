@@ -157,9 +157,9 @@
             --secondary-color: #e97239;
             --accent-hover: #c55a28;
             --btn-bg: #e97239;
-            --btn-bg-hover: #d9642f;
-            --btn-text: #0f4ebc;
-            --btn-text-hover: #08336e;
+            --btn-bg-hover: #0f4ebc;
+            --btn-text: #ffffff;
+            --btn-text-hover: #ffffff;
             --surface-dark: #2d3748;
             --surface-muted: #f8f9fa;
             --background-light: #f8f9fa;
@@ -624,6 +624,10 @@
             margin-bottom: 20px;
             font-weight: 700;
             letter-spacing: -1px;
+        }
+
+        .hero-content h1 .club-organizer-index {
+            color: #ffffff;
         }
 
         .hero-content .subtitle {
@@ -2886,7 +2890,7 @@
             }
         }
 
-        /* Tema botones: fondo naranja, texto azul */
+        /* Tema botones: fondo naranja, texto blanco */
         .cta-button,
         .main-download-btn,
         .download-btn,
@@ -2907,6 +2911,12 @@
             color: var(--btn-text);
             border-color: var(--btn-bg);
             font-weight: 600;
+            transition:
+                background-color 0.3s ease,
+                color 0.3s ease,
+                border-color 0.3s ease,
+                transform 0.25s ease,
+                box-shadow 0.3s ease;
         }
 
         .cta-button:hover,
@@ -2928,6 +2938,16 @@
             background: var(--btn-bg-hover);
             color: var(--btn-text-hover);
             border-color: var(--btn-bg-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 22px rgba(15, 78, 188, 0.35);
+        }
+
+        .tab-button {
+            transition:
+                background-color 0.3s ease,
+                color 0.3s ease,
+                border-color 0.3s ease,
+                transform 0.25s ease;
         }
 
         .tab-button:hover,
@@ -2935,6 +2955,17 @@
             background: var(--btn-bg);
             color: var(--btn-text);
             border-bottom-color: var(--btn-bg);
+        }
+
+        .tab-button:hover {
+            transform: translateY(-1px);
+        }
+
+        .tab-button.active:hover {
+            background: var(--btn-bg-hover);
+            color: var(--btn-text-hover);
+            border-bottom-color: var(--btn-bg-hover);
+            box-shadow: 0 4px 14px rgba(15, 78, 188, 0.25);
         }
 
         .tab-button.active {
@@ -3016,7 +3047,7 @@
             <div class="hero-content">
                 <h1><span class="club-organizer-index">I</span> FESTI-TORNEO REGIONAL DEL SINÚ</h1>
                 <p class="subtitle hero-date">5 de julio de 2026</p>
-                <p class="subtitle hero-clubs"><span class="club-name club-name-badge"><span class="club-organizer-index">I</span> Club Delfines Córdoba, Sport</span><span class="club-separator">y</span><span class="club-name club-name-badge club-name-badge-orange">Club Deportivo Ávatar</span></p>
+                <p class="subtitle hero-clubs"><span class="club-name club-name-badge">Club Delfines Córdoba, Sport</span><span class="club-separator">y</span><span class="club-name club-name-badge club-name-badge-orange">Club Deportivo Ávatar</span></p>
                 <p class="subtitle hero-location">Montería, Córdoba</p>
             </div>
         </div>
