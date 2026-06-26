@@ -227,6 +227,33 @@
             color: #0f4ebc;
         }
 
+        .hero-content .club-name-link {
+            text-decoration: none;
+            display: inline-block;
+            cursor: pointer;
+            transition: transform 0.25s ease, box-shadow 0.25s ease, background-color 0.25s ease;
+        }
+
+        .hero-content .club-name-link:hover,
+        .hero-content .club-name-link:focus {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 18px rgba(233, 114, 57, 0.45);
+            background: #d9642f;
+            color: #08336e;
+        }
+
+        .hero-content .club-name-link.club-name-badge:not(.club-name-badge-orange):hover,
+        .hero-content .club-name-link.club-name-badge:not(.club-name-badge-orange):focus {
+            background: #08336e;
+            color: #e97239;
+            box-shadow: 0 6px 18px rgba(15, 78, 188, 0.45);
+        }
+
+        .hero-content .club-name-link:focus-visible {
+            outline: 2px solid #ffffff;
+            outline-offset: 2px;
+        }
+
         .hero-content .club-separator {
             color: #e9ecef;
             font-weight: 300;
@@ -266,7 +293,8 @@
         }
 
         .footer .club-name {
-            color: #8cb4ff;
+            color: #e97239;
+            font-weight: 600;
         }
 
         .footer .inline-link {
@@ -2896,9 +2924,6 @@
         .download-btn,
         a.document-download-btn,
         button.document-download-btn,
-        .contact-form .btn.primary,
-        .contact-form .btn.ghost,
-        .contact-whatsapp .btn.ghost,
         .retry-button,
         .share-btn,
         .diploma-btn.enabled,
@@ -2924,9 +2949,6 @@
         .download-btn:hover,
         a.document-download-btn:hover,
         button.document-download-btn:hover,
-        .contact-form .btn.primary:hover,
-        .contact-form .btn.ghost:hover,
-        .contact-whatsapp .btn.ghost:hover,
         .retry-button:hover,
         .share-btn:hover,
         .diploma-btn.enabled:hover,
@@ -2984,6 +3006,31 @@
             background: #e9ecef;
             color: #999;
             transform: none;
+        }
+
+        /* Contacto: botones neutros (sin tema naranja global) */
+        .contact-form .btn.primary,
+        .contact-form .btn.ghost,
+        .contact-whatsapp .btn.ghost {
+            background: #ffffff;
+            color: #555;
+            border: 1px solid #e8eef8;
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+            transition: transform var(--transition), box-shadow var(--transition), border-color var(--transition), background var(--transition), color 0.2s ease;
+        }
+
+        .contact-form .btn.primary {
+            border: 2px solid #dee2e6;
+        }
+
+        .contact-form .btn.primary:hover,
+        .contact-form .btn.ghost:hover,
+        .contact-whatsapp .btn.ghost:hover {
+            background: #f8f9fa;
+            color: #333;
+            border-color: #ced4da;
+            transform: translateY(-1px);
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12);
         }
     </style>
 </head>
@@ -3047,7 +3094,7 @@
             <div class="hero-content">
                 <h1><span class="club-organizer-index">I</span> FESTI-TORNEO REGIONAL DEL SINÚ</h1>
                 <p class="subtitle hero-date">5 de julio de 2026</p>
-                <p class="subtitle hero-clubs"><span class="club-name club-name-badge">Club Delfines Córdoba, Sport</span><span class="club-separator">y</span><span class="club-name club-name-badge club-name-badge-orange">Club Deportivo Ávatar</span></p>
+                <p class="subtitle hero-clubs"><a href="https://www.instagram.com/delfinessc/" target="_blank" rel="noopener noreferrer" class="club-name club-name-badge club-name-link">Club Delfines Córdoba, Sport</a><span class="club-separator">y</span><a href="https://www.instagram.com/club_avatarmtr/" target="_blank" rel="noopener noreferrer" class="club-name club-name-badge club-name-badge-orange club-name-link">Club Deportivo Ávatar</a></p>
                 <p class="subtitle hero-location">Montería, Córdoba</p>
             </div>
         </div>
