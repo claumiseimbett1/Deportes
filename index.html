@@ -193,30 +193,23 @@
 
         .club-name-badge {
             background: #ffffff;
-            color: #0f4ebc;
             font-weight: 700;
             padding: 0.12em 0.55em;
             border-radius: 8px;
             box-shadow: 0 2px 14px rgba(0, 0, 0, 0.18);
         }
 
-        .club-name-badge-blue {
+        .club-name-badge-blue,
+        a.club-name-badge.club-name-badge-blue,
+        a.club-name-badge.club-name-badge-blue:link,
+        a.club-name-badge.club-name-badge-blue:visited {
             color: #0f4ebc;
         }
 
-        .club-name-badge-orange {
-            color: #e97239;
-        }
-
-        a.club-name-badge-blue,
-        a.club-name-badge-blue:link,
-        a.club-name-badge-blue:visited {
-            color: #0f4ebc;
-        }
-
-        a.club-name-badge-orange,
-        a.club-name-badge-orange:link,
-        a.club-name-badge-orange:visited {
+        .club-name-badge-orange,
+        a.club-name-badge.club-name-badge-orange,
+        a.club-name-badge.club-name-badge-orange:link,
+        a.club-name-badge.club-name-badge-orange:visited {
             color: #e97239;
         }
 
@@ -1384,6 +1377,10 @@
             margin-left: auto;
             margin-right: auto;
             line-height: 1.5;
+        }
+
+        .footer-credits-extra {
+            margin-top: 0.65rem;
         }
 
         /* Tabla de equipos responsive - usar formato estándar */
@@ -3961,7 +3958,8 @@
         <div class="container">
             <p>&copy; 2026 <a class="brand-link-vibrant" href="https://top4race.netlify.app/" target="_blank" rel="noopener noreferrer">Top4Race</a> · <a class="brand-link-vibrant" href="https://top4race.netlify.app/" target="_blank" rel="noopener noreferrer">Club Deportivo AquaTEN</a> — gestión de páginas deportivas, chips y mesas técnicas de natación en Montería</p>
             <p class="footer-event-line">FESTI-TORNEO REGIONAL DEL SINÚ — <a href="https://www.instagram.com/delfinessc/" target="_blank" rel="noopener noreferrer" class="club-name-badge club-name-badge-blue club-name-link">Club Delfines Córdoba y Sport</a> y <a href="https://www.instagram.com/club_avatarmtr/" target="_blank" rel="noopener noreferrer" class="club-name-badge club-name-badge-orange club-name-link">Club Deportivo Ávatar</a>. Todos los derechos reservados.</p>
-            <p class="footer-credits">Visualización de resultados, cronometraje y mesa técnica con <a class="brand-link-vibrant" href="https://top4race.netlify.app/" target="_blank" rel="noopener noreferrer">Top4Race</a> de <a class="brand-link-vibrant" href="https://top4race.netlify.app/" target="_blank" rel="noopener noreferrer">AquaTEN</a>. · <a class="inline-link" href="https://top4race.netlify.app/" target="_blank" rel="noopener noreferrer">Conoce el sistema para tu evento en Montería</a>.</p>
+            <p class="footer-credits">Visualización de resultados, cronometraje y mesa técnica con <a class="brand-link-vibrant" href="https://top4race.netlify.app/" target="_blank" rel="noopener noreferrer">Top4Race</a> de <a class="brand-link-vibrant" href="https://top4race.netlify.app/" target="_blank" rel="noopener noreferrer">AquaTEN</a>.</p>
+            <p class="footer-credits footer-credits-extra"><a class="inline-link" href="https://top4race.netlify.app/" target="_blank" rel="noopener noreferrer">Conoce el sistema para tu evento en Montería</a>.</p>
         </div>
     </footer>
 
