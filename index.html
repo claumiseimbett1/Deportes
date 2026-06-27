@@ -3866,34 +3866,45 @@
                 .replace(/^-|-$/g, '');
         }
 
+        /** Convención del Sheet: -F- = Femenino, -M- = Masculino (antes de MENORES/TORNEO/FESTIVAL) */
+        function parsePruebaGender(sheetName) {
+            const upper = sheetName.toUpperCase();
+            if (/-F-(?:MENORES-)?(?:TORNEO|FESTIVAL)$/.test(upper)) {
+                return { code: 'F', label: 'Femenino', column: 'Nadadora', emoji: '🏊‍♀️' };
+            }
+            if (/-M-(?:MENORES-)?(?:TORNEO|FESTIVAL)$/.test(upper)) {
+                return { code: 'M', label: 'Masculino', column: 'Nadador', emoji: '🏊‍♂️' };
+            }
+            return { code: '', label: '', column: 'Nadador', emoji: '🏊‍♂️' };
+        }
+
         function parsePruebaSheetName(sheetName) {
             let name = sheetName;
             const type = name.endsWith('-TORNEO') ? 'torneo' : name.endsWith('-FESTIVAL') ? 'festival' : '';
             name = name.replace(/-(TORNEO|FESTIVAL)$/, '');
             const menores = name.endsWith('-MENORES');
             if (menores) name = name.replace(/-MENORES$/, '');
-            const genderCode = name.endsWith('-F') ? 'F' : name.endsWith('-M') ? 'M' : '';
+            const { code: genderCode, label: genderLabel } = parsePruebaGender(sheetName);
             if (genderCode) name = name.replace(/-(F|M)$/, '');
             const distMatch = name.match(/^(\d+)M(?:-)?(.*)$/i);
             const distance = distMatch ? distMatch[1] : '';
             const strokeKey = distMatch ? distMatch[2].replace(/-/g, ' ').trim().toUpperCase() : name;
             const stroke = STROKE_LABELS[strokeKey] || strokeKey;
-            return { distance, stroke, genderCode, menores, type };
+            return { distance, stroke, genderCode, genderLabel, menores, type };
         }
 
         function formatPruebaLabel(sheetName) {
-            const { distance, stroke, genderCode, menores, type } = parsePruebaSheetName(sheetName);
-            const gender = genderCode === 'F' ? 'Femenino' : 'Masculino';
+            const { distance, stroke, genderLabel, menores, type } = parsePruebaSheetName(sheetName);
             const typeLabel = type === 'torneo' ? 'Torneo Regional' : 'Festival';
             const menoresLabel = menores ? ' Menores' : '';
-            return `${distance} m ${stroke}${menoresLabel} ${gender} — ${typeLabel}`;
+            return `${distance} m ${stroke}${menoresLabel} ${genderLabel} — ${typeLabel}`;
         }
 
         function formatPruebaTabLabel(sheetName) {
-            const { distance, stroke, genderCode, menores, type } = parsePruebaSheetName(sheetName);
+            const { distance, stroke, genderLabel, menores, type } = parsePruebaSheetName(sheetName);
             const typeShort = type === 'torneo' ? 'Torneo' : 'Festival';
             const menoresLabel = menores ? ' Men.' : '';
-            return `${distance}m ${stroke}${menoresLabel} ${genderCode} · ${typeShort}`;
+            return `${distance}m ${stroke}${menoresLabel} ${genderLabel} · ${typeShort}`;
         }
 
         function isPruebaSheetTitle(title) {
@@ -3908,12 +3919,12 @@
             const config = {};
             PRUEBAS_SHEET_TABS.forEach(sheetName => {
                 const key = slugifySheetTab(sheetName);
-                const isFemale = sheetName.includes('-F-') || sheetName.endsWith('-F-TORNEO') || sheetName.endsWith('-F-FESTIVAL');
+                const { column: genderColumn } = parsePruebaGender(sheetName);
                 config[key] = {
                     keywords: [],
                     alternativeNames: [sheetName],
                     tableId: `resultsTable-${key}`,
-                    genderColumn: isFemale ? 'Nadadora' : 'Nadador'
+                    genderColumn
                 };
             });
             return config;
@@ -3952,11 +3963,10 @@
 
             PRUEBAS_SHEET_TABS.forEach((sheetName, index) => {
                 const key = slugifySheetTab(sheetName);
-                const { type, genderCode } = parsePruebaSheetName(sheetName);
+                const { type } = parsePruebaSheetName(sheetName);
+                const { column: athleteCol, emoji } = parsePruebaGender(sheetName);
                 const tabLabel = formatPruebaTabLabel(sheetName);
                 const fullLabel = formatPruebaLabel(sheetName);
-                const athleteCol = genderCode === 'F' ? 'Nadadora' : 'Nadador';
-                const emoji = genderCode === 'F' ? '🏊‍♀️' : '🏊‍♂️';
 
                 const btn = document.createElement('button');
                 btn.type = 'button';
@@ -4774,6 +4784,28 @@
             console.log('⚠️ updateResultsTable llamada pero no debería usarse');
         }
         
+        const CATEGORY_HEADER_PATTERN = /^(?:categor[ií]a\s+)?(INFANTIL|JUVENIL|MAYORES|MASTER|ESPECIAL|MENORES)\b/i;
+
+        function getCategoryHeaderFromRow(row) {
+            if (!row || !row.length) return null;
+
+            const cells = row.map(cell => (cell != null ? cell.toString().trim() : ''));
+            const filledCells = cells.filter(Boolean);
+            if (!filledCells.length) return null;
+
+            const headerText = (filledCells.length <= 2 ? filledCells.join(' ') : cells[0]).replace(/\s+/g, ' ').trim();
+            if (!CATEGORY_HEADER_PATTERN.test(headerText)) return null;
+
+            // Evitar confundir filas de datos con encabezados de categoría
+            if (row.length >= 6 && filledCells.length >= 4) return null;
+
+            return headerText;
+        }
+
+        function isCategoryHeaderRow(row) {
+            return getCategoryHeaderFromRow(row) !== null;
+        }
+
         // Base class for table renderers - Optimized approach
         class TableRenderer {
             constructor(table, config = {}) {
@@ -4798,7 +4830,7 @@
                     if (!row || row.length === 0) continue;
                     
                     if (this.isCategoryRow(row)) {
-                        currentCategory = row[0].toString().trim();
+                        currentCategory = getCategoryHeaderFromRow(row);
                         htmlContent += this.renderCategoryRow(currentCategory);
                     } else if (this.isDataRow(row)) {
                         htmlContent += this.renderDataRow(row, i);
@@ -4809,8 +4841,7 @@
             }
             
             isCategoryRow(row) {
-                return (row.length === 1 || (row[0] && !row[1])) && 
-                       row[0].toString().trim().match(/^(INFANTIL|JUVENIL|MAYORES|MASTER)/i);
+                return isCategoryHeaderRow(row);
             }
             
             isDataRow(row) {
@@ -5083,17 +5114,13 @@
                 const row = data[i];
                 if (!row || row.length === 0) continue;
                 
-                // Si es una fila con solo categoría (similar a updateTableContent)
-                if (row.length === 1 || (row[0] && !row[1])) {
-                    const categoryText = row[0].toString().trim();
-                    // Verificar que sea una categoría válida
-                    if (categoryText.match(/^(INFANTIL|JUVENIL|MAYORES|MASTER)/i)) {
-                        currentCategory = categoryText;
-                        htmlContent += `
-                            <tr class="category-header">
-                                <td colspan="11">${currentCategory}</td>
-                            </tr>`;
-                    }
+                const categoryHeader = getCategoryHeaderFromRow(row);
+                if (categoryHeader) {
+                    currentCategory = categoryHeader;
+                    htmlContent += `
+                        <tr class="category-header">
+                            <td colspan="11">${currentCategory}</td>
+                        </tr>`;
                 } else if (row.length >= 6) {
                     // Es un resultado - Esperar al menos 6 columnas: LUGAR, ATLETA, EQUIPO, EDAD, CATEGORIA, PUNTOS TOTALES
                     const [lugar, atleta, equipo, edad, categoria, puntosTotales, puntos200m, puntos50m, puntos100m, certificado] = row;
