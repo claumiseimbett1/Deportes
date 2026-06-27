@@ -7572,7 +7572,8 @@ Ver resultados completos: https://festitorneosinu.netlify.app`;
                 pdf.setTextColor(0, 0, 0);
 
                 const teamNameY = layout.imgY + layout.imgHeight * 0.48;
-                const tableRowY = layout.imgY + layout.imgHeight * 0.58;
+                const teamDataOffsetY = 25; // posición y puntaje ~2.5 cm bajo la línea base
+                const tableRowY = layout.imgY + layout.imgHeight * 0.58 + teamDataOffsetY;
 
                 pdf.setFontSize(28);
                 pdf.text(nombreEquipo || 'EQUIPO', layout.pageWidth / 2, teamNameY, { align: 'center' });
