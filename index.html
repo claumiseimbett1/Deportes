@@ -6467,116 +6467,196 @@ Ver resultados completos: https://festitorneosinu.netlify.app`;
 
 
         // Diploma download functionality basado en plantilla PNG
+        function normalizeNameForMatch(name) {
+            return (name ?? '').toString().trim().toLowerCase().replace(/\s+/g, ' ');
+        }
+
+        function namesMatch(a, b) {
+            const na = normalizeNameForMatch(a);
+            const nb = normalizeNameForMatch(b);
+            if (!na || !nb) return false;
+            return na === nb || na.includes(nb) || nb.includes(na);
+        }
+
+        function formatDiplomaPosition(posRaw) {
+            const cleaned = (posRaw ?? '').toString().replace(/[🥇🥈🥉]/g, '').replace(/\s+/g, ' ').trim();
+            if (!cleaned || cleaned === '-') return '-';
+            if (cleaned.includes('°')) return cleaned;
+            const digits = cleaned.replace(/[^\d]/g, '');
+            return digits ? `${digits}°` : cleaned;
+        }
+
+        /** Hasta 4 pruebas nadadas por participante (para diploma de participación) */
+        function getParticipantPruebaResults(participantName, participantTeam) {
+            const results = [];
+            const maxPruebas = 4;
+
+            try {
+                document.querySelectorAll('#pruebasTabsContent .tab-content').forEach(panel => {
+                    if (results.length >= maxPruebas) return;
+                    const sheetName = panel.dataset.sheetName;
+                    if (!sheetName) return;
+
+                    const pruebaLabel = formatPruebaLabel(sheetName);
+                    const table = panel.querySelector('.results-table');
+                    if (!table) return;
+
+                    let currentCategory = '';
+                    table.querySelectorAll('tbody tr').forEach(row => {
+                        if (results.length >= maxPruebas) return;
+                        if (row.classList.contains('loading-row') || row.querySelector('.no-data-cell')) return;
+
+                        if (row.classList.contains('category-header')) {
+                            currentCategory = row.querySelector('.category-header-text')?.textContent?.trim() ||
+                                row.textContent.trim();
+                            return;
+                        }
+
+                        const cells = row.querySelectorAll('td');
+                        if (cells.length < 6) return;
+
+                        const athleteName = cells[1]?.textContent?.trim() || '';
+                        const teamName = cells[2]?.textContent?.trim() || '';
+                        const categoriaCell = cells[4]?.textContent?.trim() || '';
+                        const tiempo = cells[5]?.textContent?.trim() || '';
+                        const posRaw = cells[0]?.textContent?.trim() || '';
+
+                        if (!namesMatch(athleteName, participantName)) return;
+                        if (participantTeam && teamName && !namesMatch(teamName, participantTeam)) return;
+                        if (!tiempo || tiempo === '-' || tiempo === 'N/A') return;
+
+                        results.push({
+                            prueba: pruebaLabel,
+                            posicion: formatDiplomaPosition(posRaw),
+                            tiempo,
+                            categoria: categoriaCell || currentCategory || '-'
+                        });
+                    });
+                });
+            } catch (error) {
+                console.warn('Error obteniendo resultados por prueba:', error);
+            }
+
+            return results.slice(0, maxPruebas);
+        }
+
+        function fitDiplomaTemplateOnPage(pdf, templateData, templateWidth, templateHeight) {
+            const pageWidth = pdf.internal.pageSize.getWidth();
+            const pageHeight = pdf.internal.pageSize.getHeight();
+            const templateAspectRatio = templateWidth / templateHeight;
+            let imgWidth, imgHeight, imgX, imgY;
+
+            if (templateAspectRatio > pageWidth / pageHeight) {
+                imgWidth = pageWidth;
+                imgHeight = pageWidth / templateAspectRatio;
+                imgX = 0;
+                imgY = (pageHeight - imgHeight) / 2;
+            } else {
+                imgHeight = pageHeight;
+                imgWidth = pageHeight * templateAspectRatio;
+                imgX = (pageWidth - imgWidth) / 2;
+                imgY = 0;
+            }
+
+            pdf.addImage(templateData, 'PNG', imgX, imgY, imgWidth, imgHeight);
+            return { pageWidth, pageHeight, imgX, imgY, imgWidth, imgHeight };
+        }
+
+        function drawParticipationResultsTable(pdf, results, layout) {
+            const { pageWidth, imgX, imgY, imgWidth, imgHeight } = layout;
+            const centerX = pageWidth / 2;
+            const tableTop = imgY + imgHeight * 0.535;
+            const colRatios = [0.40, 0.10, 0.18, 0.22];
+            const colWidths = colRatios.map(r => imgWidth * r);
+            const totalTableWidth = colWidths.reduce((sum, w) => sum + w, 0);
+            const tableLeft = centerX - totalTableWidth / 2;
+            const rowHeight = Math.max(imgHeight * 0.042, 7);
+            const headers = ['Prueba', 'Pos.', 'Tiempo', 'Categoría'];
+
+            pdf.setFont('helvetica', 'bold');
+            pdf.setFontSize(8.5);
+            pdf.setTextColor(255, 255, 255);
+            let x = tableLeft;
+            headers.forEach((header, index) => {
+                pdf.setFillColor(0, 74, 173);
+                pdf.rect(x, tableTop, colWidths[index], rowHeight, 'F');
+                pdf.text(header, x + colWidths[index] / 2, tableTop + rowHeight * 0.68, { align: 'center' });
+                x += colWidths[index];
+            });
+
+            const rows = (results && results.length) ? results.slice(0, 4) : [];
+            while (rows.length < 1) {
+                rows.push({ prueba: 'Sin resultados registrados', posicion: '-', tiempo: '-', categoria: '-' });
+            }
+
+            pdf.setFont('helvetica', 'normal');
+            pdf.setFontSize(7.5);
+            pdf.setTextColor(35, 35, 35);
+            pdf.setDrawColor(0, 74, 173);
+
+            rows.forEach((row, rowIndex) => {
+                const rowY = tableTop + rowHeight * (rowIndex + 1);
+                const values = [row.prueba, row.posicion, row.tiempo, row.categoria];
+                x = tableLeft;
+                values.forEach((value, colIndex) => {
+                    pdf.rect(x, rowY, colWidths[colIndex], rowHeight);
+                    const lines = pdf.splitTextToSize(String(value || '-'), colWidths[colIndex] - 3);
+                    const textY = rowY + (rowHeight * 0.62) - ((lines.length - 1) * 1.8);
+                    pdf.text(lines, x + colWidths[colIndex] / 2, textY, { align: 'center' });
+                    x += colWidths[colIndex];
+                });
+            });
+        }
+
         async function downloadDiploma(swimmer, position, team, category) {
             try {
-                console.log('🎓 Iniciando descarga de diploma para:', swimmer, position, team, category);
-                
-                // Clean the data to avoid format issues
-                swimmer = swimmer.replace(/['"]/g, '');
-                position = position.replace(/['"]/g, '');
-                team = team.replace(/['"]/g, '');
-                category = category.replace(/['"]/g, '');
+                console.log('🎓 Iniciando diploma de participación para:', swimmer, team);
 
-                // Obtener tiempos específicos del participante
-                console.log('⏱️ Obteniendo tiempos del participante...');
-                const participantTimes = getParticipantTimes(swimmer, team);
+                swimmer = (swimmer || '').toString().replace(/['"]/g, '').trim();
+                team = (team || '').toString().replace(/['"]/g, '').trim();
+                category = (category || '').toString().replace(/['"]/g, '').trim();
 
-                // Load jsPDF
-                console.log('📄 Cargando jsPDF...');
+                const pruebaResults = getParticipantPruebaResults(swimmer, team);
+                console.log('🏊 Resultados por prueba:', pruebaResults);
+
                 const jsPDF = await loadjsPDF();
-                
                 if (!jsPDF) {
                     throw new Error('No se pudo cargar jsPDF');
                 }
-                
-                const pdf = new jsPDF('landscape', 'mm', 'a4'); // Landscape para diplomas
 
-                // Verificar si tenemos la plantilla cargada
-                console.log('🖼️ Estado de plantilla:', diplomaTemplateData ? 'Cargada' : 'No disponible');
-                
+                const pdf = new jsPDF('landscape', 'mm', 'a4');
+
                 if (!diplomaTemplateData) {
-                    console.error('❌ Plantilla de diploma PNG no disponible');
-                    throw new Error('La plantilla del diploma PNG no está cargada. Asegúrate de que diploma-template.png esté en la carpeta img/');
+                    throw new Error('La plantilla DIPLOMA-FESTITORNEO-PRUEBAS.png no está cargada en la carpeta img/');
                 }
 
-                // Dimensiones de la página
-                const pageWidth = pdf.internal.pageSize.getWidth();
-                const pageHeight = pdf.internal.pageSize.getHeight();
-                
-                // Calcular dimensiones para ajustar la plantilla a la página
-                const templateAspectRatio = diplomaTemplateWidth / diplomaTemplateHeight;
-                let imgWidth, imgHeight, imgX, imgY;
-                
-                if (templateAspectRatio > pageWidth / pageHeight) {
-                    // La plantilla es más ancha proporcionalmente
-                    imgWidth = pageWidth;
-                    imgHeight = pageWidth / templateAspectRatio;
-                    imgX = 0;
-                    imgY = (pageHeight - imgHeight) / 2;
-                } else {
-                    // La plantilla es más alta proporcionalmente
-                    imgHeight = pageHeight;
-                    imgWidth = pageHeight * templateAspectRatio;
-                    imgX = (pageWidth - imgWidth) / 2;
-                    imgY = 0;
-                }
+                const layout = fitDiplomaTemplateOnPage(
+                    pdf,
+                    diplomaTemplateData,
+                    diplomaTemplateWidth,
+                    diplomaTemplateHeight
+                );
 
-                // Agregar la plantilla como fondo
-                pdf.addImage(diplomaTemplateData, 'PNG', imgX, imgY, imgWidth, imgHeight);
-
-                // CONFIGURAR POSICIONES PARA EL TEXTO (ajustar según tu diseño)
-                // Estas coordenadas necesitarás ajustarlas según donde quieras que aparezca cada texto
-                const textPositions = {
-                    name: { x: pageWidth * 0.48, y: pageHeight * 0.45 },      // Centro para el nombre
-                    position: { x: pageWidth * 0.20, y: pageHeight * 0.7 },   // Posición lograda
-                    team: { x: pageWidth * 0.3, y: pageHeight * 0.7 },       // Equipo
-                    category: { x: pageWidth * 0.43, y: pageHeight * 0.7 },   // Categoría
-                    time50m: { x: pageWidth * 0.55, y: pageHeight * 0.7 },   // Tiempo 50m
-                    time100m: { x: pageWidth * 0.67, y: pageHeight * 0.7 },   // Tiempo 100m
-                    time200m: { x: pageWidth * 0.79, y: pageHeight * 0.7 }   // Tiempo 200m
-                };
-
-                // Configurar estilo del texto
-                pdf.setFont("helvetica", "bold");
-                
-                // Nombre del participante (destacado)
-                pdf.setFontSize(28);
-                pdf.setTextColor(0, 74, 173); // Azul corporativo
-                pdf.text(swimmer.toUpperCase(), textPositions.name.x, textPositions.name.y, { align: "center" });
-
-                // Posición
-                pdf.setFontSize(12);
-                pdf.setTextColor(0, 188, 232); // Celeste corporativo
-                pdf.text(`${position}° LUGAR`, textPositions.position.x, textPositions.position.y, { align: "center" });
-
-                // Equipo
-                pdf.setFontSize(12);
+                const nameY = layout.imgY + layout.imgHeight * 0.405;
+                pdf.setFont('helvetica', 'bold');
+                pdf.setFontSize(22);
                 pdf.setTextColor(0, 74, 173);
-                pdf.text(team, textPositions.team.x, textPositions.team.y, { align: "center" });
+                pdf.text(swimmer.toUpperCase(), layout.pageWidth / 2, nameY, { align: 'center' });
 
-                // Categoría
-                pdf.setFontSize(12);
-                pdf.setTextColor(80, 80, 80);
-                pdf.text(category, textPositions.category.x, textPositions.category.y, { align: "center" });
+                if (team) {
+                    pdf.setFontSize(10);
+                    pdf.setTextColor(90, 90, 90);
+                    pdf.text(team, layout.pageWidth / 2, nameY + 6.5, { align: 'center' });
+                }
 
-                // Tiempos (más pequeños)
-                pdf.setFontSize(12);
-                pdf.setTextColor(60, 60, 60);
-                
-                pdf.text(`${participantTimes['50m']}`, textPositions.time50m.x, textPositions.time50m.y, { align: "center" });
-                pdf.text(`${participantTimes['100m']}`, textPositions.time100m.x, textPositions.time100m.y, { align: "center" });
-                pdf.text(`${participantTimes['200m']}`, textPositions.time200m.x, textPositions.time200m.y, { align: "center" });
+                drawParticipationResultsTable(pdf, pruebaResults, layout);
 
-                // Generate filename and download
                 const sanitizedName = swimmer.replace(/[^a-zA-Z0-9]/g, '_');
-                const filename = `Diploma_${sanitizedName}_${position}lugar.pdf`;
-                
-                pdf.save(filename);
+                pdf.save(`Diploma_Participacion_${sanitizedName}.pdf`);
 
             } catch (error) {
-                console.error('❌ Error generando diploma:', error);
-                console.error('Stack trace:', error.stack);
-                alert(`Error generando el diploma: ${error.message}. Asegúrate de que la plantilla diploma-template.png esté disponible en la carpeta img/`);
+                console.error('❌ Error generando diploma de participación:', error);
+                alert(`Error generando el diploma: ${error.message}. Verifica que DIPLOMA-FESTITORNEO-PRUEBAS.png esté en img/`);
             }
         }
 
@@ -7232,49 +7312,18 @@ Ver resultados completos: https://festitorneosinu.netlify.app`;
         let teamDiplomaTemplateHeight = 0;
         let teamDiplomaLoadAttempted = false;
 
-        // Función para obtener tiempos específicos de un participante en las diferentes pruebas
+        // Función para obtener tiempos específicos de un participante (legado; usar getParticipantPruebaResults)
         function getParticipantTimes(participantName, participantTeam) {
-            const times = {
-                '25m': 'N/A',
-                '50m': 'N/A',
-                '100m': 'N/A',
-                '200m': 'N/A'
-            };
-            
-            try {
-                document.querySelectorAll('#pruebasTabsContent .tab-content').forEach(panel => {
-                    const sheetName = panel.dataset.sheetName;
-                    if (!sheetName) return;
-                    const { distance, stroke } = parsePruebaSheetName(sheetName);
-                    if (stroke !== 'Libre' || !times[`${distance}m`]) return;
-
-                    const table = panel.querySelector('.results-table');
-                    if (!table || times[`${distance}m`] !== 'N/A') return;
-
-                    table.querySelectorAll('tbody tr:not(.loading-row)').forEach(row => {
-                        const cells = row.querySelectorAll('td');
-                        if (cells.length >= 6) {
-                            const athleteName = cells[1]?.textContent?.trim() || '';
-                            const teamName = cells[2]?.textContent?.trim() || '';
-                            const finalTime = cells[5]?.textContent?.trim() || '';
-                            const nameMatch = athleteName.toLowerCase().includes(participantName.toLowerCase()) ||
-                                participantName.toLowerCase().includes(athleteName.toLowerCase());
-                            const teamMatch = teamName.toLowerCase().includes(participantTeam.toLowerCase()) ||
-                                participantTeam.toLowerCase().includes(teamName.toLowerCase());
-                            if (nameMatch && teamMatch && finalTime && finalTime !== 'N/A' && finalTime !== '-') {
-                                times[`${distance}m`] = finalTime;
-                            }
-                        }
-                    });
-                });
-                
-                console.log(`⏱️ Tiempos encontrados para ${participantName}:`, times);
-                return times;
-                
-            } catch (error) {
-                console.warn('Error obteniendo tiempos del participante:', error);
-                return times;
-            }
+            const results = getParticipantPruebaResults(participantName, participantTeam);
+            const times = { '25m': 'N/A', '50m': 'N/A', '100m': 'N/A', '200m': 'N/A' };
+            results.forEach(row => {
+                const match = row.prueba.match(/^(\d+)\s*m/i);
+                if (match) {
+                    const key = `${match[1]}m`;
+                    if (times[key] === 'N/A') times[key] = row.tiempo;
+                }
+            });
+            return times;
         }
 
         // Función para precargar la plantilla del diploma (se ejecuta una sola vez)
@@ -7311,7 +7360,7 @@ Ver resultados completos: https://festitorneosinu.netlify.app`;
                 };
                 
                 // Cambia este nombre por el archivo que subas a la carpeta img/
-                diplomaImg.src = './img/diploma-template.png';
+                diplomaImg.src = './img/DIPLOMA-FESTITORNEO-PRUEBAS.png';
             } catch (error) {
                 console.warn('Error iniciando carga de plantilla de diploma:', error);
             }
@@ -7385,64 +7434,31 @@ Ver resultados completos: https://festitorneosinu.netlify.app`;
                 
                 const pdf = new jsPDF('landscape', 'mm', 'a4');
 
-                // Verificar si tenemos la plantilla de récord cargada
                 if (!recordDiplomaTemplateData) {
-                    console.error('❌ Plantilla de diploma de récord PNG no disponible');
-                    throw new Error('La plantilla del diploma de récord PNG no está cargada. Asegúrate de que diploma-record-template.png esté en la carpeta img/');
+                    throw new Error('La plantilla diploma-record-template.png no está cargada en la carpeta img/');
                 }
 
-                // Dimensiones de la página
-                const pageWidth = pdf.internal.pageSize.getWidth();
-                const pageHeight = pdf.internal.pageSize.getHeight();
-                
-                // Calcular dimensiones para ajustar la plantilla a la página
-                const templateAspectRatio = recordDiplomaTemplateWidth / recordDiplomaTemplateHeight;
-                let imgWidth, imgHeight, imgX, imgY;
-                
-                if (templateAspectRatio > pageWidth / pageHeight) {
-                    // La plantilla es más ancha proporcionalmente
-                    imgWidth = pageWidth;
-                    imgHeight = pageWidth / templateAspectRatio;
-                    imgX = 0;
-                    imgY = (pageHeight - imgHeight) / 2;
-                } else {
-                    // La plantilla es más alta proporcionalmente
-                    imgHeight = pageHeight;
-                    imgWidth = pageHeight * templateAspectRatio;
-                    imgY = 0;
-                    imgX = (pageWidth - imgWidth) / 2;
-                }
-                
-                // Agregar la plantilla de fondo
-                pdf.addImage(recordDiplomaTemplateData, 'PNG', imgX, imgY, imgWidth, imgHeight);
-                
-                // Configurar fuente y agregar texto personalizado
+                const layout = fitDiplomaTemplateOnPage(
+                    pdf,
+                    recordDiplomaTemplateData,
+                    recordDiplomaTemplateWidth,
+                    recordDiplomaTemplateHeight
+                );
+
                 pdf.setFont('helvetica', 'bold');
                 pdf.setTextColor(0, 0, 0);
-                
-                // Nombre del atleta (centro superior)
+
+                const nameY = layout.imgY + layout.imgHeight * 0.48;
+                const dataY = layout.imgY + layout.imgHeight * 0.58;
+
                 pdf.setFontSize(24);
-                const nameY = imgY + (imgHeight * 0.48); // Ajustar posición según el diseño
-                pdf.text(nombre || 'ATLETA', pageWidth / 2, nameY, { align: 'center' });
-                
-                // Prueba
+                pdf.text(nombre || 'ATLETA', layout.pageWidth / 2, nameY, { align: 'center' });
+
                 pdf.setFontSize(12);
-                const eventY = nameY + 45;
-                pdf.text(`${prueba || 'Evento de Natación'}`, (pageWidth / 2) + 27 , eventY, { align: 'center' });
-                
-                // Equipo
-                pdf.setFontSize(12);
-                const teamY = nameY + 45;
-                pdf.text(`${equipo || 'N/A'}`, (pageWidth / 2) - 81, teamY, { align: 'center' });
-                
-                // Categoría
-                const categoryY = nameY + 45;
-                pdf.text(`${categoria || 'N/A'}`, (pageWidth / 2) - 29, categoryY, { align: 'center' });
-                
-                // Tiempo récord
-                pdf.setFontSize(12);
-                const timeY = nameY + 45;
-                pdf.text(`${tiempo || 'N/A'}`, (pageWidth / 2) + 80, timeY, { align: 'center' });
+                pdf.text(`${equipo || 'N/A'}`, layout.pageWidth / 2 - layout.imgWidth * 0.27, dataY, { align: 'center' });
+                pdf.text(`${categoria || 'N/A'}`, layout.pageWidth / 2 - layout.imgWidth * 0.10, dataY, { align: 'center' });
+                pdf.text(`${prueba || 'Evento de Natación'}`, layout.pageWidth / 2 + layout.imgWidth * 0.09, dataY, { align: 'center' });
+                pdf.text(`${tiempo || 'N/A'}`, layout.pageWidth / 2 + layout.imgWidth * 0.27, dataY, { align: 'center' });
                 
                 // Generar nombre de archivo y descargar
                 const sanitizedName = (nombre || 'Atleta').replace(/[^a-zA-Z0-9]/g, '_');
@@ -7490,7 +7506,7 @@ Ver resultados completos: https://festitorneosinu.netlify.app`;
                     console.warn('Error cargando plantilla de diploma de equipo desde:', teamDiplomaImg.src);
                 };
                 
-                teamDiplomaImg.src = './img/diploma-equipo-template.png';
+                teamDiplomaImg.src = './img/DIPLOMA FESTITORNEO-EQUIPO.png';
             } catch (error) {
                 console.warn('Error iniciando carga de plantilla de diploma de equipo:', error);
             }
@@ -7510,61 +7526,36 @@ Ver resultados completos: https://festitorneosinu.netlify.app`;
                 
                 const pdf = new jsPDF('landscape', 'mm', 'a4');
 
-                // Verificar si tenemos la plantilla de equipo cargada
                 if (!teamDiplomaTemplateData) {
-                    console.error('❌ Plantilla de diploma de equipo PNG no disponible');
-                    throw new Error('La plantilla del diploma de equipo PNG no está cargada. Asegúrate de que diploma-equipo-template.png esté en la carpeta img/');
+                    throw new Error('La plantilla DIPLOMA FESTITORNEO-EQUIPO.png no está cargada en la carpeta img/');
                 }
 
-                // Dimensiones de la página
-                const pageWidth = pdf.internal.pageSize.getWidth();
-                const pageHeight = pdf.internal.pageSize.getHeight();
-                
-                // Calcular dimensiones para ajustar la plantilla a la página
-                const templateAspectRatio = teamDiplomaTemplateWidth / teamDiplomaTemplateHeight;
-                let imgWidth, imgHeight, imgX, imgY;
-                
-                if (templateAspectRatio > pageWidth / pageHeight) {
-                    // La plantilla es más ancha proporcionalmente
-                    imgWidth = pageWidth;
-                    imgHeight = pageWidth / templateAspectRatio;
-                    imgX = 0;
-                    imgY = (pageHeight - imgHeight) / 2;
-                } else {
-                    // La plantilla es más alta proporcionalmente
-                    imgHeight = pageHeight;
-                    imgWidth = pageHeight * templateAspectRatio;
-                    imgY = 0;
-                    imgX = (pageWidth - imgWidth) / 2;
-                }
-                
-                // Agregar la plantilla de fondo
-                pdf.addImage(teamDiplomaTemplateData, 'PNG', imgX, imgY, imgWidth, imgHeight);
-                
-                // Configurar fuente y agregar texto personalizado
+                const layout = fitDiplomaTemplateOnPage(
+                    pdf,
+                    teamDiplomaTemplateData,
+                    teamDiplomaTemplateWidth,
+                    teamDiplomaTemplateHeight
+                );
+
                 pdf.setFont('helvetica', 'bold');
                 pdf.setTextColor(0, 0, 0);
-                
-                // Nombre del equipo (centro superior)
+
+                const teamNameY = layout.imgY + layout.imgHeight * 0.48;
+                const tableRowY = layout.imgY + layout.imgHeight * 0.58;
+
                 pdf.setFontSize(28);
-                const teamNameY = imgY + (imgHeight * 0.48);
-                pdf.text(nombreEquipo || 'EQUIPO', pageWidth / 2, teamNameY, { align: 'center' });
-                
-                // Posición
+                pdf.text(nombreEquipo || 'EQUIPO', layout.pageWidth / 2, teamNameY, { align: 'center' });
+
                 pdf.setFontSize(14);
-                const positionY = teamNameY + 45;
                 let positionText = 'Participación';
-                if (posicion === '1' || posicion === 1) positionText = 'PRIMER LUGAR ';
-                else if (posicion === '2' || posicion === 2) positionText = 'SEGUNDO LUGAR ';
-                else if (posicion === '3' || posicion === 3) positionText = 'TERCER LUGAR ';
-                else if (posicion && posicion !== '-') positionText = `${posicion}° LUGAR`;
-                
-                pdf.text(positionText, (pageWidth / 2) - 48, positionY, { align: 'center' });
-                
-                // Puntos totales
-                pdf.setFontSize(14);
-                const pointsY = teamNameY + 50;
-                pdf.text(`${puntosTotales || '0'}`, (pageWidth / 2) + 51, pointsY, { align: 'center' });
+                const posStr = (posicion ?? '').toString().trim();
+                if (posStr === '1' || posStr.startsWith('🥇')) positionText = 'PRIMER LUGAR';
+                else if (posStr === '2' || posStr.startsWith('🥈')) positionText = 'SEGUNDO LUGAR';
+                else if (posStr === '3' || posStr.startsWith('🥉')) positionText = 'TERCER LUGAR';
+                else if (posStr && posStr !== '-') positionText = `${formatDiplomaPosition(posStr)} LUGAR`;
+
+                pdf.text(positionText, layout.pageWidth / 2 - layout.imgWidth * 0.12, tableRowY, { align: 'center' });
+                pdf.text(`${puntosTotales || '0'}`, layout.pageWidth / 2 + layout.imgWidth * 0.13, tableRowY, { align: 'center' });
                 
                 
                 // Generar nombre de archivo y descargar
