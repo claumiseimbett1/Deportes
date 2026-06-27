@@ -7477,10 +7477,10 @@ Ver resultados completos: https://festitorneosinu.netlify.app`;
                 pdf.setFont('helvetica', 'bold');
                 pdf.setTextColor(0, 0, 0);
 
-                const recordOffsetY = 15; // ~1.5 cm hacia abajo
+                const recordDataOffsetY = 25; // ~2.5 cm bajo la línea base (datos del récord)
                 const pruebaSimple = formatPruebaRecordLabel(prueba);
-                const nameY = layout.imgY + layout.imgHeight * 0.48 + recordOffsetY;
-                const dataY = layout.imgY + layout.imgHeight * 0.58 + recordOffsetY;
+                const nameY = layout.imgY + layout.imgHeight * 0.48;
+                const dataY = layout.imgY + layout.imgHeight * 0.58 + recordDataOffsetY;
 
                 pdf.setFontSize(24);
                 pdf.text(nombre || 'ATLETA', layout.pageWidth / 2, nameY, { align: 'center' });
