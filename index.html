@@ -1641,42 +1641,28 @@
             margin-top: 0.5rem;
         }
 
-        /* Tabla de equipos responsive - tarjetas móviles sin :has() (incompatible en varios celulares) */
+        /* Tarjetas móviles unificadas (pruebas, general y equipos) */
         @media (max-width: 768px) {
-            .table-responsive--teams .mobile-teams-container {
+            .table-responsive--cards .mobile-results-container {
                 display: block !important;
             }
 
-            .table-responsive--teams #resultsTableTeams {
-                display: none !important;
-            }
-
-            .table-responsive--prueba .mobile-prueba-container {
-                display: block !important;
-            }
-
-            .table-responsive--prueba .results-table--prueba {
+            .table-responsive--cards .results-table {
                 display: none !important;
             }
         }
 
         @media (min-width: 769px) {
-            .mobile-prueba-container,
-            .mobile-teams-container {
+            .mobile-results-container {
                 display: none !important;
             }
         }
-        
-        /* Contenedor móvil para equipos (se creará dinámicamente) */
-        .mobile-teams-container {
+
+        .mobile-results-container {
             display: none;
         }
 
-        /* Contenedor móvil para resultados por prueba */
-        .mobile-prueba-container {
-            display: none;
-        }
-
+        .mobile-results-category,
         .mobile-prueba-category {
             background: #e8eef5;
             color: var(--primary-color);
@@ -1689,6 +1675,7 @@
             border-top: 3px solid var(--primary-color);
         }
 
+        .mobile-results-card,
         .mobile-prueba-card {
             background: #ffffff;
             border: 2px solid #e5edf8;
@@ -1698,11 +1685,13 @@
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
         }
 
+        .mobile-results-card.podium-row,
         .mobile-prueba-card.podium-row {
             border-color: #f0c674;
             background: #fffdf5;
         }
 
+        .mobile-results-card-header,
         .mobile-prueba-card-header {
             display: flex;
             align-items: center;
@@ -1712,6 +1701,7 @@
             border-bottom: 1px solid #e9ecef;
         }
 
+        .mobile-results-rank,
         .mobile-prueba-rank {
             font-weight: 700;
             font-size: 1.1em;
@@ -1719,17 +1709,20 @@
             flex-shrink: 0;
         }
 
+        .mobile-results-title,
         .mobile-prueba-athlete {
             font-size: 1.05em;
             line-height: 1.3;
         }
 
+        .mobile-results-card-body,
         .mobile-prueba-card-body {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 10px 14px;
         }
 
+        .mobile-results-field,
         .mobile-prueba-field {
             display: flex;
             flex-direction: column;
@@ -1737,10 +1730,12 @@
             min-width: 0;
         }
 
+        .mobile-results-field--full,
         .mobile-prueba-field--full {
             grid-column: 1 / -1;
         }
 
+        .mobile-results-label,
         .mobile-prueba-label {
             font-size: 0.72em;
             font-weight: 600;
@@ -1749,17 +1744,20 @@
             color: #6c757d;
         }
 
+        .mobile-results-value,
         .mobile-prueba-value {
             font-size: 0.95em;
             color: #212529;
             word-break: break-word;
         }
 
+        .mobile-results-value.time,
         .mobile-prueba-value.time {
             font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
             font-weight: 600;
         }
 
+        .mobile-results-card-actions,
         .mobile-prueba-card-actions {
             display: flex;
             justify-content: center;
@@ -1768,79 +1766,9 @@
             padding-top: 12px;
             border-top: 1px solid #e9ecef;
         }
-        
-        .mobile-team-card {
-            background: white;
-            border: 2px solid #e5edf8;
-            border-radius: 12px;
-            padding: 20px;
-            margin: 15px 0;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-        }
-        
-        .mobile-team-card .team-position {
-            background: #ffffff;
-            color: var(--secondary-color);
-            border: 2px solid #dee2e6;
-            padding: 8px 15px;
-            border-radius: 20px;
-            font-weight: bold;
-            display: inline-block;
-            margin-bottom: 10px;
-        }
-        
-        .mobile-team-card .team-name {
-            font-size: 18px;
-            font-weight: bold;
-            color: var(--primary-color);
-            margin-bottom: 10px;
-        }
-        
-        .mobile-team-card .team-points {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-            margin-top: 10px;
-        }
-        
-        .mobile-team-card .team-points div {
-            background: #f8f9fa;
-            padding: 8px;
-            border-radius: var(--border-radius-small);
-            text-align: center;
-        }
-        
-        .mobile-team-card .team-points .label {
-            font-size: 12px;
-            color: #666;
-            margin-bottom: 2px;
-        }
-        
-        .mobile-team-card .team-points .value {
-            font-size: 16px;
-            font-weight: bold;
-            color: var(--secondary-color);
-        }
 
-        /* Estilos adicionales para pantallas muy pequeñas - SOLO equipos */
+        /* Estilos adicionales para pantallas muy pequeñas */
         @media screen and (max-width: 480px) {
-            #resultsTableTeams tr {
-                padding: 8px !important;
-                margin: 8px 0 !important;
-            }
-            
-            #resultsTableTeams td {
-                padding: 4px 0 !important;
-                font-size: 13px !important;
-                min-height: 28px !important;
-            }
-            
-            #resultsTableTeams td:before {
-                font-size: 10px !important;
-                font-weight: 600 !important;
-            }
-            
-            /* Reducir espacios generales en todas las tablas móviles */
             .results-table tr {
                 margin-bottom: 6px !important;
                 padding: 6px !important;
@@ -4008,7 +3936,10 @@
                 <!-- Pestaña Masculino General -->
                 <div id="masculino-general" class="tab-content active">
                     <h3>🏊‍♂️ Clasificación General Masculina</h3>
-                    <div class="table-responsive">
+                    <div class="table-responsive table-responsive--cards">
+                    <div class="mobile-results-container">
+                        <div class="no-data-cell">🔄 Cargando clasificación masculina...</div>
+                    </div>
                     <table class="results-table results-table--gender" id="resultsTableMasculinoGeneral">
                         <thead>
                             <tr>
@@ -4039,7 +3970,10 @@
                 <!-- Pestaña Femenino General -->
                 <div id="femenino-general" class="tab-content">
                     <h3>🏊‍♀️ Clasificación General Femenina</h3>
-                    <div class="table-responsive">
+                    <div class="table-responsive table-responsive--cards">
+                    <div class="mobile-results-container">
+                        <div class="no-data-cell">🔄 Cargando clasificación femenina...</div>
+                    </div>
                     <table class="results-table results-table--gender" id="resultsTableFemeninoGeneral">
                         <thead>
                             <tr>
@@ -4083,8 +4017,8 @@
                     🏆 Clasificación General por Equipos
                 </h3>
                 
-                <div class="table-responsive table-responsive--teams">
-                <div class="mobile-teams-container">
+                <div class="table-responsive table-responsive--cards">
+                <div class="mobile-results-container">
                     <div class="no-data-cell">🔄 Cargando clasificación de equipos...</div>
                 </div>
                 <table class="results-table results-table--teams" id="resultsTableTeams">
@@ -4352,8 +4286,8 @@
                 panel.dataset.sheetName = sheetName;
                 panel.innerHTML = `
                     <h3>${emoji} ${fullLabel} — Resultados Oficiales</h3>
-                    <div class="table-responsive table-responsive--prueba">
-                    <div class="mobile-prueba-container">
+                    <div class="table-responsive table-responsive--cards">
+                    <div class="mobile-results-container">
                         <div class="no-data-cell">🔄 Cargando datos desde Google Sheets...</div>
                     </div>
                     <table class="results-table results-table--prueba" id="resultsTable-${key}">
@@ -5262,23 +5196,33 @@
             }
             tbody.innerHTML = `<tr><td colspan="${span}" class="no-data-cell">${message}</td></tr>`;
             table.classList.remove('loading');
-            if (isPruebaResultsTable(table)) {
-                buildPruebaMobileCards(table);
+            if (isResultsCardTable(table)) {
+                buildResultsMobileCards(table);
             }
         }
 
-        function buildPruebaMobileCards(table) {
-            if (!isPruebaResultsTable(table)) return;
+        const MOBILE_CARD_SKIP_LABELS = new Set(['Compartir', 'Diploma', 'Certificado']);
+
+        function isResultsCardTable(table) {
+            if (!table?.id) return false;
+            return table.id.startsWith('resultsTable-') ||
+                table.id === 'resultsTableMasculinoGeneral' ||
+                table.id === 'resultsTableFemeninoGeneral' ||
+                table.id === 'resultsTableTeams';
+        }
+
+        function buildResultsMobileCards(table) {
+            if (!isResultsCardTable(table)) return;
             const wrapper = table.closest('.table-responsive');
             if (!wrapper) return;
 
-            let container = wrapper.querySelector('.mobile-prueba-container');
+            let container = wrapper.querySelector('.mobile-results-container');
             if (!container) {
                 container = document.createElement('div');
-                container.className = 'mobile-prueba-container';
+                container.className = 'mobile-results-container';
                 wrapper.insertBefore(container, table);
             }
-            wrapper.classList.add('table-responsive--prueba');
+            wrapper.classList.add('table-responsive--cards');
 
             const tbody = table.querySelector('tbody');
             if (!tbody) {
@@ -5296,25 +5240,25 @@
                 if (row.classList.contains('category-header')) {
                     const label = row.querySelector('.category-header-text')?.textContent?.trim() || row.textContent.trim();
                     if (label) {
-                        html += `<div class="mobile-prueba-category">${escapeHtml(label)}</div>`;
+                        html += `<div class="mobile-results-category">${escapeHtml(label)}</div>`;
                     }
                     return;
                 }
 
                 const cells = row.querySelectorAll('td');
-                if (cells.length < 6) return;
+                if (cells.length < 2) return;
 
                 const detailFields = [];
-                cells.forEach(cell => {
+                cells.forEach((cell, cellIndex) => {
+                    if (cellIndex < 2) return;
                     const label = cell.getAttribute('data-label');
-                    if (!label || label === 'Pos.' || label === 'Compartir' || label === 'Diploma' || label === 'Certificado') {
-                        return;
-                    }
+                    if (!label || MOBILE_CARD_SKIP_LABELS.has(label)) return;
                     const valueClass = cell.classList.contains('time') ? ' time' : '';
+                    const fullWidth = label === 'Equipo' || label === 'Puntos Totales';
                     detailFields.push(
-                        `<div class="mobile-prueba-field${label === 'Equipo' ? ' mobile-prueba-field--full' : ''}">` +
-                        `<span class="mobile-prueba-label">${escapeHtml(label)}</span>` +
-                        `<span class="mobile-prueba-value${valueClass}">${cell.innerHTML}</span>` +
+                        `<div class="mobile-results-field${fullWidth ? ' mobile-results-field--full' : ''}">` +
+                        `<span class="mobile-results-label">${escapeHtml(label)}</span>` +
+                        `<span class="mobile-results-value${valueClass}">${cell.innerHTML}</span>` +
                         `</div>`
                     );
                 });
@@ -5323,13 +5267,13 @@
                 const diplomaCell = row.querySelector('td[data-label="Diploma"], td[data-label="Certificado"]');
                 const podiumClass = row.classList.contains('podium-row') ? ' podium-row' : '';
 
-                html += `<div class="mobile-prueba-card${podiumClass}">` +
-                    `<div class="mobile-prueba-card-header">` +
-                    `<span class="mobile-prueba-rank">${cells[0].innerHTML}</span>` +
-                    `<div class="mobile-prueba-athlete">${cells[1].innerHTML}</div>` +
+                html += `<div class="mobile-results-card${podiumClass}">` +
+                    `<div class="mobile-results-card-header">` +
+                    `<span class="mobile-results-rank">${cells[0].innerHTML}</span>` +
+                    `<div class="mobile-results-title">${cells[1].innerHTML}</div>` +
                     `</div>` +
-                    `<div class="mobile-prueba-card-body">${detailFields.join('')}</div>` +
-                    `<div class="mobile-prueba-card-actions">` +
+                    `<div class="mobile-results-card-body">${detailFields.join('')}</div>` +
+                    `<div class="mobile-results-card-actions">` +
                     `${shareCell ? shareCell.innerHTML : ''}` +
                     `${diplomaCell ? diplomaCell.innerHTML : ''}` +
                     `</div>` +
@@ -5337,17 +5281,17 @@
             });
 
             container.innerHTML = html || '<div class="no-data-cell">No hay datos disponibles</div>';
-            syncPruebaMobileCardsVisibility(table);
+            syncResultsMobileCardsVisibility(table);
         }
 
-        function syncPruebaMobileCardsVisibility(table) {
-            if (!isPruebaResultsTable(table)) return;
-            const container = table.parentElement?.querySelector('.mobile-prueba-container');
+        function syncResultsMobileCardsVisibility(table) {
+            if (!isResultsCardTable(table)) return;
+            const container = table.parentElement?.querySelector('.mobile-results-container');
             if (!container) return;
 
             const dataRows = Array.from(table.querySelectorAll('tbody tr:not(.category-header):not(.loading-row)'))
                 .filter(row => !row.querySelector('.no-data-cell'));
-            const cards = Array.from(container.querySelectorAll('.mobile-prueba-card'));
+            const cards = Array.from(container.querySelectorAll('.mobile-results-card'));
 
             dataRows.forEach((row, index) => {
                 const card = cards[index];
@@ -5356,12 +5300,12 @@
                 card.style.display = hidden ? 'none' : '';
             });
 
-            container.querySelectorAll('.mobile-prueba-category').forEach(category => {
+            container.querySelectorAll('.mobile-results-category').forEach(category => {
                 let sibling = category.nextElementSibling;
                 let visible = false;
                 while (sibling) {
-                    if (sibling.classList.contains('mobile-prueba-category')) break;
-                    if (sibling.classList.contains('mobile-prueba-card') && sibling.style.display !== 'none') {
+                    if (sibling.classList.contains('mobile-results-category')) break;
+                    if (sibling.classList.contains('mobile-results-card') && sibling.style.display !== 'none') {
                         visible = true;
                         break;
                     }
@@ -5369,6 +5313,16 @@
                 }
                 category.style.display = visible ? '' : 'none';
             });
+        }
+
+        /** @deprecated usar buildResultsMobileCards */
+        function buildPruebaMobileCards(table) {
+            buildResultsMobileCards(table);
+        }
+
+        /** @deprecated usar syncResultsMobileCardsVisibility */
+        function syncPruebaMobileCardsVisibility(table) {
+            syncResultsMobileCardsVisibility(table);
         }
 
         const CATEGORY_HEADER_PATTERN = /^(?:categor[ií]a\s+)?(INFANTIL|JUVENIL|MAYORES|MASTER|ESPECIAL|MENORES)\b/i;
@@ -5524,8 +5478,8 @@
 
                 this.tbody.innerHTML = htmlContent || this.getNoDataMessage();
                 finalizeCategoryHeaders(this.table);
-                if (isPruebaResultsTable(this.table)) {
-                    buildPruebaMobileCards(this.table);
+                if (isResultsCardTable(this.table)) {
+                    buildResultsMobileCards(this.table);
                 }
             }
             
@@ -5675,7 +5629,6 @@
             if (!tbody) return;
             
             let htmlContent = '';
-            let mobileContent = '';
             const startIndex = (data[0] && data[0][0] === '__header__') ? 1 : 0;
 
             for (let i = startIndex; i < data.length; i++) {
@@ -5725,51 +5678,11 @@
                                 }
                             </td>
                         </tr>`;
-                    
-                    // Contenido para versión móvil
-                    const isCertificateEnabled = certificado && certificado.toString().toUpperCase().trim() === 'SI';
-                    const diplomaClass = isCertificateEnabled ? 'diploma-btn enabled' : 'diploma-btn disabled';
-                    const diplomaClick = isCertificateEnabled ? `onclick="generateTeamDiploma('${(equipo || '').replace(/'/g, '\\\'')}', '${lugar || ''}', '${puntosTotales || '0'}')"` : '';
-                    const diplomaTitle = isCertificateEnabled ? 'Descargar diploma de equipo' : 'Diploma no disponible (requiere certificado SI)';
-                    const diplomaDisabled = isCertificateEnabled ? '' : 'disabled';
-                    
-                    mobileContent += `
-                        <div class="mobile-team-card">
-                            <div class="team-position">${displayPos || '-'}</div>
-                            <div class="team-name">${equipo || '-'}</div>
-                            <div class="team-points">
-                                <div>
-                                    <div class="label">Total</div>
-                                    <div class="value">${puntosTotales || '0'}</div>
-                                </div>
-                                <div>
-                                    <div class="label">Femeninos</div>
-                                    <div class="value female-points-value">${puntosFemeninos || '0'}</div>
-                                </div>
-                                <div>
-                                    <div class="label">Masculinos</div>
-                                    <div class="value male-points-value">${puntosMasculinos || '0'}</div>
-                                </div>
-                            </div>
-                            <div class="team-actions" style="display: flex; justify-content: center; gap: 15px; margin-top: 15px;">
-                                <button class="share-btn" onclick="shareResult('${equipo || ''}', '${lugar || ''}', 'N/A', 'Clasificación por Equipos')" title="Compartir resultado">📱</button>
-                                <button class="${diplomaClass}" ${diplomaClick} ${diplomaDisabled} title="${diplomaTitle}" data-status="${certificado || 'N/A'}">🎓</button>
-                            </div>
-                        </div>`;
                 }
             }
             
             tbody.innerHTML = htmlContent || '<tr><td colspan="7" class="no-data-cell">No hay datos de equipos disponibles</td></tr>';
-            
-            // Crear o actualizar contenedor móvil
-            let mobileContainer = table.parentElement.querySelector('.mobile-teams-container');
-            if (!mobileContainer) {
-                mobileContainer = document.createElement('div');
-                mobileContainer.className = 'mobile-teams-container';
-                table.parentElement.insertBefore(mobileContainer, table);
-            }
-            table.parentElement.classList.add('table-responsive--teams');
-            mobileContainer.innerHTML = mobileContent || '<div class="no-data-cell">No hay datos de equipos disponibles</div>';
+            buildResultsMobileCards(table);
             
             // Actualizar el tiempo de última actualización de equipos
             if (lastUpdateElementTeams) {
@@ -5881,6 +5794,7 @@
             
             tbody.innerHTML = htmlContent || '<tr><td colspan="11" class="no-data-cell">No hay datos de clasificación disponibles</td></tr>';
             finalizeCategoryHeaders(table);
+            buildResultsMobileCards(table);
             
             // Actualizar el tiempo de última actualización de género
             if (lastUpdateElementGender) {
@@ -6252,8 +6166,8 @@
                     }
                 });
                 finalizeCategoryHeaders(table);
-                if (isPruebaResultsTable(table)) {
-                    syncPruebaMobileCardsVisibility(table);
+                if (isResultsCardTable(table)) {
+                    syncResultsMobileCardsVisibility(table);
                 }
                 return { found: totalResults, total: totalResults };
             }
@@ -6321,8 +6235,8 @@
             });
 
             finalizeCategoryHeaders(table);
-            if (isPruebaResultsTable(table)) {
-                syncPruebaMobileCardsVisibility(table);
+            if (isResultsCardTable(table)) {
+                syncResultsMobileCardsVisibility(table);
             }
             return { found: foundResults, total: totalResults };
         }
