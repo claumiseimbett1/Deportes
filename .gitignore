@@ -1,0 +1,29 @@
+# Claves y configuración local (no subir al repositorio)
+config.js
+.env
+.env.*
+!.env.example
+
+# Credenciales y secretos
+secrets/
+*.pem
+*.key
+credentials.json
+service-account*.json
+
+# Sistema operativo
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editores
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Logs y caché
+*.log
+npm-debug.log*
+.cache/

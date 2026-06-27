@@ -1641,21 +1641,132 @@
             margin-top: 0.5rem;
         }
 
-        /* Tabla de equipos responsive - usar formato estándar */
+        /* Tabla de equipos responsive - tarjetas móviles sin :has() (incompatible en varios celulares) */
         @media (max-width: 768px) {
-            /* Equipos: tarjetas móviles cuando el JS ya las generó; si no, tabla en formato tarjeta */
-            .table-responsive:has(.mobile-teams-container) #resultsTableTeams {
+            .table-responsive--teams .mobile-teams-container {
+                display: block !important;
+            }
+
+            .table-responsive--teams #resultsTableTeams {
                 display: none !important;
             }
 
-            .table-responsive:has(.mobile-teams-container) .mobile-teams-container {
+            .table-responsive--prueba .mobile-prueba-container {
                 display: block !important;
+            }
+
+            .table-responsive--prueba .results-table--prueba {
+                display: none !important;
+            }
+        }
+
+        @media (min-width: 769px) {
+            .mobile-prueba-container,
+            .mobile-teams-container {
+                display: none !important;
             }
         }
         
         /* Contenedor móvil para equipos (se creará dinámicamente) */
         .mobile-teams-container {
             display: none;
+        }
+
+        /* Contenedor móvil para resultados por prueba */
+        .mobile-prueba-container {
+            display: none;
+        }
+
+        .mobile-prueba-category {
+            background: #e8eef5;
+            color: var(--primary-color);
+            text-align: center;
+            font-weight: 700;
+            font-size: 1.05em;
+            padding: 12px 14px;
+            margin: 18px 0 10px;
+            border-radius: 8px;
+            border-top: 3px solid var(--primary-color);
+        }
+
+        .mobile-prueba-card {
+            background: #ffffff;
+            border: 2px solid #e5edf8;
+            border-radius: 12px;
+            padding: 16px;
+            margin: 12px 0;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+
+        .mobile-prueba-card.podium-row {
+            border-color: #f0c674;
+            background: #fffdf5;
+        }
+
+        .mobile-prueba-card-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .mobile-prueba-rank {
+            font-weight: 700;
+            font-size: 1.1em;
+            color: var(--secondary-color);
+            flex-shrink: 0;
+        }
+
+        .mobile-prueba-athlete {
+            font-size: 1.05em;
+            line-height: 1.3;
+        }
+
+        .mobile-prueba-card-body {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px 14px;
+        }
+
+        .mobile-prueba-field {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            min-width: 0;
+        }
+
+        .mobile-prueba-field--full {
+            grid-column: 1 / -1;
+        }
+
+        .mobile-prueba-label {
+            font-size: 0.72em;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+            color: #6c757d;
+        }
+
+        .mobile-prueba-value {
+            font-size: 0.95em;
+            color: #212529;
+            word-break: break-word;
+        }
+
+        .mobile-prueba-value.time {
+            font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+            font-weight: 600;
+        }
+
+        .mobile-prueba-card-actions {
+            display: flex;
+            justify-content: center;
+            gap: 14px;
+            margin-top: 14px;
+            padding-top: 12px;
+            border-top: 1px solid #e9ecef;
         }
         
         .mobile-team-card {
@@ -1909,6 +2020,29 @@
 
             .tabs {
                 flex-direction: column;
+            }
+
+            .tabs.pruebas-tabs {
+                flex-direction: row;
+                flex-wrap: nowrap;
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+                justify-content: flex-start;
+                gap: 6px;
+                padding-bottom: 10px;
+                margin-bottom: 8px;
+                scrollbar-width: thin;
+            }
+
+            .tabs.pruebas-tabs .tab-button {
+                width: auto;
+                flex: 0 0 auto;
+                margin: 0;
+                white-space: nowrap;
+            }
+
+            #pruebasTabsContent .tab-content {
+                padding-top: 12px;
             }
 
             .tab-button {
@@ -3949,7 +4083,10 @@
                     🏆 Clasificación General por Equipos
                 </h3>
                 
-                <div class="table-responsive">
+                <div class="table-responsive table-responsive--teams">
+                <div class="mobile-teams-container">
+                    <div class="no-data-cell">🔄 Cargando clasificación de equipos...</div>
+                </div>
                 <table class="results-table results-table--teams" id="resultsTableTeams">
                     <thead>
                         <tr>
@@ -4033,6 +4170,7 @@
         </div>
     </footer>
 
+    <script src="config.js"></script>
     <script>
         // Variables globales
         let lastUpdateTime = null;
@@ -4214,7 +4352,10 @@
                 panel.dataset.sheetName = sheetName;
                 panel.innerHTML = `
                     <h3>${emoji} ${fullLabel} — Resultados Oficiales</h3>
-                    <div class="table-responsive">
+                    <div class="table-responsive table-responsive--prueba">
+                    <div class="mobile-prueba-container">
+                        <div class="no-data-cell">🔄 Cargando datos desde Google Sheets...</div>
+                    </div>
                     <table class="results-table results-table--prueba" id="resultsTable-${key}">
                         <thead>
                             <tr>
@@ -4272,7 +4413,7 @@
 
         // Configuración
         const CONFIG = {
-            API_KEY: 'AIzaSyDcUEGyS6grOV_p8Z6d9WofiFNMYQBblIk',
+            API_KEY: (window.APP_CONFIG && window.APP_CONFIG.API_KEY) || '',
             /** ID del spreadsheet RESULTADOS (respaldo si Drive API no resuelve) */
             SHEET_ID: '1EfjpkKEEi8rLxF9BwXCyyPHEcbBZJK71BijpUP1uEPI',
             SHEET_NAME: 'RESULTADOS',
@@ -4547,26 +4688,87 @@
         async function resolveSheetInfo() {
             await resolveSpreadsheetFromDrive();
             const fromApi = await getSheetInfo();
-            if (fromApi && fromApi.length) {
-                return fromApi;
-            }
             const fromHtml = await getSheetInfoFromPublicHtml();
-            if (fromHtml && fromHtml.length) {
+            let sheets = mergeSheetInfoLists(fromApi, fromHtml);
+
+            if (!sheets.length) {
+                const manual = CONFIG.MANUAL_SHEET_GIDS;
+                if (manual && typeof manual === 'object' && Object.keys(manual).length) {
+                    console.warn('⚠️ Usando MANUAL_SHEET_GIDS como respaldo de metadatos.');
+                    sheets = Object.entries(manual).map(([title, gid]) => ({
+                        title,
+                        gid: gid == null ? null : (typeof gid === 'string' ? parseInt(gid, 10) : gid)
+                    }));
+                }
+            } else if (fromHtml && fromHtml.length && (!fromApi || !fromApi.length)) {
                 console.warn('⚠️ Usando metadatos de la página pública (Sheets API no disponible).');
-                return fromHtml;
             }
-            const manual = CONFIG.MANUAL_SHEET_GIDS;
-            if (manual && typeof manual === 'object' && Object.keys(manual).length) {
-                console.warn('⚠️ Usando MANUAL_SHEET_GIDS como respaldo de metadatos.');
-                return Object.entries(manual).map(([title, gid]) => ({
-                    title,
-                    gid: gid == null ? null : (typeof gid === 'string' ? parseInt(gid, 10) : gid)
-                }));
+
+            sheets = ensureKnownSheetsInSheetInfo(sheets);
+            return sheets.length ? sheets : null;
+        }
+
+        /** Evita que "FEMENINO" coincida con "100M-FEMENINO" o "RESULTADOS-FEMENINO" */
+        function normalizeSheetTitle(title) {
+            return (title ?? '').toString().replace(/\s+/g, ' ').trim().toUpperCase();
+        }
+
+        function isPruebaCompetitionConfig(config) {
+            return !!(config?.tableId && config.tableId.startsWith('resultsTable-') &&
+                !['resultsTableMasculinoGeneral', 'resultsTableFemeninoGeneral', 'resultsTableTeams'].includes(config.tableId));
+        }
+
+        function getCompetitionDisplayName(competitionKey, config) {
+            if (isPruebaCompetitionConfig(config) && config.alternativeNames?.[0]) {
+                return formatPruebaLabel(config.alternativeNames[0]);
+            }
+            return config.alternativeNames?.[0] || competitionKey;
+        }
+
+        function lookupGidForSheetTitle(title) {
+            const manual = CONFIG.MANUAL_SHEET_GIDS || {};
+            const normalized = normalizeSheetTitle(title);
+            for (const [key, gid] of Object.entries(manual)) {
+                if (normalizeSheetTitle(key) === normalized) {
+                    return gid == null ? null : (typeof gid === 'string' ? parseInt(gid, 10) : gid);
+                }
             }
             return null;
         }
 
-        /** Evita que "FEMENINO" coincida con "100M-FEMENINO" o "RESULTADOS-FEMENINO" */
+        function mergeSheetInfoLists(...lists) {
+            const map = new Map();
+            for (const list of lists) {
+                for (const sheet of list || []) {
+                    if (!sheet?.title) continue;
+                    const key = normalizeSheetTitle(sheet.title);
+                    if (!map.has(key)) {
+                        map.set(key, { title: sheet.title.trim(), gid: sheet.gid ?? null });
+                    } else if (sheet.gid != null && map.get(key).gid == null) {
+                        map.get(key).gid = sheet.gid;
+                    }
+                }
+            }
+            return [...map.values()];
+        }
+
+        function ensureKnownSheetsInSheetInfo(sheets) {
+            const merged = mergeSheetInfoLists(sheets);
+            const knownNames = [
+                ...PRUEBAS_SHEET_TABS,
+                'RESULTADOS-FEMENINO',
+                'RESULTADOS-MASCULINO',
+                'EQUIPOS'
+            ];
+            for (const name of knownNames) {
+                const key = normalizeSheetTitle(name);
+                if (!merged.some(sheet => normalizeSheetTitle(sheet.title) === key)) {
+                    merged.push({ title: name, gid: lookupGidForSheetTitle(name) });
+                }
+            }
+            return merged;
+        }
+
         function sheetMatchesCompetition(sheetTitle, competitionKey, config) {
             const title = sheetTitle.toUpperCase().trim();
             const exact = config.alternativeNames.some(alt => title === alt.toUpperCase().trim());
@@ -4595,16 +4797,27 @@
         }
 
         function findSheetForCompetition(sheetInfo, competitionKey, config) {
-            if (!sheetInfo || !sheetInfo.length) {
-                return null;
-            }
-            for (const altName of config.alternativeNames) {
-                const sheet = sheetInfo.find(s => s.title.toUpperCase().trim() === altName.toUpperCase().trim());
+            const altNames = config.alternativeNames || [];
+            const pool = sheetInfo && sheetInfo.length ? sheetInfo : [];
+
+            for (const altName of altNames) {
+                const sheet = pool.find(s => normalizeSheetTitle(s.title) === normalizeSheetTitle(altName));
                 if (sheet) {
                     return sheet;
                 }
             }
-            return sheetInfo.find(sheet => sheetMatchesCompetition(sheet.title, competitionKey, config)) || null;
+
+            const fuzzy = pool.find(sheet => sheetMatchesCompetition(sheet.title, competitionKey, config));
+            if (fuzzy) {
+                return fuzzy;
+            }
+
+            // Las pruebas ya tienen el nombre exacto de la pestaña: cargar por nombre aunque falte en metadatos
+            if (isPruebaCompetitionConfig(config) && altNames[0]) {
+                return { title: altNames[0], gid: lookupGidForSheetTitle(altNames[0]) };
+            }
+
+            return null;
         }
 
         // Función para encontrar el GID de una competencia específica
@@ -4765,9 +4978,10 @@
 
                         const table = document.getElementById(config.tableId);
                         if (table) {
+                            const displayName = escapeHtml(getCompetitionDisplayName(competitionKey, config));
                             setTableBodyMessage(table, `
-                                No se encontró pestaña para ${competitionKey}<br>
-                                <small>Palabras clave: ${(config.keywords || []).join(', ')}</small>
+                                No se encontró la pestaña «${displayName}» en el Google Sheet.<br>
+                                <small>Verifica que exista y que el documento sea público.</small>
                             `);
                         }
                     }
@@ -5048,6 +5262,113 @@
             }
             tbody.innerHTML = `<tr><td colspan="${span}" class="no-data-cell">${message}</td></tr>`;
             table.classList.remove('loading');
+            if (isPruebaResultsTable(table)) {
+                buildPruebaMobileCards(table);
+            }
+        }
+
+        function buildPruebaMobileCards(table) {
+            if (!isPruebaResultsTable(table)) return;
+            const wrapper = table.closest('.table-responsive');
+            if (!wrapper) return;
+
+            let container = wrapper.querySelector('.mobile-prueba-container');
+            if (!container) {
+                container = document.createElement('div');
+                container.className = 'mobile-prueba-container';
+                wrapper.insertBefore(container, table);
+            }
+            wrapper.classList.add('table-responsive--prueba');
+
+            const tbody = table.querySelector('tbody');
+            if (!tbody) {
+                container.innerHTML = '';
+                return;
+            }
+
+            let html = '';
+            tbody.querySelectorAll('tr').forEach(row => {
+                if (row.classList.contains('loading-row') || row.querySelector('.no-data-cell')) {
+                    html = `<div class="no-data-cell">${row.textContent.trim()}</div>`;
+                    return;
+                }
+
+                if (row.classList.contains('category-header')) {
+                    const label = row.querySelector('.category-header-text')?.textContent?.trim() || row.textContent.trim();
+                    if (label) {
+                        html += `<div class="mobile-prueba-category">${escapeHtml(label)}</div>`;
+                    }
+                    return;
+                }
+
+                const cells = row.querySelectorAll('td');
+                if (cells.length < 6) return;
+
+                const detailFields = [];
+                cells.forEach(cell => {
+                    const label = cell.getAttribute('data-label');
+                    if (!label || label === 'Pos.' || label === 'Compartir' || label === 'Diploma' || label === 'Certificado') {
+                        return;
+                    }
+                    const valueClass = cell.classList.contains('time') ? ' time' : '';
+                    detailFields.push(
+                        `<div class="mobile-prueba-field${label === 'Equipo' ? ' mobile-prueba-field--full' : ''}">` +
+                        `<span class="mobile-prueba-label">${escapeHtml(label)}</span>` +
+                        `<span class="mobile-prueba-value${valueClass}">${cell.innerHTML}</span>` +
+                        `</div>`
+                    );
+                });
+
+                const shareCell = row.querySelector('td[data-label="Compartir"]');
+                const diplomaCell = row.querySelector('td[data-label="Diploma"], td[data-label="Certificado"]');
+                const podiumClass = row.classList.contains('podium-row') ? ' podium-row' : '';
+
+                html += `<div class="mobile-prueba-card${podiumClass}">` +
+                    `<div class="mobile-prueba-card-header">` +
+                    `<span class="mobile-prueba-rank">${cells[0].innerHTML}</span>` +
+                    `<div class="mobile-prueba-athlete">${cells[1].innerHTML}</div>` +
+                    `</div>` +
+                    `<div class="mobile-prueba-card-body">${detailFields.join('')}</div>` +
+                    `<div class="mobile-prueba-card-actions">` +
+                    `${shareCell ? shareCell.innerHTML : ''}` +
+                    `${diplomaCell ? diplomaCell.innerHTML : ''}` +
+                    `</div>` +
+                    `</div>`;
+            });
+
+            container.innerHTML = html || '<div class="no-data-cell">No hay datos disponibles</div>';
+            syncPruebaMobileCardsVisibility(table);
+        }
+
+        function syncPruebaMobileCardsVisibility(table) {
+            if (!isPruebaResultsTable(table)) return;
+            const container = table.parentElement?.querySelector('.mobile-prueba-container');
+            if (!container) return;
+
+            const dataRows = Array.from(table.querySelectorAll('tbody tr:not(.category-header):not(.loading-row)'))
+                .filter(row => !row.querySelector('.no-data-cell'));
+            const cards = Array.from(container.querySelectorAll('.mobile-prueba-card'));
+
+            dataRows.forEach((row, index) => {
+                const card = cards[index];
+                if (!card) return;
+                const hidden = row.style.display === 'none';
+                card.style.display = hidden ? 'none' : '';
+            });
+
+            container.querySelectorAll('.mobile-prueba-category').forEach(category => {
+                let sibling = category.nextElementSibling;
+                let visible = false;
+                while (sibling) {
+                    if (sibling.classList.contains('mobile-prueba-category')) break;
+                    if (sibling.classList.contains('mobile-prueba-card') && sibling.style.display !== 'none') {
+                        visible = true;
+                        break;
+                    }
+                    sibling = sibling.nextElementSibling;
+                }
+                category.style.display = visible ? '' : 'none';
+            });
         }
 
         const CATEGORY_HEADER_PATTERN = /^(?:categor[ií]a\s+)?(INFANTIL|JUVENIL|MAYORES|MASTER|ESPECIAL|MENORES)\b/i;
@@ -5203,6 +5524,9 @@
 
                 this.tbody.innerHTML = htmlContent || this.getNoDataMessage();
                 finalizeCategoryHeaders(this.table);
+                if (isPruebaResultsTable(this.table)) {
+                    buildPruebaMobileCards(this.table);
+                }
             }
             
             isCategoryRow(row) {
@@ -5442,8 +5766,9 @@
             if (!mobileContainer) {
                 mobileContainer = document.createElement('div');
                 mobileContainer.className = 'mobile-teams-container';
-                table.parentElement.appendChild(mobileContainer);
+                table.parentElement.insertBefore(mobileContainer, table);
             }
+            table.parentElement.classList.add('table-responsive--teams');
             mobileContainer.innerHTML = mobileContent || '<div class="no-data-cell">No hay datos de equipos disponibles</div>';
             
             // Actualizar el tiempo de última actualización de equipos
@@ -5927,6 +6252,9 @@
                     }
                 });
                 finalizeCategoryHeaders(table);
+                if (isPruebaResultsTable(table)) {
+                    syncPruebaMobileCardsVisibility(table);
+                }
                 return { found: totalResults, total: totalResults };
             }
 
@@ -5993,6 +6321,9 @@
             });
 
             finalizeCategoryHeaders(table);
+            if (isPruebaResultsTable(table)) {
+                syncPruebaMobileCardsVisibility(table);
+            }
             return { found: foundResults, total: totalResults };
         }
 
