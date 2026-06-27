@@ -1643,14 +1643,13 @@
 
         /* Tabla de equipos responsive - usar formato estándar */
         @media (max-width: 768px) {
-            /* Mantener la tabla visible y usar el formato responsive estándar */
-            #resultsTableTeams {
-                display: table;
-            }
-            
-            /* Ocultar el contenedor móvil personalizado */
-            #resultsTableTeams + .mobile-teams-container {
+            /* Equipos: tarjetas móviles cuando el JS ya las generó; si no, tabla en formato tarjeta */
+            .table-responsive:has(.mobile-teams-container) #resultsTableTeams {
                 display: none !important;
+            }
+
+            .table-responsive:has(.mobile-teams-container) .mobile-teams-container {
+                display: block !important;
             }
         }
         
@@ -1924,6 +1923,30 @@
                 border-bottom: 1px solid #e9ecef;
             }
 
+            .table-responsive {
+                overflow-x: visible;
+                border: none;
+                background: transparent;
+            }
+
+            .results-table--prueba,
+            .results-table--gender,
+            .results-table--teams {
+                min-width: 0 !important;
+                width: 100% !important;
+                display: block;
+            }
+
+            .results-table {
+                display: block;
+                width: 100%;
+            }
+
+            .results-table tbody {
+                display: block;
+                width: 100%;
+            }
+
             .results-table th, .results-table td {
                 padding: 10px 12px;
                 font-size: 0.9em;
@@ -1935,6 +1958,8 @@
 
             .results-table tr {
                 display: block;
+                width: 100%;
+                box-sizing: border-box;
                 margin-bottom: 10px;
                 border: 1px solid #e9ecef;
                 border-radius: 6px;
@@ -1943,12 +1968,26 @@
 
             .results-table td {
                 display: block;
+                width: 100%;
+                box-sizing: border-box;
                 text-align: right;
                 padding-left: 45%;
                 position: relative;
                 padding-top: 18px !important;
                 padding-bottom: 6px !important;
                 min-height: 35px;
+            }
+
+            .results-table tr.loading-row td,
+            .results-table td.no-data-cell {
+                padding-left: 12px !important;
+                text-align: center !important;
+            }
+
+            .results-table tr.loading-row td::before,
+            .results-table td.no-data-cell::before {
+                content: none !important;
+                display: none !important;
             }
 
             .results-table td::before {
@@ -3431,10 +3470,10 @@
     <header class="header">
         <nav class="nav-container">
             <div class="header-brand-group header-logos--left">
-                <div class="logo-box logo-box--light logo-box--aquaten">
+                <a class="logo-box logo-box--light logo-box--aquaten logo-link" href="https://www.aquatencd.com/" target="_blank" rel="noopener noreferrer" aria-label="Club Deportivo AquaTEN">
                     <img src="img/AQUATEN_LogoTransparenteGRANDE.png" alt="Logo AquaTEN">
-                </div>
-                <a class="logo-box logo-box--light logo-box--top4race logo-link" href="https://top4race.netlify.app/" target="_blank" rel="noopener" aria-label="Top4Race">
+                </a>
+                <a class="logo-box logo-box--light logo-box--top4race logo-link" href="https://top4race.netlify.app/" target="_blank" rel="noopener noreferrer" aria-label="Top4Race">
                     <img src="img/logoTop4Race2.png" alt="Logo Top4Race">
                 </a>
             </div>
