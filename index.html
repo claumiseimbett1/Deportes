@@ -4799,11 +4799,13 @@
         
         // Función para mostrar mensaje de no datos
         function showNoDataMessage(table, message) {
-            const tbody = table.querySelector('tbody');
+            const tbody = table?.querySelector('tbody');
+            if (!tbody) return;
+            const span = table.querySelectorAll('thead th').length || 10;
             tbody.innerHTML = `
                 <tr>
-                    <td colspan="10" class="no-data-cell">
-                        ${message}
+                    <td colspan="${span}" class="no-data-cell">
+                        ${escapeHtml(message)}
                     </td>
                 </tr>`;
         }
@@ -4814,6 +4816,22 @@
             console.log('⚠️ updateResultsTable llamada pero no debería usarse');
         }
         
+        function escapeHtml(text) {
+            return (text ?? '').toString()
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;');
+        }
+
+        function escapeJsString(text) {
+            return (text ?? '').toString()
+                .replace(/\\/g, '\\\\')
+                .replace(/'/g, "\\'")
+                .replace(/\r/g, '')
+                .replace(/\n/g, ' ');
+        }
+
         function setTableBodyMessage(table, message, colspan) {
             if (!table) return;
             const headerCount = table.querySelectorAll('thead th').length;
@@ -4912,7 +4930,7 @@
             
             renderCategoryRow(category) {
                 return `<tr class="category-header">
-                    <td colspan="${this.config.colspan}" class="category-header-cell">${category}</td>
+                    <td colspan="${this.config.colspan}" class="category-header-cell">${escapeHtml(category)}</td>
                 </tr>`;
             }
             
@@ -4933,8 +4951,7 @@
                 const isPruebaTable = isPruebaResultsTable(this.table);
                 const isGeneralRanking = !isPruebaTable && !is4x50mMixto &&
                     (this.table?.id === 'resultsTableMasculinoGeneral' ||
-                     this.table?.id === 'resultsTableFemeninoGeneral' ||
-                     row.length >= 9);
+                     this.table?.id === 'resultsTableFemeninoGeneral');
 
                 if (isGeneralRanking) {
                     const [pos, nombre, equipo, edad, categoria, puntos, p200, p50, p100, certificado] = row;
@@ -4997,19 +5014,24 @@
                         const [pos, nombre, equipo, edad, categoria, tiempo, puntos, obs] = row.slice(0, 8);
                         const isRecord = obs && obs.toString().toUpperCase().includes('R');
                         const diplomaButtonClass = isRecord ? 'diploma-btn enabled' : 'diploma-btn disabled';
-                        const diplomaButtonClick = isRecord ? `generateDiploma('${(nombre || '').replace(/'/g, '\\\'')}', '${(equipo || '').replace(/'/g, '\\\'')}', '${(categoria || '').replace(/'/g, '\\\'')}', '${tiempo || ''}', getCurrentEventName())` : '';
+                        const diplomaButtonClick = isRecord ? `generateDiploma('${escapeJsString(nombre)}', '${escapeJsString(equipo)}', '${escapeJsString(categoria)}', '${escapeJsString(tiempo)}', getCurrentEventName())` : '';
                         const athleteLabel = this.table?.querySelector('thead th:nth-child(2)')?.textContent?.trim() || 'Nadador/a';
                         
+                        const safeNombre = escapeJsString(nombre);
+                        const safeTiempo = escapeJsString(tiempo);
+                        const safeCategoria = escapeJsString(categoria);
+                        const safePos = escapeJsString(pos || index);
+
                         return `<tr>
-                            <td data-label="Pos." class="rank">${pos || index}</td>
-                            <td data-label="${athleteLabel}"><strong>${nombre || ''}</strong></td>
-                            <td data-label="Equipo">${equipo || ''}</td>
-                            <td data-label="Edad">${edad || ''}</td>
-                            <td data-label="Categoría"><span class="category-badge">${categoria || ''}</span></td>
-                            <td data-label="Tiempo Final" class="time">${tiempo || ''}</td>
-                            <td data-label="Puntos"><strong class="total-points-cell">${puntos || ''}</strong></td>
-                            <td data-label="Obs" class="obs-cell ${isRecord ? 'record-indicator' : ''}">${obs || ''}</td>
-                            <td data-label="Compartir"><button onclick="shareResult('${nombre}', '${pos || index}', '${tiempo}', '${categoria}')" class="share-btn">📱</button></td>
+                            <td data-label="Pos." class="rank">${escapeHtml(pos || index)}</td>
+                            <td data-label="${escapeHtml(athleteLabel)}"><strong>${escapeHtml(nombre || '')}</strong></td>
+                            <td data-label="Equipo">${escapeHtml(equipo || '')}</td>
+                            <td data-label="Edad">${escapeHtml(edad || '')}</td>
+                            <td data-label="Categoría"><span class="category-badge">${escapeHtml(categoria || '')}</span></td>
+                            <td data-label="Tiempo Final" class="time">${escapeHtml(tiempo || '')}</td>
+                            <td data-label="Puntos"><strong class="total-points-cell">${escapeHtml(puntos || '')}</strong></td>
+                            <td data-label="Obs" class="obs-cell ${isRecord ? 'record-indicator' : ''}">${escapeHtml(obs || '')}</td>
+                            <td data-label="Compartir"><button onclick="shareResult('${safeNombre}', '${safePos}', '${safeTiempo}', '${safeCategoria}')" class="share-btn">📱</button></td>
                             <td data-label="Diploma" class="diploma-cell">
                                 <button class="${diplomaButtonClass}" ${isRecord ? `onclick="${diplomaButtonClick}"` : ''} ${!isRecord ? 'disabled' : ''} title="${isRecord ? 'Descargar diploma de récord' : 'Solo disponible para récords (marcar con R en Obs)'}" data-status="${obs || 'N/A'}">
                                     🏆
@@ -5039,8 +5061,9 @@
             
             let htmlContent = '';
             let mobileContent = '';
-            
-            for (let i = 1; i < data.length; i++) {
+            const startIndex = (data[0] && data[0][0] === '__header__') ? 1 : 0;
+
+            for (let i = startIndex; i < data.length; i++) {
                 const row = data[i];
                 if (!row || row.length === 0) continue;
                 
@@ -5176,7 +5199,7 @@
                     currentCategory = categoryHeader;
                     htmlContent += `
                         <tr class="category-header">
-                            <td colspan="11" class="category-header-cell">${currentCategory}</td>
+                            <td colspan="11" class="category-header-cell">${escapeHtml(currentCategory)}</td>
                         </tr>`;
                 } else if (row.length >= 6) {
                     // Es un resultado - Esperar al menos 6 columnas: LUGAR, ATLETA, EQUIPO, EDAD, CATEGORIA, PUNTOS TOTALES
@@ -5282,9 +5305,8 @@
                 if (table) {
                     const tbody = table.querySelector('tbody');
                     if (tbody) {
-                        // Ajustar el colspan según el tipo de tabla
-                        const isTeamTable = table.id === 'resultsTableTeams';
-                        const colspan = isTeamTable ? '7' : '10';
+                        const headerCount = table.querySelectorAll('thead th').length;
+                        const colspan = headerCount || (table.id === 'resultsTableTeams' ? 7 : 10);
                         const adjustedErrorHTML = errorHTML.replace('colspan="7"', `colspan="${colspan}"`);
                         tbody.innerHTML = adjustedErrorHTML;
                     }
