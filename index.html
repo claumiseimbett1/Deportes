@@ -4239,6 +4239,23 @@
             return 'Natación';
         }
 
+        function isRecordObservation(obs) {
+            return !!(obs && obs.toString().toUpperCase().includes('R'));
+        }
+
+        /** Una sola fila de récord por prueba: la primera con R en Obs */
+        function findRecordRowIndex(data, startIndex, obsColumnIndex = 7) {
+            if (!data || !data.length) return -1;
+            for (let i = startIndex; i < data.length; i++) {
+                const row = data[i];
+                if (!row || row.length <= obsColumnIndex) continue;
+                const athleteCell = row[1] != null ? row[1].toString().trim() : '';
+                if (!athleteCell || isCategoryHeaderRow(row)) continue;
+                if (isRecordObservation(row[obsColumnIndex])) return i;
+            }
+            return -1;
+        }
+
         function isPruebaSheetTitle(title) {
             const upper = title.toUpperCase();
             return (upper.endsWith('-TORNEO') || upper.endsWith('-FESTIVAL'))
@@ -5542,6 +5559,18 @@
         
         // Specific renderer for general tables
         class GeneralTableRenderer extends TableRenderer {
+            render(data) {
+                const is4x50mMixto = this.table && this.table.id === 'resultsTable4x50mMixto';
+                const isPruebaTable = isPruebaResultsTable(this.table);
+                if (isPruebaTable || is4x50mMixto) {
+                    const startIndex = (data[0] && data[0][0] === '__header__') ? 1 : 0;
+                    this.recordRowIndex = findRecordRowIndex(data, startIndex, is4x50mMixto ? 8 : 7);
+                } else {
+                    this.recordRowIndex = -1;
+                }
+                super.render(data);
+            }
+
             renderDataRow(row, index) {
                 const is4x50mMixto = this.table && this.table.id === 'resultsTable4x50mMixto';
                 const isPruebaTable = isPruebaResultsTable(this.table);
@@ -5575,6 +5604,7 @@
                     if (is4x50mMixto) {
                         const [pos, nombre, equipo, edad, categoria, tiempo, puntos, diploma, obs] = row;
                         const categoriaDisplay = resolveRowCategory(categoria, this.currentCategory);
+                        const isRecordHolder = index === this.recordRowIndex;
                         const diplomaButtonClick = `generateDiploma('${(nombre || '').replace(/'/g, '\\\'')}', '${(equipo || '').replace(/'/g, '\\\'')}', '${(categoriaDisplay || '').replace(/'/g, '\\\'')}', '${tiempo || ''}', getCurrentPruebaRecordLabel())`;
                         
                         return `<tr>
@@ -5587,7 +5617,7 @@
                             <td data-label="Puntos"><strong class="total-points-cell">${puntos || ''}</strong></td>
                             <td data-label="Compartir"><button onclick="shareResult('${nombre}', '${pos || index}', '${tiempo}', '${categoriaDisplay}')" class="share-btn">📱</button></td>
                             <td data-label="Certificado" class="diploma-cell">
-                                <button class="diploma-btn enabled" onclick="${diplomaButtonClick}" title="Descargar certificado" data-status="${diploma || 'N/A'}">
+                                <button class="diploma-btn ${isRecordHolder ? 'enabled' : 'disabled'}" ${isRecordHolder ? `onclick="${diplomaButtonClick}"` : ''} ${!isRecordHolder ? 'disabled' : ''} title="${isRecordHolder ? 'Descargar diploma de récord' : 'Solo disponible para el récord de la prueba'}" data-status="${obs || diploma || 'N/A'}">
                                     🏆
                                 </button>
                             </td>
@@ -5595,7 +5625,7 @@
                     } else {
                         const [pos, nombre, equipo, edad, categoria, tiempo, puntos, obs] = row.slice(0, 8);
                         const categoriaDisplay = resolveRowCategory(categoria, this.currentCategory);
-                        const isRecord = obs && obs.toString().toUpperCase().includes('R');
+                        const isRecordHolder = index === this.recordRowIndex;
                         const diplomaButtonClick = `generateDiploma('${escapeJsString(nombre)}', '${escapeJsString(equipo)}', '${escapeJsString(categoriaDisplay)}', '${escapeJsString(tiempo)}', getCurrentPruebaRecordLabel())`;
                         const athleteLabel = this.table?.querySelector('thead th:nth-child(2)')?.textContent?.trim() || 'Nadador/a';
                         
@@ -5613,10 +5643,10 @@
                             <td data-label="Categoría"><span class="category-badge">${escapeHtml(categoriaDisplay)}</span></td>
                             <td data-label="Tiempo Final" class="time">${escapeHtml(tiempo || '')}</td>
                             <td data-label="Puntos"><strong class="total-points-cell">${escapeHtml(puntos || '')}</strong></td>
-                            <td data-label="Obs" class="obs-cell ${isRecord ? 'record-indicator' : ''}">${escapeHtml(obs || '')}</td>
+                            <td data-label="Obs" class="obs-cell ${isRecordHolder ? 'record-indicator' : ''}">${escapeHtml(obs || '')}</td>
                             <td data-label="Compartir"><button onclick="shareResult('${safeNombre}', '${safePos}', '${safeTiempo}', '${safeCategoria}')" class="share-btn">📱</button></td>
                             <td data-label="Diploma" class="diploma-cell">
-                                <button class="diploma-btn enabled" onclick="${diplomaButtonClick}" title="Descargar diploma de récord" data-status="${obs || 'N/A'}">
+                                <button class="diploma-btn ${isRecordHolder ? 'enabled' : 'disabled'}" ${isRecordHolder ? `onclick="${diplomaButtonClick}"` : ''} ${!isRecordHolder ? 'disabled' : ''} title="${isRecordHolder ? 'Descargar diploma de récord' : 'Solo disponible para el récord de la prueba'}" data-status="${obs || 'N/A'}">
                                     🏆
                                 </button>
                             </td>
