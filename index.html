@@ -1358,13 +1358,19 @@
 
         /* === CORRECCIÓN APLICADA AQUÍ === */
         /* Se combinaron las reglas y se aplicó el fondo directamente a las celdas (td) */
-        .category-header td {
+        .category-header td,
+        .category-header-cell {
             background: #f1f3f5 !important;
             color: var(--primary-color) !important;
-            text-align: center;
+            text-align: center !important;
             font-size: 1.1em;
             font-weight: bold;
             border-bottom: 2px solid #dee2e6 !important;
+        }
+
+        .category-header-cell::before {
+            content: none !important;
+            display: none !important;
         }
 
         /* Loading state para la tabla */
@@ -1828,6 +1834,29 @@
                 position: absolute !important;
                 font-size: 11px !important;
                 color: #666 !important;
+            }
+
+            .results-table tr.category-header {
+                display: block !important;
+                margin: 14px 0 8px;
+                border: none;
+                background: transparent;
+            }
+
+            .results-table tr.category-header td,
+            .results-table td.category-header-cell {
+                display: block !important;
+                text-align: center !important;
+                padding: 12px 10px !important;
+                padding-left: 10px !important;
+                min-height: auto;
+                border-radius: 6px;
+            }
+
+            .results-table tr.category-header td::before,
+            .results-table td.category-header-cell::before {
+                content: none !important;
+                display: none !important;
             }
 
             .cards-grid {
@@ -4487,8 +4516,8 @@
                 // Buscar y cargar cada competencia con lógica de búsqueda inteligente
                 for (const [competitionKey, config] of Object.entries(competitions)) {
                     console.log(` Buscando coincidencias para ${competitionKey}...`);
-                    console.log(`🎯 Palabras clave: ${config.keywords.join(', ')}`);
-                    console.log(` Nombres alternativos: ${config.alternativeNames.join(', ')}`);
+                    console.log(`🎯 Palabras clave: ${(config.keywords || []).join(', ')}`);
+                    console.log(` Nombres alternativos: ${(config.alternativeNames || []).join(', ')}`);
 
                     const foundSheet = findSheetForCompetition(sheetInfo, competitionKey, config);
                     if (foundSheet) {
@@ -4501,12 +4530,11 @@
                         
                         if (data && data.length > 0) {
                             console.log(` Datos cargados: ${data.length} filas`);
-                            
+
                             const table = document.getElementById(config.tableId);
                             if (table) {
                                 console.log(`🔄 Actualizando tabla ${competitionKey}...`);
-                                
-                                // Usar función específica para cada tipo de tabla
+
                                 if (competitionKey === 'resultados-equipo' || config.tableId === 'resultsTableTeams') {
                                     updateTeamTableContent(table, data);
                                 } else if (competitionKey === 'resultados-masculino' || competitionKey === 'resultados-femenino') {
@@ -4514,27 +4542,29 @@
                                 } else {
                                     updateTableContent(table, data, config.genderColumn);
                                 }
-                                
+
                                 table.classList.remove('loading');
                                 hasData = true;
                                 console.log(` Tabla ${competitionKey} actualizada`);
                             }
                         } else {
                             console.log(`❌ No se pudieron cargar datos de "${foundSheet.title}"`);
+                            const table = document.getElementById(config.tableId);
+                            if (table) {
+                                setTableBodyMessage(table, `No se pudieron cargar datos de ${foundSheet.title}`);
+                            }
                         }
                     } else {
                         console.log(`⚠️ No se encontró pestaña para ${competitionKey}`);
-                        console.log(`💡 Palabras clave buscadas:`, config.keywords);
+                        console.log(`💡 Palabras clave buscadas:`, config.keywords || []);
                         console.log(`📋 Pestañas disponibles:`, sheetInfo.map(s => s.title));
-                        
-                        // Mostrar mensaje específico en la tabla
+
                         const table = document.getElementById(config.tableId);
                         if (table) {
-                            table.innerHTML = `<tr><td colspan="10" class="table-no-data">
+                            setTableBodyMessage(table, `
                                 No se encontró pestaña para ${competitionKey}<br>
-                                <small>Palabras clave: ${config.keywords.join(', ')}</small>
-                            </td></tr>`;
-                            table.classList.remove('loading');
+                                <small>Palabras clave: ${(config.keywords || []).join(', ')}</small>
+                            `);
                         }
                     }
                 }
@@ -4784,6 +4814,19 @@
             console.log('⚠️ updateResultsTable llamada pero no debería usarse');
         }
         
+        function setTableBodyMessage(table, message, colspan) {
+            if (!table) return;
+            const headerCount = table.querySelectorAll('thead th').length;
+            const span = colspan || headerCount || 10;
+            let tbody = table.querySelector('tbody');
+            if (!tbody) {
+                tbody = document.createElement('tbody');
+                table.appendChild(tbody);
+            }
+            tbody.innerHTML = `<tr><td colspan="${span}" class="no-data-cell">${message}</td></tr>`;
+            table.classList.remove('loading');
+        }
+
         const CATEGORY_HEADER_PATTERN = /^(?:categor[ií]a\s+)?(INFANTIL|JUVENIL|MAYORES|MASTER|ESPECIAL|MENORES)\b/i;
 
         function isPruebaResultsTable(table) {
@@ -4826,22 +4869,34 @@
             
             render(data) {
                 if (!this.tbody || !data || data.length === 0) return;
-                
+
+                const panel = this.table.closest('.tab-content');
+                const sheetName = panel?.dataset?.sheetName || '';
+                const { menores } = sheetName ? parsePruebaSheetName(sheetName) : { menores: false };
+
                 let htmlContent = '';
-                let currentCategory = '';
-                
-                for (let i = 1; i < data.length; i++) {
+                const startIndex = (data[0] && data[0][0] === '__header__') ? 1 : 0;
+
+                let hasMenoresHeader = false;
+                for (let i = startIndex; i < data.length; i++) {
+                    const cat = getCategoryHeaderFromRow(data[i]);
+                    if (cat && /^menores$/i.test(cat)) hasMenoresHeader = true;
+                }
+                if (menores && !hasMenoresHeader) {
+                    htmlContent += this.renderCategoryRow('MENORES');
+                }
+
+                for (let i = startIndex; i < data.length; i++) {
                     const row = data[i];
                     if (!row || row.length === 0) continue;
-                    
+
                     if (this.isCategoryRow(row)) {
-                        currentCategory = getCategoryHeaderFromRow(row);
-                        htmlContent += this.renderCategoryRow(currentCategory);
+                        htmlContent += this.renderCategoryRow(getCategoryHeaderFromRow(row));
                     } else if (this.isDataRow(row)) {
                         htmlContent += this.renderDataRow(row, i);
                     }
                 }
-                
+
                 this.tbody.innerHTML = htmlContent || this.getNoDataMessage();
             }
             
@@ -4857,7 +4912,7 @@
             
             renderCategoryRow(category) {
                 return `<tr class="category-header">
-                    <td colspan="${this.config.colspan}">${category}</td>
+                    <td colspan="${this.config.colspan}" class="category-header-cell">${category}</td>
                 </tr>`;
             }
             
@@ -4968,10 +5023,9 @@
         
         // Optimized legacy function wrapper
         function updateTableContent(table, data, swimmerLabel) {
-            // Detectar el tipo de tabla para ajustar el colspan
             const headers = table.querySelectorAll('thead th');
-            const colspan = headers.length.toString();
-            
+            const colspan = (headers.length || 10).toString();
+
             const renderer = new GeneralTableRenderer(table, {
                 colspan: colspan
             });
@@ -5111,17 +5165,18 @@
             
             let htmlContent = '';
             let currentCategory = '';
-            
-            for (let i = 1; i < data.length; i++) {
+            const startIndex = (data[0] && data[0][0] === '__header__') ? 1 : 0;
+
+            for (let i = startIndex; i < data.length; i++) {
                 const row = data[i];
                 if (!row || row.length === 0) continue;
-                
+
                 const categoryHeader = getCategoryHeaderFromRow(row);
                 if (categoryHeader) {
                     currentCategory = categoryHeader;
                     htmlContent += `
                         <tr class="category-header">
-                            <td colspan="11">${currentCategory}</td>
+                            <td colspan="11" class="category-header-cell">${currentCategory}</td>
                         </tr>`;
                 } else if (row.length >= 6) {
                     // Es un resultado - Esperar al menos 6 columnas: LUGAR, ATLETA, EQUIPO, EDAD, CATEGORIA, PUNTOS TOTALES
@@ -5537,12 +5592,16 @@
             const rows = table.getElementsByTagName('tr');
             let foundResults = 0;
             let totalResults = 0;
-            
+
             for (let i = 0; i < rows.length; i++) {
                 const row = rows[i];
-                
-                // Skip header rows
-                if (row.classList.contains('category-header') || i === 0) {
+
+                if (row.classList.contains('category-header')) {
+                    row.style.display = '';
+                    continue;
+                }
+
+                if (row.parentElement && row.parentElement.tagName === 'THEAD') {
                     continue;
                 }
                 
