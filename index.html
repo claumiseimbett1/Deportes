@@ -4210,6 +4210,35 @@
             return `${distance}m ${stroke}${menoresLabel} ${genderLabel}${typeSuffix}`;
         }
 
+        /** Etiqueta corta para diploma de récord: "50 Mariposa", "100 Pecho" */
+        function formatPruebaRecordLabel(sheetNameOrLabel) {
+            const raw = (sheetNameOrLabel ?? '').toString().trim();
+            if (!raw) return 'Natación';
+
+            if (/-(?:TORNEO|FESTIVAL)$/i.test(raw)) {
+                const { distance, stroke } = parsePruebaSheetName(raw);
+                if (distance && stroke) return `${distance} ${stroke}`;
+            }
+
+            const fromLabel = raw.match(/^(\d+)\s*m?\s+([A-Za-zÁÉÍÓÚáéíóúñÑ]+)/);
+            if (fromLabel) return `${fromLabel[1]} ${fromLabel[2]}`;
+
+            return raw.split('—')[0].split('·')[0].trim();
+        }
+
+        function getCurrentPruebaRecordLabel() {
+            const section = document.getElementById('resultados');
+            const activeContent = section?.querySelector('#pruebasTabsContent .tab-content.active');
+            if (activeContent?.dataset?.sheetName) {
+                return formatPruebaRecordLabel(activeContent.dataset.sheetName);
+            }
+            const activeTab = section?.querySelector('#pruebasTabsNav .tab-button.active');
+            if (activeTab?.dataset?.label) {
+                return formatPruebaRecordLabel(activeTab.dataset.label);
+            }
+            return 'Natación';
+        }
+
         function isPruebaSheetTitle(title) {
             const upper = title.toUpperCase();
             return (upper.endsWith('-TORNEO') || upper.endsWith('-FESTIVAL'))
@@ -5560,7 +5589,7 @@
                             console.log(`🏆 Diploma para ${nombre}: "${diploma}" - Habilitado: ${isDiplomaEnabled}`);
                         }
                         const diplomaButtonClass = isDiplomaEnabled ? 'diploma-btn enabled' : 'diploma-btn disabled';
-                        const diplomaButtonClick = isDiplomaEnabled ? `generateDiploma('${(nombre || '').replace(/'/g, '\\\'')}', '${(equipo || '').replace(/'/g, '\\\'')}', '${(categoriaDisplay || '').replace(/'/g, '\\\'')}', '${tiempo || ''}', getCurrentEventName())` : '';
+                        const diplomaButtonClick = isDiplomaEnabled ? `generateDiploma('${(nombre || '').replace(/'/g, '\\\'')}', '${(equipo || '').replace(/'/g, '\\\'')}', '${(categoriaDisplay || '').replace(/'/g, '\\\'')}', '${tiempo || ''}', getCurrentPruebaRecordLabel())` : '';
                         
                         return `<tr>
                             <td data-label="Pos." class="rank">${pos || index}</td>
@@ -5582,7 +5611,7 @@
                         const categoriaDisplay = resolveRowCategory(categoria, this.currentCategory);
                         const isRecord = obs && obs.toString().toUpperCase().includes('R');
                         const diplomaButtonClass = isRecord ? 'diploma-btn enabled' : 'diploma-btn disabled';
-                        const diplomaButtonClick = isRecord ? `generateDiploma('${escapeJsString(nombre)}', '${escapeJsString(equipo)}', '${escapeJsString(categoriaDisplay)}', '${escapeJsString(tiempo)}', getCurrentEventName())` : '';
+                        const diplomaButtonClick = isRecord ? `generateDiploma('${escapeJsString(nombre)}', '${escapeJsString(equipo)}', '${escapeJsString(categoriaDisplay)}', '${escapeJsString(tiempo)}', getCurrentPruebaRecordLabel())` : '';
                         const athleteLabel = this.table?.querySelector('thead th:nth-child(2)')?.textContent?.trim() || 'Nadador/a';
                         
                         const safeNombre = escapeJsString(nombre);
@@ -7448,8 +7477,10 @@ Ver resultados completos: https://festitorneosinu.netlify.app`;
                 pdf.setFont('helvetica', 'bold');
                 pdf.setTextColor(0, 0, 0);
 
-                const nameY = layout.imgY + layout.imgHeight * 0.48;
-                const dataY = layout.imgY + layout.imgHeight * 0.58;
+                const recordOffsetY = 15; // ~1.5 cm hacia abajo
+                const pruebaSimple = formatPruebaRecordLabel(prueba);
+                const nameY = layout.imgY + layout.imgHeight * 0.48 + recordOffsetY;
+                const dataY = layout.imgY + layout.imgHeight * 0.58 + recordOffsetY;
 
                 pdf.setFontSize(24);
                 pdf.text(nombre || 'ATLETA', layout.pageWidth / 2, nameY, { align: 'center' });
@@ -7457,7 +7488,7 @@ Ver resultados completos: https://festitorneosinu.netlify.app`;
                 pdf.setFontSize(12);
                 pdf.text(`${equipo || 'N/A'}`, layout.pageWidth / 2 - layout.imgWidth * 0.27, dataY, { align: 'center' });
                 pdf.text(`${categoria || 'N/A'}`, layout.pageWidth / 2 - layout.imgWidth * 0.10, dataY, { align: 'center' });
-                pdf.text(`${prueba || 'Evento de Natación'}`, layout.pageWidth / 2 + layout.imgWidth * 0.09, dataY, { align: 'center' });
+                pdf.text(pruebaSimple, layout.pageWidth / 2 + layout.imgWidth * 0.09, dataY, { align: 'center' });
                 pdf.text(`${tiempo || 'N/A'}`, layout.pageWidth / 2 + layout.imgWidth * 0.27, dataY, { align: 'center' });
                 
                 // Generar nombre de archivo y descargar
