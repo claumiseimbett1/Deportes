@@ -1448,14 +1448,41 @@
 
         /* === CORRECCIÓN APLICADA AQUÍ === */
         /* Se combinaron las reglas y se aplicó el fondo directamente a las celdas (td) */
+        .results-table tbody tr.category-header {
+            display: table-row;
+        }
+
         .category-header td,
         .category-header-cell {
-            background: #f1f3f5 !important;
+            background: #e8eef5 !important;
             color: var(--primary-color) !important;
             text-align: center !important;
             font-size: 1.1em;
             font-weight: bold;
+            border-top: 3px solid var(--primary-color) !important;
             border-bottom: 2px solid #dee2e6 !important;
+            padding: 14px 16px !important;
+        }
+
+        .category-header-text {
+            display: block;
+            width: 100%;
+            text-align: center;
+            font-weight: 700;
+            letter-spacing: 0.03em;
+            color: var(--primary-color);
+        }
+
+        .category-badge:empty::before {
+            content: '—';
+            color: #9aa8bc;
+        }
+
+        .results-table tbody tr.category-header.category-header--only td.category-header-cell {
+            background: #dce8f8 !important;
+            border-top: 4px solid var(--primary-color) !important;
+            font-size: 1.2em;
+            padding: 16px !important;
         }
 
         .category-header-cell::before {
@@ -1926,21 +1953,32 @@
                 color: #666 !important;
             }
 
-            .results-table tr.category-header {
+            .results-table tbody tr.category-header {
                 display: block !important;
-                margin: 14px 0 8px;
+                margin: 16px 0 10px;
                 border: none;
                 background: transparent;
+                min-height: 44px;
             }
 
             .results-table tr.category-header td,
             .results-table td.category-header-cell {
                 display: block !important;
                 text-align: center !important;
-                padding: 12px 10px !important;
-                padding-left: 10px !important;
-                min-height: auto;
-                border-radius: 6px;
+                padding: 14px 12px !important;
+                padding-left: 12px !important;
+                min-height: 44px;
+                line-height: 1.4;
+                border-radius: 8px;
+            }
+
+            .category-header-text {
+                padding: 4px 0;
+            }
+
+            .results-table tbody tr.category-header.category-header--only td.category-header-cell {
+                font-size: 1.15em;
+                padding: 16px 12px !important;
             }
 
             .results-table tr.category-header td::before,
@@ -4702,6 +4740,7 @@
                     
                     loadAttempts = 0;
                     console.log('🎉 ¡Carga automática completada exitosamente!');
+                    refreshTablesSearchState();
                 } else {
                     updateStatus('warning', '⚠️ No se encontraron pestañas coincidentes');
                     updateLastUpdateTime();
@@ -4960,30 +4999,74 @@
         }
 
         const CATEGORY_HEADER_PATTERN = /^(?:categor[ií]a\s+)?(INFANTIL|JUVENIL|MAYORES|MASTER|ESPECIAL|MENORES)\b/i;
+        const CATEGORY_SUBHEADER_PATTERN = /^(INFANTIL|JUVENIL|MAYORES|MASTER|ESPECIAL|MENORES)\s+[A-Z0-9]+(?:\s+(?:Torneo|Festival))?$/i;
 
         function isPruebaResultsTable(table) {
             return !!(table && table.id && table.id.startsWith('resultsTable-'));
         }
 
+        function isCategoryLabel(text) {
+            const normalized = (text ?? '').toString().replace(/\s+/g, ' ').trim();
+            if (!normalized) return false;
+            return CATEGORY_HEADER_PATTERN.test(normalized) ||
+                CATEGORY_SUBHEADER_PATTERN.test(normalized);
+        }
+
+        function normalizeCategoryLabel(text) {
+            return (text ?? '').toString().replace(/^categor[ií]a\s+/i, '').replace(/\s+/g, ' ').trim();
+        }
+
         function getCategoryHeaderFromRow(row) {
             if (!row || !row.length) return null;
 
-            const dataCols = row.slice(0, 8);
-            const firstCell = (dataCols[0] != null ? dataCols[0].toString().trim() : '');
-            if (!firstCell || firstCell === '0') return null;
+            const dataCols = row.slice(0, 8).map(cell => (cell != null ? cell.toString().trim() : ''));
+            const colA = dataCols[0];
+            const colB = dataCols[1];
 
-            const athleteCell = dataCols[1] != null ? dataCols[1].toString().trim() : '';
-            if (athleteCell) return null;
+            if (/^categor[ií]a$/i.test(colA) && colB && isCategoryLabel(colB)) {
+                return normalizeCategoryLabel(colB);
+            }
 
-            const headerText = firstCell.replace(/\s+/g, ' ').trim();
-            const isCategory = CATEGORY_HEADER_PATTERN.test(headerText) ||
-                /^(INFANTIL|JUVENIL|MAYORES|MASTER)\s+[A-Z0-9]+(?:\s+(?:Torneo|Festival))?$/i.test(headerText);
+            if (!colA || colA === '0') return null;
 
-            return isCategory ? headerText : null;
+            if (colB && !isCategoryLabel(colB)) return null;
+
+            const headerText = normalizeCategoryLabel(colB && isCategoryLabel(colB) ? colB : colA);
+            return isCategoryLabel(headerText) ? headerText : null;
         }
 
         function isCategoryHeaderRow(row) {
             return getCategoryHeaderFromRow(row) !== null;
+        }
+
+        function finalizeCategoryHeaders(table) {
+            if (!table) return;
+            const headers = Array.from(table.querySelectorAll('tbody tr.category-header'));
+            headers.forEach(header => header.classList.remove('category-header--only'));
+            if (headers.length === 1) {
+                headers[0].classList.add('category-header--only');
+                headers[0].style.removeProperty('display');
+            }
+        }
+
+        function getSingleCategoryLabelFromData(data, startIndex) {
+            const labels = new Set();
+            for (let i = startIndex; i < data.length; i++) {
+                const row = data[i];
+                if (!row || row.length < 6) continue;
+                const athlete = (row[1] ?? '').toString().trim();
+                if (!athlete) continue;
+                const category = (row[4] ?? '').toString().trim();
+                if (category) labels.add(category);
+            }
+            if (labels.size !== 1) return null;
+            return [...labels][0];
+        }
+
+        function resolveRowCategory(categoria, currentCategory) {
+            const fromRow = (categoria ?? '').toString().trim();
+            if (fromRow) return fromRow;
+            return (currentCategory ?? '').toString().trim();
         }
 
         function formatRankDisplay(pos) {
@@ -5005,6 +5088,7 @@
             constructor(table, config = {}) {
                 this.table = table;
                 this.tbody = table.querySelector('tbody');
+                this.currentCategory = '';
                 this.config = {
                     colspan: '10',
                     hasGenderColumn: false,
@@ -5023,13 +5107,34 @@
                 let htmlContent = '';
                 const startIndex = (data[0] && data[0][0] === '__header__') ? 1 : 0;
 
+                const categoryHeadersInData = [];
                 let hasMenoresHeader = false;
                 for (let i = startIndex; i < data.length; i++) {
                     const cat = getCategoryHeaderFromRow(data[i]);
-                    if (cat && /^menores$/i.test(cat)) hasMenoresHeader = true;
+                    if (cat) {
+                        categoryHeadersInData.push(cat);
+                        if (/^menores$/i.test(cat)) hasMenoresHeader = true;
+                    }
                 }
+
+                this.currentCategory = '';
+                if (menores && !hasMenoresHeader) {
+                    this.currentCategory = 'MENORES';
+                } else if (categoryHeadersInData.length === 1) {
+                    this.currentCategory = categoryHeadersInData[0];
+                } else if (categoryHeadersInData.length === 0) {
+                    const singleFromRows = getSingleCategoryLabelFromData(data, startIndex);
+                    if (singleFromRows) this.currentCategory = singleFromRows;
+                }
+
                 if (menores && !hasMenoresHeader) {
                     htmlContent += this.renderCategoryRow('MENORES');
+                } else if (
+                    categoryHeadersInData.length === 0 &&
+                    this.currentCategory &&
+                    /^(menores|especial)$/i.test(this.currentCategory)
+                ) {
+                    htmlContent += this.renderCategoryRow(this.currentCategory.toUpperCase());
                 }
 
                 for (let i = startIndex; i < data.length; i++) {
@@ -5037,13 +5142,15 @@
                     if (!row || row.length === 0) continue;
 
                     if (this.isCategoryRow(row)) {
-                        htmlContent += this.renderCategoryRow(getCategoryHeaderFromRow(row));
+                        this.currentCategory = getCategoryHeaderFromRow(row);
+                        htmlContent += this.renderCategoryRow(this.currentCategory);
                     } else if (this.isDataRow(row)) {
                         htmlContent += this.renderDataRow(row, i);
                     }
                 }
 
                 this.tbody.innerHTML = htmlContent || this.getNoDataMessage();
+                finalizeCategoryHeaders(this.table);
             }
             
             isCategoryRow(row) {
@@ -5058,7 +5165,9 @@
             
             renderCategoryRow(category) {
                 return `<tr class="category-header">
-                    <td colspan="${this.config.colspan}" class="category-header-cell">${escapeHtml(category)}</td>
+                    <td colspan="${this.config.colspan}" class="category-header-cell">
+                        <span class="category-header-text">${escapeHtml(category)}</span>
+                    </td>
                 </tr>`;
             }
             
@@ -5110,8 +5219,8 @@
                 } else {
                     // Tabla de prueba individual
                     if (is4x50mMixto) {
-                        // Para 4x50m Mixto: usar columna Diploma (SI/NO) pero sin mostrar las columnas Diploma y Obs
                         const [pos, nombre, equipo, edad, categoria, tiempo, puntos, diploma, obs] = row;
+                        const categoriaDisplay = resolveRowCategory(categoria, this.currentCategory);
                         
                         // Determinar si el diploma debe estar habilitado (columna Diploma con valor 'SI')
                         const isDiplomaEnabled = diploma && diploma.toString().toUpperCase().trim() === 'SI';
@@ -5121,17 +5230,17 @@
                             console.log(`🏆 Diploma para ${nombre}: "${diploma}" - Habilitado: ${isDiplomaEnabled}`);
                         }
                         const diplomaButtonClass = isDiplomaEnabled ? 'diploma-btn enabled' : 'diploma-btn disabled';
-                        const diplomaButtonClick = isDiplomaEnabled ? `generateDiploma('${(nombre || '').replace(/'/g, '\\\'')}', '${(equipo || '').replace(/'/g, '\\\'')}', '${(categoria || '').replace(/'/g, '\\\'')}', '${tiempo || ''}', getCurrentEventName())` : '';
+                        const diplomaButtonClick = isDiplomaEnabled ? `generateDiploma('${(nombre || '').replace(/'/g, '\\\'')}', '${(equipo || '').replace(/'/g, '\\\'')}', '${(categoriaDisplay || '').replace(/'/g, '\\\'')}', '${tiempo || ''}', getCurrentEventName())` : '';
                         
                         return `<tr>
                             <td data-label="Pos." class="rank">${pos || index}</td>
                             <td data-label="Nadador/a"><strong>${nombre || ''}</strong></td>
                             <td data-label="Equipo">${equipo || ''}</td>
                             <td data-label="Edad">${edad || ''}</td>
-                            <td data-label="Categoría"><span class="category-badge">${categoria || ''}</span></td>
+                            <td data-label="Categoría"><span class="category-badge">${escapeHtml(categoriaDisplay)}</span></td>
                             <td data-label="Tiempo Final" class="time">${tiempo || ''}</td>
                             <td data-label="Puntos"><strong class="total-points-cell">${puntos || ''}</strong></td>
-                            <td data-label="Compartir"><button onclick="shareResult('${nombre}', '${pos || index}', '${tiempo}', '${categoria}')" class="share-btn">📱</button></td>
+                            <td data-label="Compartir"><button onclick="shareResult('${nombre}', '${pos || index}', '${tiempo}', '${categoriaDisplay}')" class="share-btn">📱</button></td>
                             <td data-label="Certificado" class="diploma-cell">
                                 <button class="${diplomaButtonClass}" ${isDiplomaEnabled ? `onclick="${diplomaButtonClick}"` : ''} ${!isDiplomaEnabled ? 'disabled' : ''} title="${isDiplomaEnabled ? 'Descargar certificado' : 'Certificado no habilitado'}" data-status="${diploma || 'NO'}">
                                     🏆
@@ -5140,14 +5249,15 @@
                         </tr>`;
                     } else {
                         const [pos, nombre, equipo, edad, categoria, tiempo, puntos, obs] = row.slice(0, 8);
+                        const categoriaDisplay = resolveRowCategory(categoria, this.currentCategory);
                         const isRecord = obs && obs.toString().toUpperCase().includes('R');
                         const diplomaButtonClass = isRecord ? 'diploma-btn enabled' : 'diploma-btn disabled';
-                        const diplomaButtonClick = isRecord ? `generateDiploma('${escapeJsString(nombre)}', '${escapeJsString(equipo)}', '${escapeJsString(categoria)}', '${escapeJsString(tiempo)}', getCurrentEventName())` : '';
+                        const diplomaButtonClick = isRecord ? `generateDiploma('${escapeJsString(nombre)}', '${escapeJsString(equipo)}', '${escapeJsString(categoriaDisplay)}', '${escapeJsString(tiempo)}', getCurrentEventName())` : '';
                         const athleteLabel = this.table?.querySelector('thead th:nth-child(2)')?.textContent?.trim() || 'Nadador/a';
                         
                         const safeNombre = escapeJsString(nombre);
                         const safeTiempo = escapeJsString(tiempo);
-                        const safeCategoria = escapeJsString(categoria);
+                        const safeCategoria = escapeJsString(categoriaDisplay);
                         const safePos = escapeJsString(pos || index);
                         const { display: displayPos, isPodium } = formatRankDisplay(pos);
 
@@ -5156,7 +5266,7 @@
                             <td data-label="${escapeHtml(athleteLabel)}" class="athlete-cell"><strong>${escapeHtml(nombre || '')}</strong></td>
                             <td data-label="Equipo" class="team-cell">${escapeHtml(equipo || '')}</td>
                             <td data-label="Edad">${escapeHtml(edad || '')}</td>
-                            <td data-label="Categoría"><span class="category-badge">${escapeHtml(categoria || '')}</span></td>
+                            <td data-label="Categoría"><span class="category-badge">${escapeHtml(categoriaDisplay)}</span></td>
                             <td data-label="Tiempo Final" class="time">${escapeHtml(tiempo || '')}</td>
                             <td data-label="Puntos"><strong class="total-points-cell">${escapeHtml(puntos || '')}</strong></td>
                             <td data-label="Obs" class="obs-cell ${isRecord ? 'record-indicator' : ''}">${escapeHtml(obs || '')}</td>
@@ -5324,7 +5434,9 @@
                     currentCategory = categoryHeader;
                     htmlContent += `
                         <tr class="category-header">
-                            <td colspan="11" class="category-header-cell">${escapeHtml(currentCategory)}</td>
+                            <td colspan="11" class="category-header-cell">
+                                <span class="category-header-text">${escapeHtml(currentCategory)}</span>
+                            </td>
                         </tr>`;
                 } else if (row.length >= 6) {
                     // Es un resultado - Esperar al menos 6 columnas: LUGAR, ATLETA, EQUIPO, EDAD, CATEGORIA, PUNTOS TOTALES
@@ -5391,6 +5503,7 @@
             }
             
             tbody.innerHTML = htmlContent || '<tr><td colspan="11" class="no-data-cell">No hay datos de clasificación disponibles</td></tr>';
+            finalizeCategoryHeaders(table);
             
             // Actualizar el tiempo de última actualización de género
             if (lastUpdateElementGender) {
@@ -5731,54 +5844,103 @@
             }
         }
 
+        function escapeRegexForSearch(term) {
+            return term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        }
+
+        function refreshTablesSearchState() {
+            const pruebasSearch = document.getElementById('searchPruebas');
+            const genderSearch = document.getElementById('searchGender');
+            performSearch(pruebasSearch ? pruebasSearch.value : '', 'pruebas');
+            performSearch(genderSearch ? genderSearch.value : '', 'gender');
+        }
+
         function searchInTable(table, searchTerm) {
-            const rows = table.getElementsByTagName('tr');
+            const rows = Array.from(table.querySelectorAll('tbody tr')).filter(row => !row.classList.contains('loading-row'));
+            const categoryHeaders = rows.filter(row => row.classList.contains('category-header'));
+            const singleCategoryTable = categoryHeaders.length === 1;
             let foundResults = 0;
             let totalResults = 0;
 
-            for (let i = 0; i < rows.length; i++) {
-                const row = rows[i];
-
-                if (row.classList.contains('category-header')) {
-                    row.style.display = '';
-                    continue;
-                }
-
-                if (row.parentElement && row.parentElement.tagName === 'THEAD') {
-                    continue;
-                }
-                
-                const cells = row.getElementsByTagName('td');
-                if (cells.length === 0) continue;
-                
-                totalResults++;
-                let rowContainsSearch = false;
-                
-                // Search in name column (usually first or second column)
-                for (let j = 0; j < Math.min(cells.length, 3); j++) {
-                    const cellText = cells[j].textContent.toLowerCase();
-                    
-                    // Remove previous highlights
-                    cells[j].innerHTML = cells[j].textContent;
-                    
-                    if (searchTerm && cellText.includes(searchTerm)) {
-                        rowContainsSearch = true;
-                        // Highlight the search term
-                        const originalText = cells[j].textContent;
-                        const regex = new RegExp(`(${searchTerm})`, 'gi');
-                        cells[j].innerHTML = originalText.replace(regex, '<span class="highlight-search">$1</span>');
+            if (!searchTerm) {
+                rows.forEach(row => {
+                    row.style.removeProperty('display');
+                    if (!row.classList.contains('category-header')) {
+                        const cells = row.getElementsByTagName('td');
+                        if (cells.length === 0) return;
+                        totalResults++;
+                        for (let j = 0; j < Math.min(cells.length, 5); j++) {
+                            cells[j].innerHTML = cells[j].textContent;
+                        }
                     }
-                }
-                
-                // Show/hide row based on search
-                if (searchTerm === '' || rowContainsSearch) {
-                    row.style.display = '';
-                    if (rowContainsSearch) foundResults++;
-                } else {
-                    row.style.display = 'none';
-                }
+                });
+                finalizeCategoryHeaders(table);
+                return { found: totalResults, total: totalResults };
             }
-            
+
+            const sections = [];
+            let currentSection = { header: null, rows: [] };
+
+            rows.forEach(row => {
+                if (row.classList.contains('category-header')) {
+                    if (currentSection.header || currentSection.rows.length) {
+                        sections.push(currentSection);
+                    }
+                    currentSection = { header: row, rows: [] };
+                    return;
+                }
+                currentSection.rows.push(row);
+            });
+            if (currentSection.header || currentSection.rows.length) {
+                sections.push(currentSection);
+            }
+
+            sections.forEach(section => {
+                let sectionVisible = false;
+                const headerText = section.header ? section.header.textContent.toLowerCase() : '';
+
+                if (section.header && headerText.includes(searchTerm)) {
+                    sectionVisible = true;
+                }
+
+                section.rows.forEach(row => {
+                    const cells = row.getElementsByTagName('td');
+                    if (cells.length === 0) return;
+
+                    totalResults++;
+                    let rowContainsSearch = false;
+
+                    for (let j = 0; j < Math.min(cells.length, 5); j++) {
+                        const cellText = cells[j].textContent.toLowerCase();
+                        cells[j].innerHTML = cells[j].textContent;
+
+                        if (cellText.includes(searchTerm)) {
+                            rowContainsSearch = true;
+                            const originalText = cells[j].textContent;
+                            const regex = new RegExp(`(${escapeRegexForSearch(searchTerm)})`, 'gi');
+                            cells[j].innerHTML = originalText.replace(regex, '<span class="highlight-search">$1</span>');
+                        }
+                    }
+
+                    if (rowContainsSearch) {
+                        sectionVisible = true;
+                        foundResults++;
+                        row.style.display = '';
+                    } else {
+                        row.style.display = 'none';
+                    }
+                });
+
+                if (section.header) {
+                    const headerLabel = (section.header.querySelector('.category-header-text')?.textContent || section.header.textContent)
+                        .trim()
+                        .toLowerCase();
+                    const alwaysShowGroup = headerLabel === 'menores' || headerLabel === 'especial';
+                    section.header.style.display = (sectionVisible || alwaysShowGroup || singleCategoryTable) ? '' : 'none';
+                }
+            });
+
+            finalizeCategoryHeaders(table);
             return { found: foundResults, total: totalResults };
         }
 
