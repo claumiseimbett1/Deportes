@@ -5565,13 +5565,8 @@
                         <td><button onclick="shareResult('${nombre}', '${pos || index}', 'N/A', '${categoria}')" class="share-btn">📱</button></td>
                         <td class="diploma-cell">
                             ${(() => {
-                                const isDiplomaEnabled = certificado && certificado.toString().toUpperCase().trim() === 'SI';
-                                const diplomaClass = isDiplomaEnabled ? 'diploma-btn enabled' : 'diploma-btn disabled';
-                                const diplomaClick = isDiplomaEnabled ? `onclick="downloadDiploma('${(nombre || '').replace(/'/g, '\\\'')}'', '${pos || index}', '${(equipo || '').replace(/'/g, '\\\'')}'', '${(categoria || '').replace(/'/g, '\\\'')}'')"` : '';
-                                const diplomaDisabled = isDiplomaEnabled ? '' : 'disabled';
-                                const diplomaTitle = isDiplomaEnabled ? 'Descargar diploma' : 'Diploma no disponible (certificado requerido)';
-                                
-                                return `<button class="${diplomaClass}" ${diplomaClick} ${diplomaDisabled} title="${diplomaTitle}" data-status="${certificado || 'N/A'}">🏆</button>`;
+                                const diplomaClick = `onclick="downloadDiploma('${(nombre || '').replace(/'/g, '\\\'')}'', '${pos || index}', '${(equipo || '').replace(/'/g, '\\\'')}'', '${(categoria || '').replace(/'/g, '\\\'')}'')"`;
+                                return `<button class="diploma-btn enabled" ${diplomaClick} title="Descargar diploma" data-status="${certificado || 'N/A'}">🏆</button>`;
                             })()}
                         </td>
                     </tr>`;
@@ -5580,16 +5575,7 @@
                     if (is4x50mMixto) {
                         const [pos, nombre, equipo, edad, categoria, tiempo, puntos, diploma, obs] = row;
                         const categoriaDisplay = resolveRowCategory(categoria, this.currentCategory);
-                        
-                        // Determinar si el diploma debe estar habilitado (columna Diploma con valor 'SI')
-                        const isDiplomaEnabled = diploma && diploma.toString().toUpperCase().trim() === 'SI';
-                        
-                        // Debug: mostrar información de la columna Diploma
-                        if (diploma && diploma.toString().trim() !== '') {
-                            console.log(`🏆 Diploma para ${nombre}: "${diploma}" - Habilitado: ${isDiplomaEnabled}`);
-                        }
-                        const diplomaButtonClass = isDiplomaEnabled ? 'diploma-btn enabled' : 'diploma-btn disabled';
-                        const diplomaButtonClick = isDiplomaEnabled ? `generateDiploma('${(nombre || '').replace(/'/g, '\\\'')}', '${(equipo || '').replace(/'/g, '\\\'')}', '${(categoriaDisplay || '').replace(/'/g, '\\\'')}', '${tiempo || ''}', getCurrentPruebaRecordLabel())` : '';
+                        const diplomaButtonClick = `generateDiploma('${(nombre || '').replace(/'/g, '\\\'')}', '${(equipo || '').replace(/'/g, '\\\'')}', '${(categoriaDisplay || '').replace(/'/g, '\\\'')}', '${tiempo || ''}', getCurrentPruebaRecordLabel())`;
                         
                         return `<tr>
                             <td data-label="Pos." class="rank">${pos || index}</td>
@@ -5601,7 +5587,7 @@
                             <td data-label="Puntos"><strong class="total-points-cell">${puntos || ''}</strong></td>
                             <td data-label="Compartir"><button onclick="shareResult('${nombre}', '${pos || index}', '${tiempo}', '${categoriaDisplay}')" class="share-btn">📱</button></td>
                             <td data-label="Certificado" class="diploma-cell">
-                                <button class="${diplomaButtonClass}" ${isDiplomaEnabled ? `onclick="${diplomaButtonClick}"` : ''} ${!isDiplomaEnabled ? 'disabled' : ''} title="${isDiplomaEnabled ? 'Descargar certificado' : 'Certificado no habilitado'}" data-status="${diploma || 'NO'}">
+                                <button class="diploma-btn enabled" onclick="${diplomaButtonClick}" title="Descargar certificado" data-status="${diploma || 'N/A'}">
                                     🏆
                                 </button>
                             </td>
@@ -5610,8 +5596,7 @@
                         const [pos, nombre, equipo, edad, categoria, tiempo, puntos, obs] = row.slice(0, 8);
                         const categoriaDisplay = resolveRowCategory(categoria, this.currentCategory);
                         const isRecord = obs && obs.toString().toUpperCase().includes('R');
-                        const diplomaButtonClass = isRecord ? 'diploma-btn enabled' : 'diploma-btn disabled';
-                        const diplomaButtonClick = isRecord ? `generateDiploma('${escapeJsString(nombre)}', '${escapeJsString(equipo)}', '${escapeJsString(categoriaDisplay)}', '${escapeJsString(tiempo)}', getCurrentPruebaRecordLabel())` : '';
+                        const diplomaButtonClick = `generateDiploma('${escapeJsString(nombre)}', '${escapeJsString(equipo)}', '${escapeJsString(categoriaDisplay)}', '${escapeJsString(tiempo)}', getCurrentPruebaRecordLabel())`;
                         const athleteLabel = this.table?.querySelector('thead th:nth-child(2)')?.textContent?.trim() || 'Nadador/a';
                         
                         const safeNombre = escapeJsString(nombre);
@@ -5631,7 +5616,7 @@
                             <td data-label="Obs" class="obs-cell ${isRecord ? 'record-indicator' : ''}">${escapeHtml(obs || '')}</td>
                             <td data-label="Compartir"><button onclick="shareResult('${safeNombre}', '${safePos}', '${safeTiempo}', '${safeCategoria}')" class="share-btn">📱</button></td>
                             <td data-label="Diploma" class="diploma-cell">
-                                <button class="${diplomaButtonClass}" ${isRecord ? `onclick="${diplomaButtonClick}"` : ''} ${!isRecord ? 'disabled' : ''} title="${isRecord ? 'Descargar diploma de récord' : 'Solo disponible para récords (marcar con R en Obs)'}" data-status="${obs || 'N/A'}">
+                                <button class="diploma-btn enabled" onclick="${diplomaButtonClick}" title="Descargar diploma de récord" data-status="${obs || 'N/A'}">
                                     🏆
                                 </button>
                             </td>
@@ -5694,13 +5679,8 @@
                             </td>
                             <td data-label="Diploma" class="diploma-cell">
                                 ${(() => {
-                                    const isCertificateEnabled = certificado && certificado.toString().toUpperCase().trim() === 'SI';
-                                    const diplomaClass = isCertificateEnabled ? 'diploma-btn enabled' : 'diploma-btn disabled';
-                                    const diplomaClick = isCertificateEnabled ? `onclick="generateTeamDiploma('${(equipo || '').replace(/'/g, '\\\'')}', '${lugar || ''}', '${puntosTotales || '0'}')"` : '';
-                                    const diplomaTitle = isCertificateEnabled ? 'Descargar diploma de equipo' : 'Diploma no disponible (requiere certificado SI)';
-                                    const diplomaDisabled = isCertificateEnabled ? '' : 'disabled';
-                                    
-                                    return `<button class="${diplomaClass}" ${diplomaClick} ${diplomaDisabled} title="${diplomaTitle}" data-status="${certificado || 'N/A'}">
+                                    const diplomaClick = `onclick="generateTeamDiploma('${(equipo || '').replace(/'/g, '\\\'')}', '${lugar || ''}', '${puntosTotales || '0'}')"`;
+                                    return `<button class="diploma-btn enabled" ${diplomaClick} title="Descargar diploma de equipo" data-status="${certificado || 'N/A'}">
                                         🎓
                                     </button>`;
                                 })()
@@ -5790,13 +5770,10 @@
                     // Generar medallas para las posiciones
                     const { display: displayPos, isPodium } = formatRankDisplay(lugar);
                     
-                    // Determine if diploma download should be enabled - usar columna Certificado
-                    const isDiplomaEnabled = certificado && certificado.toString().toUpperCase().trim() === 'SI';
-                    const diplomaButtonClass = isDiplomaEnabled ? 'diploma-btn enabled' : 'diploma-btn disabled';
-                    const diplomaButtonClick = isDiplomaEnabled ? `downloadDiploma('${(atleta || '').replace(/'/g, '\\\'')
+                    const diplomaButtonClick = `downloadDiploma('${(atleta || '').replace(/'/g, '\\\'')
                     }', '${lugar || ''}', '${(equipo || '').replace(/'/g, '\\\'')
                     }', '${(categoria || currentCategory || '').replace(/'/g, '\\\'')
-                    }')` : '';
+                    }')`;
 
                     htmlContent += `
                         <tr class="${isPodium ? 'podium-row' : ''}">
@@ -5813,7 +5790,7 @@
                                 <button class="share-btn" onclick="shareResult('${atleta || ''}', '${lugar || ''}', 'N/A', '${categoria || currentCategory || ''}')">📱</button>
                             </td>
                             <td data-label="Diploma" class="diploma-cell">
-                                <button class="${diplomaButtonClass}" ${isDiplomaEnabled ? `onclick="${diplomaButtonClick}"` : ''} ${!isDiplomaEnabled ? 'disabled' : ''} title="${isDiplomaEnabled ? 'Descargar diploma' : 'Diploma no disponible'}" data-status="${certificado || 'N/A'}">
+                                <button class="diploma-btn enabled" onclick="${diplomaButtonClick}" title="Descargar diploma" data-status="${certificado || 'N/A'}">
                                     🎓
                                 </button>
                             </td>
