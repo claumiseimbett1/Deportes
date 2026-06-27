@@ -1205,6 +1205,33 @@
             border: 2px solid #e9ecef;
         }
 
+        .table-responsive {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            margin-top: 1rem;
+            border-radius: var(--border-radius);
+            border: 1px solid #e9ecef;
+            background: #ffffff;
+        }
+
+        .table-responsive .results-table {
+            margin-top: 0;
+            box-shadow: none;
+            border-radius: 0;
+        }
+
+        .results-table--prueba {
+            min-width: 900px;
+        }
+
+        .results-table--gender {
+            min-width: 1020px;
+        }
+
+        .results-table--teams {
+            min-width: 680px;
+        }
+
         /* Pestañas de Resultados */
         .tabs {
             display: flex;
@@ -1310,50 +1337,113 @@
             border-collapse: collapse;
             margin-top: 20px;
             background-color: #ffffff;
-            border-radius: var(--border-radius);
-            overflow: hidden;
-            box-shadow: 0 5px 25px rgba(0, 0, 0, 0.08);
+            table-layout: auto;
         }
 
-        .results-table th, .results-table td {
-            padding: 15px 20px;
+        .table-responsive .results-table {
+            margin-top: 0;
+        }
+
+        .results-table th,
+        .results-table td {
+            padding: 12px 14px;
             text-align: left;
             border-bottom: 1px solid #e9ecef;
+            vertical-align: middle;
         }
 
         .results-table th {
             background-color: #f1f3f5;
             color: var(--primary-color);
             font-weight: 600;
-            font-size: 1em;
+            font-size: 0.92em;
+            white-space: nowrap;
         }
 
-        .results-table tr:nth-child(even) td {
+        @media (min-width: 769px) {
+            .table-responsive .results-table thead th {
+                position: sticky;
+                top: 0;
+                z-index: 2;
+                box-shadow: 0 1px 0 #dee2e6;
+            }
+        }
+
+        .results-table tr:nth-child(even):not(.category-header) td {
             background-color: #fafcff;
         }
 
-        .results-table tr:hover td {
-            background-color: #e9ecef;
-            transition: background-color 0.3s ease;
+        .results-table tr:not(.category-header):hover td {
+            background-color: #eef4fc;
+            transition: background-color 0.2s ease;
         }
 
-        .results-table .rank {
-            font-weight: bold;
-            color: var(--primary-color);
+        .results-table tr.category-header:hover td,
+        .results-table tr.category-header td {
+            background: #f1f3f5 !important;
+        }
+
+        .results-table tr.podium-row td {
+            background: #fffdf5 !important;
+        }
+
+        .results-table tr.podium-row:hover td {
+            background: #fff8e8 !important;
+        }
+
+        .results-table .rank,
+        .results-table .time,
+        .results-table .points,
+        .results-table .obs-cell,
+        .results-table .total-points-cell,
+        .results-table .share-cell,
+        .results-table .diploma-cell {
             text-align: center;
+        }
+
+        .results-table th:nth-child(2),
+        .results-table td.athlete-cell {
+            min-width: 9.5rem;
+        }
+
+        .results-table th:nth-child(3),
+        .results-table td.team-cell {
+            min-width: 6.5rem;
         }
 
         .results-table .time {
             font-family: 'Courier New', Courier, monospace;
             font-weight: bold;
             color: var(--primary-color);
-            text-align: center;
+            white-space: nowrap;
         }
 
-        .results-table .points {
+        .results-table .points,
+        .results-table .total-points-cell {
             font-weight: bold;
             color: #000000;
-            text-align: center;
+        }
+
+        .category-badge {
+            display: inline-block;
+            padding: 0.2rem 0.55rem;
+            border-radius: 999px;
+            background: #eef4ff;
+            color: var(--primary-color);
+            font-size: 0.85em;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        .no-data-cell {
+            text-align: center !important;
+            color: var(--text-gray);
+            padding: 1.5rem !important;
+        }
+
+        .obs-cell.record-indicator {
+            color: #c45a00;
+            font-weight: 700;
         }
 
         /* === CORRECCIÓN APLICADA AQUÍ === */
@@ -1857,6 +1947,22 @@
             .results-table td.category-header-cell::before {
                 content: none !important;
                 display: none !important;
+            }
+
+            .results-table td[data-label="Compartir"],
+            .results-table td[data-label="Diploma"],
+            .results-table td.share-cell,
+            .results-table td.diploma-cell {
+                text-align: center !important;
+                padding-left: 12px !important;
+            }
+
+            .results-table td[data-label="Compartir"]::before,
+            .results-table td[data-label="Diploma"]::before {
+                left: 50% !important;
+                transform: translateX(-50%);
+                width: 100%;
+                text-align: center;
             }
 
             .cards-grid {
@@ -3678,7 +3784,8 @@
                 <!-- Pestaña Masculino General -->
                 <div id="masculino-general" class="tab-content active">
                     <h3>🏊‍♂️ Clasificación General Masculina</h3>
-                    <table class="results-table" id="resultsTableMasculinoGeneral">
+                    <div class="table-responsive">
+                    <table class="results-table results-table--gender" id="resultsTableMasculinoGeneral">
                         <thead>
                             <tr>
                                 <th>Pos.</th>
@@ -3702,12 +3809,14 @@
                             </tr>
                         </tbody>
                     </table>
+                    </div>
                 </div>
 
                 <!-- Pestaña Femenino General -->
                 <div id="femenino-general" class="tab-content">
                     <h3>🏊‍♀️ Clasificación General Femenina</h3>
-                    <table class="results-table" id="resultsTableFemeninoGeneral">
+                    <div class="table-responsive">
+                    <table class="results-table results-table--gender" id="resultsTableFemeninoGeneral">
                         <thead>
                             <tr>
                                 <th>Pos.</th>
@@ -3731,6 +3840,7 @@
                             </tr>
                         </tbody>
                     </table>
+                    </div>
                 </div>
             </div>
         </div>
@@ -3749,7 +3859,8 @@
                     🏆 Clasificación General por Equipos
                 </h3>
                 
-                <table class="results-table" id="resultsTableTeams">
+                <div class="table-responsive">
+                <table class="results-table results-table--teams" id="resultsTableTeams">
                     <thead>
                         <tr>
                             <th>Lugar</th>
@@ -3769,6 +3880,7 @@
                         </tr>
                     </tbody>
                 </table>
+                </div>
             </div>
         </div>
     </section>
@@ -4012,7 +4124,8 @@
                 panel.dataset.sheetName = sheetName;
                 panel.innerHTML = `
                     <h3>${emoji} ${fullLabel} — Resultados Oficiales</h3>
-                    <table class="results-table" id="resultsTable-${key}">
+                    <div class="table-responsive">
+                    <table class="results-table results-table--prueba" id="resultsTable-${key}">
                         <thead>
                             <tr>
                                 <th>Pos.</th>
@@ -4033,6 +4146,7 @@
                             </tr>
                         </tbody>
                     </table>
+                    </div>
                 `;
                 content.appendChild(panel);
 
@@ -4872,6 +4986,20 @@
             return getCategoryHeaderFromRow(row) !== null;
         }
 
+        function formatRankDisplay(pos) {
+            const normalized = (pos ?? '').toString().trim();
+            if (normalized === '1') return { display: '🥇 1°', isPodium: true };
+            if (normalized === '2') return { display: '🥈 2°', isPodium: true };
+            if (normalized === '3') return { display: '🥉 3°', isPodium: true };
+            if (normalized && normalized !== '-' && normalized !== '0') {
+                return {
+                    display: normalized.includes('°') ? normalized : `${normalized}°`,
+                    isPodium: false
+                };
+            }
+            return { display: normalized || '-', isPodium: false };
+        }
+
         // Base class for table renderers - Optimized approach
         class TableRenderer {
             constructor(table, config = {}) {
@@ -5021,11 +5149,12 @@
                         const safeTiempo = escapeJsString(tiempo);
                         const safeCategoria = escapeJsString(categoria);
                         const safePos = escapeJsString(pos || index);
+                        const { display: displayPos, isPodium } = formatRankDisplay(pos);
 
-                        return `<tr>
-                            <td data-label="Pos." class="rank">${escapeHtml(pos || index)}</td>
-                            <td data-label="${escapeHtml(athleteLabel)}"><strong>${escapeHtml(nombre || '')}</strong></td>
-                            <td data-label="Equipo">${escapeHtml(equipo || '')}</td>
+                        return `<tr class="${isPodium ? 'podium-row' : ''}">
+                            <td data-label="Pos." class="rank">${escapeHtml(displayPos)}</td>
+                            <td data-label="${escapeHtml(athleteLabel)}" class="athlete-cell"><strong>${escapeHtml(nombre || '')}</strong></td>
+                            <td data-label="Equipo" class="team-cell">${escapeHtml(equipo || '')}</td>
                             <td data-label="Edad">${escapeHtml(edad || '')}</td>
                             <td data-label="Categoría"><span class="category-badge">${escapeHtml(categoria || '')}</span></td>
                             <td data-label="Tiempo Final" class="time">${escapeHtml(tiempo || '')}</td>
@@ -5082,17 +5211,13 @@
                     }
                     
                     // Generar medallas para las posiciones
-                    let displayPos = lugar;
-                    if (lugar === '1' || lugar === 1) displayPos = '🥇 1°';
-                    else if (lugar === '2' || lugar === 2) displayPos = '🥈 2°';
-                    else if (lugar === '3' || lugar === 3) displayPos = '🥉 3°';
-                    else if (lugar && lugar !== '-' && lugar !== '') displayPos = `${lugar}°`;
+                    const { display: displayPos, isPodium } = formatRankDisplay(lugar);
                     
                     // Contenido para tabla desktop
                     htmlContent += `
-                        <tr>
+                        <tr class="${isPodium ? 'podium-row' : ''}">
                             <td data-label="Posición" class="rank">${displayPos || '-'}</td>
-                            <td data-label="Equipo" class="team-name-cell">${equipo || '-'}</td>
+                            <td data-label="Equipo" class="team-cell team-name-cell">${escapeHtml(equipo || '-')}</td>
                             <td data-label="Puntos Totales" class="points total-points-cell">${puntosTotales || '0'}</td>
                             <td data-label="Puntos Femeninos" class="points female-points-cell">${puntosFemeninos || '0'}</td>
                             <td data-label="Puntos Masculinos" class="points male-points-cell">${puntosMasculinos || '0'}</td>
@@ -5232,11 +5357,7 @@
                     }
                     
                     // Generar medallas para las posiciones
-                    let displayPos = lugar;
-                    if (lugar === '1' || lugar === 1) displayPos = '🥇 1°';
-                    else if (lugar === '2' || lugar === 2) displayPos = '🥈 2°';
-                    else if (lugar === '3' || lugar === 3) displayPos = '🥉 3°';
-                    else if (lugar && lugar !== '-' && lugar !== '') displayPos = `${lugar}°`;
+                    const { display: displayPos, isPodium } = formatRankDisplay(lugar);
                     
                     // Determine if diploma download should be enabled - usar columna Certificado
                     const isDiplomaEnabled = certificado && certificado.toString().toUpperCase().trim() === 'SI';
@@ -5247,16 +5368,16 @@
                     }')` : '';
 
                     htmlContent += `
-                        <tr>
+                        <tr class="${isPodium ? 'podium-row' : ''}">
                             <td data-label="Pos." class="rank">${displayPos || '-'}</td>
-                            <td data-label="Atleta" class="athlete-name-cell">${atleta || '-'}</td>
-                            <td data-label="Equipo">${equipo || '-'}</td>
-                            <td data-label="Edad">${edad || '-'}</td>
-                            <td data-label="Categoría">${categoria || currentCategory}</td>
-                            <td data-label="Puntos Totales" class="points total-points-cell">${puntosTotales || '0'}</td>
-                            <td data-label="P. 200m Libre" class="points points-200m-cell">${puntos200m || '0'}</td>
-                            <td data-label="P. 50m Libre" class="points points-50m-cell">${puntos50m || '0'}</td>
-                            <td data-label="P. 100m Libre" class="points points-100m-cell">${puntos100m || '0'}</td>
+                            <td data-label="Atleta" class="athlete-cell athlete-name-cell">${escapeHtml(atleta || '-')}</td>
+                            <td data-label="Equipo" class="team-cell">${escapeHtml(equipo || '-')}</td>
+                            <td data-label="Edad">${escapeHtml(edad || '-')}</td>
+                            <td data-label="Categoría"><span class="category-badge">${escapeHtml(categoria || currentCategory)}</span></td>
+                            <td data-label="Puntos Totales" class="points total-points-cell">${escapeHtml(puntosTotales || '0')}</td>
+                            <td data-label="P. 200m Libre" class="points points-200m-cell">${escapeHtml(puntos200m || '0')}</td>
+                            <td data-label="P. 50m Libre" class="points points-50m-cell">${escapeHtml(puntos50m || '0')}</td>
+                            <td data-label="P. 100m Libre" class="points points-100m-cell">${escapeHtml(puntos100m || '0')}</td>
                             <td data-label="Compartir" class="share-cell">
                                 <button class="share-btn" onclick="shareResult('${atleta || ''}', '${lugar || ''}', 'N/A', '${categoria || currentCategory || ''}')">📱</button>
                             </td>
@@ -6050,6 +6171,8 @@ Ver resultados completos: https://vchampionship.netlify.app`;
                 
                 statusDiv.innerHTML = '<p class="status-loading-text"><span class="status-loading-icon">⏳</span> Obteniendo datos frescos...</p>';
                 
+                await preloadClubLogos();
+                
                 // Verificar que jsPDF se cargó correctamente
                 if (!window.jsPDF) {
                     throw new Error('jsPDF no está disponible');
@@ -6126,7 +6249,8 @@ Ver resultados completos: https://vchampionship.netlify.app`;
                 statusDiv.innerHTML = '<p class="status-loading-text"><span class="status-loading-icon">⏳</span> Generando PDF...</p>';
                 
                 const pdf = new window.jsPDF();
-                let yPosition = 20;
+                addCompetitionLogo(pdf);
+                let yPosition = 28;
                 
                 // Configurar fuentes y colores
                 pdf.setFont("helvetica", "bold");
@@ -6571,11 +6695,65 @@ Ver resultados completos: https://vchampionship.netlify.app`;
             return timeStr; // Devolver sin cambios si no coincide con ningún formato
         }
 
-        // Variable global para almacenar el logo cargado
-        let logoImageData = null;
-        let logoOriginalWidth = 0;
-        let logoOriginalHeight = 0;
-        let logoLoadAttempted = false;
+        // Logos de clubes organizadores para PDFs
+        const clubLogos = {
+            delfines: { data: null, width: 0, height: 0 },
+            avatar: { data: null, width: 0, height: 0 }
+        };
+        let clubLogosLoadAttempted = false;
+        let clubLogosLoadPromise = null;
+
+        function loadClubLogoImage(src) {
+            return new Promise((resolve) => {
+                const logoImg = new Image();
+                logoImg.crossOrigin = 'anonymous';
+                logoImg.onload = function() {
+                    try {
+                        const canvas = document.createElement('canvas');
+                        const ctx = canvas.getContext('2d');
+                        canvas.width = logoImg.width;
+                        canvas.height = logoImg.height;
+                        ctx.drawImage(logoImg, 0, 0);
+                        resolve({
+                            data: canvas.toDataURL('image/png'),
+                            width: logoImg.width * 0.264583,
+                            height: logoImg.height * 0.264583
+                        });
+                    } catch (error) {
+                        console.warn('Error procesando logo:', src, error);
+                        resolve(null);
+                    }
+                };
+                logoImg.onerror = function() {
+                    console.warn('Error cargando logo desde:', src);
+                    resolve(null);
+                };
+                logoImg.src = src;
+            });
+        }
+
+        async function preloadClubLogos() {
+            if (clubLogosLoadPromise) return clubLogosLoadPromise;
+            clubLogosLoadPromise = (async () => {
+                if (clubLogosLoadAttempted) return;
+                clubLogosLoadAttempted = true;
+                const [delfines, avatar] = await Promise.all([
+                    loadClubLogoImage('./img/Logo-Club-Delfines.png'),
+                    loadClubLogoImage('./img/Logo-Club-Avatar.png')
+                ]);
+                if (delfines) Object.assign(clubLogos.delfines, delfines);
+                if (avatar) Object.assign(clubLogos.avatar, avatar);
+                console.log(' Logos de clubes cargados para PDF:', {
+                    delfines: !!clubLogos.delfines.data,
+                    avatar: !!clubLogos.avatar.data
+                });
+            })();
+            return clubLogosLoadPromise;
+        }
+
+        function preloadLogo() {
+            preloadClubLogos();
+        }
 
         // Variables globales para el diploma
         let diplomaTemplateData = null;
@@ -6944,108 +7122,49 @@ Ver resultados completos: https://vchampionship.netlify.app`;
             }
         }
 
-        // Función para precargar el logo (se ejecuta una sola vez)
-        function preloadLogo() {
-            if (logoLoadAttempted) return;
-            logoLoadAttempted = true;
-            
-            try {
-                const logoImg = new Image();
-                logoImg.crossOrigin = 'anonymous';
-                
-                logoImg.onload = function() {
-                    try {
-                        const canvas = document.createElement('canvas');
-                        const ctx = canvas.getContext('2d');
-                        canvas.width = logoImg.width;
-                        canvas.height = logoImg.height;
-                        ctx.drawImage(logoImg, 0, 0);
-                        logoImageData = canvas.toDataURL('image/png');
-                        
-                        // Guardar dimensiones originales (convertidas a unidades PDF)
-                        // Conversión aproximada: píxeles a mm para PDF (300 DPI ≈ 0.264583 mm/píxel)
-                        logoOriginalWidth = logoImg.width * 0.264583;
-                        logoOriginalHeight = logoImg.height * 0.264583;
-                        
-                        console.log(' Logo cargado correctamente para PDFs');
-                        console.log(`📐 Dimensiones originales: ${logoImg.width}x${logoImg.height}px (${logoOriginalWidth.toFixed(1)}x${logoOriginalHeight.toFixed(1)}mm)`);
-                    } catch (error) {
-                        console.warn('Error procesando logo:', error);
-                    }
-                };
-                
-                logoImg.onerror = function() {
-                    console.warn('Error cargando logo desde:', logoImg.src);
-                };
-                
-                logoImg.src = './img/Logo-Club-Delfines.png';
-            } catch (error) {
-                console.warn('Error iniciando carga de logo:', error);
-            }
-        }
-
-        // Función para agregar logo de la competencia en cada página (síncrona)
+        // Función para agregar logos de ambos clubes organizadores en cada página
         function addCompetitionLogo(pdf) {
-            const logoX = 150;
+            const pageWidth = pdf.internal.pageSize.getWidth();
             const logoY = 10;
-            
-            try {
-                // Si tenemos el logo cargado, calcularlo con reducción proporcional
-                if (logoImageData && logoOriginalWidth > 0 && logoOriginalHeight > 0) {
-                    // Obtener dimensiones de la página PDF
-                    const pageWidth = pdf.internal.pageSize.getWidth();
-                    const pageHeight = pdf.internal.pageSize.getHeight();
-                    
-                    // Calcular espacio máximo disponible (con margen de seguridad)
-                    const maxWidth = pageWidth - logoX - 10; // 10mm de margen derecho
-                    const maxHeight = 40; // Máximo 40mm de altura para no interferir con el contenido
-                    
-                    // Calcular factor de escala para mantener proporciones
-                    let scale = 1;
-                    if (logoOriginalWidth > maxWidth || logoOriginalHeight > maxHeight) {
-                        const scaleWidth = maxWidth / logoOriginalWidth;
-                        const scaleHeight = maxHeight / logoOriginalHeight;
-                        scale = Math.min(scaleWidth, scaleHeight); // Usar el factor más restrictivo
-                    }
-                    
-                    // Aplicar escala
-                    const finalWidth = logoOriginalWidth * scale;
-                    const finalHeight = logoOriginalHeight * scale;
-                    
-                    console.log(`📐 Logo en PDF: ${finalWidth.toFixed(1)}x${finalHeight.toFixed(1)}mm (escala: ${(scale * 100).toFixed(1)}%)`);
-                    
-                    pdf.addImage(logoImageData, 'PNG', logoX, logoY, finalWidth, finalHeight);
-                    return;
-                }
-            } catch (error) {
-                console.warn('Error agregando logo al PDF:', error);
+            const maxHeight = 18;
+            const maxWidthPerLogo = 26;
+            const gap = 5;
+            const rightMargin = 10;
+
+            const orderedLogos = [clubLogos.avatar, clubLogos.delfines].filter((logo) => logo && logo.data);
+            if (!orderedLogos.length) {
+                addTextLogo(pdf, pageWidth - 45, logoY);
+                return;
             }
-            
-            // Fallback: usar texto estilizado
-            addTextLogo(pdf, logoX, logoY);
+
+            const scaled = orderedLogos.map((logo) => {
+                let scale = 1;
+                if (logo.width > maxWidthPerLogo || logo.height > maxHeight) {
+                    scale = Math.min(maxWidthPerLogo / logo.width, maxHeight / logo.height);
+                }
+                return {
+                    data: logo.data,
+                    width: logo.width * scale,
+                    height: logo.height * scale
+                };
+            });
+
+            const totalWidth = scaled.reduce((sum, logo) => sum + logo.width, 0) + gap * (scaled.length - 1);
+            let cursorX = pageWidth - rightMargin - totalWidth;
+
+            scaled.forEach((logo) => {
+                pdf.addImage(logo.data, 'PNG', cursorX, logoY, logo.width, logo.height);
+                cursorX += logo.width + gap;
+            });
         }
         
         // Función auxiliar para logo de texto como respaldo
         function addTextLogo(pdf, logoX, logoY) {
             pdf.setFont("helvetica", "bold");
-            pdf.setFontSize(10);
-            pdf.setTextColor(0, 74, 173);
-            
-            // Caja para el logo
-            pdf.setDrawColor(255, 140, 66);
-            pdf.setLineWidth(1);
-            pdf.rect(logoX, logoY - 8, 30, 16);
-            
-            // Texto del logo
-            pdf.text("FESTI", logoX + 2, logoY - 2);
             pdf.setFontSize(8);
-            pdf.setTextColor(255, 140, 66);
-            pdf.text("SINÚ", logoX + 2, logoY + 4);
-            
-            // Línea decorativa
-            pdf.setDrawColor(0, 188, 232);
-            pdf.setLineWidth(2);
-            pdf.line(logoX, logoY + 8, logoX + 30, logoY + 8);
+            pdf.setTextColor(0, 74, 173);
+            pdf.text("Club Ávatar", logoX, logoY);
+            pdf.text("Club Delfines", logoX, logoY + 5);
         }
 
         // Función para separar datos por tipo desde RESULTADOS
