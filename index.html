@@ -4786,20 +4786,25 @@
         
         const CATEGORY_HEADER_PATTERN = /^(?:categor[ií]a\s+)?(INFANTIL|JUVENIL|MAYORES|MASTER|ESPECIAL|MENORES)\b/i;
 
+        function isPruebaResultsTable(table) {
+            return !!(table && table.id && table.id.startsWith('resultsTable-'));
+        }
+
         function getCategoryHeaderFromRow(row) {
             if (!row || !row.length) return null;
 
-            const cells = row.map(cell => (cell != null ? cell.toString().trim() : ''));
-            const filledCells = cells.filter(Boolean);
-            if (!filledCells.length) return null;
+            const dataCols = row.slice(0, 8);
+            const firstCell = (dataCols[0] != null ? dataCols[0].toString().trim() : '');
+            if (!firstCell || firstCell === '0') return null;
 
-            const headerText = (filledCells.length <= 2 ? filledCells.join(' ') : cells[0]).replace(/\s+/g, ' ').trim();
-            if (!CATEGORY_HEADER_PATTERN.test(headerText)) return null;
+            const athleteCell = dataCols[1] != null ? dataCols[1].toString().trim() : '';
+            if (athleteCell) return null;
 
-            // Evitar confundir filas de datos con encabezados de categoría
-            if (row.length >= 6 && filledCells.length >= 4) return null;
+            const headerText = firstCell.replace(/\s+/g, ' ').trim();
+            const isCategory = CATEGORY_HEADER_PATTERN.test(headerText) ||
+                /^(INFANTIL|JUVENIL|MAYORES|MASTER)\s+[A-Z0-9]+(?:\s+(?:Torneo|Festival))?$/i.test(headerText);
 
-            return headerText;
+            return isCategory ? headerText : null;
         }
 
         function isCategoryHeaderRow(row) {
@@ -4845,7 +4850,9 @@
             }
             
             isDataRow(row) {
-                return row.length >= 6;
+                if (!row || row.length < 6) return false;
+                const athleteCell = row[1] != null ? row[1].toString().trim() : '';
+                return !!athleteCell;
             }
             
             renderCategoryRow(category) {
@@ -4867,12 +4874,14 @@
         // Specific renderer for general tables
         class GeneralTableRenderer extends TableRenderer {
             renderDataRow(row, index) {
-                // Detectar si es la tabla de 4x50m Mixto
                 const is4x50mMixto = this.table && this.table.id === 'resultsTable4x50mMixto';
-                
-                // Detectar el tipo de tabla por el número de columnas o el contenido
-                if (row.length >= 9) {
-                    // Tabla de clasificación general (10 columnas incluyendo certificado)
+                const isPruebaTable = isPruebaResultsTable(this.table);
+                const isGeneralRanking = !isPruebaTable && !is4x50mMixto &&
+                    (this.table?.id === 'resultsTableMasculinoGeneral' ||
+                     this.table?.id === 'resultsTableFemeninoGeneral' ||
+                     row.length >= 9);
+
+                if (isGeneralRanking) {
                     const [pos, nombre, equipo, edad, categoria, puntos, p200, p50, p100, certificado] = row;
                     
                     return `<tr>
@@ -4930,22 +4939,15 @@
                             </td>
                         </tr>`;
                     } else {
-                        // Para otras pruebas: usar lógica de récords (R en Obs)
-                        const [pos, nombre, equipo, edad, categoria, tiempo, puntos, obs] = row;
-                        console.log('DEBUG ROW:', row, 'OBS VALUE:', obs, 'OBS INDEX:', row.indexOf(obs));
-                        // Determinar si el diploma debe estar habilitado (solo para récords marcados con 'R' en la columna Obs)
+                        const [pos, nombre, equipo, edad, categoria, tiempo, puntos, obs] = row.slice(0, 8);
                         const isRecord = obs && obs.toString().toUpperCase().includes('R');
-
-                        // Debug: mostrar información de la columna Obs
-                        if (obs && obs.toString().trim() !== '') {
-                            console.log(`📄 Obs detectada para ${nombre}: "${obs}" - Es récord: ${isRecord}`);
-                        }
                         const diplomaButtonClass = isRecord ? 'diploma-btn enabled' : 'diploma-btn disabled';
                         const diplomaButtonClick = isRecord ? `generateDiploma('${(nombre || '').replace(/'/g, '\\\'')}', '${(equipo || '').replace(/'/g, '\\\'')}', '${(categoria || '').replace(/'/g, '\\\'')}', '${tiempo || ''}', getCurrentEventName())` : '';
+                        const athleteLabel = this.table?.querySelector('thead th:nth-child(2)')?.textContent?.trim() || 'Nadador/a';
                         
                         return `<tr>
                             <td data-label="Pos." class="rank">${pos || index}</td>
-                            <td data-label="Nadador/a"><strong>${nombre || ''}</strong></td>
+                            <td data-label="${athleteLabel}"><strong>${nombre || ''}</strong></td>
                             <td data-label="Equipo">${equipo || ''}</td>
                             <td data-label="Edad">${edad || ''}</td>
                             <td data-label="Categoría"><span class="category-badge">${categoria || ''}</span></td>
