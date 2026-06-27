@@ -4,7 +4,7 @@ Landing estática del **FESTI-TORNEO REGIONAL DEL SINÚ 2026**, organizado por *
 
 **Evento:** sábado 18 de abril de 2026 · Piscina de la Villa Olímpica, Montería (Córdoba).
 
-**Producción:** [https://vchampionship.netlify.app/](https://vchampionship.netlify.app/)
+**Producción:** [https://festitorneosinu.netlify.app/](https://festitorneosinu.netlify.app/)
 
 ## Características
 
@@ -54,7 +54,7 @@ Tras cambiar dominio o imagen social principal, actualiza canonical, `og:url`, `
 - `#top4race` — Destacado Top4Race (oculto por defecto)
 - `#contacto` — Contacto
 
-Ejemplo: `https://vchampionship.netlify.app/#resultados`
+Ejemplo: `https://festitorneosinu.netlify.app/#resultados`
 
 ## Cómo verlo en local
 

@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://vchampionship.netlify.app/sitemap.xml
+Sitemap: https://festitorneosinu.netlify.app/sitemap.xml
