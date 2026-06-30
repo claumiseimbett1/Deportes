@@ -3971,15 +3971,13 @@
                                 <th>Lugar</th>
                                 <th>Equipo</th>
                                 <th>Puntos Totales</th>
-                                <th>Puntos Femeninos</th>
-                                <th>Puntos Masculinos</th>
                                 <th>Compartir</th>
                                 <th>Diploma</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr class="loading-row">
-                                <td colspan="7" class="no-data-cell">
+                                <td colspan="5" class="no-data-cell">
                                     🔄 Cargando clasificación de equipos (torneo)...
                                 </td>
                             </tr>
@@ -4000,15 +3998,13 @@
                                 <th>Lugar</th>
                                 <th>Equipo</th>
                                 <th>Puntos Totales</th>
-                                <th>Puntos Femeninos</th>
-                                <th>Puntos Masculinos</th>
                                 <th>Compartir</th>
                                 <th>Diploma</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr class="loading-row">
-                                <td colspan="7" class="no-data-cell">
+                                <td colspan="5" class="no-data-cell">
                                     🔄 Cargando clasificación de equipos (festival)...
                                 </td>
                             </tr>
@@ -4234,7 +4230,7 @@
             const upper = title.toUpperCase();
             return (upper.endsWith('-TORNEO') || upper.endsWith('-FESTIVAL'))
                 && !upper.includes('RESULTADOS')
-                && !upper.includes('EQUIPOS')
+                && !upper.includes('EQUIPO')
                 && !upper.includes('ACTIVADOR');
         }
 
@@ -4396,15 +4392,16 @@
                 'RESULTADOS-GENERALES-F-FESTIVAL'
             ],
             'resultados-equipo-torneo': [
-                'EQUIPOS-TORNEO',
-                'EQUIPOS TORNEO',
+                'EQUIPO TORNEO',
                 'EQUIPO-TORNEO',
-                'EQUIPOS'
+                'EQUIPOS TORNEO',
+                'EQUIPOS-TORNEO'
             ],
             'resultados-equipo-festival': [
-                'EQUIPOS-FESTIVAL',
+                'EQUIPO FESTIVAL',
+                'EQUIPO-FESTIVAL',
                 'EQUIPOS FESTIVAL',
-                'EQUIPO-FESTIVAL'
+                'EQUIPOS-FESTIVAL'
             ]
         };
 
@@ -4446,6 +4443,7 @@
 
             if (gender === 'equipo') {
                 if (!normalized.includes('EQUIPO')) return false;
+                if (normalized.includes('GENERALES')) return false;
                 if (isGeneralGenderSheetFeminine(normalized) || isGeneralGenderSheetMasculine(normalized)) return false;
             } else {
                 const isFem = isGeneralGenderSheetFeminine(normalized);
@@ -4666,6 +4664,10 @@
                 'RESULTADOS GENERALES-F-FESTIVAL': null,
                 'RESULTADOS GENERALES-F_FESTIVAL': null,
                 'EQUIPOS': 2036627092,
+                'EQUIPO TORNEO': null,
+                'EQUIPO FESTIVAL': null,
+                'EQUIPO-TORNEO': null,
+                'EQUIPO-FESTIVAL': null,
                 'EQUIPOS-TORNEO': null,
                 'EQUIPOS-FESTIVAL': null,
                 'ACTIVADOR DIPLOMAS RECORD': 1817975419
@@ -5898,7 +5900,7 @@
                 
                 // Esperar al menos 3 columnas: LUGAR, EQUIPO, PUNTOS TOTALES
                 if (row.length >= 3) {
-                    const [lugar, equipo, puntosTotales, puntosFemeninos, puntosMasculinos, certificado] = row;
+                    const [lugar, equipo, puntosTotales, certificado] = row;
                     
                     // Skip si no hay equipo válido
                     if (!equipo || equipo === '-' || equipo.toLowerCase().includes('sin equipos')) {
@@ -5918,9 +5920,7 @@
                         <tr class="${isPodium ? 'podium-row' : ''}">
                             <td data-label="Posición" class="rank">${displayPos || '-'}</td>
                             <td data-label="Equipo" class="team-cell team-name-cell">${escapeHtml(equipo || '-')}</td>
-                            <td data-label="Puntos Totales" class="points total-points-cell">${puntosTotales || '0'}</td>
-                            <td data-label="Puntos Femeninos" class="points female-points-cell">${puntosFemeninos || '0'}</td>
-                            <td data-label="Puntos Masculinos" class="points male-points-cell">${puntosMasculinos || '0'}</td>
+                            <td data-label="Puntos Totales" class="points total-points-cell">${escapeHtml(puntosTotales || '0')}</td>
                             <td data-label="Compartir" class="share-cell">
                                 <button class="share-btn" onclick="shareResult('${equipo || ''}', '${lugar || ''}', 'N/A', 'Clasificación por Equipos')">📱</button>
                             </td>
@@ -5937,7 +5937,7 @@
                 }
             }
             
-            tbody.innerHTML = htmlContent || '<tr><td colspan="7" class="no-data-cell">No hay datos de equipos disponibles</td></tr>';
+            tbody.innerHTML = htmlContent || '<tr><td colspan="5" class="no-data-cell">No hay datos de equipos disponibles</td></tr>';
             buildResultsMobileCards(table);
             
             // Actualizar el tiempo de última actualización de equipos
@@ -6078,7 +6078,7 @@
                     const tbody = table.querySelector('tbody');
                     if (tbody) {
                         const headerCount = table.querySelectorAll('thead th').length;
-                        const colspan = headerCount || (isTeamResultsTable(table.id) ? 7 : 8);
+                        const colspan = headerCount || (isTeamResultsTable(table.id) ? 5 : 8);
                         const adjustedErrorHTML = errorHTML.replace('colspan="7"', `colspan="${colspan}"`);
                         tbody.innerHTML = adjustedErrorHTML;
                     }
@@ -7273,7 +7273,9 @@ Ver resultados completos: https://festitorneosinu.netlify.app`;
                 if (allData.equipos.length === 0) {
                     console.warn('⚠️ PROBLEMA: No se cargaron datos de equipos - intentando fallback por nombre');
                     await tryLoadByName(sheetInfo, allData, 'equipos', [
-                        'EQUIPOS-TORNEO', 'EQUIPOS-FESTIVAL', 'EQUIPOS', 'EQUIPO', 'CLASIFICACION EQUIPOS', 'TEAM'
+                        'EQUIPO TORNEO', 'EQUIPO FESTIVAL',
+                        'EQUIPO-TORNEO', 'EQUIPO-FESTIVAL',
+                        'EQUIPOS-TORNEO', 'EQUIPOS-FESTIVAL'
                     ]);
                 }
                 
@@ -7300,7 +7302,7 @@ Ver resultados completos: https://festitorneosinu.netlify.app`;
                             eventos: [],
                             masculino: htmlData['RESULTADOS GENERALES-M-TORNEO'] || htmlData['RESULTADOS GENERALES-M_TORNEO'] || [],
                             femenino: htmlData['RESULTADOS GENERALES-F-TORNEO'] || htmlData['RESULTADOS GENERALES-F_TORNEO'] || [],
-                            equipos: htmlData['EQUIPOS'] || htmlData['EQUIPO'] || htmlData['TEAMS'] || []
+                            equipos: htmlData['EQUIPO TORNEO'] || htmlData['EQUIPO FESTIVAL'] || htmlData['EQUIPOS'] || htmlData['EQUIPO'] || []
                         };
                         
                         console.log(' Fallback HTML - Datos estructurados:', {
@@ -7411,9 +7413,13 @@ Ver resultados completos: https://festitorneosinu.netlify.app`;
                 }
             });
             
-            // Agregar datos por equipo con múltiples nombres
-            const teamsTable = document.getElementById('resultsTableTeamsTorneo') || document.getElementById('resultsTableTeamsFestival');
-            if (teamsTable) {
+            // Agregar datos por equipo (torneo y festival)
+            [
+                { id: 'resultsTableTeamsTorneo', names: ['EQUIPO TORNEO', 'EQUIPO-TORNEO', 'EQUIPOS-TORNEO'] },
+                { id: 'resultsTableTeamsFestival', names: ['EQUIPO FESTIVAL', 'EQUIPO-FESTIVAL', 'EQUIPOS-FESTIVAL'] }
+            ].forEach(({ id, names }) => {
+                const teamsTable = document.getElementById(id);
+                if (!teamsTable) return;
                 const data = [];
                 const rows = teamsTable.querySelectorAll('tbody tr:not(.loading-row)');
                 rows.forEach(row => {
@@ -7427,13 +7433,11 @@ Ver resultados completos: https://festitorneosinu.netlify.app`;
                     }
                 });
                 if (data.length > 0) {
-                    // Usar todos los nombres posibles para equipos
-                    const teamNames = ['EQUIPOS', 'EQUIPO', 'TEAMS', 'CLASIFICACION EQUIPOS'];
-                    teamNames.forEach(name => {
+                    names.forEach(name => {
                         allData[name] = data;
                     });
                 }
-            }
+            });
             
             return allData;
         }
@@ -8007,9 +8011,7 @@ Ver resultados completos: https://festitorneosinu.netlify.app`;
                 } else if (type === 'team') {
                     pdf.text("POS", boxX + 3, y + 7);
                     pdf.text("EQUIPO", boxX + 20, y + 7);
-                    pdf.text("TOTAL", boxX + 90, y + 7);
-                    pdf.text("FEM", boxX + 120, y + 7);
-                    pdf.text("MAS", boxX + 145, y + 7);
+                    pdf.text("TOTAL", boxX + 120, y + 7);
                 }
                 return y + headerHeight;
             }
@@ -8114,10 +8116,8 @@ Ver resultados completos: https://festitorneosinu.netlify.app`;
                     pdf.text(row.totalPoints || '', boxX + 119, rowY + 5.5);
                 } else if (type === 'team') {
                     pdf.text(row.position || '', boxX + 3, rowY + 5.5);
-                    pdf.text((row.team || '').substring(0, 25), boxX + 19, rowY + 5.5);
-                    pdf.text(row.totalPoints || '', boxX + 89, rowY + 5.5);
-                    pdf.text(row.femalePoints || '', boxX + 119, rowY + 5.5);
-                    pdf.text(row.malePoints || '', boxX + 144, rowY + 5.5);
+                    pdf.text((row.team || '').substring(0, 30), boxX + 19, rowY + 5.5);
+                    pdf.text(row.totalPoints || '', boxX + 119, rowY + 5.5);
                 }
                 
                 // Línea horizontal sutil entre filas
@@ -8263,19 +8263,16 @@ Ver resultados completos: https://festitorneosinu.netlify.app`;
                 });
                 
                 // VALIDACIÓN: Verificar si los datos son realmente de equipos o si son datos de atletas
-                if (allSheetData.equipos[0] && allSheetData.equipos[0].length > 7) {
+                if (allSheetData.equipos[0] && allSheetData.equipos[0].length > 5) {
                     console.error('⚠️ ERROR: Los datos de equipos parecen ser datos de atletas (muchas columnas)');
                     console.log(' Datos sospechosos:', allSheetData.equipos.slice(0, 3));
                 }
                 const tableData = allSheetData.equipos.map((row, index) => {
-                    // Mapear columnas A-E: A=Pos, B=Equipo, C=Pts Totales, D=Pts Femeninos, E=Pts Masculinos
-                    const [pos, team, totalPoints, femalePoints, malePoints] = row;
+                    const [pos, team, totalPoints] = row;
                     return {
                         position: pos || (index + 1).toString(),
                         team: team || '',
-                        totalPoints: totalPoints || '',
-                        femalePoints: femalePoints || '',
-                        malePoints: malePoints || ''
+                        totalPoints: totalPoints || ''
                     };
                 });
                 
@@ -8486,8 +8483,8 @@ Ver resultados completos: https://festitorneosinu.netlify.app`;
                 
                 // Cargar datos directamente de Google Sheets
                 console.log('Cargando datos de equipos desde Google Sheets...');
-                const gidEquipos = '2036627092'; // GID de la hoja EQUIPOS
-                const datosEquipos = await loadDirectSheetData(gidEquipos, 'EQUIPOS');
+                const gidEquipos = lookupGidForSheetTitle('EQUIPO TORNEO') || '2036627092';
+                const datosEquipos = await loadDirectSheetData(gidEquipos, 'EQUIPO TORNEO');
                 console.log('Datos de equipos cargados:', datosEquipos ? datosEquipos.length + ' filas' : 'null');
                 
                 if (datosEquipos && datosEquipos.length > 0) {
@@ -8497,9 +8494,7 @@ Ver resultados completos: https://festitorneosinu.netlify.app`;
                     pdf.setTextColor(0, 0, 0);
                     pdf.text("POS", 20, yPosition);
                     pdf.text("EQUIPO", 35, yPosition);
-                    pdf.text("PTS TOTALES", 100, yPosition);
-                    pdf.text("PTS FEM", 140, yPosition);
-                    pdf.text("PTS MAS", 175, yPosition);
+                    pdf.text("PTS TOTALES", 120, yPosition);
                     yPosition += 8;
                     
                     // Línea separadora
@@ -8530,25 +8525,21 @@ Ver resultados completos: https://festitorneosinu.netlify.app`;
                             pdf.setTextColor(0, 0, 0);
                             pdf.text("POS", 20, yPosition);
                             pdf.text("EQUIPO", 35, yPosition);
-                            pdf.text("PTS TOTALES", 100, yPosition);
-                            pdf.text("PTS FEM", 140, yPosition);
-                            pdf.text("PTS MAS", 175, yPosition);
+                            pdf.text("PTS TOTALES", 120, yPosition);
                             yPosition += 8;
                             pdf.setFont("helvetica", "normal");
                             pdf.setFontSize(7);
                         }
                         
                         // Mapear columnas A-E del Google Sheet
-                        const [pos, equipo, ptsTotales, ptsFemeninos, ptsMasculinos] = row;
+                        const [pos, equipo, ptsTotales] = row;
                         
                         // Solo usar el valor original del Google Sheet
                         let displayPos = pos || (index + 1);
                         
                         pdf.text((displayPos || '-').toString(), 20, yPosition);
-                        pdf.text((equipo || 'N/A').substring(0, 25), 35, yPosition);
-                        pdf.text((ptsTotales || '0').toString(), 100, yPosition);
-                        pdf.text((ptsFemeninos || '0').toString(), 140, yPosition);
-                        pdf.text((ptsMasculinos || '0').toString(), 175, yPosition);
+                        pdf.text((equipo || 'N/A').substring(0, 30), 35, yPosition);
+                        pdf.text((ptsTotales || '0').toString(), 120, yPosition);
                         yPosition += 6;
                     });
                     
@@ -8891,14 +8882,11 @@ Ver resultados completos: https://festitorneosinu.netlify.app`;
                 }
                 
                 const tableData = allSheetData.equipos.map((row, index) => {
-                    // Mapear columnas A-E: A=Pos, B=Equipo, C=Pts Totales, D=Pts Femeninos, E=Pts Masculinos
-                    const [pos, team, totalPoints, femalePoints, malePoints] = row;
+                    const [pos, team, totalPoints] = row;
                     return {
                         position: pos || (index + 1).toString(),
                         team: team || '',
-                        totalPoints: totalPoints || '',
-                        femalePoints: femalePoints || '',
-                        malePoints: malePoints || ''
+                        totalPoints: totalPoints || ''
                     };
                 });
                 
