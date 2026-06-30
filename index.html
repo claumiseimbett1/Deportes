@@ -3949,16 +3949,13 @@
                                 <th>Edad</th>
                                 <th>Categoría</th>
                                 <th>Puntos Totales</th>
-                                <th>P. 200m Libre</th>
-                                <th>P. 50m Libre</th>
-                                <th>P. 100m Libre</th>
                                 <th>Compartir</th>
                                 <th>Diploma</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr class="loading-row">
-                                <td colspan="11" class="no-data-cell">
+                                <td colspan="8" class="no-data-cell">
                                     🔄 Cargando clasificación masculina...
                                 </td>
                             </tr>
@@ -3983,16 +3980,13 @@
                                 <th>Edad</th>
                                 <th>Categoría</th>
                                 <th>Puntos Totales</th>
-                                <th>P. 200m Libre</th>
-                                <th>P. 50m Libre</th>
-                                <th>P. 100m Libre</th>
                                 <th>Compartir</th>
                                 <th>Diploma</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr class="loading-row">
-                                <td colspan="11" class="no-data-cell">
+                                <td colspan="8" class="no-data-cell">
                                     🔄 Cargando clasificación femenina...
                                 </td>
                             </tr>
@@ -5763,13 +5757,13 @@
                     currentCategory = categoryHeader;
                     htmlContent += `
                         <tr class="category-header">
-                            <td colspan="11" class="category-header-cell">
+                            <td colspan="8" class="category-header-cell">
                                 <span class="category-header-text">${escapeHtml(currentCategory)}</span>
                             </td>
                         </tr>`;
                 } else if (row.length >= 6) {
-                    // Es un resultado - Esperar al menos 6 columnas: LUGAR, ATLETA, EQUIPO, EDAD, CATEGORIA, PUNTOS TOTALES
-                    const [lugar, atleta, equipo, edad, categoria, puntosTotales, puntos200m, puntos50m, puntos100m, certificado] = row;
+                    // LUGAR, ATLETA, EQUIPO, EDAD, CATEGORIA, PUNTOS TOTALES, CERTIFICADO
+                    const [lugar, atleta, equipo, edad, categoria, puntosTotales, certificado] = row;
                     
                     // Debug: verificar datos de certificado (reducido)
                     if (atleta && atleta !== 'Sin atletas') {
@@ -5787,9 +5781,6 @@
                                     <td data-label="Edad" class="age-empty-cell">-</td>
                                     <td data-label="Categoría" class="category-empty-cell">${currentCategory || categoria}</td>
                                     <td data-label="Puntos Totales" class="points-empty-cell">-</td>
-                                    <td data-label="P. 200m Libre" class="points-empty-cell">-</td>
-                                    <td data-label="P. 50m Libre" class="points-empty-cell">-</td>
-                                    <td data-label="P. 100m Libre" class="points-empty-cell">-</td>
                                     <td data-label="Compartir" class="points-empty-cell">-</td>
                                     <td data-label="Diploma" class="points-empty-cell">-</td>
                                 </tr>`;
@@ -5813,9 +5804,6 @@
                             <td data-label="Edad">${escapeHtml(edad || '-')}</td>
                             <td data-label="Categoría"><span class="category-badge">${escapeHtml(categoria || currentCategory)}</span></td>
                             <td data-label="Puntos Totales" class="points total-points-cell">${escapeHtml(puntosTotales || '0')}</td>
-                            <td data-label="P. 200m Libre" class="points points-200m-cell">${escapeHtml(puntos200m || '0')}</td>
-                            <td data-label="P. 50m Libre" class="points points-50m-cell">${escapeHtml(puntos50m || '0')}</td>
-                            <td data-label="P. 100m Libre" class="points points-100m-cell">${escapeHtml(puntos100m || '0')}</td>
                             <td data-label="Compartir" class="share-cell">
                                 <button class="share-btn" onclick="shareResult('${atleta || ''}', '${lugar || ''}', 'N/A', '${categoria || currentCategory || ''}')">📱</button>
                             </td>
@@ -5828,7 +5816,7 @@
                 }
             }
             
-            tbody.innerHTML = htmlContent || '<tr><td colspan="11" class="no-data-cell">No hay datos de clasificación disponibles</td></tr>';
+            tbody.innerHTML = htmlContent || '<tr><td colspan="8" class="no-data-cell">No hay datos de clasificación disponibles</td></tr>';
             finalizeCategoryHeaders(table);
             buildResultsMobileCards(table);
             
@@ -5867,7 +5855,7 @@
                     const tbody = table.querySelector('tbody');
                     if (tbody) {
                         const headerCount = table.querySelectorAll('thead th').length;
-                        const colspan = headerCount || (table.id === 'resultsTableTeams' ? 7 : 10);
+                        const colspan = headerCount || (table.id === 'resultsTableTeams' ? 7 : 8);
                         const adjustedErrorHTML = errorHTML.replace('colspan="7"', `colspan="${colspan}"`);
                         tbody.innerHTML = adjustedErrorHTML;
                     }
@@ -6775,7 +6763,7 @@ Ver resultados completos: https://festitorneosinu.netlify.app`;
                     allSheetData.equipos && allSheetData.equipos.length > 0) {
                     
                     const femeninoParecenEquipos = allSheetData.femenino[0].length <= 5;
-                    const equiposParecenAtletas = allSheetData.equipos[0].length > 7;
+                    const equiposParecenAtletas = allSheetData.equipos[0].length > 6;
                     
                     console.log(' ANÁLISIS DE INTERCAMBIO:', {
                         femeninoParecenEquipos: femeninoParecenEquipos,
@@ -7809,10 +7797,7 @@ Ver resultados completos: https://festitorneosinu.netlify.app`;
                     pdf.text("EQUIPO", boxX + 50, y + 7);
                     pdf.text("EDAD", boxX + 75, y + 7);
                     pdf.text("CAT", boxX + 90, y + 7);
-                    pdf.text("TOT", boxX + 105, y + 7);
-                    pdf.text("200", boxX + 120, y + 7);
-                    pdf.text("50", boxX + 135, y + 7);
-                    pdf.text("100", boxX + 150, y + 7);
+                    pdf.text("TOT", boxX + 120, y + 7);
                 } else if (type === 'team') {
                     pdf.text("POS", boxX + 3, y + 7);
                     pdf.text("EQUIPO", boxX + 20, y + 7);
@@ -7920,10 +7905,7 @@ Ver resultados completos: https://festitorneosinu.netlify.app`;
                     pdf.text((row.team || '').substring(0, 10), boxX + 49, rowY + 5.5);
                     pdf.text(row.age || '', boxX + 74, rowY + 5.5);
                     pdf.text((row.category || '').substring(0, 6), boxX + 89, rowY + 5.5);
-                    pdf.text(row.totalPoints || '', boxX + 104, rowY + 5.5);
-                    pdf.text(row.points200m || '', boxX + 119, rowY + 5.5);
-                    pdf.text(row.points50m || '', boxX + 134, rowY + 5.5);
-                    pdf.text(row.points100m || '', boxX + 149, rowY + 5.5);
+                    pdf.text(row.totalPoints || '', boxX + 119, rowY + 5.5);
                 } else if (type === 'team') {
                     pdf.text(row.position || '', boxX + 3, rowY + 5.5);
                     pdf.text((row.team || '').substring(0, 25), boxX + 19, rowY + 5.5);
@@ -8401,8 +8383,7 @@ Ver resultados completos: https://festitorneosinu.netlify.app`;
             if (allSheetData.masculino.length > 0) {
                 console.log(' PDF: Procesando datos masculinos, primera fila:', allSheetData.masculino[0]);
                 const tableData = allSheetData.masculino.map((row, index) => {
-                    // Mapear columnas A-I: A=Pos, B=Atleta, C=Equipo, D=Edad, E=Categoría, F=Pts Totales, G=Pts 200m, H=Pts 50m, I=Pts 100m
-                    const [pos, athlete, team, age, category, totalPoints, points200m, points50m, points100m] = row;
+                    const [pos, athlete, team, age, category, totalPoints] = row;
                     return {
                         position: pos || (index + 1).toString(),
                         athlete: athlete || '',
@@ -8410,9 +8391,6 @@ Ver resultados completos: https://festitorneosinu.netlify.app`;
                         age: age || '',
                         category: category || '',
                         totalPoints: totalPoints || '',
-                        points200m: points200m || '',
-                        points50m: points50m || '',
-                        points100m: points100m || '',
                         genderType: 'masculino'
                     };
                 });
@@ -8515,8 +8493,7 @@ Ver resultados completos: https://festitorneosinu.netlify.app`;
                 }
                 
                 const tableData = allSheetData.femenino.map((row, index) => {
-                    // Mapear columnas A-I: A=Pos, B=Atleta, C=Equipo, D=Edad, E=Categoría, F=Pts Totales, G=Pts 200m, H=Pts 50m, I=Pts 100m
-                    const [pos, athlete, team, age, category, totalPoints, points200m, points50m, points100m] = row;
+                    const [pos, athlete, team, age, category, totalPoints] = row;
                     return {
                         position: pos || (index + 1).toString(),
                         athlete: athlete || '',
@@ -8524,9 +8501,6 @@ Ver resultados completos: https://festitorneosinu.netlify.app`;
                         age: age || '',
                         category: category || '',
                         totalPoints: totalPoints || '',
-                        points200m: points200m || '',
-                        points50m: points50m || '',
-                        points100m: points100m || '',
                         genderType: 'femenino'
                     };
                 });
@@ -8546,10 +8520,10 @@ Ver resultados completos: https://festitorneosinu.netlify.app`;
                     
                     // Buscar datos de atletas en cualquier variable (deberían ser femeninos)
                     let datosAtletasEncontrados = null;
-                    if (allSheetData.equipos && allSheetData.equipos.length > 0 && allSheetData.equipos[0] && allSheetData.equipos[0].length > 7) {
+                    if (allSheetData.equipos && allSheetData.equipos.length > 0 && allSheetData.equipos[0] && allSheetData.equipos[0].length > 6) {
                         datosAtletasEncontrados = allSheetData.equipos;
                         console.log(' Datos de atletas encontrados en variable equipos');
-                    } else if (allSheetData.masculino && allSheetData.masculino.length > 0 && allSheetData.masculino[0] && allSheetData.masculino[0].length > 7) {
+                    } else if (allSheetData.masculino && allSheetData.masculino.length > 0 && allSheetData.masculino[0] && allSheetData.masculino[0].length > 6) {
                         // Verificar si masculino tiene datos diferentes (podrían ser femeninos)
                         console.log(' Verificando si masculino contiene datos femeninos...');
                     }
@@ -8560,7 +8534,7 @@ Ver resultados completos: https://festitorneosinu.netlify.app`;
                         allSheetData.equipos = []; // Limpiar equipos para evitar duplicados
                         
                         const tableData = allSheetData.femenino.map((row, index) => {
-                            const [pos, athlete, team, age, category, totalPoints, points200m, points50m, points100m] = row;
+                            const [pos, athlete, team, age, category, totalPoints] = row;
                             return {
                                 position: pos || (index + 1).toString(),
                                 athlete: athlete || '',
@@ -8568,9 +8542,6 @@ Ver resultados completos: https://festitorneosinu.netlify.app`;
                                 age: age || '',
                                 category: category || '',
                                 totalPoints: totalPoints || '',
-                                points200m: points200m || '',
-                                points50m: points50m || '',
-                                points100m: points100m || '',
                                 genderType: 'femenino'
                             };
                         });
@@ -8606,10 +8577,7 @@ Ver resultados completos: https://festitorneosinu.netlify.app`;
                                     celdas[2].textContent.trim() || '', // Equipo
                                     celdas[3].textContent.trim() || '', // Edad
                                     celdas[4].textContent.trim() || '', // Categoría
-                                    celdas[5].textContent.trim() || '', // Puntos Totales
-                                    celdas[6] ? celdas[6].textContent.trim() : '', // P. 200m Libre
-                                    celdas[7] ? celdas[7].textContent.trim() : '', // P. 50m Libre
-                                    celdas[8] ? celdas[8].textContent.trim() : ''  // P. 100m Libre
+                                    celdas[5].textContent.trim() || ''  // Puntos Totales
                                 ]);
                             }
                         });
@@ -8619,7 +8587,7 @@ Ver resultados completos: https://festitorneosinu.netlify.app`;
                             console.log(' Primera atleta:', datosDeHTML[0]);
                             
                             const tableData = datosDeHTML.map((row, index) => {
-                                const [pos, athlete, team, age, category, totalPoints, points200m, points50m, points100m] = row;
+                                const [pos, athlete, team, age, category, totalPoints] = row;
                                 return {
                                     position: pos || (index + 1).toString(),
                                     athlete: athlete || '',
@@ -8627,9 +8595,6 @@ Ver resultados completos: https://festitorneosinu.netlify.app`;
                                     age: age || '',
                                     category: category || '',
                                     totalPoints: totalPoints || '',
-                                    points200m: points200m || '',
-                                    points50m: points50m || '',
-                                    points100m: points100m || '',
                                     genderType: 'femenino'
                                 };
                             });
@@ -8676,10 +8641,10 @@ Ver resultados completos: https://festitorneosinu.netlify.app`;
                     intercambioYaCorregido: !!allSheetData._intercambioCorregido,
                     tieneDataEquipos: !!(allSheetData.equipos && allSheetData.equipos[0]),
                     columnasEquipos: allSheetData.equipos && allSheetData.equipos[0] ? allSheetData.equipos[0].length : 'N/A',
-                    esMayorA7: allSheetData.equipos && allSheetData.equipos[0] ? allSheetData.equipos[0].length > 7 : false
+                    esMayorA6: allSheetData.equipos && allSheetData.equipos[0] ? allSheetData.equipos[0].length > 6 : false
                 });
                 
-                if (!allSheetData._intercambioCorregido && allSheetData.equipos[0] && allSheetData.equipos[0].length > 7) {
+                if (!allSheetData._intercambioCorregido && allSheetData.equipos[0] && allSheetData.equipos[0].length > 6) {
                     console.error('❌ DATOS INCORRECTOS: Los datos de equipos son datos de atletas!');
                     console.log(' Datos incorrectos recibidos:', allSheetData.equipos.slice(0, 3));
                     
