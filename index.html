@@ -4392,16 +4392,12 @@
                 'RESULTADOS-GENERALES-F-FESTIVAL'
             ],
             'resultados-equipo-torneo': [
-                'EQUIPO TORNEO',
-                'EQUIPO-TORNEO',
-                'EQUIPOS TORNEO',
-                'EQUIPOS-TORNEO'
+                'RESULTADOS EQUIPOS TORNEO',
+                'RESULTADOS-EQUIPOS-TORNEO'
             ],
             'resultados-equipo-festival': [
-                'EQUIPO FESTIVAL',
-                'EQUIPO-FESTIVAL',
-                'EQUIPOS FESTIVAL',
-                'EQUIPOS-FESTIVAL'
+                'RESULTADOS EQUIPOS FESTIVAL',
+                'RESULTADOS-EQUIPOS-FESTIVAL'
             ]
         };
 
@@ -4442,7 +4438,7 @@
             const hasFestival = normalized.includes('FESTIVAL');
 
             if (gender === 'equipo') {
-                if (!normalized.includes('EQUIPO')) return false;
+                if (!normalized.includes('RESULTADOS') || !normalized.includes('EQUIPO')) return false;
                 if (normalized.includes('GENERALES')) return false;
                 if (isGeneralGenderSheetFeminine(normalized) || isGeneralGenderSheetMasculine(normalized)) return false;
             } else {
@@ -4485,10 +4481,9 @@
             const fuzzy = pool.find(sheet => validateGeneralSheetMatch(sheet.title, config));
             if (fuzzy) return fuzzy;
 
-            for (const altName of alternatives) {
-                if (validateGeneralSheetMatch(altName, config)) {
-                    return { title: altName, gid: lookupGidForSheetTitle(altName) };
-                }
+            const primaryName = alternatives[0];
+            if (primaryName) {
+                return { title: primaryName, gid: lookupGidForSheetTitle(primaryName) };
             }
 
             return null;
@@ -4666,10 +4661,8 @@
                 'EQUIPOS': 2036627092,
                 'EQUIPO TORNEO': null,
                 'EQUIPO FESTIVAL': null,
-                'EQUIPO-TORNEO': null,
-                'EQUIPO-FESTIVAL': null,
-                'EQUIPOS-TORNEO': null,
-                'EQUIPOS-FESTIVAL': null,
+                'RESULTADOS EQUIPOS TORNEO': null,
+                'RESULTADOS EQUIPOS FESTIVAL': null,
                 'ACTIVADOR DIPLOMAS RECORD': 1817975419
             },
             // Mapeo automático de pestañas - detecta GIDs automáticamente
@@ -5900,10 +5893,16 @@
                 
                 // Esperar al menos 3 columnas: LUGAR, EQUIPO, PUNTOS TOTALES
                 if (row.length >= 3) {
-                    const [lugar, equipo, puntosTotales, certificado] = row;
+                    const lugar = (row[0] ?? '').toString().trim();
+                    const equipo = (row[1] ?? '').toString().trim();
+                    const puntosTotales = (row[2] ?? '').toString().trim();
+                    const certificado = (row[5] ?? row[3] ?? '').toString().trim();
                     
-                    // Skip si no hay equipo válido
+                    // Skip filas vacías o de plantilla (p. ej. fila con "0" sin equipo)
                     if (!equipo || equipo === '-' || equipo.toLowerCase().includes('sin equipos')) {
+                        continue;
+                    }
+                    if (lugar === '0' && !puntosTotales) {
                         continue;
                     }
                     
@@ -5985,8 +5984,13 @@
                             </td>
                         </tr>`;
                 } else if (row.length >= 6) {
-                    // LUGAR, ATLETA, EQUIPO, EDAD, CATEGORIA, PUNTOS TOTALES, CERTIFICADO
-                    const [lugar, atleta, equipo, edad, categoria, puntosTotales, certificado] = row;
+                    const lugar = (row[0] ?? '').toString().trim();
+                    const atleta = (row[1] ?? '').toString().trim();
+                    const equipo = (row[2] ?? '').toString().trim();
+                    const edad = (row[3] ?? '').toString().trim();
+                    const categoria = (row[4] ?? '').toString().trim();
+                    const puntosTotales = (row[5] ?? '').toString().trim();
+                    const certificado = (row[9] ?? row[6] ?? '').toString().trim();
                     
                     // Debug: verificar datos de certificado (reducido)
                     if (atleta && atleta !== 'Sin atletas') {
@@ -7273,9 +7277,7 @@ Ver resultados completos: https://festitorneosinu.netlify.app`;
                 if (allData.equipos.length === 0) {
                     console.warn('⚠️ PROBLEMA: No se cargaron datos de equipos - intentando fallback por nombre');
                     await tryLoadByName(sheetInfo, allData, 'equipos', [
-                        'EQUIPO TORNEO', 'EQUIPO FESTIVAL',
-                        'EQUIPO-TORNEO', 'EQUIPO-FESTIVAL',
-                        'EQUIPOS-TORNEO', 'EQUIPOS-FESTIVAL'
+                        'RESULTADOS EQUIPOS TORNEO', 'RESULTADOS EQUIPOS FESTIVAL'
                     ]);
                 }
                 
@@ -7302,7 +7304,7 @@ Ver resultados completos: https://festitorneosinu.netlify.app`;
                             eventos: [],
                             masculino: htmlData['RESULTADOS GENERALES-M-TORNEO'] || htmlData['RESULTADOS GENERALES-M_TORNEO'] || [],
                             femenino: htmlData['RESULTADOS GENERALES-F-TORNEO'] || htmlData['RESULTADOS GENERALES-F_TORNEO'] || [],
-                            equipos: htmlData['EQUIPO TORNEO'] || htmlData['EQUIPO FESTIVAL'] || htmlData['EQUIPOS'] || htmlData['EQUIPO'] || []
+                            equipos: htmlData['RESULTADOS EQUIPOS TORNEO'] || htmlData['RESULTADOS EQUIPOS FESTIVAL'] || []
                         };
                         
                         console.log(' Fallback HTML - Datos estructurados:', {
@@ -7415,8 +7417,8 @@ Ver resultados completos: https://festitorneosinu.netlify.app`;
             
             // Agregar datos por equipo (torneo y festival)
             [
-                { id: 'resultsTableTeamsTorneo', names: ['EQUIPO TORNEO', 'EQUIPO-TORNEO', 'EQUIPOS-TORNEO'] },
-                { id: 'resultsTableTeamsFestival', names: ['EQUIPO FESTIVAL', 'EQUIPO-FESTIVAL', 'EQUIPOS-FESTIVAL'] }
+                { id: 'resultsTableTeamsTorneo', names: ['RESULTADOS EQUIPOS TORNEO'] },
+                { id: 'resultsTableTeamsFestival', names: ['RESULTADOS EQUIPOS FESTIVAL'] }
             ].forEach(({ id, names }) => {
                 const teamsTable = document.getElementById(id);
                 if (!teamsTable) return;
@@ -8483,8 +8485,8 @@ Ver resultados completos: https://festitorneosinu.netlify.app`;
                 
                 // Cargar datos directamente de Google Sheets
                 console.log('Cargando datos de equipos desde Google Sheets...');
-                const gidEquipos = lookupGidForSheetTitle('EQUIPO TORNEO') || '2036627092';
-                const datosEquipos = await loadDirectSheetData(gidEquipos, 'EQUIPO TORNEO');
+                const gidEquipos = lookupGidForSheetTitle('RESULTADOS EQUIPOS TORNEO') || '2036627092';
+                const datosEquipos = await loadDirectSheetData(gidEquipos, 'RESULTADOS EQUIPOS TORNEO');
                 console.log('Datos de equipos cargados:', datosEquipos ? datosEquipos.length + ' filas' : 'null');
                 
                 if (datosEquipos && datosEquipos.length > 0) {
