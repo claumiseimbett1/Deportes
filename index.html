@@ -4377,26 +4377,23 @@
         const GENERAL_CLASSIFICATION_SHEETS = {
             'resultados-masculino-torneo': [
                 'RESULTADOS GENERALES-M-TORNEO',
-                'RESULTADOS-GENERALES-M-TORNEO',
-                'RESULTADOS-MASCULINO-TORNEO',
-                'RESULTADOS-MASCULINO'
+                'RESULTADOS GENERALES-M_TORNEO',
+                'RESULTADOS-GENERALES-M-TORNEO'
             ],
             'resultados-masculino-festival': [
                 'RESULTADOS GENERALES-M-FESTIVAL',
-                'RESULTADOS-GENERALES-M-FESTIVAL',
-                'RESULTADOS-MASCULINO-FESTIVAL'
+                'RESULTADOS GENERALES-M_FESTIVAL',
+                'RESULTADOS-GENERALES-M-FESTIVAL'
             ],
             'resultados-femenino-torneo': [
                 'RESULTADOS GENERALES-F-TORNEO',
-                'RESULTADOS-GENERALES-F-TORNEO',
-                'RESULTADOS-FEMENINO-TORNEO',
-                'RESULTADOS-FEMENINO',
-                'CLASIFICACIÓN GENERAL FEMENINA'
+                'RESULTADOS GENERALES-F_TORNEO',
+                'RESULTADOS-GENERALES-F-TORNEO'
             ],
             'resultados-femenino-festival': [
                 'RESULTADOS GENERALES-F-FESTIVAL',
-                'RESULTADOS-GENERALES-F-FESTIVAL',
-                'RESULTADOS-FEMENINO-FESTIVAL'
+                'RESULTADOS GENERALES-F_FESTIVAL',
+                'RESULTADOS-GENERALES-F-FESTIVAL'
             ],
             'resultados-equipo-torneo': [
                 'EQUIPOS-TORNEO',
@@ -4430,17 +4427,13 @@
         }
 
         function isGeneralGenderSheetFeminine(normalized) {
-            return normalized.includes('FEMENINO')
-                || /\bFEM\b/.test(normalized)
-                || /(?:^|[-\s])F[-\s](?:TORNEO|FESTIVAL)/.test(normalized)
-                || /GENERALES[-\s]F(?:[-\s]|$)/.test(normalized);
+            return /GENERALES[-\s_]F[-\s_](?:TORNEO|FESTIVAL)/.test(normalized)
+                || /GENERALES[-\s_]F(?:[-\s_]|$)/.test(normalized);
         }
 
         function isGeneralGenderSheetMasculine(normalized) {
-            return normalized.includes('MASCULINO')
-                || /\bMAS\b/.test(normalized)
-                || /(?:^|[-\s])M[-\s](?:TORNEO|FESTIVAL)/.test(normalized)
-                || /GENERALES[-\s]M(?:[-\s]|$)/.test(normalized);
+            return /GENERALES[-\s_]M[-\s_](?:TORNEO|FESTIVAL)/.test(normalized)
+                || /GENERALES[-\s_]M(?:[-\s_]|$)/.test(normalized);
         }
 
         function validateGeneralSheetMatch(title, config) {
@@ -4467,12 +4460,12 @@
             }
 
             if (type === 'festival') return hasFestival;
-            if (type === 'torneo') return hasTorneo || (!hasTorneo && !hasFestival);
+            if (type === 'torneo') return hasTorneo;
             return false;
         }
 
         function canonicalSheetTitle(title) {
-            return normalizeSheetTitle(title).replace(/[\s-]+/g, '');
+            return normalizeSheetTitle(title).replace(/[\s\-_]+/g, '');
         }
 
         function sheetTitlesMatch(a, b) {
@@ -4665,13 +4658,13 @@
                 'RESULTADOS-FEMENINO': 1083700705,
                 'RESULTADOS-MASCULINO': 1681548039,
                 'RESULTADOS GENERALES-M-TORNEO': null,
+                'RESULTADOS GENERALES-M_TORNEO': null,
                 'RESULTADOS GENERALES-M-FESTIVAL': null,
+                'RESULTADOS GENERALES-M_FESTIVAL': null,
                 'RESULTADOS GENERALES-F-TORNEO': null,
+                'RESULTADOS GENERALES-F_TORNEO': null,
                 'RESULTADOS GENERALES-F-FESTIVAL': null,
-                'RESULTADOS-MASCULINO-TORNEO': null,
-                'RESULTADOS-MASCULINO-FESTIVAL': null,
-                'RESULTADOS-FEMENINO-TORNEO': null,
-                'RESULTADOS-FEMENINO-FESTIVAL': null,
+                'RESULTADOS GENERALES-F_FESTIVAL': null,
                 'EQUIPOS': 2036627092,
                 'EQUIPOS-TORNEO': null,
                 'EQUIPOS-FESTIVAL': null,
@@ -7266,9 +7259,15 @@ Ver resultados completos: https://festitorneosinu.netlify.app`;
                 if (allData.femenino.length === 0) {
                     console.warn('⚠️ PROBLEMA: No se cargaron datos femeninos - intentando fallback por nombre');
                     await tryLoadByName(sheetInfo, allData, 'femenino', [
-                        'RESULTADOS GENERALES-F-TORNEO', 'RESULTADOS GENERALES-F-FESTIVAL',
-                        'RESULTADOS-FEMENINO-TORNEO', 'RESULTADOS-FEMENINO-FESTIVAL',
-                        'CLASIFICACIÓN GENERAL FEMENINA', 'FEMENINO', 'RESULTADOS-FEMENINO', 'RESULTADOS FEMENINO'
+                        'RESULTADOS GENERALES-F-TORNEO', 'RESULTADOS GENERALES-F_TORNEO',
+                        'RESULTADOS GENERALES-F-FESTIVAL', 'RESULTADOS GENERALES-F_FESTIVAL'
+                    ]);
+                }
+                if (allData.masculino.length === 0) {
+                    console.warn('⚠️ PROBLEMA: No se cargaron datos masculinos - intentando fallback por nombre');
+                    await tryLoadByName(sheetInfo, allData, 'masculino', [
+                        'RESULTADOS GENERALES-M-TORNEO', 'RESULTADOS GENERALES-M_TORNEO',
+                        'RESULTADOS GENERALES-M-FESTIVAL', 'RESULTADOS GENERALES-M_FESTIVAL'
                     ]);
                 }
                 if (allData.equipos.length === 0) {
@@ -7299,8 +7298,8 @@ Ver resultados completos: https://festitorneosinu.netlify.app`;
                         // Mapear correctamente los datos HTML a la estructura esperada
                         const estructuradoHTML = {
                             eventos: [],
-                            masculino: htmlData['RESULTADOS-MASCULINO'] || htmlData['RESULTADOS MASCULINO'] || htmlData['MASCULINO'] || [],
-                            femenino: htmlData['CLASIFICACIÓN GENERAL FEMENINA'] || htmlData['RESULTADOS-FEMENINO'] || htmlData['RESULTADOS FEMENINO'] || htmlData['FEMENINO'] || [],
+                            masculino: htmlData['RESULTADOS GENERALES-M-TORNEO'] || htmlData['RESULTADOS GENERALES-M_TORNEO'] || [],
+                            femenino: htmlData['RESULTADOS GENERALES-F-TORNEO'] || htmlData['RESULTADOS GENERALES-F_TORNEO'] || [],
                             equipos: htmlData['EQUIPOS'] || htmlData['EQUIPO'] || htmlData['TEAMS'] || []
                         };
                         
@@ -7381,10 +7380,10 @@ Ver resultados completos: https://festitorneosinu.netlify.app`;
             
             // Agregar datos por género con múltiples nombres
             const genderTables = [
-                { id: 'resultsTableMasculinoTorneo', names: ['RESULTADOS GENERALES-M-TORNEO', 'RESULTADOS-MASCULINO-TORNEO', 'RESULTADOS-MASCULINO', 'RESULTADOS MASCULINO', 'MASCULINO'] },
-                { id: 'resultsTableMasculinoFestival', names: ['RESULTADOS GENERALES-M-FESTIVAL', 'RESULTADOS-MASCULINO-FESTIVAL'] },
-                { id: 'resultsTableFemeninoTorneo', names: ['RESULTADOS GENERALES-F-TORNEO', 'RESULTADOS-FEMENINO-TORNEO', 'CLASIFICACIÓN GENERAL FEMENINA', 'RESULTADOS-FEMENINO', 'RESULTADOS FEMENINO', 'FEMENINO'] },
-                { id: 'resultsTableFemeninoFestival', names: ['RESULTADOS GENERALES-F-FESTIVAL', 'RESULTADOS-FEMENINO-FESTIVAL'] }
+                { id: 'resultsTableMasculinoTorneo', names: ['RESULTADOS GENERALES-M-TORNEO', 'RESULTADOS GENERALES-M_TORNEO'] },
+                { id: 'resultsTableMasculinoFestival', names: ['RESULTADOS GENERALES-M-FESTIVAL', 'RESULTADOS GENERALES-M_FESTIVAL'] },
+                { id: 'resultsTableFemeninoTorneo', names: ['RESULTADOS GENERALES-F-TORNEO', 'RESULTADOS GENERALES-F_TORNEO'] },
+                { id: 'resultsTableFemeninoFestival', names: ['RESULTADOS GENERALES-F-FESTIVAL', 'RESULTADOS GENERALES-F_FESTIVAL'] }
             ];
             
             genderTables.forEach(({ id, names }) => {
@@ -8307,12 +8306,12 @@ Ver resultados completos: https://festitorneosinu.netlify.app`;
             
             try {
                 // GIDs específicos de las hojas
-                const gidFemenino = '1083700705'; // RESULTADOS-FEMENINO
-                const gidMasculino = '1681548039'; // RESULTADOS-MASCULINO
+                const gidFemenino = lookupGidForSheetTitle('RESULTADOS GENERALES-F-TORNEO') || '1083700705';
+                const gidMasculino = lookupGidForSheetTitle('RESULTADOS GENERALES-M-TORNEO') || '1681548039';
                 
                 // Cargar datos masculinos desde Google Sheets
                 console.log('Cargando datos masculinos desde Google Sheets (GID:', gidMasculino, ')...');
-                const datosMasculinos = await loadDirectSheetData(gidMasculino, 'RESULTADOS-MASCULINO');
+                const datosMasculinos = await loadDirectSheetData(gidMasculino, 'RESULTADOS GENERALES-M-TORNEO');
                 console.log('Datos masculinos cargados:', datosMasculinos ? datosMasculinos.length + ' filas' : 'null');
                 
                 if (datosMasculinos && datosMasculinos.length > 0) {
@@ -8384,7 +8383,7 @@ Ver resultados completos: https://festitorneosinu.netlify.app`;
                 
                 // Cargar datos femeninos desde Google Sheets
                 console.log('Cargando datos femeninos desde Google Sheets (GID:', gidFemenino, ')...');
-                const datosFemeninos = await loadDirectSheetData(gidFemenino, 'RESULTADOS-FEMENINO');
+                const datosFemeninos = await loadDirectSheetData(gidFemenino, 'RESULTADOS GENERALES-F-TORNEO');
                 console.log('Datos femeninos cargados:', datosFemeninos ? datosFemeninos.length + ' filas' : 'null');
                 
                 if (datosFemeninos && datosFemeninos.length > 0) {
