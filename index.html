@@ -3936,8 +3936,8 @@
                 </div>
 
                 <div class="tabs gender-general-tabs">
-                    <button type="button" class="tab-button active" data-gender="masculino" onclick="openGenderGeneralTab(event, 'masculino')">🏊‍♂️ Masculino</button>
-                    <button type="button" class="tab-button" data-gender="femenino" onclick="openGenderGeneralTab(event, 'femenino')">🏊‍♀️ Femenino</button>
+                    <button type="button" class="tab-button active" data-gender="femenino" onclick="openGenderGeneralTab(event, 'femenino')">🏊‍♀️ Femenino</button>
+                    <button type="button" class="tab-button" data-gender="masculino" onclick="openGenderGeneralTab(event, 'masculino')">🏊‍♂️ Masculino</button>
                 </div>
 
                 <div id="genderGeneralPanels"></div>
@@ -4080,6 +4080,7 @@
         let lastUpdateTime = null;
         let loadAttempts = 0;
         const MAX_ATTEMPTS = 3;
+        const EVENT_DISPLAY_NAME = 'I Festitorneo Regional del Sinú';
 
         /** Pestañas de pruebas en el Google Sheet (Torneo + Festival) */
         let PRUEBAS_SHEET_TABS = [
@@ -4362,10 +4363,10 @@
         }
 
         const GENERAL_RESULTS_TABLE_IDS = [
-            'resultsTableMasculinoTorneo',
-            'resultsTableMasculinoFestival',
             'resultsTableFemeninoTorneo',
             'resultsTableFemeninoFestival',
+            'resultsTableMasculinoTorneo',
+            'resultsTableMasculinoFestival',
             'resultsTableTeamsTorneo',
             'resultsTableTeamsFestival'
         ];
@@ -4401,7 +4402,7 @@
             ]
         };
 
-        const activeGenderGeneral = { gender: 'masculino', type: 'torneo' };
+        const activeGenderGeneral = { gender: 'femenino', type: 'torneo' };
 
         function isGeneralResultsTable(tableOrId) {
             const id = typeof tableOrId === 'string' ? tableOrId : tableOrId?.id;
@@ -4491,10 +4492,10 @@
 
         function buildGeneralClassificationCompetitions() {
             const entries = [
-                { key: 'resultados-masculino-torneo', tableId: 'resultsTableMasculinoTorneo', genderColumn: 'Nadador', gender: 'masculino', type: 'torneo' },
-                { key: 'resultados-masculino-festival', tableId: 'resultsTableMasculinoFestival', genderColumn: 'Nadador', gender: 'masculino', type: 'festival' },
                 { key: 'resultados-femenino-torneo', tableId: 'resultsTableFemeninoTorneo', genderColumn: 'Nadadora', gender: 'femenino', type: 'torneo' },
                 { key: 'resultados-femenino-festival', tableId: 'resultsTableFemeninoFestival', genderColumn: 'Nadadora', gender: 'femenino', type: 'festival' },
+                { key: 'resultados-masculino-torneo', tableId: 'resultsTableMasculinoTorneo', genderColumn: 'Nadador', gender: 'masculino', type: 'torneo' },
+                { key: 'resultados-masculino-festival', tableId: 'resultsTableMasculinoFestival', genderColumn: 'Nadador', gender: 'masculino', type: 'festival' },
                 { key: 'resultados-equipo-torneo', tableId: 'resultsTableTeamsTorneo', genderColumn: 'Equipo', gender: 'equipo', type: 'torneo' },
                 { key: 'resultados-equipo-festival', tableId: 'resultsTableTeamsFestival', genderColumn: 'Equipo', gender: 'equipo', type: 'festival' }
             ];
@@ -4551,10 +4552,10 @@
             if (!container) return;
 
             const panels = [
-                ['masculino', 'torneo', 'resultsTableMasculinoTorneo', '🏊‍♂️ Clasificación General Masculina — Torneo'],
-                ['masculino', 'festival', 'resultsTableMasculinoFestival', '🏊‍♂️ Clasificación General Masculina — Festival'],
                 ['femenino', 'torneo', 'resultsTableFemeninoTorneo', '🏊‍♀️ Clasificación General Femenina — Torneo'],
-                ['femenino', 'festival', 'resultsTableFemeninoFestival', '🏊‍♀️ Clasificación General Femenina — Festival']
+                ['femenino', 'festival', 'resultsTableFemeninoFestival', '🏊‍♀️ Clasificación General Femenina — Festival'],
+                ['masculino', 'torneo', 'resultsTableMasculinoTorneo', '🏊‍♂️ Clasificación General Masculina — Torneo'],
+                ['masculino', 'festival', 'resultsTableMasculinoFestival', '🏊‍♂️ Clasificación General Masculina — Festival']
             ];
 
             container.innerHTML = panels.map(([gender, type, tableId, title]) =>
@@ -6372,7 +6373,7 @@
                 updateSearchInfo('searchResultsPruebas', foundResults, totalResults, searchTerm);
                 
             } else if (section === 'gender') {
-                GENERAL_RESULTS_TABLE_IDS.filter(id => id.includes('Masculino') || id.includes('Femenino')).forEach(tableId => {
+                GENERAL_RESULTS_TABLE_IDS.filter(id => id.includes('Femenino') || id.includes('Masculino')).forEach(tableId => {
                     const table = document.getElementById(tableId);
                     if (table) {
                         const result = searchInTable(table, normalizedTerm);
@@ -6585,17 +6586,17 @@
                 // Convertir nombres de prueba a abreviaciones
                 const pruebaAbrev = getCurrentEventName();
                 
-                message = `🏊‍♂️ ${swimmer}: ¡Felicitaciones por haber obtenido la posición No. ${position} con un tiempo de ${time} en ${pruebaAbrev} en el I FESTITORNEO 2026! 🏆 
+                message = `🏊‍♂️ ${swimmer}: ¡Felicitaciones por haber obtenido la posición No. ${position} con un tiempo de ${time} en ${pruebaAbrev} en el ${EVENT_DISPLAY_NAME}! 🏆 
 
 Ver más resultados: https://festitorneosinu.netlify.app`;
             } else if (category === 'Clasificación por Equipos') {
                 // Para equipos - solo posición
-                message = `¡🏊‍♂️ Felicitaciones al equipo ${swimmer} por haber obtenido la posición No. ${position} en el I FESTITORNEO 2026! 🏆 
+                message = `¡🏊‍♂️ Felicitaciones al equipo ${swimmer} por haber obtenido la posición No. ${position} en el ${EVENT_DISPLAY_NAME}! 🏆 
 
 Ver más resultados: https://festitorneosinu.netlify.app`;
             } else {
                 // Para clasificación por género - usar categoría
-                message = `🏊‍♂️ ${swimmer}: ¡Felicitaciones por haber obtenido la posición No. ${position} en la categoría ${category} en el I FESTITORNEO 2026! 🏆 
+                message = `🏊‍♂️ ${swimmer}: ¡Felicitaciones por haber obtenido la posición No. ${position} en la categoría ${category} en el ${EVENT_DISPLAY_NAME}! 🏆 
 
 Ver más resultados: https://festitorneosinu.netlify.app`;
             }
@@ -6613,21 +6614,21 @@ Ver más resultados: https://festitorneosinu.netlify.app`;
                 // Para nadadores individuales con tiempo (pruebas específicas)
                 const pruebaAbrev = getCurrentEventName();
                 
-                message = `🏊‍♂️ ${swimmer}: ¡Felicitaciones por haber obtenido la posición No. ${position} con un tiempo de ${time} en ${pruebaAbrev} en el I FESTITORNEO 2026! 🏆 
+                message = `🏊‍♂️ ${swimmer}: ¡Felicitaciones por haber obtenido la posición No. ${position} con un tiempo de ${time} en ${pruebaAbrev} en el ${EVENT_DISPLAY_NAME}! 🏆 
 
 #Natación #FestiTorneoSinu #DelfinesCordoba #ClubAvatar #Córdoba #Swimming
 
 Ver resultados completos: https://festitorneosinu.netlify.app`;
             } else if (category === 'Clasificación por Equipos') {
                 // Para equipos - solo posición
-                message = `🏊‍♂️ Felicitaciones al equipo ${swimmer} por haber obtenido la posición No. ${position} en el I FESTITORNEO 2026! 🏆 
+                message = `🏊‍♂️ Felicitaciones al equipo ${swimmer} por haber obtenido la posición No. ${position} en el ${EVENT_DISPLAY_NAME}! 🏆 
 
 #Natación #FestiTorneoSinu #DelfinesCordoba #ClubAvatar #TeamWork #Córdoba
 
 Ver resultados completos: https://festitorneosinu.netlify.app`;
             } else {
                 // Para clasificación por género - usar categoría
-                message = `🏊‍♂️ ${swimmer}: ¡Felicitaciones por haber obtenido la posición No. ${position} en la categoría ${category} en el I FESTITORNEO 2026! 🏆 
+                message = `🏊‍♂️ ${swimmer}: ¡Felicitaciones por haber obtenido la posición No. ${position} en la categoría ${category} en el ${EVENT_DISPLAY_NAME}! 🏆 
 
 #Natación #FestiTorneoSinu #DelfinesCordoba #ClubAvatar #Córdoba #Swimming
 
@@ -8308,16 +8309,16 @@ Ver resultados completos: https://festitorneosinu.netlify.app`;
                 const gidFemenino = lookupGidForSheetTitle('RESULTADOS GENERALES-F-TORNEO') || '1083700705';
                 const gidMasculino = lookupGidForSheetTitle('RESULTADOS GENERALES-M-TORNEO') || '1681548039';
                 
-                // Cargar datos masculinos desde Google Sheets
-                console.log('Cargando datos masculinos desde Google Sheets (GID:', gidMasculino, ')...');
-                const datosMasculinos = await loadDirectSheetData(gidMasculino, 'RESULTADOS GENERALES-M-TORNEO');
-                console.log('Datos masculinos cargados:', datosMasculinos ? datosMasculinos.length + ' filas' : 'null');
+                // Cargar datos femeninos desde Google Sheets
+                console.log('Cargando datos femeninos desde Google Sheets (GID:', gidFemenino, ')...');
+                const datosFemeninos = await loadDirectSheetData(gidFemenino, 'RESULTADOS GENERALES-F-TORNEO');
+                console.log('Datos femeninos cargados:', datosFemeninos ? datosFemeninos.length + ' filas' : 'null');
                 
-                if (datosMasculinos && datosMasculinos.length > 0) {
+                if (datosFemeninos && datosFemeninos.length > 0) {
                     pdf.setFont("helvetica", "bold");
                     pdf.setFontSize(14);
                     pdf.setTextColor(0, 74, 173);
-                    pdf.text("CLASIFICACIÓN GENERAL MASCULINA", 20, yPosition);
+                    pdf.text("CLASIFICACIÓN GENERAL FEMENINA", 20, yPosition);
                     yPosition += 15;
                     
                     // Encabezados
@@ -8335,11 +8336,11 @@ Ver resultados completos: https://festitorneosinu.netlify.app`;
                     pdf.text("100", 195, yPosition);
                     yPosition += 8;
                     
-                    // Datos masculinos (columnas A-I)
+                    // Datos femeninos (columnas A-I)
                     pdf.setFont("helvetica", "normal");
                     pdf.setFontSize(7);
                     
-                    datosMasculinos.forEach((row, index) => {
+                    datosFemeninos.forEach((row, index) => {
                         if (yPosition > 270) {
                             pdf.addPage();
                             addCompetitionLogo(pdf);
@@ -8380,12 +8381,12 @@ Ver resultados completos: https://festitorneosinu.netlify.app`;
                     yPosition += 10;
                 }
                 
-                // Cargar datos femeninos desde Google Sheets
-                console.log('Cargando datos femeninos desde Google Sheets (GID:', gidFemenino, ')...');
-                const datosFemeninos = await loadDirectSheetData(gidFemenino, 'RESULTADOS GENERALES-F-TORNEO');
-                console.log('Datos femeninos cargados:', datosFemeninos ? datosFemeninos.length + ' filas' : 'null');
+                // Cargar datos masculinos desde Google Sheets
+                console.log('Cargando datos masculinos desde Google Sheets (GID:', gidMasculino, ')...');
+                const datosMasculinos = await loadDirectSheetData(gidMasculino, 'RESULTADOS GENERALES-M-TORNEO');
+                console.log('Datos masculinos cargados:', datosMasculinos ? datosMasculinos.length + ' filas' : 'null');
                 
-                if (datosFemeninos && datosFemeninos.length > 0) {
+                if (datosMasculinos && datosMasculinos.length > 0) {
                     // Verificar espacio
                     if (yPosition > 200) {
                         pdf.addPage();
@@ -8396,7 +8397,7 @@ Ver resultados completos: https://festitorneosinu.netlify.app`;
                     pdf.setFont("helvetica", "bold");
                     pdf.setFontSize(14);
                     pdf.setTextColor(0, 74, 173);
-                    pdf.text("CLASIFICACIÓN GENERAL FEMENINA", 20, yPosition);
+                    pdf.text("CLASIFICACIÓN GENERAL MASCULINA", 20, yPosition);
                     yPosition += 15;
                     
                     // Encabezados
@@ -8414,11 +8415,11 @@ Ver resultados completos: https://festitorneosinu.netlify.app`;
                     pdf.text("100", 195, yPosition);
                     yPosition += 8;
                     
-                    // Datos femeninos (columnas A-I)
+                    // Datos masculinos (columnas A-I)
                     pdf.setFont("helvetica", "normal");
                     pdf.setFontSize(7);
                     
-                    datosFemeninos.forEach((row, index) => {
+                    datosMasculinos.forEach((row, index) => {
                         if (yPosition > 270) {
                             pdf.addPage();
                             addCompetitionLogo(pdf);
