@@ -3900,7 +3900,7 @@
                 
                 <div class="pruebas-filter-bar" id="pruebasFilterBar">
                     <button type="button" class="pruebas-filter active" data-filter="all">Todas las pruebas</button>
-                    <button type="button" class="pruebas-filter" data-filter="torneo">Competencia</button>
+                    <button type="button" class="pruebas-filter" data-filter="torneo">Torneo</button>
                     <button type="button" class="pruebas-filter" data-filter="festival">Festival</button>
                 </div>
                 <div class="tabs pruebas-tabs" id="pruebasTabsNav" role="tablist" aria-label="Pruebas del campeonato"></div>
@@ -3931,7 +3931,7 @@
                 </div>
                 
                 <div class="general-classification-filter-bar" id="genderGeneralFilterBar">
-                    <button type="button" class="pruebas-filter active" data-filter="torneo">Competencia</button>
+                    <button type="button" class="pruebas-filter active" data-filter="torneo">Torneo</button>
                     <button type="button" class="pruebas-filter" data-filter="festival">Festival</button>
                 </div>
 
@@ -3955,15 +3955,15 @@
                 </div>
                 
                 <div class="general-classification-filter-bar team-general-filter-bar" id="teamGeneralFilterBar">
-                    <button type="button" class="pruebas-filter active" data-filter="torneo" onclick="openTeamGeneralTab(event, 'torneo')">Competencia</button>
+                    <button type="button" class="pruebas-filter active" data-filter="torneo" onclick="openTeamGeneralTab(event, 'torneo')">Torneo</button>
                     <button type="button" class="pruebas-filter" data-filter="festival" onclick="openTeamGeneralTab(event, 'festival')">Festival</button>
                 </div>
 
                 <div id="equipos-general-torneo" class="tab-content team-general-panel active" data-type="torneo">
-                    <h3 class="general-section-title">🏆 Clasificación por Equipos — Competencia</h3>
+                    <h3 class="general-section-title">🏆 Clasificación por Equipos — Torneo</h3>
                     <div class="table-responsive table-responsive--cards">
                     <div class="mobile-results-container">
-                        <div class="no-data-cell">🔄 Cargando clasificación de equipos (competencia)...</div>
+                        <div class="no-data-cell">🔄 Cargando clasificación de equipos (torneo)...</div>
                     </div>
                     <table class="results-table results-table--teams" id="resultsTableTeamsTorneo">
                         <thead>
@@ -3980,7 +3980,7 @@
                         <tbody>
                             <tr class="loading-row">
                                 <td colspan="7" class="no-data-cell">
-                                    🔄 Cargando clasificación de equipos (competencia)...
+                                    🔄 Cargando clasificación de equipos (torneo)...
                                 </td>
                             </tr>
                         </tbody>
@@ -4376,44 +4376,38 @@
 
         const GENERAL_CLASSIFICATION_SHEETS = {
             'resultados-masculino-torneo': [
+                'RESULTADOS GENERALES-M-TORNEO',
+                'RESULTADOS-GENERALES-M-TORNEO',
                 'RESULTADOS-MASCULINO-TORNEO',
-                'CLASIFICACION GENERAL MASCULINA TORNEO',
-                'CLASIFICACIÓN GENERAL MASCULINA TORNEO',
-                'RESULTADOS MASCULINO TORNEO',
                 'RESULTADOS-MASCULINO'
             ],
             'resultados-masculino-festival': [
-                'RESULTADOS-MASCULINO-FESTIVAL',
-                'CLASIFICACION GENERAL MASCULINA FESTIVAL',
-                'CLASIFICACIÓN GENERAL MASCULINA FESTIVAL',
-                'RESULTADOS MASCULINO FESTIVAL'
+                'RESULTADOS GENERALES-M-FESTIVAL',
+                'RESULTADOS-GENERALES-M-FESTIVAL',
+                'RESULTADOS-MASCULINO-FESTIVAL'
             ],
             'resultados-femenino-torneo': [
+                'RESULTADOS GENERALES-F-TORNEO',
+                'RESULTADOS-GENERALES-F-TORNEO',
                 'RESULTADOS-FEMENINO-TORNEO',
-                'CLASIFICACION GENERAL FEMENINA TORNEO',
-                'CLASIFICACIÓN GENERAL FEMENINA TORNEO',
-                'RESULTADOS FEMENINO TORNEO',
                 'RESULTADOS-FEMENINO',
                 'CLASIFICACIÓN GENERAL FEMENINA'
             ],
             'resultados-femenino-festival': [
-                'RESULTADOS-FEMENINO-FESTIVAL',
-                'CLASIFICACION GENERAL FEMENINA FESTIVAL',
-                'CLASIFICACIÓN GENERAL FEMENINA FESTIVAL',
-                'RESULTADOS FEMENINO FESTIVAL'
+                'RESULTADOS GENERALES-F-FESTIVAL',
+                'RESULTADOS-GENERALES-F-FESTIVAL',
+                'RESULTADOS-FEMENINO-FESTIVAL'
             ],
             'resultados-equipo-torneo': [
                 'EQUIPOS-TORNEO',
+                'EQUIPOS TORNEO',
                 'EQUIPO-TORNEO',
-                'CLASIFICACION EQUIPOS TORNEO',
-                'CLASIFICACIÓN EQUIPOS TORNEO',
                 'EQUIPOS'
             ],
             'resultados-equipo-festival': [
                 'EQUIPOS-FESTIVAL',
-                'EQUIPO-FESTIVAL',
-                'CLASIFICACION EQUIPOS FESTIVAL',
-                'CLASIFICACIÓN EQUIPOS FESTIVAL'
+                'EQUIPOS FESTIVAL',
+                'EQUIPO-FESTIVAL'
             ]
         };
 
@@ -4435,20 +4429,34 @@
                 || id === 'resultsTableFemeninoTorneo' || id === 'resultsTableFemeninoFestival';
         }
 
+        function isGeneralGenderSheetFeminine(normalized) {
+            return normalized.includes('FEMENINO')
+                || /\bFEM\b/.test(normalized)
+                || /(?:^|[-\s])F[-\s](?:TORNEO|FESTIVAL)/.test(normalized)
+                || /GENERALES[-\s]F(?:[-\s]|$)/.test(normalized);
+        }
+
+        function isGeneralGenderSheetMasculine(normalized) {
+            return normalized.includes('MASCULINO')
+                || /\bMAS\b/.test(normalized)
+                || /(?:^|[-\s])M[-\s](?:TORNEO|FESTIVAL)/.test(normalized)
+                || /GENERALES[-\s]M(?:[-\s]|$)/.test(normalized);
+        }
+
         function validateGeneralSheetMatch(title, config) {
             const normalized = normalizeSheetTitle(title);
             if (isPruebaSheetTitle(title)) return false;
 
             const { gender, type } = config;
-            const hasTorneo = normalized.includes('TORNEO') || normalized.includes('COMPETENCIA');
+            const hasTorneo = normalized.includes('TORNEO');
             const hasFestival = normalized.includes('FESTIVAL');
 
             if (gender === 'equipo') {
                 if (!normalized.includes('EQUIPO')) return false;
-                if (normalized.includes('MASCULINO') || normalized.includes('FEMENINO')) return false;
+                if (isGeneralGenderSheetFeminine(normalized) || isGeneralGenderSheetMasculine(normalized)) return false;
             } else {
-                const isFem = normalized.includes('FEMENINO') || /\bFEM\b/.test(normalized);
-                const isMas = normalized.includes('MASCULINO') || /\bMAS\b/.test(normalized);
+                const isFem = isGeneralGenderSheetFeminine(normalized);
+                const isMas = isGeneralGenderSheetMasculine(normalized);
                 if (gender === 'femenino' && !isFem) return false;
                 if (gender === 'masculino' && !isMas) return false;
                 if (gender === 'masculino' && isFem && !isMas) return false;
@@ -4463,18 +4471,36 @@
             return false;
         }
 
+        function canonicalSheetTitle(title) {
+            return normalizeSheetTitle(title).replace(/[\s-]+/g, '');
+        }
+
+        function sheetTitlesMatch(a, b) {
+            return normalizeSheetTitle(a) === normalizeSheetTitle(b)
+                || canonicalSheetTitle(a) === canonicalSheetTitle(b);
+        }
+
         function findGeneralClassificationSheet(sheetInfo, config) {
             const pool = sheetInfo && sheetInfo.length ? sheetInfo : [];
             const alternatives = config.alternativeNames || [];
 
             for (const altName of alternatives) {
-                const sheet = pool.find(s => normalizeSheetTitle(s.title) === normalizeSheetTitle(altName));
+                const sheet = pool.find(s => sheetTitlesMatch(s.title, altName));
                 if (sheet && validateGeneralSheetMatch(sheet.title, config)) {
                     return sheet;
                 }
             }
 
-            return pool.find(sheet => validateGeneralSheetMatch(sheet.title, config)) || null;
+            const fuzzy = pool.find(sheet => validateGeneralSheetMatch(sheet.title, config));
+            if (fuzzy) return fuzzy;
+
+            for (const altName of alternatives) {
+                if (validateGeneralSheetMatch(altName, config)) {
+                    return { title: altName, gid: lookupGidForSheetTitle(altName) };
+                }
+            }
+
+            return null;
         }
 
         function buildGeneralClassificationCompetitions() {
@@ -4539,9 +4565,9 @@
             if (!container) return;
 
             const panels = [
-                ['masculino', 'torneo', 'resultsTableMasculinoTorneo', '🏊‍♂️ Clasificación General Masculina — Competencia'],
+                ['masculino', 'torneo', 'resultsTableMasculinoTorneo', '🏊‍♂️ Clasificación General Masculina — Torneo'],
                 ['masculino', 'festival', 'resultsTableMasculinoFestival', '🏊‍♂️ Clasificación General Masculina — Festival'],
-                ['femenino', 'torneo', 'resultsTableFemeninoTorneo', '🏊‍♀️ Clasificación General Femenina — Competencia'],
+                ['femenino', 'torneo', 'resultsTableFemeninoTorneo', '🏊‍♀️ Clasificación General Femenina — Torneo'],
                 ['femenino', 'festival', 'resultsTableFemeninoFestival', '🏊‍♀️ Clasificación General Femenina — Festival']
             ];
 
@@ -4638,6 +4664,10 @@
                 '4x50M-MIXTO': null,
                 'RESULTADOS-FEMENINO': 1083700705,
                 'RESULTADOS-MASCULINO': 1681548039,
+                'RESULTADOS GENERALES-M-TORNEO': null,
+                'RESULTADOS GENERALES-M-FESTIVAL': null,
+                'RESULTADOS GENERALES-F-TORNEO': null,
+                'RESULTADOS GENERALES-F-FESTIVAL': null,
                 'RESULTADOS-MASCULINO-TORNEO': null,
                 'RESULTADOS-MASCULINO-FESTIVAL': null,
                 'RESULTADOS-FEMENINO-TORNEO': null,
@@ -4910,7 +4940,7 @@
 
         function getCompetitionDisplayName(competitionKey, config) {
             if (config?.gender && config?.type) {
-                const typeLabel = config.type === 'festival' ? 'Festival' : 'Competencia';
+                const typeLabel = config.type === 'festival' ? 'Festival' : 'Torneo';
                 if (config.gender === 'equipo') return `Equipos — ${typeLabel}`;
                 const genderLabel = config.gender === 'femenino' ? 'Femenino' : 'Masculino';
                 return `Clasificación general ${genderLabel} — ${typeLabel}`;
@@ -7236,6 +7266,7 @@ Ver resultados completos: https://festitorneosinu.netlify.app`;
                 if (allData.femenino.length === 0) {
                     console.warn('⚠️ PROBLEMA: No se cargaron datos femeninos - intentando fallback por nombre');
                     await tryLoadByName(sheetInfo, allData, 'femenino', [
+                        'RESULTADOS GENERALES-F-TORNEO', 'RESULTADOS GENERALES-F-FESTIVAL',
                         'RESULTADOS-FEMENINO-TORNEO', 'RESULTADOS-FEMENINO-FESTIVAL',
                         'CLASIFICACIÓN GENERAL FEMENINA', 'FEMENINO', 'RESULTADOS-FEMENINO', 'RESULTADOS FEMENINO'
                     ]);
@@ -7350,10 +7381,10 @@ Ver resultados completos: https://festitorneosinu.netlify.app`;
             
             // Agregar datos por género con múltiples nombres
             const genderTables = [
-                { id: 'resultsTableMasculinoTorneo', names: ['RESULTADOS-MASCULINO-TORNEO', 'RESULTADOS-MASCULINO', 'RESULTADOS MASCULINO', 'MASCULINO'] },
-                { id: 'resultsTableMasculinoFestival', names: ['RESULTADOS-MASCULINO-FESTIVAL'] },
-                { id: 'resultsTableFemeninoTorneo', names: ['RESULTADOS-FEMENINO-TORNEO', 'CLASIFICACIÓN GENERAL FEMENINA', 'RESULTADOS-FEMENINO', 'RESULTADOS FEMENINO', 'FEMENINO'] },
-                { id: 'resultsTableFemeninoFestival', names: ['RESULTADOS-FEMENINO-FESTIVAL'] }
+                { id: 'resultsTableMasculinoTorneo', names: ['RESULTADOS GENERALES-M-TORNEO', 'RESULTADOS-MASCULINO-TORNEO', 'RESULTADOS-MASCULINO', 'RESULTADOS MASCULINO', 'MASCULINO'] },
+                { id: 'resultsTableMasculinoFestival', names: ['RESULTADOS GENERALES-M-FESTIVAL', 'RESULTADOS-MASCULINO-FESTIVAL'] },
+                { id: 'resultsTableFemeninoTorneo', names: ['RESULTADOS GENERALES-F-TORNEO', 'RESULTADOS-FEMENINO-TORNEO', 'CLASIFICACIÓN GENERAL FEMENINA', 'RESULTADOS-FEMENINO', 'RESULTADOS FEMENINO', 'FEMENINO'] },
+                { id: 'resultsTableFemeninoFestival', names: ['RESULTADOS GENERALES-F-FESTIVAL', 'RESULTADOS-FEMENINO-FESTIVAL'] }
             ];
             
             genderTables.forEach(({ id, names }) => {
