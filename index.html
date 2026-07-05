@@ -1461,6 +1461,12 @@
             font-weight: 700;
         }
 
+        .results-table--prueba tbody tr.category-header td.category-header-cell {
+            background: linear-gradient(180deg, #dce8f8 0%, #e8eef5 100%) !important;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+        }
+
         /* === CORRECCIÓN APLICADA AQUÍ === */
         /* Se combinaron las reglas y se aplicó el fondo directamente a las celdas (td) */
         .results-table tbody tr.category-header {
@@ -5590,7 +5596,8 @@
         }
 
         const CATEGORY_HEADER_PATTERN = /^(?:categor[ií]a\s+)?(INFANTIL|JUVENIL|MAYORES|MASTER|ESPECIAL|MENORES)\b/i;
-        const CATEGORY_SUBHEADER_PATTERN = /^(INFANTIL|JUVENIL|MAYORES|MASTER|ESPECIAL|MENORES)\s+[A-Z0-9]+(?:\s+(?:Torneo|Festival))?$/i;
+        const CATEGORY_SUBHEADER_PATTERN = /^(INFANTIL|JUVENIL|MAYORES|MASTER|ESPECIAL|MENORES)\s+[A-Za-z0-9]+(?:\s+(?:Torneo|Festival))?$/i;
+        const SHEET_METADATA_PATTERN = /^(pos\.?|posici[oó]n|nombre|club|cat(?:egor[ií]a)?|tiempo\s*final|record|activador)$/i;
 
         function isPruebaResultsTable(table) {
             return !!(table && table.id && table.id.startsWith('resultsTable-'));
@@ -5607,6 +5614,39 @@
             return (text ?? '').toString().replace(/^categor[ií]a\s+/i, '').replace(/\s+/g, ' ').trim();
         }
 
+        function formatSegmentDisplayLabel(label) {
+            const normalized = normalizeCategoryLabel(label);
+            return normalized ? normalized.toUpperCase() : '';
+        }
+
+        function rowHasHorizontalSegmentInColumnA(row) {
+            const dataCols = row.slice(0, 8).map(cell => (cell != null ? cell.toString().trim() : ''));
+            const colA = dataCols[0];
+            const athlete = dataCols[1];
+
+            if (!colA || colA === '0' || athlete) return null;
+            if (/^\d+$/.test(colA) || SHEET_METADATA_PATTERN.test(colA)) return null;
+
+            const hasOtherData = dataCols.slice(2).some(value => value && value !== '0' && value !== '-');
+            if (hasOtherData) return null;
+
+            const label = normalizeCategoryLabel(colA);
+            return label || null;
+        }
+
+        function isSkippableSheetRow(row) {
+            if (!row || !row.length) return true;
+
+            const colA = (row[0] ?? '').toString().trim();
+            const athlete = (row[1] ?? '').toString().trim();
+            if (colA === '0' && !athlete) return true;
+
+            const metadataCells = row.slice(0, 8).map(cell => (cell ?? '').toString().trim().toLowerCase());
+            if (metadataCells.includes('nombre') && metadataCells.includes('club')) return true;
+
+            return false;
+        }
+
         function getCategoryHeaderFromRow(row) {
             if (!row || !row.length) return null;
 
@@ -5618,12 +5658,20 @@
                 return normalizeCategoryLabel(colB);
             }
 
-            if (!colA || colA === '0') return null;
+            if (colA === '0') return null;
 
-            if (colB && !isCategoryLabel(colB)) return null;
+            if (!colA) return null;
+
+            if (colB && !isCategoryLabel(colB) && !/^categor[ií]a$/i.test(colA)) {
+                const segmentOnly = rowHasHorizontalSegmentInColumnA(row);
+                if (segmentOnly) return segmentOnly;
+                return null;
+            }
 
             const headerText = normalizeCategoryLabel(colB && isCategoryLabel(colB) ? colB : colA);
-            return isCategoryLabel(headerText) ? headerText : null;
+            if (isCategoryLabel(headerText)) return headerText;
+
+            return rowHasHorizontalSegmentInColumnA(row);
         }
 
         function isCategoryHeaderRow(row) {
@@ -5634,7 +5682,7 @@
             if (!table) return;
             const headers = Array.from(table.querySelectorAll('tbody tr.category-header'));
             headers.forEach(header => header.classList.remove('category-header--only'));
-            if (headers.length === 1) {
+            if (headers.length === 1 && !isPruebaResultsTable(table)) {
                 headers[0].classList.add('category-header--only');
                 headers[0].style.removeProperty('display');
             }
@@ -5704,7 +5752,7 @@
                     const cat = getCategoryHeaderFromRow(data[i]);
                     if (cat) {
                         categoryHeadersInData.push(cat);
-                        if (/^menores$/i.test(cat)) hasMenoresHeader = true;
+                        if (/^menores\b/i.test(cat)) hasMenoresHeader = true;
                     }
                 }
 
@@ -5718,24 +5766,44 @@
                     if (singleFromRows) this.currentCategory = singleFromRows;
                 }
 
+                let lastRenderedSegment = '';
+
                 if (menores && !hasMenoresHeader) {
                     htmlContent += this.renderCategoryRow('MENORES');
+                    lastRenderedSegment = 'MENORES';
                 } else if (
                     categoryHeadersInData.length === 0 &&
                     this.currentCategory &&
                     /^(menores|especial)$/i.test(this.currentCategory)
                 ) {
-                    htmlContent += this.renderCategoryRow(this.currentCategory.toUpperCase());
+                    const segmentLabel = formatSegmentDisplayLabel(this.currentCategory);
+                    htmlContent += this.renderCategoryRow(segmentLabel);
+                    lastRenderedSegment = segmentLabel;
                 }
+
+                const isPruebaTable = isPruebaResultsTable(this.table);
 
                 for (let i = startIndex; i < data.length; i++) {
                     const row = data[i];
-                    if (!row || row.length === 0) continue;
+                    if (!row || row.length === 0 || isSkippableSheetRow(row)) continue;
 
                     if (this.isCategoryRow(row)) {
                         this.currentCategory = getCategoryHeaderFromRow(row);
-                        htmlContent += this.renderCategoryRow(this.currentCategory);
+                        const segmentLabel = formatSegmentDisplayLabel(this.currentCategory);
+                        htmlContent += this.renderCategoryRow(segmentLabel);
+                        lastRenderedSegment = segmentLabel;
                     } else if (this.isDataRow(row)) {
+                        if (isPruebaTable) {
+                            const rowCategory = (row[4] ?? '').toString().trim();
+                            if (rowCategory) {
+                                const segmentLabel = formatSegmentDisplayLabel(rowCategory);
+                                if (segmentLabel && segmentLabel !== lastRenderedSegment) {
+                                    htmlContent += this.renderCategoryRow(segmentLabel);
+                                    this.currentCategory = segmentLabel;
+                                    lastRenderedSegment = segmentLabel;
+                                }
+                            }
+                        }
                         htmlContent += this.renderDataRow(row, i);
                     }
                 }
@@ -5752,15 +5820,17 @@
             }
             
             isDataRow(row) {
-                if (!row || row.length < 6) return false;
+                if (!row || row.length < 2) return false;
                 const athleteCell = row[1] != null ? row[1].toString().trim() : '';
-                return !!athleteCell;
+                if (!athleteCell || SHEET_METADATA_PATTERN.test(athleteCell)) return false;
+                return true;
             }
             
             renderCategoryRow(category) {
+                const label = formatSegmentDisplayLabel(category) || category;
                 return `<tr class="category-header">
                     <td colspan="${this.config.colspan}" class="category-header-cell">
-                        <span class="category-header-text">${escapeHtml(category)}</span>
+                        <span class="category-header-text">${escapeHtml(label)}</span>
                     </td>
                 </tr>`;
             }
