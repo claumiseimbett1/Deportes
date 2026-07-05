@@ -1333,6 +1333,70 @@
             white-space: nowrap;
         }
 
+        .pruebas-selector-bar {
+            display: flex;
+            flex-direction: column;
+            align-items: stretch;
+            gap: 1rem;
+            margin-bottom: 1.25rem;
+        }
+
+        .pruebas-select-wrap {
+            display: flex;
+            flex-direction: column;
+            gap: 0.4rem;
+            width: 100%;
+            max-width: 720px;
+            margin: 0 auto;
+        }
+
+        .pruebas-select-label {
+            font-weight: 600;
+            color: var(--primary-color);
+            font-size: 0.95rem;
+        }
+
+        .pruebas-select {
+            width: 100%;
+            padding: 12px 2.75rem 12px 14px;
+            font-size: 1rem;
+            font-family: inherit;
+            border: 2px solid #e5edf8;
+            border-radius: 10px;
+            background-color: #fff;
+            color: #333;
+            cursor: pointer;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%230f4ebc' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .pruebas-select:hover,
+        .pruebas-select:focus {
+            border-color: var(--primary-color);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(15, 78, 188, 0.12);
+        }
+
+        @media (min-width: 769px) {
+            .pruebas-selector-bar {
+                flex-direction: row;
+                align-items: flex-end;
+                justify-content: center;
+                flex-wrap: wrap;
+            }
+
+            .pruebas-selector-bar .pruebas-filter-bar {
+                margin-bottom: 0;
+            }
+
+            .pruebas-select-wrap {
+                flex: 1 1 360px;
+            }
+        }
+
         /* Indicador de última actualización */
         .last-update {
             text-align: center;
@@ -3705,7 +3769,7 @@
                             <rect x="11.5" y="11" width="1" height="1" fill="#555" rx="0.5"/>
                         </svg>
                     </div>
-                    <h3 class="stat-number" id="swimmerCount">19</h3>
+                    <h3 class="stat-number" id="swimmerCount">110</h3>
                     <p class="stat-label">Nadadores Inscritos</p>
                     <p class="stat-description">Atletas de élite</p>
                 </div>
@@ -3728,9 +3792,22 @@
                             <rect x="16" y="7" width="1.5" height="4" stroke="#555" stroke-width="1.5"/>
                         </svg>
                     </div>
-                    <h3 class="stat-number" id="clubCount">4</h3>
+                    <h3 class="stat-number" id="clubCount">10</h3>
                     <p class="stat-label">Clubes Participantes</p>
                     <p class="stat-description">De Córdoba</p>
+                </div>
+
+                <!-- Patrocinadores -->
+                <div class="stat-card">
+                    <div class="sticker-icon">
+                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 2L14.4 8.8L22 9.6L17 14.4L18.8 22L12 18.4L5.2 22L7 14.4L2 9.6L9.6 8.8L12 2Z" fill="none" stroke="#666" stroke-width="2.5"/>
+                            <circle cx="12" cy="12" r="2" fill="#555"/>
+                        </svg>
+                    </div>
+                    <h3 class="stat-number" id="sponsorCount">12</h3>
+                    <p class="stat-label">Patrocinadores</p>
+                    <p class="stat-description">Empresas aliadas</p>
                 </div>
             </div>
             
@@ -3779,7 +3856,7 @@
         <div class="container">
             <div class="sembrado-download-wrap">
                 <h2 class="section-title sembrado-section-title">DESCARGA EL SEMBRADO</h2>
-                <a href="documentos/Programa-Sembrado2026.pdf" class="document-download-btn" download="Programa-Sembrado2026.pdf">
+                <a href="documentos/sembrado_manual_completo_20260704_190142.pdf" class="document-download-btn" download="sembrado_manual_completo_20260704_190142.pdf">
                     <span class="button-loading-text">⬇️</span>
                     Descargar programa (PDF)
                 </a>
@@ -3904,12 +3981,19 @@
                     Última actualización: <span class="time" id="lastUpdateTime">Cargando...</span>
                 </div>
                 
-                <div class="pruebas-filter-bar" id="pruebasFilterBar">
-                    <button type="button" class="pruebas-filter active" data-filter="all">Todas las pruebas</button>
-                    <button type="button" class="pruebas-filter" data-filter="torneo">Torneo</button>
-                    <button type="button" class="pruebas-filter" data-filter="festival">Festival</button>
+                <div class="pruebas-selector-bar">
+                    <div class="pruebas-filter-bar" id="pruebasFilterBar">
+                        <button type="button" class="pruebas-filter active" data-filter="all">Todas las pruebas</button>
+                        <button type="button" class="pruebas-filter" data-filter="torneo">Torneo</button>
+                        <button type="button" class="pruebas-filter" data-filter="festival">Festival</button>
+                    </div>
+                    <div class="pruebas-select-wrap">
+                        <label for="pruebasSelect" class="pruebas-select-label">Selecciona una prueba</label>
+                        <select id="pruebasSelect" class="pruebas-select" aria-label="Seleccionar prueba">
+                            <option value="" disabled selected>Cargando pruebas...</option>
+                        </select>
+                    </div>
                 </div>
-                <div class="tabs pruebas-tabs" id="pruebasTabsNav" role="tablist" aria-label="Pruebas del campeonato"></div>
                 <div id="pruebasTabsContent"></div>
             </div>
         </div>
@@ -4052,7 +4136,7 @@
     <section class="cta-section">
         <div class="container">
             <h2>¿Listo para competir?</h2>
-            <p>Únete a los <strong>19</strong> nadadores en esta emocionante competencia, con la participación de <strong>4</strong> clubes de Córdoba, en el <strong>I Festitorneo Regional del Sinú</strong> organizado por <a href="https://www.instagram.com/delfinessc/" target="_blank" rel="noopener noreferrer" class="club-name-badge club-name-badge-blue club-name-link">Club Delfines Córdoba y Sport</a> y <a href="https://www.instagram.com/club_avatarmtr/" target="_blank" rel="noopener noreferrer" class="club-name-badge club-name-badge-orange club-name-link">Club Deportivo Ávatar</a>, con el apoyo tecnológico de <a href="https://top4race.netlify.app/" target="_blank" rel="noopener">Top4Race</a> del <a href="https://top4race.netlify.app/" target="_blank" rel="noopener">Club Deportivo AquaTEN</a>.</p>
+            <p>Únete a los <strong>110</strong> nadadores en esta emocionante competencia, con la participación de <strong>10</strong> clubes de Córdoba y el apoyo de <strong>12</strong> patrocinadores, en el <strong>I Festitorneo Regional del Sinú</strong> organizado por <a href="https://www.instagram.com/delfinessc/" target="_blank" rel="noopener noreferrer" class="club-name-badge club-name-badge-blue club-name-link">Club Delfines Córdoba y Sport</a> y <a href="https://www.instagram.com/club_avatarmtr/" target="_blank" rel="noopener noreferrer" class="club-name-badge club-name-badge-orange club-name-link">Club Deportivo Ávatar</a>, con el apoyo tecnológico de <a href="https://top4race.netlify.app/" target="_blank" rel="noopener">Top4Race</a> del <a href="https://top4race.netlify.app/" target="_blank" rel="noopener">Club Deportivo AquaTEN</a>.</p>
         </div>
     </section>
     
@@ -4209,11 +4293,44 @@
             if (activeContent?.dataset?.sheetName) {
                 return formatPruebaRecordLabel(activeContent.dataset.sheetName);
             }
-            const activeTab = section?.querySelector('#pruebasTabsNav .tab-button.active');
-            if (activeTab?.dataset?.label) {
-                return formatPruebaRecordLabel(activeTab.dataset.label);
+            const activeOption = getActivePruebaOption();
+            if (activeOption?.dataset?.label) {
+                return formatPruebaRecordLabel(activeOption.dataset.label);
             }
             return 'Natación';
+        }
+
+        function getActivePruebaOption() {
+            const select = document.getElementById('pruebasSelect');
+            if (!select || !select.value) return null;
+            return select.options[select.selectedIndex] || null;
+        }
+
+        function getActivePruebaLabel() {
+            const activeOption = getActivePruebaOption();
+            if (activeOption?.dataset?.label) return activeOption.dataset.label;
+            const panel = document.querySelector('#pruebasTabsContent .tab-content.active');
+            if (panel?.dataset?.sheetName) return formatPruebaLabel(panel.dataset.sheetName);
+            return 'Evento de Natación';
+        }
+
+        function selectPrueba(key) {
+            const section = document.getElementById('resultados');
+            if (!section || !key) return;
+
+            section.querySelectorAll('#pruebasTabsContent .tab-content').forEach(panel => {
+                panel.classList.toggle('active', panel.id === key);
+            });
+
+            const select = document.getElementById('pruebasSelect');
+            if (select && select.value !== key) {
+                select.value = key;
+            }
+
+            const activeTable = document.getElementById(`resultsTable-${key}`);
+            if (activeTable && isResultsCardTable(activeTable)) {
+                syncResultsMobileCardsVisibility(activeTable);
+            }
         }
 
         function isRecordObservation(obs) {
@@ -4280,11 +4397,11 @@
         }
 
         function initPruebasTabs() {
-            const nav = document.getElementById('pruebasTabsNav');
+            const select = document.getElementById('pruebasSelect');
             const content = document.getElementById('pruebasTabsContent');
-            if (!nav || !content) return;
+            if (!select || !content) return;
 
-            nav.innerHTML = '';
+            select.innerHTML = '';
             content.innerHTML = '';
 
             PRUEBAS_SHEET_TABS.forEach((sheetName, index) => {
@@ -4294,14 +4411,13 @@
                 const tabLabel = formatPruebaTabLabel(sheetName);
                 const fullLabel = formatPruebaLabel(sheetName);
 
-                const btn = document.createElement('button');
-                btn.type = 'button';
-                btn.className = `tab-button${index === 0 ? ' active' : ''}`;
-                btn.dataset.group = type;
-                btn.dataset.label = fullLabel;
-                btn.textContent = tabLabel;
-                btn.onclick = (evt) => openTab(evt, key);
-                nav.appendChild(btn);
+                const option = document.createElement('option');
+                option.value = key;
+                option.textContent = tabLabel;
+                option.dataset.group = type;
+                option.dataset.label = fullLabel;
+                if (index === 0) option.selected = true;
+                select.appendChild(option);
 
                 const panel = document.createElement('div');
                 panel.id = key;
@@ -4343,6 +4459,38 @@
 
             registerPruebasTables();
 
+            select.addEventListener('change', () => {
+                if (!select.value) return;
+                selectPrueba(select.value);
+
+                const searchInput = document.getElementById('searchPruebas');
+                const searchTerm = searchInput ? searchInput.value.trim() : '';
+                if (!searchTerm) return;
+
+                const activeTable = document.getElementById(`resultsTable-${select.value}`);
+                if (!activeTable) return;
+
+                const panels = Array.from(document.querySelectorAll('#pruebasTabsContent .tab-content'));
+                let totalFound = 0;
+                let pruebasWithMatches = 0;
+                panels.forEach(panel => {
+                    const table = panel.querySelector('.results-table');
+                    if (!table) return;
+                    const matches = Array.from(
+                        table.querySelectorAll('tbody tr:not(.category-header):not(.loading-row)')
+                    ).filter(row => row.style.display !== 'none' && !row.querySelector('.no-data-cell')).length;
+                    if (matches > 0) {
+                        totalFound += matches;
+                        pruebasWithMatches++;
+                    }
+                });
+
+                updateSearchInfo('searchResultsPruebas', totalFound, totalFound, searchTerm, {
+                    pruebasCount: pruebasWithMatches,
+                    activePrueba: select.options[select.selectedIndex]?.textContent?.trim() || ''
+                });
+            });
+
             const filterBar = document.getElementById('pruebasFilterBar');
             if (filterBar) {
                 filterBar.querySelectorAll('.pruebas-filter').forEach(filterBtn => {
@@ -4356,15 +4504,20 @@
         }
 
         function filterPruebasTabs(filter) {
-            const buttons = document.querySelectorAll('#pruebasTabsNav .tab-button');
+            const select = document.getElementById('pruebasSelect');
+            if (!select) return;
+
             let firstVisible = null;
-            buttons.forEach(btn => {
-                const show = filter === 'all' || btn.dataset.group === filter;
-                btn.style.display = show ? '' : 'none';
-                if (show && !firstVisible) firstVisible = btn;
+            Array.from(select.options).forEach(option => {
+                const show = filter === 'all' || option.dataset.group === filter;
+                option.hidden = !show;
+                option.disabled = !show;
+                if (show && !firstVisible) firstVisible = option;
             });
-            if (firstVisible && !firstVisible.classList.contains('active')) {
-                firstVisible.click();
+
+            const selected = select.options[select.selectedIndex];
+            if ((!selected || selected.disabled || selected.hidden) && firstVisible) {
+                selectPrueba(firstVisible.value);
             }
         }
 
@@ -6238,15 +6391,7 @@
 
         // Funciones para tabs
         function openTab(evt, tabName) {
-            const section = document.getElementById('resultados');
-            if (!section) return;
-
-            section.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
-            section.querySelectorAll('#pruebasTabsNav .tab-button').forEach(btn => btn.classList.remove('active'));
-
-            const panel = document.getElementById(tabName);
-            if (panel) panel.classList.add('active');
-            if (evt && evt.currentTarget) evt.currentTarget.classList.add('active');
+            selectPrueba(tabName);
         }
 
         // Función específica para tabs de género (independiente de las pruebas)
@@ -6428,19 +6573,42 @@
         }
 
         function performSearch(searchTerm, section) {
-            const normalizedTerm = searchTerm.toLowerCase().trim();
+            const normalizedTerm = normalizeSearchText(searchTerm);
             let foundResults = 0;
             let totalResults = 0;
             
             if (section === 'pruebas') {
-                const tables = document.querySelectorAll('#pruebasTabsContent .results-table');
-                tables.forEach(table => {
+                const panels = Array.from(document.querySelectorAll('#pruebasTabsContent .tab-content'));
+                const pruebasWithMatches = [];
+
+                panels.forEach(panel => {
+                    const table = panel.querySelector('.results-table');
+                    if (!table) return;
                     const result = searchInTable(table, normalizedTerm);
                     foundResults += result.found;
                     totalResults += result.total;
+                    if (normalizedTerm && result.found > 0) {
+                        const option = document.querySelector(`#pruebasSelect option[value="${panel.id}"]`);
+                        pruebasWithMatches.push({
+                            key: panel.id,
+                            label: option?.textContent?.trim() || panel.dataset.sheetName || panel.id,
+                            found: result.found
+                        });
+                    }
                 });
-                
-                updateSearchInfo('searchResultsPruebas', foundResults, totalResults, searchTerm);
+
+                if (normalizedTerm && pruebasWithMatches.length > 0) {
+                    const activePanel = document.querySelector('#pruebasTabsContent .tab-content.active');
+                    const activeHasMatch = pruebasWithMatches.some(item => item.key === activePanel?.id);
+                    if (!activeHasMatch) {
+                        selectPrueba(pruebasWithMatches[0].key);
+                    }
+                }
+
+                updateSearchInfo('searchResultsPruebas', foundResults, totalResults, searchTerm, {
+                    pruebasCount: pruebasWithMatches.length,
+                    activePrueba: getActivePruebaOption()?.textContent?.trim() || ''
+                });
                 
             } else if (section === 'gender') {
                 GENERAL_RESULTS_TABLE_IDS.filter(id => id.includes('Femenino') || id.includes('Masculino')).forEach(tableId => {
@@ -6465,6 +6633,27 @@
             const genderSearch = document.getElementById('searchGender');
             performSearch(pruebasSearch ? pruebasSearch.value : '', 'pruebas');
             performSearch(genderSearch ? genderSearch.value : '', 'gender');
+        }
+
+        function normalizeSearchText(text) {
+            return (text ?? '')
+                .toString()
+                .normalize('NFD')
+                .replace(/[\u0300-\u036f]/g, '')
+                .toLowerCase()
+                .trim();
+        }
+
+        function rowMatchesSearch(row, searchTerm) {
+            if (!searchTerm) return true;
+            const cells = row.querySelectorAll('td');
+            if (!cells.length) return false;
+
+            for (let j = 0; j < Math.min(cells.length, 6); j++) {
+                const cellText = normalizeSearchText(cells[j].textContent);
+                if (cellText.includes(searchTerm)) return true;
+            }
+            return false;
         }
 
         function searchInTable(table, searchTerm) {
@@ -6512,7 +6701,7 @@
 
             sections.forEach(section => {
                 let sectionVisible = false;
-                const headerText = section.header ? section.header.textContent.toLowerCase() : '';
+                const headerText = section.header ? normalizeSearchText(section.header.textContent) : '';
 
                 if (section.header && headerText.includes(searchTerm)) {
                     sectionVisible = true;
@@ -6523,14 +6712,14 @@
                     if (cells.length === 0) return;
 
                     totalResults++;
-                    let rowContainsSearch = false;
+                    let rowContainsSearch = rowMatchesSearch(row, searchTerm);
 
-                    for (let j = 0; j < Math.min(cells.length, 5); j++) {
-                        const cellText = cells[j].textContent.toLowerCase();
+                    for (let j = 0; j < Math.min(cells.length, 6); j++) {
                         cells[j].innerHTML = cells[j].textContent;
+                        if (!searchTerm || !rowContainsSearch) continue;
 
+                        const cellText = normalizeSearchText(cells[j].textContent);
                         if (cellText.includes(searchTerm)) {
-                            rowContainsSearch = true;
                             const originalText = cells[j].textContent;
                             const regex = new RegExp(`(${escapeRegexForSearch(searchTerm)})`, 'gi');
                             cells[j].innerHTML = originalText.replace(regex, '<span class="highlight-search">$1</span>');
@@ -6562,7 +6751,7 @@
             return { found: foundResults, total: totalResults };
         }
 
-        function updateSearchInfo(infoElementId, found, total, searchTerm) {
+        function updateSearchInfo(infoElementId, found, total, searchTerm, extra = {}) {
             const infoElement = document.getElementById(infoElementId);
             if (infoElement) {
                 if (searchTerm === '') {
@@ -6570,7 +6759,16 @@
                 } else if (found === 0) {
                     infoElement.textContent = `No se encontraron resultados para "${searchTerm}"`;
                 } else {
-                    infoElement.textContent = `Se encontraron ${found} resultado${found !== 1 ? 's' : ''} de ${total} total${total !== 1 ? 'es' : ''}`;
+                    let message = `Se encontraron ${found} resultado${found !== 1 ? 's' : ''}`;
+                    if (extra.pruebasCount > 1) {
+                        message += ` en ${extra.pruebasCount} pruebas`;
+                    }
+                    if (extra.activePrueba) {
+                        message += `. Mostrando: ${extra.activePrueba}`;
+                    } else {
+                        message += ` de ${total} total${total !== 1 ? 'es' : ''}`;
+                    }
+                    infoElement.textContent = message;
                 }
             }
         }
@@ -6588,22 +6786,21 @@
             time = (time || '').toString().replace(/['"\\]/g, '').trim();
             category = (category || '').toString().replace(/['"\\]/g, '').trim();
             
-            // Determinar la prueba actual basado en el tab activo de Resultados por Pruebas
+            // Determinar la prueba actual basado en la selección de Resultados por Pruebas
             const resultadosSection = document.getElementById('resultados');
-            const activePruebaTab = resultadosSection ? resultadosSection.querySelector('#pruebasTabsNav .tab-button.active') : null;
             const activeTabContent = resultadosSection ? resultadosSection.querySelector('#pruebasTabsContent .tab-content.active') : null;
-            let prueba = 'Natación';
+            let prueba = getActivePruebaLabel();
 
-            if (activePruebaTab) {
-                prueba = activePruebaTab.dataset.label || activePruebaTab.textContent.trim();
-            } else if (activeTabContent && activeTabContent.dataset.sheetName) {
-                prueba = formatPruebaLabel(activeTabContent.dataset.sheetName);
-            } else {
-                const activeGenderTab = document.querySelector('.results-section:not(#resultados) .tab-button.active');
-                if (activeGenderTab) {
-                    const tabText = activeGenderTab.textContent.toLowerCase();
-                    if (tabText.includes('masculino')) prueba = 'Clasificación General Masculina';
-                    else if (tabText.includes('femenino')) prueba = 'Clasificación General Femenina';
+            if (!prueba || prueba === 'Evento de Natación') {
+                if (activeTabContent && activeTabContent.dataset.sheetName) {
+                    prueba = formatPruebaLabel(activeTabContent.dataset.sheetName);
+                } else {
+                    const activeGenderTab = document.querySelector('.results-section:not(#resultados) .tab-button.active');
+                    if (activeGenderTab) {
+                        const tabText = activeGenderTab.textContent.toLowerCase();
+                        if (tabText.includes('masculino')) prueba = 'Clasificación General Masculina';
+                        else if (tabText.includes('femenino')) prueba = 'Clasificación General Femenina';
+                    }
                 }
             }
             
@@ -7713,18 +7910,7 @@ Ver resultados completos: https://festitorneosinu.netlify.app`;
 
         // Función para obtener el nombre del evento actual
         function getCurrentEventName() {
-            const section = document.getElementById('resultados');
-            const activeTab = section ? section.querySelector('#pruebasTabsNav .tab-button.active') : null;
-            if (activeTab) {
-                return activeTab.dataset.label || activeTab.textContent.trim();
-            }
-
-            const activeContent = section ? section.querySelector('#pruebasTabsContent .tab-content.active') : null;
-            if (activeContent && activeContent.dataset.sheetName) {
-                return formatPruebaLabel(activeContent.dataset.sheetName);
-            }
-
-            return 'Evento de Natación';
+            return getActivePruebaLabel();
         }
         
         // Función para generar diploma de récord
@@ -9439,9 +9625,11 @@ Ver resultados completos: https://festitorneosinu.netlify.app`;
         // Función para animar las estadísticas del evento (opcional)
         function animateEventStats() {
             const swimmerEl = document.getElementById('swimmerCount');
-            if (swimmerEl) swimmerEl.textContent = '19';
+            if (swimmerEl) swimmerEl.textContent = '110';
             const clubEl = document.getElementById('clubCount');
-            if (clubEl) clubEl.textContent = '4';
+            if (clubEl) clubEl.textContent = '10';
+            const sponsorEl = document.getElementById('sponsorCount');
+            if (sponsorEl) sponsorEl.textContent = '12';
         }
 
         // Intersection Observer para animar cuando sea visible (optimizado para móvil)
