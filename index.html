@@ -7558,154 +7558,167 @@ Ver resultados completos: https://festitorneosinu.netlify.app`;
         async function downloadResultsPDF() {
             const statusDiv = document.getElementById('pdfStatus');
             const downloadBtn = document.getElementById('downloadPdfBtn');
-            
-            statusDiv.style.display = 'block';
-            statusDiv.innerHTML = '<p class="status-loading-text"><span class="status-loading-icon">⏳</span> Cargando librería PDF...</p>';
+            if (!downloadBtn) return;
+
+            const setStatus = (html) => {
+                if (!statusDiv) return;
+                statusDiv.classList.remove('pdf-status-hidden');
+                statusDiv.style.display = 'block';
+                statusDiv.innerHTML = html;
+            };
+
+            setStatus('<p class="status-loading-text"><span class="status-loading-icon">⏳</span> Preparando descarga...</p>');
             downloadBtn.disabled = true;
             downloadBtn.style.opacity = '0.6';
-            
+
             try {
-                // Cargar jsPDF si no está disponible
+                setStatus('<p class="status-loading-text"><span class="status-loading-icon">⏳</span> Cargando librería PDF...</p>');
                 await loadjsPDF();
-                
-                statusDiv.innerHTML = '<p class="status-loading-text"><span class="status-loading-icon">⏳</span> Obteniendo datos frescos...</p>';
-                
-                await preloadClubLogos();
-                
-                // Verificar que jsPDF se cargó correctamente
-                if (!window.jsPDF) {
-                    throw new Error('jsPDF no está disponible');
+                if (!window.jsPDF) throw new Error('jsPDF no está disponible');
+
+                await preloadClubLogos().catch(() => {});
+
+                setStatus('<p class="status-loading-text"><span class="status-loading-icon">⏳</span> Leyendo resultados de la página...</p>');
+                let allSheetData = getPdfDataFromLoadedTables();
+
+                const needsSheetFallback = !allSheetData.eventos.length
+                    && !allSheetData.femenino.length
+                    && !allSheetData.masculino.length
+                    && !allSheetData.equipos.length;
+
+                // Solo ir al Sheet si la página aún no tiene resultados cargados
+                if (needsSheetFallback) {
+                    setStatus('<p class="status-loading-text"><span class="status-loading-icon">⏳</span> Los resultados aún no están en pantalla. Cargando desde Google Sheet...</p>');
+                    allSheetData = await getAllSheetData();
                 }
-                
-                // Obtener datos frescos directamente del Google Sheet
-                const allSheetData = await getAllSheetData();
-                console.log(' Datos obtenidos para PDF:', Object.keys(allSheetData));
-                console.log(' DEBUG PDF - Conteo de datos:', {
-                    eventos: allSheetData.eventos?.length || 0,
-                    masculino: allSheetData.masculino?.length || 0,
-                    femenino: allSheetData.femenino?.length || 0,
-                    equipos: allSheetData.equipos?.length || 0
-                });
-                
-                // VALIDACIÓN CRÍTICA: Detectar intercambio de datos femenino/equipos
-                console.log(' ANÁLISIS PREVIO AL PDF:', {
-                    tieneDataFemenino: !!(allSheetData.femenino && allSheetData.femenino.length > 0),
-                    tieneDataEquipos: !!(allSheetData.equipos && allSheetData.equipos.length > 0),
-                    columnasFemenino: allSheetData.femenino && allSheetData.femenino[0] ? allSheetData.femenino[0].length : 'N/A',
-                    columnasEquipos: allSheetData.equipos && allSheetData.equipos[0] ? allSheetData.equipos[0].length : 'N/A'
-                });
-                
-                if (allSheetData.femenino && allSheetData.femenino.length > 0 && 
-                    allSheetData.equipos && allSheetData.equipos.length > 0) {
-                    
-                    const femeninoParecenEquipos = allSheetData.femenino[0].length <= 5;
-                    const equiposParecenAtletas = allSheetData.equipos[0].length > 6;
-                    
-                    console.log(' ANÁLISIS DE INTERCAMBIO:', {
-                        femeninoParecenEquipos: femeninoParecenEquipos,
-                        equiposParecenAtletas: equiposParecenAtletas,
-                        primeraFilaFemenino: allSheetData.femenino[0],
-                        primeraFilaEquipos: allSheetData.equipos[0]
-                    });
-                    
-                    if (femeninoParecenEquipos && equiposParecenAtletas) {
-                        console.warn('⚠️ POSIBLE INTERCAMBIO DETECTADO: Datos femeninos y equipos pueden estar intercambiados');
-                        console.log('ℹ️ INTERCAMBIO DESHABILITADO: Manteniendo datos originales');
-                        
-                        // DESHABILITADO: No hacer intercambio automático
-                        // const temp = allSheetData.femenino;
-                        // allSheetData.femenino = allSheetData.equipos;
-                        // allSheetData.equipos = temp;
-                        
-                        console.log(' Corrección aplicada:', {
-                            femeninoCorregido: allSheetData.femenino.length + ' filas, ' + (allSheetData.femenino[0] ? allSheetData.femenino[0].length : 0) + ' columnas',
-                            equiposCorregido: allSheetData.equipos.length + ' filas, ' + (allSheetData.equipos[0] ? allSheetData.equipos[0].length : 0) + ' columnas'
-                        });
-                        
-                        // Marcar que ya se hizo la corrección global
-                        allSheetData._intercambioCorregido = true;
-                    } else {
-                        console.log('ℹ️ No se detectó intercambio en validación global');
-                    }
-                } else {
-                    console.warn('⚠️ Faltan datos para validar intercambio global');
-                }
-                
-                // Validación adicional: Si falta alguna sección crítica, mostrar advertencia
-                if (!allSheetData.femenino || allSheetData.femenino.length === 0) {
-                    console.warn('ADVERTENCIA PDF: No hay datos de clasificación femenina');
-                }
-                if (!allSheetData.equipos || allSheetData.equipos.length === 0) {
-                    console.warn('ADVERTENCIA PDF: No hay datos de clasificación de equipos');
-                }
-                
-                // Asegurar que las estructuras existan aunque estén vacías
+
                 allSheetData.eventos = allSheetData.eventos || [];
                 allSheetData.masculino = allSheetData.masculino || [];
                 allSheetData.femenino = allSheetData.femenino || [];
                 allSheetData.equipos = allSheetData.equipos || [];
-                
-                statusDiv.innerHTML = '<p class="status-loading-text"><span class="status-loading-icon">⏳</span> Generando PDF...</p>';
-                
+
+                setStatus('<p class="status-loading-text"><span class="status-loading-icon">⏳</span> Generando PDF...</p>');
+
                 const pdf = new window.jsPDF();
                 addCompetitionLogo(pdf);
                 let yPosition = 28;
-                
-                // Configurar fuentes y colores
-                pdf.setFont("helvetica", "bold");
-                pdf.setFontSize(18);
-                pdf.setTextColor(0, 74, 173); // Color azul del sitio
-                
-                // Título principal
-                pdf.text("I Festitorneo Regional del Sinú - RESULTADOS OFICIALES", 105, yPosition, { align: "center" });
-                yPosition += 15;
-                
-                pdf.setFontSize(12);
+
+                pdf.setFont('helvetica', 'bold');
+                pdf.setFontSize(16);
+                pdf.setTextColor(0, 74, 173);
+                pdf.text('I Festitorneo Regional del Sinú', 105, yPosition, { align: 'center' });
+                yPosition += 8;
+                pdf.setFontSize(13);
+                pdf.text('RESULTADOS OFICIALES', 105, yPosition, { align: 'center' });
+                yPosition += 10;
+
+                pdf.setFontSize(10);
                 pdf.setTextColor(102, 102, 102);
-                pdf.text("Reporte generado el " + new Date().toLocaleDateString('es-ES') + " a las " + new Date().toLocaleTimeString('es-ES'), 105, yPosition, { align: "center" });
-                yPosition += 20;
-                
-                // RESULTADOS POR PRUEBAS
+                pdf.text(
+                    'Reporte generado el ' + new Date().toLocaleDateString('es-ES') +
+                    ' a las ' + new Date().toLocaleTimeString('es-ES'),
+                    105,
+                    yPosition,
+                    { align: 'center' }
+                );
+                yPosition += 14;
+
                 yPosition = await addEventResultsBoxesToPDF(pdf, yPosition, allSheetData);
-                
-                // RESULTADOS POR GÉNERO (nueva página)
+
                 pdf.addPage();
                 addCompetitionLogo(pdf);
                 yPosition = 30;
-                
-                // Agregar resultados por género leyendo directamente de las tablas HTML
-                yPosition = await addGenderResultsFromHTMLTables(pdf, yPosition);
-                
-                // EQUIPOS (nueva página)
+
+                if (allSheetData.femenino.length || allSheetData.masculino.length) {
+                    pdf.setFont('helvetica', 'bold');
+                    pdf.setFontSize(16);
+                    pdf.setTextColor(0, 74, 173);
+                    pdf.text('RESULTADOS POR GÉNERO', 20, yPosition);
+                    yPosition += 12;
+
+                    if (allSheetData.femenino.length) {
+                        const femeninoRows = organizePdfAthleteRows(allSheetData.femenino)
+                            .map(row => ({ ...row, genderType: 'femenino' }));
+                        if (femeninoRows.length) {
+                            yPosition = ensurePdfSpace(pdf, yPosition, 28);
+                            pdf.setFont('helvetica', 'bold');
+                            pdf.setFontSize(12);
+                            pdf.setTextColor(0, 74, 173);
+                            pdf.text('CLASIFICACIÓN GENERAL FEMENINA', 20, yPosition);
+                            yPosition += 8;
+                            yPosition = drawProfessionalTable(pdf, femeninoRows, yPosition, 'gender', {
+                                sectionTitle: 'Clasificación General Femenina'
+                            });
+                            yPosition += 8;
+                        }
+                    }
+
+                    if (allSheetData.masculino.length) {
+                        const masculinoRows = organizePdfAthleteRows(allSheetData.masculino)
+                            .map(row => ({ ...row, genderType: 'masculino' }));
+                        if (masculinoRows.length) {
+                            yPosition = ensurePdfSpace(pdf, yPosition, 28);
+                            pdf.setFont('helvetica', 'bold');
+                            pdf.setFontSize(12);
+                            pdf.setTextColor(0, 74, 173);
+                            pdf.text('CLASIFICACIÓN GENERAL MASCULINA', 20, yPosition);
+                            yPosition += 8;
+                            yPosition = drawProfessionalTable(pdf, masculinoRows, yPosition, 'gender', {
+                                sectionTitle: 'Clasificación General Masculina'
+                            });
+                        }
+                    }
+                } else {
+                    yPosition = await addGenderResultsFromHTMLTables(pdf, yPosition);
+                }
+
                 pdf.addPage();
                 addCompetitionLogo(pdf);
                 yPosition = 30;
-                
-                // Agregar resultados de equipos directamente desde Google Sheets
-                yPosition = await addEquiposFromGoogleSheets(pdf, yPosition);
-                
-                // Guardar el PDF
-                const fileName = `Resultados_I_Festitorneo_${new Date().toISOString().split('T')[0]}.pdf`;
+
+                if (allSheetData.equipos.length) {
+                    pdf.setFont('helvetica', 'bold');
+                    pdf.setFontSize(16);
+                    pdf.setTextColor(0, 74, 173);
+                    pdf.text('CLASIFICACIÓN POR EQUIPOS', 20, yPosition);
+                    yPosition += 12;
+                    const teamRows = organizePdfTeamRows(allSheetData.equipos);
+                    if (teamRows.length) {
+                        yPosition = drawProfessionalTable(pdf, teamRows, yPosition, 'team', {
+                            sectionTitle: 'Clasificación por Equipos'
+                        });
+                    }
+                } else {
+                    yPosition = await addEquiposFromGoogleSheets(pdf, yPosition);
+                }
+
+                const fileName = 'Resultados_I_Festitorneo_' + new Date().toISOString().split('T')[0] + '.pdf';
                 pdf.save(fileName);
-                
-                // Ocultar status
-                statusDiv.style.display = 'none';
-                
+
+                setStatus('<p class="status-loading-text">✅ PDF descargado</p>');
+                setTimeout(() => {
+                    if (statusDiv) {
+                        statusDiv.style.display = 'none';
+                        statusDiv.classList.add('pdf-status-hidden');
+                    }
+                }, 2000);
             } catch (error) {
                 console.error('Error generando PDF:', error);
-                let errorMessage = 'Error desconocido';
-                if (error.message.includes('jsPDF')) {
+                const msg = (error && error.message) ? String(error.message) : 'Error desconocido';
+                let errorMessage = msg;
+                if (/jspdf/i.test(msg)) {
                     errorMessage = 'Error cargando la librería PDF. Verifica tu conexión a internet.';
-                } else if (error.message.includes('network')) {
-                    errorMessage = 'Error de conexión. Verifica tu internet.';
-                } else {
-                    errorMessage = error.message || 'Error procesando los datos para el PDF';
+                } else if (/network|fetch|Failed to fetch/i.test(msg)) {
+                    errorMessage = 'Error de conexión. Verifica tu internet e intenta de nuevo.';
                 }
-                
-                statusDiv.innerHTML = `<p class="status-error-text">❌ ${errorMessage}<br><small>Revisa la consola para más detalles.</small></p>`;
+
+                setStatus('<p class="status-error-text">❌ ' + errorMessage + '<br><small>Si el problema continúa, recarga la página cuando los resultados ya estén visibles.</small></p>');
                 setTimeout(() => {
-                    statusDiv.style.display = 'none';
-                }, 5000);
+                    if (statusDiv) {
+                        statusDiv.style.display = 'none';
+                        statusDiv.classList.add('pdf-status-hidden');
+                    }
+                }, 8000);
             } finally {
                 downloadBtn.disabled = false;
                 downloadBtn.style.opacity = '1';
@@ -7768,9 +7781,7 @@ Ver resultados completos: https://festitorneosinu.netlify.app`;
                     try {
                         const data = await loadSheetByGid(sheet.gid, sheet.title);
                         if (data && data.length > 1) {
-                            const dataRows = data.slice(1).filter(row => 
-                                row && row.length > 0 && row.some(cell => cell && cell.trim() !== '')
-                            );
+                            const dataRows = data.slice(1).filter(sheetRowHasContent);
                             if (dataRows.length > 0) {
                                 allData[dataKey] = dataRows;
                                 console.log(` Fallback exitoso: ${dataKey} cargado con ${dataRows.length} filas desde "${sheet.title}"`);
@@ -7811,27 +7822,27 @@ Ver resultados completos: https://festitorneosinu.netlify.app`;
                     equipos: []
                 };
                 
-                // Cargar hojas de pruebas (Torneo + Festival)
+                // Cargar hojas de pruebas (Torneo + Festival) en paralelo
                 console.log('🏊‍♀️ Cargando hojas de pruebas...');
                 const eventSheets = sheetInfo.filter(sheet => isPruebaSheetTitle(sheet.title));
-                for (const sheet of eventSheets) {
-                    console.log(`📄 Cargando prueba: ${sheet.title}`);
+                const eventResults = await Promise.all(eventSheets.map(async (sheet) => {
                     try {
                         const data = await loadSheetByGid(sheet.gid, sheet.title);
                         if (data && data.length > 1) {
-                            const dataRows = data.slice(1).filter(row =>
-                                row && row.length > 0 && row.some(cell => cell && cell.trim() !== '')
-                            );
-                            console.log(` ${sheet.title}: ${dataRows.length} filas de datos`);
-                            allData.eventos.push({
-                                name: mapSheetTitleToDisplayName(sheet.title),
-                                data: dataRows
-                            });
+                            const dataRows = data.slice(1).filter(sheetRowHasContent);
+                            if (dataRows.length) {
+                                return {
+                                    name: mapSheetTitleToDisplayName(sheet.title),
+                                    data: dataRows
+                                };
+                            }
                         }
                     } catch (error) {
                         console.warn(`⚠️ Error cargando ${sheet.title}:`, error);
                     }
-                }
+                    return null;
+                }));
+                allData.eventos.push(...eventResults.filter(Boolean));
 
                 // Cargar hojas de clasificación general (competencia / festival)
                 console.log('👥 Cargando hojas de clasificación general...');
@@ -7843,9 +7854,7 @@ Ver resultados completos: https://festitorneosinu.netlify.app`;
                     try {
                         const sheetData = await loadSheetByGid(sheet.gid, sheet.title);
                         if (sheetData && sheetData.length > 1) {
-                            return sheetData.slice(1).filter(row =>
-                                row && row.length > 0 && row.some(cell => cell && cell.trim() !== '')
-                            );
+                            return sheetData.slice(1).filter(sheetRowHasContent);
                         }
                     } catch (error) {
                         console.warn(`⚠️ Error cargando ${sheet.title}:`, error);
@@ -8056,28 +8065,144 @@ Ver resultados completos: https://festitorneosinu.netlify.app`;
 
         // Función para formatear tiempo correctamente
         function formatTime(timeStr) {
-            if (!timeStr || timeStr === '') return '';
+            if (timeStr == null || timeStr === '') return '';
+            const value = String(timeStr).trim();
+            if (!value) return '';
             
             // Si ya está en formato mm:ss,cc, devolverlo tal como está
-            if (/^\d{1,2}:\d{2},\d{2}$/.test(timeStr)) {
-                return timeStr;
+            if (/^\d{1,2}:\d{2},\d{2}$/.test(value)) {
+                return value;
             }
             
             // Si está en formato mm:ss.cc, convertir a mm:ss,cc
-            if (/^\d{1,2}:\d{2}\.\d{2}$/.test(timeStr)) {
-                return timeStr.replace('.', ',');
+            if (/^\d{1,2}:\d{2}\.\d{2}$/.test(value)) {
+                return value.replace('.', ',');
             }
             
             // Si está en formato de segundos decimales (ej: 30.45), convertir a mm:ss,cc
-            if (/^\d+\.\d{2}$/.test(timeStr)) {
-                const totalSeconds = parseFloat(timeStr);
+            if (/^\d+\.\d{2}$/.test(value)) {
+                const totalSeconds = parseFloat(value);
                 const minutes = Math.floor(totalSeconds / 60);
                 const seconds = Math.floor(totalSeconds % 60);
                 const centiseconds = Math.round((totalSeconds % 1) * 100);
                 return `${minutes}:${seconds.toString().padStart(2, '0')},${centiseconds.toString().padStart(2, '0')}`;
             }
             
-            return timeStr; // Devolver sin cambios si no coincide con ningún formato
+            return value;
+        }
+
+        function sheetRowHasContent(row) {
+            if (!row || !row.length) return false;
+            return row.some(cell => {
+                if (cell == null || cell === '') return false;
+                return String(cell).trim() !== '';
+            });
+        }
+
+        /** Extrae resultados ya renderizados en la página para armar el PDF rápido */
+        function getPdfDataFromLoadedTables() {
+            const eventos = [];
+            document.querySelectorAll('#pruebasTabsContent .tab-content').forEach(panel => {
+                const table = panel.querySelector('.results-table');
+                if (!table) return;
+
+                const sheetName = panel.dataset.sheetName || '';
+                const name = sheetName ? formatPruebaLabel(sheetName) : (panel.querySelector('h3')?.textContent || 'Prueba').replace(/\s*—\s*Resultados Oficiales\s*$/i, '').trim();
+                const data = [];
+                let currentCategory = '';
+
+                table.querySelectorAll('tbody tr').forEach(row => {
+                    if (row.classList.contains('loading-row') || row.querySelector('.no-data-cell')) return;
+
+                    if (row.classList.contains('category-header')) {
+                        currentCategory = row.querySelector('.category-header-text')?.textContent?.trim()
+                            || row.textContent.trim();
+                        if (currentCategory) data.push([currentCategory, '', '', '', '', '', '']);
+                        return;
+                    }
+
+                    const cells = row.querySelectorAll('td');
+                    if (cells.length < 6) return;
+                    const athlete = cells[1]?.textContent?.trim() || '';
+                    if (!athlete) return;
+
+                    data.push([
+                        cells[0]?.textContent?.replace(/[🥇🥈🥉]/g, '').trim() || '',
+                        athlete,
+                        cells[2]?.textContent?.trim() || '',
+                        cells[3]?.textContent?.trim() || '',
+                        cells[4]?.textContent?.trim() || currentCategory,
+                        cells[5]?.textContent?.trim() || '',
+                        cells[6]?.textContent?.trim() || ''
+                    ]);
+                });
+
+                if (data.length) eventos.push({ name, data });
+            });
+
+            function readGenderTable(tableId) {
+                const table = document.getElementById(tableId);
+                if (!table) return [];
+                const data = [];
+                let currentCategory = '';
+                table.querySelectorAll('tbody tr').forEach(row => {
+                    if (row.classList.contains('loading-row') || row.querySelector('.no-data-cell')) return;
+                    if (row.classList.contains('category-header')) {
+                        currentCategory = row.querySelector('.category-header-text')?.textContent?.trim()
+                            || row.textContent.trim();
+                        if (currentCategory) data.push([currentCategory, '', '', '', '', '']);
+                        return;
+                    }
+                    const cells = row.querySelectorAll('td');
+                    if (cells.length < 6) return;
+                    const athlete = cells[1]?.textContent?.trim() || '';
+                    if (!athlete || /sin atletas/i.test(athlete)) return;
+                    data.push([
+                        cells[0]?.textContent?.replace(/[🥇🥈🥉]/g, '').trim() || '',
+                        athlete,
+                        cells[2]?.textContent?.trim() || '',
+                        cells[3]?.textContent?.trim() || '',
+                        cells[4]?.textContent?.trim() || currentCategory,
+                        cells[5]?.textContent?.trim() || ''
+                    ]);
+                });
+                return data;
+            }
+
+            function readTeamTable(tableId) {
+                const table = document.getElementById(tableId);
+                if (!table) return [];
+                const data = [];
+                table.querySelectorAll('tbody tr').forEach(row => {
+                    if (row.classList.contains('loading-row') || row.querySelector('.no-data-cell')) return;
+                    const cells = row.querySelectorAll('td');
+                    if (cells.length < 3) return;
+                    const team = cells[1]?.textContent?.trim() || '';
+                    if (!team) return;
+                    data.push([
+                        cells[0]?.textContent?.replace(/[🥇🥈🥉]/g, '').trim() || '',
+                        team,
+                        cells[2]?.textContent?.trim() || '0'
+                    ]);
+                });
+                return data;
+            }
+
+            return {
+                eventos,
+                femenino: (() => {
+                    const torneo = readGenderTable('resultsTableFemeninoTorneo');
+                    return torneo.length ? torneo : readGenderTable('resultsTableFemeninoFestival');
+                })(),
+                masculino: (() => {
+                    const torneo = readGenderTable('resultsTableMasculinoTorneo');
+                    return torneo.length ? torneo : readGenderTable('resultsTableMasculinoFestival');
+                })(),
+                equipos: (() => {
+                    const torneo = readTeamTable('resultsTableTeamsTorneo');
+                    return torneo.length ? torneo : readTeamTable('resultsTableTeamsFestival');
+                })()
+            };
         }
 
         // Logos de clubes organizadores para PDFs
