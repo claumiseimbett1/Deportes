@@ -7657,7 +7657,7 @@ Ver resultados completos: https://festitorneosinu.netlify.app`;
                 pdf.setTextColor(0, 74, 173); // Color azul del sitio
                 
                 // Título principal
-                pdf.text("I FESTITORNEO - RESULTADOS OFICIALES", 105, yPosition, { align: "center" });
+                pdf.text("I Festitorneo Regional del Sinú - RESULTADOS OFICIALES", 105, yPosition, { align: "center" });
                 yPosition += 15;
                 
                 pdf.setFontSize(12);
@@ -8503,6 +8503,115 @@ Ver resultados completos: https://festitorneosinu.netlify.app`;
             return sections;
         }
 
+        function pdfCell(value) {
+            return (value ?? '').toString().trim();
+        }
+
+        function isValidPdfAthleteRow(row) {
+            if (!row || !row.length) return false;
+            if (isCategoryHeaderRow(row) || isSkippableSheetRow(row)) return false;
+            const athlete = pdfCell(row[1]);
+            if (!athlete || athlete === '-' || athlete === '0') return false;
+            if (/sin atletas/i.test(athlete) || SHEET_METADATA_PATTERN.test(athlete)) return false;
+            return true;
+        }
+
+        function parsePdfPosition(value) {
+            const digits = pdfCell(value).replace(/[^\d]/g, '');
+            return digits ? Number(digits) : Number.MAX_SAFE_INTEGER;
+        }
+
+        /** Filtra vacíos y organiza nadadores por categoría + posición */
+        function organizePdfAthleteRows(rawRows, options = {}) {
+            const { includeSplitPoints = false } = options;
+            const groups = new Map();
+            let currentCategory = '';
+
+            (rawRows || []).forEach(row => {
+                if (!row || !row.length) return;
+
+                const categoryHeader = getCategoryHeaderFromRow(row);
+                if (categoryHeader) {
+                    currentCategory = formatSegmentDisplayLabel(categoryHeader) || categoryHeader;
+                    return;
+                }
+                if (!isValidPdfAthleteRow(row)) return;
+
+                const pos = pdfCell(row[0]);
+                const athlete = pdfCell(row[1]);
+                const team = pdfCell(row[2]);
+                const age = pdfCell(row[3]);
+                const category = pdfCell(row[4]) || currentCategory;
+                const categoryKey = formatSegmentDisplayLabel(category) || category || 'GENERAL';
+                if (!currentCategory && category) currentCategory = categoryKey;
+
+                const entry = {
+                    position: pos || '',
+                    athlete,
+                    team,
+                    age,
+                    category: categoryKey,
+                    time: typeof formatTime === 'function' ? (formatTime(row[5]) || pdfCell(row[5])) : pdfCell(row[5]),
+                    points: pdfCell(row[6]),
+                    totalPoints: pdfCell(row[5]),
+                    points200m: includeSplitPoints ? pdfCell(row[6]) : '',
+                    points50m: includeSplitPoints ? pdfCell(row[7]) : '',
+                    points100m: includeSplitPoints ? pdfCell(row[8]) : '',
+                    _posNum: parsePdfPosition(pos),
+                    _order: groups.has(categoryKey) ? groups.get(categoryKey).length : 0
+                };
+
+                if (!groups.has(categoryKey)) groups.set(categoryKey, []);
+                groups.get(categoryKey).push(entry);
+            });
+
+            const organized = [];
+            groups.forEach((athletes, categoryKey) => {
+                athletes.sort((a, b) => {
+                    if (a._posNum !== b._posNum) return a._posNum - b._posNum;
+                    return a._order - b._order;
+                });
+                athletes.forEach((athlete, index) => {
+                    if (!athlete.position || athlete.position === '0') {
+                        athlete.position = String(index + 1);
+                    }
+                    organized.push(athlete);
+                });
+            });
+
+            return organized;
+        }
+
+        function organizePdfTeamRows(rawRows) {
+            return (rawRows || [])
+                .map((row, index) => {
+                    if (!row || row.length < 2) return null;
+                    const team = pdfCell(row[1]);
+                    if (!team || team === '-' || /sin equipos/i.test(team)) return null;
+                    const pos = pdfCell(row[0]);
+                    if (pos === '0' && !pdfCell(row[2])) return null;
+                    return {
+                        position: pos || String(index + 1),
+                        team,
+                        totalPoints: pdfCell(row[2]) || '0',
+                        _posNum: parsePdfPosition(pos),
+                        _order: index
+                    };
+                })
+                .filter(Boolean)
+                .sort((a, b) => {
+                    if (a._posNum !== b._posNum) return a._posNum - b._posNum;
+                    return a._order - b._order;
+                });
+        }
+
+        function ensurePdfSpace(pdf, yPosition, needed = 24) {
+            if (yPosition + needed <= 275) return yPosition;
+            pdf.addPage();
+            addCompetitionLogo(pdf);
+            return 30;
+        }
+
         // Nueva función para agregar resultados por prueba con formato profesional
         async function addEventResultsBoxesToPDF(pdf, startY, allSheetData) {
             let yPosition = startY;
@@ -8512,228 +8621,180 @@ Ver resultados completos: https://festitorneosinu.netlify.app`;
             pdf.setFontSize(16);
             pdf.setTextColor(0, 74, 173);
             pdf.text("RESULTADOS POR PRUEBAS", 20, yPosition);
-            yPosition += 20;
+            yPosition += 14;
             
             const eventos = allSheetData.eventos || [];
             
             if (eventos.length > 0) {
                 for (const evento of eventos) {
-                    // Verificar espacio en la página
-                    if (yPosition > 200) {
-                        pdf.addPage();
-                        addCompetitionLogo(pdf);
-                        yPosition = 40;
-                    }
+                    const tableData = organizePdfAthleteRows(evento.data);
+                    if (!tableData.length) continue;
+
+                    yPosition = ensurePdfSpace(pdf, yPosition, 36);
                     
                     // Título del evento
                     pdf.setFont("helvetica", "bold");
-                    pdf.setFontSize(12);
+                    pdf.setFontSize(11);
                     pdf.setTextColor(0, 74, 173);
                     pdf.text(evento.name, 20, yPosition);
-                    yPosition += 12;
+                    yPosition += 8;
                     
-                    // Crear tabla profesional - Columnas A-G para eventos
-                    const tableData = evento.data.map((row, index) => {
-                        // Mapear columnas A-G: A=Pos, B=Atleta, C=Equipo, D=Edad, E=Categoría, F=Tiempo, G=Puntos
-                        const [pos, athlete, team, age, category, time, points] = row;
-                        return {
-                            position: pos || (index + 1).toString(),
-                            athlete: athlete || '',
-                            team: team || '',
-                            age: age || '',
-                            category: category || '',
-                            time: formatTime(time) || '',
-                            points: points || ''
-                        };
+                    yPosition = drawProfessionalTable(pdf, tableData, yPosition, 'event', {
+                        sectionTitle: evento.name
                     });
-                    
-                    yPosition = drawProfessionalTable(pdf, tableData, yPosition, 'event');
-                    yPosition += 10;
+                    yPosition += 6;
                 }
             } else {
                 pdf.setFont("helvetica", "normal");
                 pdf.setFontSize(10);
                 pdf.setTextColor(128, 128, 128);
                 pdf.text("No se encontraron datos de eventos", 20, yPosition);
-                yPosition += 20;
+                yPosition += 16;
             }
             
             return yPosition;
         }
 
         // Función mejorada para dibujar tabla profesional con paginación automática
-        function drawProfessionalTable(pdf, data, startY, type) {
-            let yPosition = startY;
+        function drawProfessionalTable(pdf, data, startY, type, options = {}) {
             const boxX = 20;
             const boxWidth = 170;
-            const headerHeight = 10;
-            const rowHeight = 8;
-            const maxRowsPerPage = 25; // Máximo de filas por página
-            const headerColor = [0, 74, 173]; // Azul corporativo
-            
-            let processedRows = 0;
-            let currentPageRows = 0;
-            let currentY = yPosition;
-            
-            // Función para dibujar encabezados
+            const headerHeight = 9;
+            const rowHeight = 7;
+            const categoryHeight = 8;
+            const pageBottom = 275;
+            const headerColor = [0, 74, 173];
+            const sectionTitle = options.sectionTitle || '';
+            let currentY = startY;
+            let lastCategory = null;
+            let rowIndexInPage = 0;
+
             function drawHeaders(y) {
-                // Marco y fondo del header
                 pdf.setDrawColor(180, 180, 180);
-                pdf.setLineWidth(0.5);
+                pdf.setLineWidth(0.4);
                 pdf.setFillColor(248, 249, 250);
                 pdf.rect(boxX, y, boxWidth, headerHeight, 'F');
                 pdf.rect(boxX, y, boxWidth, headerHeight);
-                
-                // Línea debajo del header
-                pdf.setDrawColor(200, 200, 200);
-                pdf.setLineWidth(0.3);
-                pdf.line(boxX, y + headerHeight, boxX + boxWidth, y + headerHeight);
-                
-                // Configurar texto del header
+
                 pdf.setFont("helvetica", "bold");
-                pdf.setFontSize(8);
+                pdf.setFontSize(7.5);
                 pdf.setTextColor(...headerColor);
-                
+
                 if (type === 'event') {
-                    pdf.text("POS", boxX + 2, y + 7);
-                    pdf.text("ATLETA", boxX + 15, y + 7);
-                    pdf.text("EQUIPO", boxX + 55, y + 7);
-                    pdf.text("EDAD", boxX + 85, y + 7);
-                    pdf.text("CAT", boxX + 105, y + 7);
-                    pdf.text("TIEMPO", boxX + 125, y + 7);
-                    pdf.text("PTS", boxX + 155, y + 7);
+                    pdf.text("POS", boxX + 2, y + 6);
+                    pdf.text("ATLETA", boxX + 12, y + 6);
+                    pdf.text("EQUIPO", boxX + 58, y + 6);
+                    pdf.text("EDAD", boxX + 92, y + 6);
+                    pdf.text("CAT", boxX + 108, y + 6);
+                    pdf.text("TIEMPO", boxX + 128, y + 6);
+                    pdf.text("PTS", boxX + 156, y + 6);
                 } else if (type === 'gender') {
-                    pdf.text("POS", boxX + 2, y + 7);
-                    pdf.text("ATLETA", boxX + 15, y + 7);
-                    pdf.text("EQUIPO", boxX + 50, y + 7);
-                    pdf.text("EDAD", boxX + 75, y + 7);
-                    pdf.text("CAT", boxX + 90, y + 7);
-                    pdf.text("TOT", boxX + 120, y + 7);
+                    pdf.text("POS", boxX + 2, y + 6);
+                    pdf.text("ATLETA", boxX + 12, y + 6);
+                    pdf.text("EQUIPO", boxX + 58, y + 6);
+                    pdf.text("EDAD", boxX + 92, y + 6);
+                    pdf.text("CAT", boxX + 108, y + 6);
+                    pdf.text("TOT", boxX + 140, y + 6);
                 } else if (type === 'team') {
-                    pdf.text("POS", boxX + 3, y + 7);
-                    pdf.text("EQUIPO", boxX + 20, y + 7);
-                    pdf.text("TOTAL", boxX + 120, y + 7);
+                    pdf.text("POS", boxX + 3, y + 6);
+                    pdf.text("EQUIPO", boxX + 18, y + 6);
+                    pdf.text("TOTAL", boxX + 130, y + 6);
                 }
                 return y + headerHeight;
             }
-            
-            // Dibujar encabezados iniciales
+
+            function startNewPage(continuation = true) {
+                pdf.addPage();
+                addCompetitionLogo(pdf);
+                let y = 28;
+                if (continuation && sectionTitle) {
+                    pdf.setFont("helvetica", "bold");
+                    pdf.setFontSize(10);
+                    pdf.setTextColor(...headerColor);
+                    pdf.text(`${sectionTitle} (continuación)`, 20, y);
+                    y += 8;
+                }
+                y = drawHeaders(y);
+                rowIndexInPage = 0;
+                return y;
+            }
+
+            function drawCategoryBanner(y, category) {
+                pdf.setFillColor(220, 232, 248);
+                pdf.rect(boxX, y, boxWidth, categoryHeight, 'F');
+                pdf.setDrawColor(...headerColor);
+                pdf.setLineWidth(0.4);
+                pdf.rect(boxX, y, boxWidth, categoryHeight);
+                pdf.setFont("helvetica", "bold");
+                pdf.setFontSize(8);
+                pdf.setTextColor(...headerColor);
+                pdf.text(String(category || 'GENERAL').toUpperCase(), boxX + boxWidth / 2, y + 5.5, { align: 'center' });
+                return y + categoryHeight;
+            }
+
+            if (!data || !data.length) return currentY;
+
             currentY = drawHeaders(currentY);
-            
-            // Procesar datos con paginación automática
+
             for (let i = 0; i < data.length; i++) {
                 const row = data[i];
-                
-                // Verificar si necesitamos nueva página
-                if (currentPageRows >= maxRowsPerPage && i < data.length - 1) {
-                    // Nueva página
-                    pdf.addPage();
-                    addCompetitionLogo(pdf);
-                    currentY = 30;
-                    
-                    // Repetir título de sección si es necesario
-                    if (type === 'event') {
-                        pdf.setFont("helvetica", "bold");
-                        pdf.setFontSize(12);
-                        pdf.setTextColor(0, 74, 173);
-                        pdf.text("RESULTADOS POR PRUEBAS (continuación)", 20, currentY);
-                        currentY += 15;
-                    } else if (type === 'gender') {
-                        pdf.setFont("helvetica", "bold");
-                        pdf.setFontSize(12);
-                        pdf.setTextColor(0, 74, 173);
-                        // Determinar título basándose en los datos disponibles
-                        let genderTitle = 'GENERAL';
-                        if (data[0] && data[0].genderType) {
-                            genderTitle = data[0].genderType === 'masculino' ? 'MASCULINA' : 'FEMENINA';
-                        } else {
-                            // Fallback: analizar el contenido para determinar el género
-                            const sampleData = data.slice(0, 3);
-                            const hasMaleNames = sampleData.some(row => 
-                                row.athlete && (row.athlete.toLowerCase().includes('carlos') || 
-                                               row.athlete.toLowerCase().includes('juan') ||
-                                               row.athlete.toLowerCase().includes('miguel'))
-                            );
-                            genderTitle = hasMaleNames ? 'MASCULINA' : 'FEMENINA';
-                        }
-                        pdf.text(`CLASIFICACIÓN GENERAL ${genderTitle} (continuación)`, 20, currentY);
-                        currentY += 15;
-                    } else if (type === 'team') {
-                        pdf.setFont("helvetica", "bold");
-                        pdf.setFontSize(12);
-                        pdf.setTextColor(0, 74, 173);
-                        pdf.text("EQUIPOS (continuación)", 20, currentY);
-                        currentY += 15;
-                    }
-                    
-                    // Redibujar encabezados
-                    currentY = drawHeaders(currentY);
-                    currentPageRows = 0;
+                const category = pdfCell(row.category) || 'GENERAL';
+                const needsCategory = type !== 'team' && category !== lastCategory;
+                const needed = (needsCategory ? categoryHeight : 0) + rowHeight + 2;
+
+                if (currentY + needed > pageBottom) {
+                    currentY = startNewPage(true);
+                    lastCategory = null;
                 }
-                
-                const rowY = currentY + (currentPageRows * rowHeight);
-                
-                // Fondo alternado
-                if (currentPageRows % 2 === 0) {
-                    pdf.setFillColor(240, 248, 255);
-                    pdf.rect(boxX, rowY, boxWidth, rowHeight, 'F');
+
+                if (type !== 'team' && category !== lastCategory) {
+                    currentY = drawCategoryBanner(currentY, category);
+                    lastCategory = category;
                 }
-                
-                // Destacar podio (solo para los primeros 3 registros globales)
-                if (processedRows < 3) {
-                    const podiumShades = [
-                        [240, 248, 255], // 1er lugar
-                        [248, 250, 252], // 2do lugar  
-                        [250, 250, 250]  // 3er lugar
-                    ];
-                    pdf.setFillColor(...podiumShades[processedRows]);
-                    pdf.rect(boxX, rowY, boxWidth, rowHeight, 'F');
-                    
+
+                if (rowIndexInPage % 2 === 0) {
+                    pdf.setFillColor(245, 249, 255);
+                    pdf.rect(boxX, currentY, boxWidth, rowHeight, 'F');
+                }
+
+                const posNum = parsePdfPosition(row.position);
+                if (posNum >= 1 && posNum <= 3) {
                     pdf.setDrawColor(...headerColor);
-                    pdf.setLineWidth(0.5);
-                    pdf.rect(boxX, rowY, boxWidth, rowHeight);
+                    pdf.setLineWidth(0.35);
+                    pdf.rect(boxX, currentY, boxWidth, rowHeight);
                 }
-                
-                // Configurar texto de datos
+
                 pdf.setFont("helvetica", "normal");
-                pdf.setFontSize(8);
+                pdf.setFontSize(7.5);
                 pdf.setTextColor(0, 0, 0);
-                
-                // Escribir datos según el tipo
+
+                const textY = currentY + 5;
                 if (type === 'event') {
-                    pdf.text(row.position || '', boxX + 2, rowY + 5.5);
-                    pdf.text((row.athlete || '').substring(0, 18), boxX + 14, rowY + 5.5);
-                    pdf.text((row.team || '').substring(0, 12), boxX + 54, rowY + 5.5);
-                    pdf.text(row.age || '', boxX + 84, rowY + 5.5);
-                    pdf.text((row.category || '').substring(0, 8), boxX + 104, rowY + 5.5);
-                    pdf.text(row.time || '', boxX + 124, rowY + 5.5);
-                    pdf.text(row.points || '', boxX + 154, rowY + 5.5);
+                    pdf.text(pdfCell(row.position), boxX + 2, textY);
+                    pdf.text(pdfCell(row.athlete).substring(0, 22), boxX + 12, textY);
+                    pdf.text(pdfCell(row.team).substring(0, 14), boxX + 58, textY);
+                    pdf.text(pdfCell(row.age), boxX + 92, textY);
+                    pdf.text(pdfCell(row.category).substring(0, 10), boxX + 108, textY);
+                    pdf.text(pdfCell(row.time), boxX + 128, textY);
+                    pdf.text(pdfCell(row.points), boxX + 156, textY);
                 } else if (type === 'gender') {
-                    pdf.text(row.position || '', boxX + 2, rowY + 5.5);
-                    pdf.text((row.athlete || '').substring(0, 15), boxX + 14, rowY + 5.5);
-                    pdf.text((row.team || '').substring(0, 10), boxX + 49, rowY + 5.5);
-                    pdf.text(row.age || '', boxX + 74, rowY + 5.5);
-                    pdf.text((row.category || '').substring(0, 6), boxX + 89, rowY + 5.5);
-                    pdf.text(row.totalPoints || '', boxX + 119, rowY + 5.5);
+                    pdf.text(pdfCell(row.position), boxX + 2, textY);
+                    pdf.text(pdfCell(row.athlete).substring(0, 22), boxX + 12, textY);
+                    pdf.text(pdfCell(row.team).substring(0, 14), boxX + 58, textY);
+                    pdf.text(pdfCell(row.age), boxX + 92, textY);
+                    pdf.text(pdfCell(row.category).substring(0, 10), boxX + 108, textY);
+                    pdf.text(pdfCell(row.totalPoints), boxX + 140, textY);
                 } else if (type === 'team') {
-                    pdf.text(row.position || '', boxX + 3, rowY + 5.5);
-                    pdf.text((row.team || '').substring(0, 30), boxX + 19, rowY + 5.5);
-                    pdf.text(row.totalPoints || '', boxX + 119, rowY + 5.5);
+                    pdf.text(pdfCell(row.position), boxX + 3, textY);
+                    pdf.text(pdfCell(row.team).substring(0, 40), boxX + 18, textY);
+                    pdf.text(pdfCell(row.totalPoints), boxX + 130, textY);
                 }
-                
-                // Línea horizontal sutil entre filas
-                if (i < data.length - 1) {
-                    pdf.setDrawColor(240, 240, 240);
-                    pdf.setLineWidth(0.1);
-                    pdf.line(boxX, rowY + rowHeight, boxX + boxWidth, rowY + rowHeight);
-                }
-                
-                currentPageRows++;
-                processedRows++;
+
+                currentY += rowHeight;
+                rowIndexInPage++;
             }
-            
-            // Retornar la posición Y final
-            return currentY + (currentPageRows * rowHeight) + 10;
+
+            return currentY + 4;
         }
 
         // FUNCIÓN ANTIGUA - DEPRECADA - Usar addMasculinoResultsToPDF y addFemeninoResultsToPDF por separado
@@ -8895,176 +8956,63 @@ Ver resultados completos: https://festitorneosinu.netlify.app`;
         async function addGenderResultsFromHTMLTables(pdf, startY) {
             let yPosition = startY;
             
-            // Título principal
             pdf.setFont("helvetica", "bold");
             pdf.setFontSize(16);
             pdf.setTextColor(0, 74, 173);
             pdf.text("RESULTADOS POR GÉNERO", 20, yPosition);
-            yPosition += 20;
+            yPosition += 14;
             
             try {
-                // GIDs específicos de las hojas
                 const gidFemenino = lookupGidForSheetTitle('RESULTADOS GENERALES-F-TORNEO') || '1083700705';
                 const gidMasculino = lookupGidForSheetTitle('RESULTADOS GENERALES-M-TORNEO') || '1681548039';
-                
-                // Cargar datos femeninos desde Google Sheets
-                console.log('Cargando datos femeninos desde Google Sheets (GID:', gidFemenino, ')...');
+
                 const datosFemeninos = await loadDirectSheetData(gidFemenino, 'RESULTADOS GENERALES-F-TORNEO');
-                console.log('Datos femeninos cargados:', datosFemeninos ? datosFemeninos.length + ' filas' : 'null');
-                
-                if (datosFemeninos && datosFemeninos.length > 0) {
+                const femeninoRows = organizePdfAthleteRows(datosFemeninos, { includeSplitPoints: true })
+                    .map(row => ({ ...row, genderType: 'femenino' }));
+
+                if (femeninoRows.length > 0) {
+                    yPosition = ensurePdfSpace(pdf, yPosition, 30);
                     pdf.setFont("helvetica", "bold");
-                    pdf.setFontSize(14);
+                    pdf.setFontSize(12);
                     pdf.setTextColor(0, 74, 173);
-                    pdf.text("CLASIFICACIÓN GENERAL FEMENINA", 20, yPosition);
-                    yPosition += 15;
-                    
-                    // Encabezados
-                    pdf.setFont("helvetica", "bold");
-                    pdf.setFontSize(8);
-                    pdf.setTextColor(0, 0, 0);
-                    pdf.text("POS", 20, yPosition);
-                    pdf.text("ATLETA", 35, yPosition);
-                    pdf.text("EQUIPO", 80, yPosition);
-                    pdf.text("EDAD", 120, yPosition);
-                    pdf.text("CAT", 135, yPosition);
-                    pdf.text("TOT", 150, yPosition);
-                    pdf.text("200", 165, yPosition);
-                    pdf.text("50", 180, yPosition);
-                    pdf.text("100", 195, yPosition);
+                    pdf.text("CLASIFICACIÓN GENERAL FEMENINA — TORNEO", 20, yPosition);
                     yPosition += 8;
-                    
-                    // Datos femeninos (columnas A-I)
-                    pdf.setFont("helvetica", "normal");
-                    pdf.setFontSize(7);
-                    
-                    datosFemeninos.forEach((row, index) => {
-                        if (yPosition > 270) {
-                            pdf.addPage();
-                            addCompetitionLogo(pdf);
-                            yPosition = 30;
-                            
-                            // Repetir encabezados
-                            pdf.setFont("helvetica", "bold");
-                            pdf.setFontSize(8);
-                            pdf.text("POS", 20, yPosition);
-                            pdf.text("ATLETA", 35, yPosition);
-                            pdf.text("EQUIPO", 80, yPosition);
-                            pdf.text("EDAD", 120, yPosition);
-                            pdf.text("CAT", 135, yPosition);
-                            pdf.text("TOT", 150, yPosition);
-                            pdf.text("200", 165, yPosition);
-                            pdf.text("50", 180, yPosition);
-                            pdf.text("100", 195, yPosition);
-                            yPosition += 8;
-                            pdf.setFont("helvetica", "normal");
-                            pdf.setFontSize(7);
-                        }
-                        
-                        // Mapear columnas A-I
-                        const [pos, atleta, equipo, edad, categoria, total, pts200, pts50, pts100] = row;
-                        
-                        pdf.text((pos || (index + 1)).toString(), 20, yPosition);
-                        pdf.text((atleta || 'N/A').substring(0, 20), 35, yPosition);
-                        pdf.text((equipo || 'N/A').substring(0, 15), 80, yPosition);
-                        pdf.text((edad || 'N/A').toString(), 120, yPosition);
-                        pdf.text((categoria || 'N/A').substring(0, 8), 135, yPosition);
-                        pdf.text((total || '0').toString(), 150, yPosition);
-                        pdf.text((pts200 || '0').toString(), 165, yPosition);
-                        pdf.text((pts50 || '0').toString(), 180, yPosition);
-                        pdf.text((pts100 || '0').toString(), 195, yPosition);
-                        yPosition += 6;
+                    yPosition = drawProfessionalTable(pdf, femeninoRows, yPosition, 'gender', {
+                        sectionTitle: 'Clasificación General Femenina'
                     });
-                    
-                    yPosition += 10;
+                    yPosition += 8;
                 }
-                
-                // Cargar datos masculinos desde Google Sheets
-                console.log('Cargando datos masculinos desde Google Sheets (GID:', gidMasculino, ')...');
+
                 const datosMasculinos = await loadDirectSheetData(gidMasculino, 'RESULTADOS GENERALES-M-TORNEO');
-                console.log('Datos masculinos cargados:', datosMasculinos ? datosMasculinos.length + ' filas' : 'null');
-                
-                if (datosMasculinos && datosMasculinos.length > 0) {
-                    // Verificar espacio
-                    if (yPosition > 200) {
-                        pdf.addPage();
-                        addCompetitionLogo(pdf);
-                        yPosition = 30;
-                    }
-                    
+                const masculinoRows = organizePdfAthleteRows(datosMasculinos, { includeSplitPoints: true })
+                    .map(row => ({ ...row, genderType: 'masculino' }));
+
+                if (masculinoRows.length > 0) {
+                    yPosition = ensurePdfSpace(pdf, yPosition, 30);
                     pdf.setFont("helvetica", "bold");
-                    pdf.setFontSize(14);
+                    pdf.setFontSize(12);
                     pdf.setTextColor(0, 74, 173);
-                    pdf.text("CLASIFICACIÓN GENERAL MASCULINA", 20, yPosition);
-                    yPosition += 15;
-                    
-                    // Encabezados
-                    pdf.setFont("helvetica", "bold");
-                    pdf.setFontSize(8);
-                    pdf.setTextColor(0, 0, 0);
-                    pdf.text("POS", 20, yPosition);
-                    pdf.text("ATLETA", 35, yPosition);
-                    pdf.text("EQUIPO", 80, yPosition);
-                    pdf.text("EDAD", 120, yPosition);
-                    pdf.text("CAT", 135, yPosition);
-                    pdf.text("TOT", 150, yPosition);
-                    pdf.text("200", 165, yPosition);
-                    pdf.text("50", 180, yPosition);
-                    pdf.text("100", 195, yPosition);
+                    pdf.text("CLASIFICACIÓN GENERAL MASCULINA — TORNEO", 20, yPosition);
                     yPosition += 8;
-                    
-                    // Datos masculinos (columnas A-I)
-                    pdf.setFont("helvetica", "normal");
-                    pdf.setFontSize(7);
-                    
-                    datosMasculinos.forEach((row, index) => {
-                        if (yPosition > 270) {
-                            pdf.addPage();
-                            addCompetitionLogo(pdf);
-                            yPosition = 30;
-                            
-                            // Repetir encabezados
-                            pdf.setFont("helvetica", "bold");
-                            pdf.setFontSize(8);
-                            pdf.text("POS", 20, yPosition);
-                            pdf.text("ATLETA", 35, yPosition);
-                            pdf.text("EQUIPO", 80, yPosition);
-                            pdf.text("EDAD", 120, yPosition);
-                            pdf.text("CAT", 135, yPosition);
-                            pdf.text("TOT", 150, yPosition);
-                            pdf.text("200", 165, yPosition);
-                            pdf.text("50", 180, yPosition);
-                            pdf.text("100", 195, yPosition);
-                            yPosition += 8;
-                            pdf.setFont("helvetica", "normal");
-                            pdf.setFontSize(7);
-                        }
-                        
-                        // Mapear columnas A-I
-                        const [pos, atleta, equipo, edad, categoria, total, pts200, pts50, pts100] = row;
-                        
-                        pdf.text((pos || (index + 1)).toString(), 20, yPosition);
-                        pdf.text((atleta || 'N/A').substring(0, 20), 35, yPosition);
-                        pdf.text((equipo || 'N/A').substring(0, 15), 80, yPosition);
-                        pdf.text((edad || 'N/A').toString(), 120, yPosition);
-                        pdf.text((categoria || 'N/A').substring(0, 8), 135, yPosition);
-                        pdf.text((total || '0').toString(), 150, yPosition);
-                        pdf.text((pts200 || '0').toString(), 165, yPosition);
-                        pdf.text((pts50 || '0').toString(), 180, yPosition);
-                        pdf.text((pts100 || '0').toString(), 195, yPosition);
-                        yPosition += 6;
+                    yPosition = drawProfessionalTable(pdf, masculinoRows, yPosition, 'gender', {
+                        sectionTitle: 'Clasificación General Masculina'
                     });
                 }
-                
+
+                if (!femeninoRows.length && !masculinoRows.length) {
+                    pdf.setFont("helvetica", "normal");
+                    pdf.setFontSize(10);
+                    pdf.setTextColor(128, 128, 128);
+                    pdf.text("No se encontraron datos de clasificación por género", 20, yPosition);
+                    yPosition += 16;
+                }
             } catch (error) {
                 console.error('Error cargando datos de género desde Google Sheets:', error);
                 pdf.setFont("helvetica", "normal");
                 pdf.setFontSize(10);
                 pdf.setTextColor(255, 0, 0);
                 pdf.text("Error cargando resultados por género: " + error.message, 20, yPosition);
-                yPosition += 10;
-                pdf.text("Verifica la consola del navegador para más detalles", 20, yPosition);
-                yPosition += 15;
+                yPosition += 12;
             }
             
             return yPosition;
@@ -9075,90 +9023,34 @@ Ver resultados completos: https://festitorneosinu.netlify.app`;
             let yPosition = startY;
             
             try {
-                // Título principal
                 pdf.setFont("helvetica", "bold");
                 pdf.setFontSize(16);
                 pdf.setTextColor(0, 74, 173);
-                pdf.text("EQUIPOS", 20, yPosition);
-                yPosition += 20;
+                pdf.text("CLASIFICACIÓN POR EQUIPOS", 20, yPosition);
+                yPosition += 14;
                 
-                // Cargar datos directamente de Google Sheets
-                console.log('Cargando datos de equipos desde Google Sheets...');
                 const gidEquipos = lookupGidForSheetTitle('RESULTADOS EQUIPOS TORNEO') || '2036627092';
                 const datosEquipos = await loadDirectSheetData(gidEquipos, 'RESULTADOS EQUIPOS TORNEO');
-                console.log('Datos de equipos cargados:', datosEquipos ? datosEquipos.length + ' filas' : 'null');
+                const teamRows = organizePdfTeamRows(datosEquipos);
                 
-                if (datosEquipos && datosEquipos.length > 0) {
-                    // Encabezados de la tabla
-                    pdf.setFont("helvetica", "bold");
-                    pdf.setFontSize(8);
-                    pdf.setTextColor(0, 0, 0);
-                    pdf.text("POS", 20, yPosition);
-                    pdf.text("EQUIPO", 35, yPosition);
-                    pdf.text("PTS TOTALES", 120, yPosition);
-                    yPosition += 8;
-                    
-                    // Línea separadora
-                    pdf.setDrawColor(200, 200, 200);
-                    pdf.line(20, yPosition - 2, 200, yPosition - 2);
-                    yPosition += 5;
-                    
-                    // Datos de equipos (columnas A-E)
-                    pdf.setFont("helvetica", "normal");
-                    pdf.setFontSize(7);
-                    
-                    datosEquipos.forEach((row, index) => {
-                        if (yPosition > 270) {
-                            pdf.addPage();
-                            addCompetitionLogo(pdf);
-                            yPosition = 30;
-                            
-                            // Repetir título
-                            pdf.setFont("helvetica", "bold");
-                            pdf.setFontSize(16);
-                            pdf.setTextColor(0, 74, 173);
-                            pdf.text("EQUIPOS (continuación)", 20, yPosition);
-                            yPosition += 15;
-                            
-                            // Repetir encabezados
-                            pdf.setFont("helvetica", "bold");
-                            pdf.setFontSize(8);
-                            pdf.setTextColor(0, 0, 0);
-                            pdf.text("POS", 20, yPosition);
-                            pdf.text("EQUIPO", 35, yPosition);
-                            pdf.text("PTS TOTALES", 120, yPosition);
-                            yPosition += 8;
-                            pdf.setFont("helvetica", "normal");
-                            pdf.setFontSize(7);
-                        }
-                        
-                        // Mapear columnas A-E del Google Sheet
-                        const [pos, equipo, ptsTotales] = row;
-                        
-                        // Solo usar el valor original del Google Sheet
-                        let displayPos = pos || (index + 1);
-                        
-                        pdf.text((displayPos || '-').toString(), 20, yPosition);
-                        pdf.text((equipo || 'N/A').substring(0, 30), 35, yPosition);
-                        pdf.text((ptsTotales || '0').toString(), 120, yPosition);
-                        yPosition += 6;
+                if (teamRows.length > 0) {
+                    yPosition = drawProfessionalTable(pdf, teamRows, yPosition, 'team', {
+                        sectionTitle: 'Clasificación por Equipos'
                     });
-                    
                 } else {
                     pdf.setFont("helvetica", "normal");
                     pdf.setFontSize(10);
                     pdf.setTextColor(128, 128, 128);
                     pdf.text("No se encontraron datos de equipos", 20, yPosition);
-                    yPosition += 20;
+                    yPosition += 16;
                 }
-                
             } catch (error) {
                 console.error('Error cargando datos de equipos desde Google Sheets:', error);
                 pdf.setFont("helvetica", "normal");
                 pdf.setFontSize(10);
                 pdf.setTextColor(255, 0, 0);
-                pdf.text("Error cargando datos de equipos: " + error.message, 20, yPosition);
-                yPosition += 15;
+                pdf.text("Error cargando resultados de equipos: " + error.message, 20, yPosition);
+                yPosition += 12;
             }
             
             return yPosition;
