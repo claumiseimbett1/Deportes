@@ -41,6 +41,7 @@ Tras cambiar dominio o imagen social principal, actualiza canonical, `og:url`, `
 | `documentos/` | PDF de convocatoria (`I FESTITORNEO-2026 (1).pdf`), programa y política de datos. |
 | `archive/iv-championship/` | Respaldo histórico del **IV Championship** (`index.html`, `img/`, `documentos/`). No se despliega. |
 | `archive/v-championship/` | Respaldo histórico del **V Championship 2026** (`index.html`, `img/`, `documentos/`). No se despliega. |
+| `archive/i-festitorneo/` | Respaldo del **I Festitorneo 2026** (`index.html`, `gracias.html`, `style.css`, `img/`, `documentos/`, `video/`). No se despliega. |
 | `sitemap.xml` | Mapa del sitio para buscadores (URL canónica y `lastmod`). |
 | `robots.txt` | Permite rastreo e indica la URL del sitemap. |
 
@@ -70,18 +71,20 @@ Publica la **raíz** del repositorio (donde está `index.html`). Si cambias de d
 
 ## Respaldos en `archive/`
 
-Solo guardan ediciones pasadas del **Championship**. El **Festi-Torneo Regional del Sinú** es el sitio activo en la **raíz** del repo (`index.html`, `img/`, `documentos/`, `video/`) y **no** tiene carpeta en `archive/`.
+Guardan ediciones congeladas. El sitio activo sigue en la **raíz** del repo (`index.html`, `img/`, `documentos/`, `video/`).
 
-Cada respaldo de Championship sigue el mismo esquema:
+Cada respaldo sigue el mismo esquema:
 
 ```
 archive/<nombre-edición>/
   index.html      # copia de la página en ese momento
   img/            # logos y plantillas usadas por esa copia
   documentos/     # PDFs de términos y política de esa edición
+  video/          # opcional (incluido en i-festitorneo y v-championship)
 ```
 
 - **`archive/iv-championship/`** — IV Championship 2025.
 - **`archive/v-championship/`** — V Championship Master 2026.
+- **`archive/i-festitorneo/`** — I Festitorneo Regional del Sinú 2026 (incluye `gracias.html`, `style.css` y `video/`).
 
-Para congelar una edición Championship antes de un cambio mayor, copia `index.html`, `img/` y `documentos/` desde la raíz (en su momento) a la carpeta correspondiente en `archive/`. La carpeta `video/` no se incluye en los respaldos; al abrir un `index.html` solo desde `archive/` el hero puede no reproducir vídeo.
+Para congelar una edición antes de un cambio mayor, copia `index.html`, `img/` y `documentos/` desde la raíz a la carpeta correspondiente en `archive/`. Si omites `video/`, al abrir el `index.html` solo desde `archive/` el hero puede no reproducir vídeo.
