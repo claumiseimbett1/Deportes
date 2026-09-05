@@ -4113,11 +4113,6 @@
                 </div>
                 
                 <div class="pruebas-selector-bar">
-                    <div class="pruebas-filter-bar" id="pruebasFilterBar">
-                        <button type="button" class="pruebas-filter active" data-filter="all">Todas las pruebas</button>
-                        <button type="button" class="pruebas-filter" data-filter="torneo">Torneo</button>
-                        <button type="button" class="pruebas-filter" data-filter="festival">Festival</button>
-                    </div>
                     <div class="pruebas-select-wrap">
                         <label for="pruebasSelect" class="pruebas-select-label">Selecciona una prueba</label>
                         <select id="pruebasSelect" class="pruebas-select" aria-label="Seleccionar prueba">
@@ -4152,11 +4147,6 @@
                     Última actualización: <span class="time" id="lastUpdateTimeGender">Cargando...</span>
                 </div>
                 
-                <div class="general-classification-filter-bar" id="genderGeneralFilterBar">
-                    <button type="button" class="pruebas-filter active" data-filter="torneo">Torneo</button>
-                    <button type="button" class="pruebas-filter" data-filter="festival">Festival</button>
-                </div>
-
                 <div class="tabs gender-general-tabs">
                     <button type="button" class="tab-button active" data-gender="femenino" onclick="openGenderGeneralTab(event, 'femenino')">🏊‍♀️ Femenino</button>
                     <button type="button" class="tab-button" data-gender="masculino" onclick="openGenderGeneralTab(event, 'masculino')">🏊‍♂️ Masculino</button>
@@ -4176,18 +4166,13 @@
                     Última actualización: <span class="time" id="lastUpdateTimeTeams">Cargando...</span>
                 </div>
                 
-                <div class="general-classification-filter-bar team-general-filter-bar" id="teamGeneralFilterBar">
-                    <button type="button" class="pruebas-filter active" data-filter="torneo" onclick="openTeamGeneralTab(event, 'torneo')">Torneo</button>
-                    <button type="button" class="pruebas-filter" data-filter="festival" onclick="openTeamGeneralTab(event, 'festival')">Festival</button>
-                </div>
-
-                <div id="equipos-general-torneo" class="tab-content team-general-panel active" data-type="torneo">
-                    <h3 class="general-section-title">🏆 Clasificación por Equipos — Torneo</h3>
+                <div id="equipos-general-festitorneo" class="tab-content team-general-panel active" data-type="festitorneo">
+                    <h3 class="general-section-title">🏆 Clasificación por Equipos</h3>
                     <div class="table-responsive table-responsive--cards">
                     <div class="mobile-results-container">
-                        <div class="no-data-cell">🔄 Cargando clasificación de equipos (torneo)...</div>
+                        <div class="no-data-cell">🔄 Cargando clasificación de equipos...</div>
                     </div>
-                    <table class="results-table results-table--teams" id="resultsTableTeamsTorneo">
+                    <table class="results-table results-table--teams" id="resultsTableTeams">
                         <thead>
                             <tr>
                                 <th>Lugar</th>
@@ -4200,34 +4185,7 @@
                         <tbody>
                             <tr class="loading-row">
                                 <td colspan="5" class="no-data-cell">
-                                    🔄 Cargando clasificación de equipos (torneo)...
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                    </div>
-                </div>
-
-                <div id="equipos-general-festival" class="tab-content team-general-panel" data-type="festival">
-                    <h3 class="general-section-title">🏆 Clasificación por Equipos — Festival</h3>
-                    <div class="table-responsive table-responsive--cards">
-                    <div class="mobile-results-container">
-                        <div class="no-data-cell">🔄 Cargando clasificación de equipos (festival)...</div>
-                    </div>
-                    <table class="results-table results-table--teams" id="resultsTableTeamsFestival">
-                        <thead>
-                            <tr>
-                                <th>Lugar</th>
-                                <th>Equipo</th>
-                                <th>Puntos Totales</th>
-                                <th>Compartir</th>
-                                <th>Diploma</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr class="loading-row">
-                                <td colspan="5" class="no-data-cell">
-                                    🔄 Cargando clasificación de equipos (festival)...
+                                    🔄 Cargando clasificación de equipos...
                                 </td>
                             </tr>
                         </tbody>
@@ -4308,7 +4266,7 @@
         let lastPruebasSearchMatches = [];
         let lastGenderSearchMatches = [];
 
-        /** Pestañas de pruebas en el Google Sheet (Torneo + Festival) */
+        /** Pestañas de pruebas en el Google Sheet (Festitorneo unificado) */
         let PRUEBAS_SHEET_TABS = [
             '50M-MARIPOSA-F-MENORES-TORNEO',
             '50M-MARIPOSA-M-MENORES-TORNEO',
@@ -4366,13 +4324,17 @@
                 .replace(/^-|-$/g, '');
         }
 
-        /** Convención del Sheet: -F- = Femenino, -M- = Masculino (antes de MENORES/TORNEO/FESTIVAL) */
+        /** Convención del Sheet: -F- = Femenino, -M- = Masculino (antes de MENORES / sufijo de modalidad) */
         function parsePruebaGender(sheetName) {
             const upper = sheetName.toUpperCase();
-            if (/-F-(?:MENORES-)?(?:TORNEO|FESTIVAL)$/.test(upper)) {
+            if (/-F-(?:MENORES-)?(?:TORNEO|FESTIVAL|FESTITORNEO)$/.test(upper)
+                || /-F-MENORES$/.test(upper)
+                || /-F$/.test(upper)) {
                 return { code: 'F', label: 'Femenino', column: 'Nadadora', emoji: '🏊‍♀️' };
             }
-            if (/-M-(?:MENORES-)?(?:TORNEO|FESTIVAL)$/.test(upper)) {
+            if (/-M-(?:MENORES-)?(?:TORNEO|FESTIVAL|FESTITORNEO)$/.test(upper)
+                || /-M-MENORES$/.test(upper)
+                || /-M$/.test(upper)) {
                 return { code: 'M', label: 'Masculino', column: 'Nadador', emoji: '🏊‍♂️' };
             }
             return { code: '', label: '', column: 'Nadador', emoji: '🏊‍♂️' };
@@ -4380,8 +4342,10 @@
 
         function parsePruebaSheetName(sheetName) {
             let name = sheetName;
-            const type = name.endsWith('-TORNEO') ? 'torneo' : name.endsWith('-FESTIVAL') ? 'festival' : '';
-            name = name.replace(/-(TORNEO|FESTIVAL)$/, '');
+            const type = name.endsWith('-TORNEO') || name.endsWith('-FESTIVAL') || name.endsWith('-FESTITORNEO')
+                ? 'festitorneo'
+                : 'festitorneo';
+            name = name.replace(/-(TORNEO|FESTIVAL|FESTITORNEO)$/, '');
             const menores = name.endsWith('-MENORES');
             if (menores) name = name.replace(/-MENORES$/, '');
             const { code: genderCode, label: genderLabel } = parsePruebaGender(sheetName);
@@ -4396,15 +4360,13 @@
         function formatPruebaLabel(sheetName) {
             const { distance, stroke, genderLabel, menores, type } = parsePruebaSheetName(sheetName);
             const menoresLabel = menores ? ' Menores' : '';
-            const typeSuffix = type === 'festival' ? ' — Festival' : '';
-            return `${distance} m ${stroke}${menoresLabel} ${genderLabel}${typeSuffix}`;
+            return `${distance} m ${stroke}${menoresLabel} ${genderLabel}`.replace(/\s+/g, ' ').trim();
         }
 
         function formatPruebaTabLabel(sheetName) {
             const { distance, stroke, genderLabel, menores, type } = parsePruebaSheetName(sheetName);
             const menoresLabel = menores ? ' Men.' : '';
-            const typeSuffix = type === 'festival' ? ' · Festival' : '';
-            return `${distance}m ${stroke}${menoresLabel} ${genderLabel}${typeSuffix}`;
+            return `${distance}m ${stroke}${menoresLabel} ${genderLabel}`.replace(/\s+/g, ' ').trim();
         }
 
         /** Etiqueta corta para diploma de récord: "50 Mariposa", "100 Pecho" */
@@ -4412,7 +4374,7 @@
             const raw = (sheetNameOrLabel ?? '').toString().trim();
             if (!raw) return 'Natación';
 
-            if (/-(?:TORNEO|FESTIVAL)$/i.test(raw)) {
+            if (/-(?:TORNEO|FESTIVAL|FESTITORNEO)$/i.test(raw)) {
                 const { distance, stroke } = parsePruebaSheetName(raw);
                 if (distance && stroke) return `${distance} ${stroke}`;
             }
@@ -4488,10 +4450,15 @@
 
         function isPruebaSheetTitle(title) {
             const upper = title.toUpperCase();
-            return (upper.endsWith('-TORNEO') || upper.endsWith('-FESTIVAL'))
+            const looksLikePrueba = upper.endsWith('-TORNEO')
+                || upper.endsWith('-FESTIVAL')
+                || upper.endsWith('-FESTITORNEO')
+                || /^\d+M-/.test(upper);
+            return looksLikePrueba
                 && !upper.includes('RESULTADOS')
                 && !upper.includes('EQUIPO')
-                && !upper.includes('ACTIVADOR');
+                && !upper.includes('ACTIVADOR')
+                && !upper.includes('GENERAL');
         }
 
         function buildPruebasCompetitionConfig() {
@@ -4615,8 +4582,7 @@
         }
 
         function getActivePruebasGroupFilter() {
-            const activeFilter = document.querySelector('#pruebasFilterBar .pruebas-filter.active');
-            return activeFilter?.dataset.filter || 'all';
+            return 'all';
         }
 
         function applyPruebasSelectVisibility() {
@@ -4767,10 +4733,8 @@
 
         function getGenderGeneralSearchPanels() {
             return [
-                { panelId: 'femenino-general-torneo', tableId: 'resultsTableFemeninoTorneo', gender: 'femenino', type: 'torneo', label: '🏊‍♀️ Clasificación General Femenina — Torneo' },
-                { panelId: 'femenino-general-festival', tableId: 'resultsTableFemeninoFestival', gender: 'femenino', type: 'festival', label: '🏊‍♀️ Clasificación General Femenina — Festival' },
-                { panelId: 'masculino-general-torneo', tableId: 'resultsTableMasculinoTorneo', gender: 'masculino', type: 'torneo', label: '🏊‍♂️ Clasificación General Masculina — Torneo' },
-                { panelId: 'masculino-general-festival', tableId: 'resultsTableMasculinoFestival', gender: 'masculino', type: 'festival', label: '🏊‍♂️ Clasificación General Masculina — Festival' }
+                { panelId: 'femenino-general-festitorneo', tableId: 'resultsTableFemenino', gender: 'femenino', type: 'festitorneo', label: '🏊‍♀️ Clasificación General Femenina' },
+                { panelId: 'masculino-general-festitorneo', tableId: 'resultsTableMasculino', gender: 'masculino', type: 'festitorneo', label: '🏊‍♂️ Clasificación General Masculina' }
             ];
         }
 
@@ -4888,46 +4852,43 @@
         }
 
         const GENERAL_RESULTS_TABLE_IDS = [
-            'resultsTableFemeninoTorneo',
-            'resultsTableFemeninoFestival',
-            'resultsTableMasculinoTorneo',
-            'resultsTableMasculinoFestival',
-            'resultsTableTeamsTorneo',
-            'resultsTableTeamsFestival'
+            'resultsTableFemenino',
+            'resultsTableMasculino',
+            'resultsTableTeams'
         ];
 
         const GENERAL_CLASSIFICATION_SHEETS = {
-            'resultados-masculino-torneo': [
+            'resultados-masculino': [
+                'RESULTADOS GENERALES-M',
+                'RESULTADOS GENERALES-M-FESTITORNEO',
                 'RESULTADOS GENERALES-M-TORNEO',
                 'RESULTADOS GENERALES-M_TORNEO',
-                'RESULTADOS-GENERALES-M-TORNEO'
-            ],
-            'resultados-masculino-festival': [
+                'RESULTADOS-GENERALES-M-TORNEO',
                 'RESULTADOS GENERALES-M-FESTIVAL',
                 'RESULTADOS GENERALES-M_FESTIVAL',
                 'RESULTADOS-GENERALES-M-FESTIVAL'
             ],
-            'resultados-femenino-torneo': [
+            'resultados-femenino': [
+                'RESULTADOS GENERALES-F',
+                'RESULTADOS GENERALES-F-FESTITORNEO',
                 'RESULTADOS GENERALES-F-TORNEO',
                 'RESULTADOS GENERALES-F_TORNEO',
-                'RESULTADOS-GENERALES-F-TORNEO'
-            ],
-            'resultados-femenino-festival': [
+                'RESULTADOS-GENERALES-F-TORNEO',
                 'RESULTADOS GENERALES-F-FESTIVAL',
                 'RESULTADOS GENERALES-F_FESTIVAL',
                 'RESULTADOS-GENERALES-F-FESTIVAL'
             ],
-            'resultados-equipo-torneo': [
+            'resultados-equipo': [
+                'RESULTADOS EQUIPOS',
+                'RESULTADOS EQUIPOS FESTITORNEO',
                 'RESULTADOS EQUIPOS TORNEO',
-                'RESULTADOS-EQUIPOS-TORNEO'
-            ],
-            'resultados-equipo-festival': [
+                'RESULTADOS-EQUIPOS-TORNEO',
                 'RESULTADOS EQUIPOS FESTIVAL',
                 'RESULTADOS-EQUIPOS-FESTIVAL'
             ]
         };
 
-        const activeGenderGeneral = { gender: 'femenino', type: 'torneo' };
+        const activeGenderGeneral = { gender: 'femenino', type: 'festitorneo' };
 
         function isGeneralResultsTable(tableOrId) {
             const id = typeof tableOrId === 'string' ? tableOrId : tableOrId?.id;
@@ -4936,22 +4897,21 @@
 
         function isTeamResultsTable(tableOrId) {
             const id = typeof tableOrId === 'string' ? tableOrId : tableOrId?.id;
-            return id === 'resultsTableTeamsTorneo' || id === 'resultsTableTeamsFestival';
+            return id === 'resultsTableTeams';
         }
 
         function isGenderResultsTable(tableOrId) {
             const id = typeof tableOrId === 'string' ? tableOrId : tableOrId?.id;
-            return id === 'resultsTableMasculinoTorneo' || id === 'resultsTableMasculinoFestival'
-                || id === 'resultsTableFemeninoTorneo' || id === 'resultsTableFemeninoFestival';
+            return id === 'resultsTableMasculino' || id === 'resultsTableFemenino';
         }
 
         function isGeneralGenderSheetFeminine(normalized) {
-            return /GENERALES[-\s_]F[-\s_](?:TORNEO|FESTIVAL)/.test(normalized)
+            return /GENERALES[-\s_]F[-\s_](?:TORNEO|FESTIVAL|FESTITORNEO)/.test(normalized)
                 || /GENERALES[-\s_]F(?:[-\s_]|$)/.test(normalized);
         }
 
         function isGeneralGenderSheetMasculine(normalized) {
-            return /GENERALES[-\s_]M[-\s_](?:TORNEO|FESTIVAL)/.test(normalized)
+            return /GENERALES[-\s_]M[-\s_](?:TORNEO|FESTIVAL|FESTITORNEO)/.test(normalized)
                 || /GENERALES[-\s_]M(?:[-\s_]|$)/.test(normalized);
         }
 
@@ -4979,9 +4939,11 @@
                 }
             }
 
+            // Festitorneo unificado: acepta hojas con o sin sufijo Torneo/Festival/Festitorneo
+            if (type === 'festitorneo') return true;
             if (type === 'festival') return hasFestival;
             if (type === 'torneo') return hasTorneo;
-            return false;
+            return true;
         }
 
         function canonicalSheetTitle(title) {
@@ -5017,12 +4979,9 @@
 
         function buildGeneralClassificationCompetitions() {
             const entries = [
-                { key: 'resultados-femenino-torneo', tableId: 'resultsTableFemeninoTorneo', genderColumn: 'Nadadora', gender: 'femenino', type: 'torneo' },
-                { key: 'resultados-femenino-festival', tableId: 'resultsTableFemeninoFestival', genderColumn: 'Nadadora', gender: 'femenino', type: 'festival' },
-                { key: 'resultados-masculino-torneo', tableId: 'resultsTableMasculinoTorneo', genderColumn: 'Nadador', gender: 'masculino', type: 'torneo' },
-                { key: 'resultados-masculino-festival', tableId: 'resultsTableMasculinoFestival', genderColumn: 'Nadador', gender: 'masculino', type: 'festival' },
-                { key: 'resultados-equipo-torneo', tableId: 'resultsTableTeamsTorneo', genderColumn: 'Equipo', gender: 'equipo', type: 'torneo' },
-                { key: 'resultados-equipo-festival', tableId: 'resultsTableTeamsFestival', genderColumn: 'Equipo', gender: 'equipo', type: 'festival' }
+                { key: 'resultados-femenino', tableId: 'resultsTableFemenino', genderColumn: 'Nadadora', gender: 'femenino', type: 'festitorneo' },
+                { key: 'resultados-masculino', tableId: 'resultsTableMasculino', genderColumn: 'Nadador', gender: 'masculino', type: 'festitorneo' },
+                { key: 'resultados-equipo', tableId: 'resultsTableTeams', genderColumn: 'Equipo', gender: 'equipo', type: 'festitorneo' }
             ];
 
             const competitions = {};
@@ -5077,43 +5036,21 @@
             if (!container) return;
 
             const panels = [
-                ['femenino', 'torneo', 'resultsTableFemeninoTorneo', '🏊‍♀️ Clasificación General Femenina — Torneo'],
-                ['femenino', 'festival', 'resultsTableFemeninoFestival', '🏊‍♀️ Clasificación General Femenina — Festival'],
-                ['masculino', 'torneo', 'resultsTableMasculinoTorneo', '🏊‍♂️ Clasificación General Masculina — Torneo'],
-                ['masculino', 'festival', 'resultsTableMasculinoFestival', '🏊‍♂️ Clasificación General Masculina — Festival']
+                ['femenino', 'festitorneo', 'resultsTableFemenino', '🏊‍♀️ Clasificación General Femenina'],
+                ['masculino', 'festitorneo', 'resultsTableMasculino', '🏊‍♂️ Clasificación General Masculina']
             ];
 
             container.innerHTML = panels.map(([gender, type, tableId, title]) =>
                 buildGenderGeneralPanelHtml(gender, type, tableId, title)
             ).join('');
-
-            const filterBar = document.getElementById('genderGeneralFilterBar');
-            if (filterBar) {
-                filterBar.querySelectorAll('.pruebas-filter').forEach(filterBtn => {
-                    filterBtn.addEventListener('click', () => {
-                        filterBar.querySelectorAll('.pruebas-filter').forEach(btn => btn.classList.remove('active'));
-                        filterBtn.classList.add('active');
-                        activeGenderGeneral.type = filterBtn.dataset.filter;
-                        syncGenderGeneralPanels();
-                        refreshGenderSearchUI();
-                    });
-                });
-            }
         }
 
         function syncGenderGeneralPanels() {
+            activeGenderGeneral.type = 'festitorneo';
             document.querySelectorAll('.gender-general-panel').forEach(panel => {
-                const isActive = panel.dataset.gender === activeGenderGeneral.gender
-                    && panel.dataset.type === activeGenderGeneral.type;
+                const isActive = panel.dataset.gender === activeGenderGeneral.gender;
                 panel.classList.toggle('active', isActive);
             });
-
-            const filterBar = document.getElementById('genderGeneralFilterBar');
-            if (filterBar) {
-                filterBar.querySelectorAll('.pruebas-filter').forEach(btn => {
-                    btn.classList.toggle('active', btn.dataset.filter === activeGenderGeneral.type);
-                });
-            }
 
             document.querySelectorAll('.gender-general-tabs .tab-button').forEach(btn => {
                 btn.classList.toggle('active', btn.dataset.gender === activeGenderGeneral.gender);
@@ -5130,17 +5067,10 @@
             updateGenderMatchChipState(`${gender}-general-${activeGenderGeneral.type}`);
         }
 
-        function openTeamGeneralTab(evt, type) {
+        function openTeamGeneralTab() {
             document.querySelectorAll('.team-general-panel').forEach(panel => {
-                panel.classList.toggle('active', panel.dataset.type === type);
+                panel.classList.add('active');
             });
-
-            const filterBar = document.getElementById('teamGeneralFilterBar');
-            if (filterBar) {
-                filterBar.querySelectorAll('.pruebas-filter').forEach(btn => {
-                    btn.classList.toggle('active', btn.dataset.filter === type);
-                });
-            }
         }
 
         function registerGeneralClassificationTables() {
@@ -5457,10 +5387,9 @@
 
         function getCompetitionDisplayName(competitionKey, config) {
             if (config?.gender && config?.type) {
-                const typeLabel = config.type === 'festival' ? 'Festival' : 'Torneo';
-                if (config.gender === 'equipo') return `Equipos — ${typeLabel}`;
+                if (config.gender === 'equipo') return 'Clasificación por equipos';
                 const genderLabel = config.gender === 'femenino' ? 'Femenino' : 'Masculino';
-                return `Clasificación general ${genderLabel} — ${typeLabel}`;
+                return `Clasificación general ${genderLabel}`;
             }
             if (isPruebaCompetitionConfig(config) && config.alternativeNames?.[0]) {
                 return formatPruebaLabel(config.alternativeNames[0]);
@@ -6119,7 +6048,7 @@
         }
 
         const CATEGORY_HEADER_PATTERN = /^(?:categor[ií]a\s+)?(INFANTIL|JUVENIL|MAYORES|MASTER|ESPECIAL|MENORES)\b/i;
-        const CATEGORY_SUBHEADER_PATTERN = /^(INFANTIL|JUVENIL|MAYORES|MASTER|ESPECIAL|MENORES)\s+[A-Za-z0-9]+(?:\s+(?:Torneo|Festival))?$/i;
+        const CATEGORY_SUBHEADER_PATTERN = /^(INFANTIL|JUVENIL|MAYORES|MASTER|ESPECIAL|MENORES)\s+[A-Za-z0-9]+(?:\s+(?:Torneo|Festival|Festitorneo))?$/i;
         const SHEET_METADATA_PATTERN = /^(pos\.?|posici[oó]n|nombre|club|cat(?:egor[ií]a)?|tiempo\s*final|record|activador)$/i;
 
         function isPruebaResultsTable(table) {
@@ -6552,7 +6481,7 @@
             if (!tbody) return;
             
             // DEBUG: Verificar qué datos se están pasando a la tabla femenina
-            if (table.id === 'resultsTableFemeninoTorneo' || table.id === 'resultsTableFemeninoFestival') {
+            if (table.id === 'resultsTableFemenino') {
                 console.log(' DEBUG: updateGenderTableContent para tabla femenina');
                 console.log(' Datos recibidos:', data ? data.length + ' filas' : 'null/undefined');
                 console.log(' Primera fila (headers):', data ? data[0] : 'n/a');
@@ -7880,7 +7809,7 @@ Ver resultados completos: https://festitorneosinu.netlify.app`;
                     equipos: []
                 };
                 
-                // Cargar hojas de pruebas (Torneo + Festival) en paralelo
+                // Cargar hojas de pruebas del Festitorneo en paralelo
                 console.log('🏊‍♀️ Cargando hojas de pruebas...');
                 const eventSheets = sheetInfo.filter(sheet => isPruebaSheetTitle(sheet.title));
                 const eventResults = await Promise.all(eventSheets.map(async (sheet) => {
@@ -7902,7 +7831,7 @@ Ver resultados completos: https://festitorneosinu.netlify.app`;
                 }));
                 allData.eventos.push(...eventResults.filter(Boolean));
 
-                // Cargar hojas de clasificación general (competencia / festival)
+                // Cargar hojas de clasificación general del Festitorneo
                 console.log('👥 Cargando hojas de clasificación general...');
                 const generalConfigs = buildGeneralClassificationCompetitions();
 
@@ -7920,14 +7849,14 @@ Ver resultados completos: https://festitorneosinu.netlify.app`;
                     return [];
                 }
 
-                const maleRows = await loadGeneralRows(generalConfigs['resultados-masculino-torneo']);
-                allData.masculino = maleRows.length ? maleRows : await loadGeneralRows(generalConfigs['resultados-masculino-festival']);
+                const maleRows = await loadGeneralRows(generalConfigs['resultados-masculino']);
+                allData.masculino = maleRows;
 
-                const femaleRows = await loadGeneralRows(generalConfigs['resultados-femenino-torneo']);
-                allData.femenino = femaleRows.length ? femaleRows : await loadGeneralRows(generalConfigs['resultados-femenino-festival']);
+                const femaleRows = await loadGeneralRows(generalConfigs['resultados-femenino']);
+                allData.femenino = femaleRows;
 
-                const teamRows = await loadGeneralRows(generalConfigs['resultados-equipo-torneo']);
-                allData.equipos = teamRows.length ? teamRows : await loadGeneralRows(generalConfigs['resultados-equipo-festival']);
+                const teamRows = await loadGeneralRows(generalConfigs['resultados-equipo']);
+                allData.equipos = teamRows;
                 
                 console.log(' Resumen final de carga de datos:', {
                     eventos: allData.eventos.length,
@@ -7979,9 +7908,9 @@ Ver resultados completos: https://festitorneosinu.netlify.app`;
                         // Mapear correctamente los datos HTML a la estructura esperada
                         const estructuradoHTML = {
                             eventos: [],
-                            masculino: htmlData['RESULTADOS GENERALES-M-TORNEO'] || htmlData['RESULTADOS GENERALES-M_TORNEO'] || [],
-                            femenino: htmlData['RESULTADOS GENERALES-F-TORNEO'] || htmlData['RESULTADOS GENERALES-F_TORNEO'] || [],
-                            equipos: htmlData['RESULTADOS EQUIPOS TORNEO'] || htmlData['RESULTADOS EQUIPOS FESTIVAL'] || []
+                            masculino: htmlData['RESULTADOS GENERALES-M'] || htmlData['RESULTADOS GENERALES-M-FESTITORNEO'] || htmlData['RESULTADOS GENERALES-M-TORNEO'] || htmlData['RESULTADOS GENERALES-M_TORNEO'] || htmlData['RESULTADOS GENERALES-M-FESTIVAL'] || htmlData['RESULTADOS GENERALES-M_FESTIVAL'] || [],
+                            femenino: htmlData['RESULTADOS GENERALES-F'] || htmlData['RESULTADOS GENERALES-F-FESTITORNEO'] || htmlData['RESULTADOS GENERALES-F-TORNEO'] || htmlData['RESULTADOS GENERALES-F_TORNEO'] || htmlData['RESULTADOS GENERALES-F-FESTIVAL'] || htmlData['RESULTADOS GENERALES-F_FESTIVAL'] || [],
+                            equipos: htmlData['RESULTADOS EQUIPOS'] || htmlData['RESULTADOS EQUIPOS FESTITORNEO'] || htmlData['RESULTADOS EQUIPOS TORNEO'] || htmlData['RESULTADOS EQUIPOS FESTIVAL'] || []
                         };
                         
                         console.log(' Fallback HTML - Datos estructurados:', {
@@ -8061,10 +7990,22 @@ Ver resultados completos: https://festitorneosinu.netlify.app`;
             
             // Agregar datos por género con múltiples nombres
             const genderTables = [
-                { id: 'resultsTableMasculinoTorneo', names: ['RESULTADOS GENERALES-M-TORNEO', 'RESULTADOS GENERALES-M_TORNEO'] },
-                { id: 'resultsTableMasculinoFestival', names: ['RESULTADOS GENERALES-M-FESTIVAL', 'RESULTADOS GENERALES-M_FESTIVAL'] },
-                { id: 'resultsTableFemeninoTorneo', names: ['RESULTADOS GENERALES-F-TORNEO', 'RESULTADOS GENERALES-F_TORNEO'] },
-                { id: 'resultsTableFemeninoFestival', names: ['RESULTADOS GENERALES-F-FESTIVAL', 'RESULTADOS GENERALES-F_FESTIVAL'] }
+                { id: 'resultsTableMasculino', names: [
+                    'RESULTADOS GENERALES-M',
+                    'RESULTADOS GENERALES-M-FESTITORNEO',
+                    'RESULTADOS GENERALES-M-TORNEO',
+                    'RESULTADOS GENERALES-M_TORNEO',
+                    'RESULTADOS GENERALES-M-FESTIVAL',
+                    'RESULTADOS GENERALES-M_FESTIVAL'
+                ] },
+                { id: 'resultsTableFemenino', names: [
+                    'RESULTADOS GENERALES-F',
+                    'RESULTADOS GENERALES-F-FESTITORNEO',
+                    'RESULTADOS GENERALES-F-TORNEO',
+                    'RESULTADOS GENERALES-F_TORNEO',
+                    'RESULTADOS GENERALES-F-FESTIVAL',
+                    'RESULTADOS GENERALES-F_FESTIVAL'
+                ] }
             ];
             
             genderTables.forEach(({ id, names }) => {
@@ -8092,10 +8033,14 @@ Ver resultados completos: https://festitorneosinu.netlify.app`;
                 }
             });
             
-            // Agregar datos por equipo (torneo y festival)
+            // Agregar datos por equipo
             [
-                { id: 'resultsTableTeamsTorneo', names: ['RESULTADOS EQUIPOS TORNEO'] },
-                { id: 'resultsTableTeamsFestival', names: ['RESULTADOS EQUIPOS FESTIVAL'] }
+                { id: 'resultsTableTeams', names: [
+                    'RESULTADOS EQUIPOS',
+                    'RESULTADOS EQUIPOS FESTITORNEO',
+                    'RESULTADOS EQUIPOS TORNEO',
+                    'RESULTADOS EQUIPOS FESTIVAL'
+                ] }
             ].forEach(({ id, names }) => {
                 const teamsTable = document.getElementById(id);
                 if (!teamsTable) return;
@@ -8249,16 +8194,13 @@ Ver resultados completos: https://festitorneosinu.netlify.app`;
             return {
                 eventos,
                 femenino: (() => {
-                    const torneo = readGenderTable('resultsTableFemeninoTorneo');
-                    return torneo.length ? torneo : readGenderTable('resultsTableFemeninoFestival');
+                    return readGenderTable('resultsTableFemenino');
                 })(),
                 masculino: (() => {
-                    const torneo = readGenderTable('resultsTableMasculinoTorneo');
-                    return torneo.length ? torneo : readGenderTable('resultsTableMasculinoFestival');
+                    return readGenderTable('resultsTableMasculino');
                 })(),
                 equipos: (() => {
-                    const torneo = readTeamTable('resultsTableTeamsTorneo');
-                    return torneo.length ? torneo : readTeamTable('resultsTableTeamsFestival');
+                    return readTeamTable('resultsTableTeams');
                 })()
             };
         }
@@ -9428,8 +9370,7 @@ Ver resultados completos: https://festitorneosinu.netlify.app`;
                 console.log(' Estado actual de allData.masculino:', allData.masculino ? allData.masculino.length : 'undefined');
                 console.log(' Estado actual de allData.equipos:', allData.equipos ? allData.equipos.length : 'undefined');
                 
-                const tablaFemeninaHTML = document.getElementById('resultsTableFemeninoTorneo')
-                    || document.getElementById('resultsTableFemeninoFestival');
+                const tablaFemeninaHTML = document.getElementById('resultsTableFemenino');
                 
                 if (tablaFemeninaHTML) {
                     const filas = tablaFemeninaHTML.querySelectorAll('tbody tr:not(.loading-row):not(.category-header)');
