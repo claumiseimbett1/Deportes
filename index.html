@@ -152,7 +152,7 @@
     <style>
         /* CSS Variables for consistency and easy maintenance */
         :root {
-            /* Marca NNG: navy, cian, acento rojo */
+            /* Marca NNG: navy, cian, acento rojo del logo (#7b2026) */
             --primary-color: #0b1e4a;
             --secondary-color: #3eb6e8;
             --accent-red: #7b2026;
@@ -234,10 +234,10 @@
             color: #0b1e4a;
         }
 
-        .club-name-badge-orange,
-        a.club-name-badge.club-name-badge-orange,
-        a.club-name-badge.club-name-badge-orange:link,
-        a.club-name-badge.club-name-badge-orange:visited {
+        .club-name-badge-red,
+        a.club-name-badge.club-name-badge-red,
+        a.club-name-badge.club-name-badge-red:link,
+        a.club-name-badge.club-name-badge-red:visited {
             color: var(--accent-red);
         }
 
@@ -262,8 +262,8 @@
             color: #071530;
         }
 
-        .club-name-link.club-name-badge-orange:hover,
-        .club-name-link.club-name-badge-orange:focus {
+        .club-name-link.club-name-badge-red:hover,
+        .club-name-link.club-name-badge-red:focus {
             background: #fdf2f3;
             color: #5e161c;
         }
@@ -701,7 +701,7 @@
         }
 
         .status-error {
-            background: #f44336;
+            background: var(--accent-red);
             color: white;
         }
 
@@ -1219,7 +1219,7 @@
             left: -120%;
             width: 80%;
             height: 100%;
-            background: linear-gradient(105deg, transparent 0%, rgba(233, 114, 57, 0.12) 45%, rgba(233, 114, 57, 0.22) 50%, rgba(233, 114, 57, 0.12) 55%, transparent 100%);
+            background: linear-gradient(105deg, transparent 0%, rgba(123, 32, 38, 0.12) 45%, rgba(123, 32, 38, 0.22) 50%, rgba(123, 32, 38, 0.12) 55%, transparent 100%);
             transform: skewX(-18deg);
             transition: left 0.65s ease;
             pointer-events: none;
@@ -1238,17 +1238,17 @@
             opacity: 0;
             pointer-events: none;
             box-shadow:
-                inset 0 0 0 1px rgba(233, 114, 57, 0.35),
+                inset 0 0 0 1px rgba(123, 32, 38, 0.35),
                 inset 0 1px 0 rgba(255, 255, 255, 0.6);
             transition: opacity 0.35s ease;
         }
 
         .info-card:hover, .contact-card-link:hover {
             transform: translateY(-10px) scale(1.02);
-            border-color: rgba(233, 114, 57, 0.55);
+            border-color: rgba(123, 32, 38, 0.55);
             box-shadow:
-                0 22px 48px rgba(233, 114, 57, 0.2),
-                0 0 32px rgba(233, 114, 57, 0.14);
+                0 22px 48px rgba(123, 32, 38, 0.2),
+                0 0 32px rgba(123, 32, 38, 0.14);
         }
 
         .info-card:hover::before,
@@ -1807,7 +1807,7 @@
             box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
             color: #ffffff;
             border-color: var(--accent-red);
-            background: rgba(233, 114, 57, 0.15);
+            background: rgba(123, 32, 38, 0.15);
         }
 
         .cta-section .inline-link {
@@ -2430,16 +2430,16 @@
         }
 
         .diploma-btn.disabled {
-            background: #ffcdd2;
-            color: #d32f2f;
+            background: #f4c8cb;
+            color: var(--accent-red);
             cursor: not-allowed;
-            box-shadow: 0 2px 5px rgba(211, 47, 47, 0.2);
+            box-shadow: 0 2px 5px rgba(123, 32, 38, 0.2);
             opacity: 0.7;
         }
 
         .diploma-btn.disabled:hover {
             transform: none;
-            background: #ffcdd2;
+            background: #f4c8cb;
             opacity: 0.8;
         }
         
@@ -2560,12 +2560,12 @@
         }
 
         .share-option.instagram {
-            border-color: #e4405f;
-            color: #e4405f;
+            border-color: var(--accent-red);
+            color: var(--accent-red);
         }
 
         .share-option.instagram:hover {
-            background: #e4405f;
+            background: var(--accent-red);
             color: white;
         }
 
@@ -2625,8 +2625,8 @@
             }
             
             .diploma-btn.disabled {
-                background: #ffcdd2;
-                border: 2px solid #d32f2f;
+                background: #f4c8cb;
+                border: 2px solid var(--accent-red);
             }
             
             /* Añadir indicador visual para récords en móvil */
@@ -2763,15 +2763,15 @@
         
         .stat-card:hover {
             transform: translateY(-12px) scale(1.03);
-            border-color: rgba(233, 114, 57, 0.55);
+            border-color: rgba(123, 32, 38, 0.55);
             box-shadow:
-                0 24px 50px rgba(233, 114, 57, 0.22),
-                0 0 36px rgba(233, 114, 57, 0.15);
+                0 24px 50px rgba(123, 32, 38, 0.22),
+                0 0 36px rgba(123, 32, 38, 0.15);
         }
 
         .stat-card:hover .stat-number {
-            color: var(--secondary-color);
-            text-shadow: 0 0 24px rgba(233, 114, 57, 0.35);
+            color: var(--accent-red);
+            text-shadow: 0 0 24px rgba(123, 32, 38, 0.35);
             transition: color 0.35s ease, text-shadow 0.35s ease;
         }
 
@@ -2934,11 +2934,11 @@
 
         .event-goal-card:hover {
             transform: translateY(-6px) scale(1.01);
-            border-color: rgba(233, 114, 57, 0.45);
+            border-color: rgba(123, 32, 38, 0.45);
             border-left-color: var(--accent-red);
             box-shadow:
-                0 18px 40px rgba(233, 114, 57, 0.18),
-                0 0 28px rgba(233, 114, 57, 0.12);
+                0 18px 40px rgba(123, 32, 38, 0.18),
+                0 0 28px rgba(123, 32, 38, 0.12);
         }
 
         .event-goal-card:hover .goal-card-title {
@@ -3014,10 +3014,10 @@
 
         .terms-main-card:hover {
             transform: translateY(-8px) scale(1.01);
-            border-color: rgba(233, 114, 57, 0.5);
+            border-color: rgba(123, 32, 38, 0.5);
             box-shadow:
-                0 20px 44px rgba(233, 114, 57, 0.2),
-                0 0 30px rgba(233, 114, 57, 0.12);
+                0 20px 44px rgba(123, 32, 38, 0.2),
+                0 0 30px rgba(123, 32, 38, 0.12);
         }
         
         .terms-header-row {
@@ -3083,10 +3083,10 @@
 
         .privacy-main-card:hover {
             transform: translateY(-8px) scale(1.01);
-            border-color: rgba(233, 114, 57, 0.5);
+            border-color: rgba(123, 32, 38, 0.5);
             box-shadow:
-                0 18px 40px rgba(233, 114, 57, 0.18),
-                0 0 28px rgba(233, 114, 57, 0.12);
+                0 18px 40px rgba(123, 32, 38, 0.18),
+                0 0 28px rgba(123, 32, 38, 0.12);
         }
         
         .privacy-header-row {
@@ -3125,10 +3125,10 @@
 
         .results-cta-card:hover {
             transform: translateY(-10px) scale(1.02);
-            border-color: rgba(233, 114, 57, 0.55);
+            border-color: rgba(123, 32, 38, 0.55);
             box-shadow:
-                0 22px 48px rgba(233, 114, 57, 0.2),
-                0 0 32px rgba(233, 114, 57, 0.14);
+                0 22px 48px rgba(123, 32, 38, 0.2),
+                0 0 32px rgba(123, 32, 38, 0.14);
         }
 
         .results-cta-card:hover .results-cta-title {
@@ -3137,7 +3137,7 @@
 
         .results-cta-card:hover .results-cta-arrow {
             transform: translateY(4px) scale(1.1);
-            filter: drop-shadow(0 0 10px rgba(233, 114, 57, 0.45));
+            filter: drop-shadow(0 0 10px rgba(123, 32, 38, 0.45));
         }
         
         .results-cta-title {
@@ -3293,7 +3293,7 @@
         .error-message-cell {
             text-align: center;
             padding: 40px;
-            color: #f44336;
+            color: var(--accent-red);
         }
         
         .error-subtitle {
@@ -3358,7 +3358,7 @@
         }
         
         .status-error-text {
-            color: red;
+            color: var(--accent-red);
         }
         
         .button-loading-text {
@@ -9191,7 +9191,7 @@ Ver resultados completos: https://festitorneosinu.netlify.app`;
                 console.error('Error cargando datos de género desde Google Sheets:', error);
                 pdf.setFont("helvetica", "normal");
                 pdf.setFontSize(10);
-                pdf.setTextColor(255, 0, 0);
+                pdf.setTextColor(123, 32, 38);
                 pdf.text("Error cargando resultados por género: " + error.message, 20, yPosition);
                 yPosition += 12;
             }
@@ -9229,7 +9229,7 @@ Ver resultados completos: https://festitorneosinu.netlify.app`;
                 console.error('Error cargando datos de equipos desde Google Sheets:', error);
                 pdf.setFont("helvetica", "normal");
                 pdf.setFontSize(10);
-                pdf.setTextColor(255, 0, 0);
+                pdf.setTextColor(123, 32, 38);
                 pdf.text("Error cargando resultados de equipos: " + error.message, 20, yPosition);
                 yPosition += 12;
             }
@@ -9356,7 +9356,7 @@ Ver resultados completos: https://festitorneosinu.netlify.app`;
                         console.error('❌ No hay datos de equipos para intercambiar.');
                         pdf.setFont("helvetica", "normal");
                         pdf.setFontSize(10);
-                        pdf.setTextColor(255, 0, 0);
+                        pdf.setTextColor(123, 32, 38);
                         pdf.text("ERROR: Los datos femeninos están intercambiados pero no se pueden corregir", 20, yPosition);
                         return yPosition + 20;
                     }
@@ -9480,7 +9480,7 @@ Ver resultados completos: https://festitorneosinu.netlify.app`;
                 console.error('❌ CRÍTICO: No se encontraron datos femeninos en ningún lugar');
                 pdf.setFont("helvetica", "normal");
                 pdf.setFontSize(10);
-                pdf.setTextColor(255, 0, 0);
+                pdf.setTextColor(123, 32, 38);
                 pdf.text("ERROR: No se encontraron datos de clasificación femenina", 20, yPosition);
                 yPosition += 20;
             }
