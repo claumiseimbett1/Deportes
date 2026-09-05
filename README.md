@@ -1,90 +1,68 @@
-# Festi-Torneo Regional del Sinú – sitio web (2026)
+# Festi-Torneo de Aniversario NNG 2026 — página modelo de evento
 
-Landing estática del **FESTI-TORNEO REGIONAL DEL SINÚ 2026**, organizado por **Club Delfines Córdoba** y **Sport y Club Deportivo Ávatar**: resultados enlazados a Google Sheets, tablas por prueba y género, ranking por equipos y descarga de diplomas en PDF (jsPDF).
+Sitio estático del **Festi-Torneo de Aniversario NNG — El Nadador Más Rápido 2026**, organizado por el **Club Nadadores Nueva Generación (NNG)** con apoyo de la Liga de Natación de Córdoba y el IMDER Montería.
 
-**Evento:** sábado 18 de abril de 2026 · Piscina de la Villa Olímpica, Montería (Córdoba).
+Esta landing es la **página modelo de evento** para Top4Race / AquaTEN: mismo esquema reutilizable (hero, info, convocatoria, resultados desde Google Sheets, diplomas PDF, compartir) adaptado a la marca y datos de cada competencia.
+
+**Evento:** 13 de septiembre de 2026 · Piscina Villa Olímpica, Montería (Córdoba).  
+**Convocatoria:** `documentos/FESTI-TORNEO-DE-ANIVERSARIO-NNG.pdf`
 
 **Producción:** [https://festitorneosinu.netlify.app/](https://festitorneosinu.netlify.app/)
 
-## Características
+## Qué incluye el modelo
 
-- Resultados actualizados desde Google Sheets (API y exportación CSV).
-- Secciones de resultados por distancia (50 m, 100 m, 200 m, relevos) y vista por género; clasificación por equipos.
-- Indicador de carga y búsqueda por nombre en tablas.
-- Diplomas descargables y mensajes para compartir resultados.
-- **Siete patrocinadores** en la sección `#patrocinadores`.
-- Identidad visual con logos de **Delfines Córdoba** y **Club Ávatar** (azul, cian y naranja).
-- **Subsección Top4Race** (`#top4race`): espacio publicitario deshabilitado por defecto (código conservado; reactivar quitando `hidden` y `data-ad-disabled`).
-- Diseño responsive, video hero, patrocinadores y contacto.
+- Resultados en vivo desde Google Sheets (API y CSV).
+- Tablas por prueba, género y clasificación por equipos; búsqueda y filtros.
+- Diplomas descargables (jsPDF) y textos para compartir (WhatsApp / Instagram).
+- Hero a sangre con foto de marca, convocatoria PDF y contacto del club.
+- Identidad visual NNG (navy, cian, rojo) + soporte tecnológico Top4Race / AquaTEN.
+- Diseño responsive; sección Top4Race (`#top4race`) deshabilitada por defecto.
 
 ## SEO (resumen)
 
-El `index.html` incluye, entre otras medidas:
-
-- **`<title>` y meta description** orientados a búsquedas locales (Montería, Córdoba) y palabras clave del evento.
-- **`link rel="canonical"`** a la URL de producción en Netlify.
-- **Open Graph** (`og:*`) y **Twitter Card** para vista previa al compartir.
-- **`robots`** `index, follow` y `max-image-preview:large`.
-- **JSON-LD** (`application/ld+json`) con `SportsEvent`, `WebSite` y `ProfessionalService` (Top4Race).
-- Enlaces de patrocinio con **`rel="sponsored"`** donde aplica.
-
-Tras cambiar dominio o imagen social principal, actualiza canonical, `og:url`, `og:image` y el bloque JSON-LD.
+El `index.html` incluye title/description locales, canonical, Open Graph, Twitter Card, `robots` y JSON-LD (`SportsEvent`, `WebSite`, Top4Race). Tras cambiar dominio o imagen social, actualiza canonical, `og:*` y el bloque JSON-LD.
 
 ## Estructura del proyecto
 
 | Ruta | Descripción |
 |------|-------------|
-| `index.html` | Página única: marcado, estilos embebidos, SEO, JSON-LD y lógica (Sheets, tablas, PDF). |
-| `style.css` | Hoja de estilos adicional (el layout principal vive en `index.html`). |
-| `img/` | Logos de clubes, patrocinadores y plantillas de diplomas. |
-| `video/` | Vídeo promocional del hero. |
-| `documentos/` | PDF de convocatoria (`I FESTITORNEO-2026 (1).pdf`), programa y política de datos. |
-| `archive/iv-championship/` | Respaldo histórico del **IV Championship** (`index.html`, `img/`, `documentos/`). No se despliega. |
-| `archive/v-championship/` | Respaldo histórico del **V Championship 2026** (`index.html`, `img/`, `documentos/`). No se despliega. |
-| `archive/i-festitorneo/` | Respaldo del **I Festitorneo 2026** (`index.html`, `gracias.html`, `style.css`, `img/`, `documentos/`, `video/`). No se despliega. |
-| `sitemap.xml` | Mapa del sitio para buscadores (URL canónica y `lastmod`). |
-| `robots.txt` | Permite rastreo e indica la URL del sitemap. |
+| `index.html` | Página modelo activa: marcado, estilos, SEO y lógica (Sheets, tablas, PDF). |
+| `style.css` | Estilos adicionales (el layout principal vive en `index.html`). |
+| `img/` | Logo NNG, foto de equipo, logos Top4Race y plantillas de diplomas. |
+| `video/` | Recurso opcional (el hero NNG usa foto). |
+| `documentos/` | Convocatoria NNG y política de datos. |
+| `archive/` | Ediciones anteriores congeladas (no se despliegan). |
+| `sitemap.xml` / `robots.txt` | SEO técnico. |
 
-## Mapa del sitio (anclas en la misma página)
+## Mapa del sitio (anclas)
 
-- `#inicio` — Hero con vídeo
+- `#inicio` — Hero (foto NNG)
 - `#informacion` — Información del evento
-- `#terminos` — Términos y condiciones
+- `#terminos` — Convocatoria / documentos
 - `#resultados` — Resultados y tablas
 - `#patrocinadores` — Patrocinadores
 - `#top4race` — Destacado Top4Race (oculto por defecto)
-- `#contacto` — Contacto
-
-Ejemplo: `https://festitorneosinu.netlify.app/#resultados`
+- `#contacto` — Contacto del club y soporte Top4Race
 
 ## Cómo verlo en local
-
-Abre `index.html` en el navegador o sirve la carpeta con un servidor estático:
 
 ```bash
 npx --yes serve .
 ```
 
+O abre `index.html` en el navegador.
+
 ## Despliegue (Netlify)
 
-Publica la **raíz** del repositorio (donde está `index.html`). Si cambias de dominio, actualiza `sitemap.xml`, `robots.txt`, el **canonical**, las meta **Open Graph** y las URLs en los textos para compartir / PDF dentro de `index.html`.
+Publica la **raíz** del repositorio. Si cambias de dominio, actualiza `sitemap.xml`, `robots.txt`, canonical, Open Graph y las URLs en textos de compartir / PDF dentro de `index.html`.
 
 ## Respaldos en `archive/`
 
-Guardan ediciones congeladas. El sitio activo sigue en la **raíz** del repo (`index.html`, `img/`, `documentos/`, `video/`).
+Ediciones congeladas del mismo esquema modelo. El sitio activo está en la raíz.
 
-Cada respaldo sigue el mismo esquema:
+- `archive/iv-championship/` — IV Championship 2025
+- `archive/v-championship/` — V Championship Master 2026
+- `archive/i-festitorneo/` — I Festitorneo Regional del Sinú 2026
+- ZIP descargable del Festitorneo Sinú en `archive/` cuando exista
 
-```
-archive/<nombre-edición>/
-  index.html      # copia de la página en ese momento
-  img/            # logos y plantillas usadas por esa copia
-  documentos/     # PDFs de términos y política de esa edición
-  video/          # opcional (incluido en i-festitorneo y v-championship)
-```
-
-- **`archive/iv-championship/`** — IV Championship 2025.
-- **`archive/v-championship/`** — V Championship Master 2026.
-- **`archive/i-festitorneo/`** — I Festitorneo Regional del Sinú 2026 (incluye `gracias.html`, `style.css` y `video/`).
-
-Para congelar una edición antes de un cambio mayor, copia `index.html`, `img/` y `documentos/` desde la raíz a la carpeta correspondiente en `archive/`. Si omites `video/`, al abrir el `index.html` solo desde `archive/` el hero puede no reproducir vídeo.
+Para congelar esta edición NNG antes de un cambio mayor, copia `index.html`, `img/` y `documentos/` a una carpeta nueva en `archive/`.
