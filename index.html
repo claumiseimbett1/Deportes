@@ -763,6 +763,29 @@
             object-position: center center;
             border: none;
             display: block;
+            transform: scale(1.08);
+            transform-origin: center center;
+            will-change: transform;
+            animation: heroPhotoDrift 28s ease-in-out infinite alternate;
+        }
+
+        @keyframes heroPhotoDrift {
+            0% {
+                transform: scale(1.06) translate3d(-1.2%, 0.6%, 0);
+            }
+            50% {
+                transform: scale(1.12) translate3d(1.1%, -0.8%, 0);
+            }
+            100% {
+                transform: scale(1.08) translate3d(-0.4%, 1%, 0);
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .video-container .hero-photo {
+                animation: none;
+                transform: none;
+            }
         }
 
         .video-overlay {
@@ -5085,8 +5108,9 @@
         // Configuración
         const CONFIG = {
             API_KEY: (window.APP_CONFIG && window.APP_CONFIG.API_KEY) || '',
-            /** ID del spreadsheet RESULTADOS (respaldo si Drive API no resuelve) */
+            /** ID del spreadsheet RESULTADOS (mismo archivo del evento modelo anterior) */
             SHEET_ID: '1EfjpkKEEi8rLxF9BwXCyyPHEcbBZJK71BijpUP1uEPI',
+            /** Nombre del archivo en Drive / carpeta EVENTOS */
             SHEET_NAME: 'RESULTADOS',
             /** Carpeta en Google Drive donde vive el spreadsheet (antes podía llamarse RESULTADOS) */
             DRIVE_FOLDER_NAME: 'EVENTOS',
