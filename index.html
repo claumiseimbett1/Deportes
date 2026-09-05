@@ -5330,8 +5330,7 @@
         // Parser CSV mejorado
         function parseCSV(csvText) {
             const rows = [];
-            const lines = csvText.split('
-');
+            const lines = csvText.split('\n');
             
             for (let line of lines) {
                 if (!line.trim()) continue;
@@ -5989,6 +5988,19 @@
             const hasGid = gid != null && gid !== '' && Number(gid) !== 0;
             let data = null;
 
+            // Preferir gviz por nombre (pestañas NNG con espacios; GIDs manuales suelen faltar)
+            if (sheetName) {
+                try {
+                    console.log(`📄 Cargando por nombre (gviz): ${sheetName}`);
+                    data = await loadSheetRowsByName(sheetName);
+                    if (data && data.length) {
+                        return forTable ? rowsForTables(data) : data;
+                    }
+                } catch (error) {
+                    console.warn(`⚠️ gviz por nombre falló (${sheetName}):`, error.message);
+                }
+            }
+
             if (hasGid) {
                 try {
                     const url = `https://docs.google.com/spreadsheets/d/${CONFIG.SHEET_ID}/export?format=csv&gid=${gid}&range=${range}`;
@@ -6000,11 +6012,6 @@
                 } catch (error) {
                     console.warn(`⚠️ CSV por gid ${gid} falló:`, error.message);
                 }
-            }
-
-            if (sheetName) {
-                console.log(`📄 Fallback gviz por nombre de pestaña: ${sheetName}`);
-                data = await loadSheetRowsByName(sheetName);
             }
 
             if (!data || !data.length) {
@@ -6066,8 +6073,7 @@
                 .replace(/\\/g, '\\\\')
                 .replace(/'/g, "\\'")
                 .replace(/\r/g, '')
-                .replace(/
-/g, ' ');
+                .replace(/\n/g, ' ');
         }
 
         function setTableBodyMessage(table, message, colspan) {
