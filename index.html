@@ -4291,42 +4291,42 @@
 
         /** Pestañas de pruebas en el Google Sheet (Festitorneo unificado) */
         let PRUEBAS_SHEET_TABS = [
-            '50M-MARIPOSA-F-MENORES-TORNEO',
-            '50M-MARIPOSA-M-MENORES-TORNEO',
-            '100M-LIBRE-F-TORNEO',
-            '100M-LIBRE-M-TORNEO',
-            '25M-PAT.LIBRE-F-FESTIVAL',
-            '25M-PAT.LIBRE-M-FESTIVAL',
-            '50M-MARIPOSA-F-FESTIVAL',
-            '50M-MARIPOSA-M-FESTIVAL',
-            '25M-LIBRE CON TABLA-F-FESTIVAL',
-            '25M-LIBRE CON TABLA-M-FESTIVAL',
-            '50M-LIBRE CON ALETAS-F-FESTIVAL',
-            '50M-LIBRE CON ALETAS-M-FESTIVAL',
-            '25M-LIBRE INSTINTIVO-F-FESTIVAL',
-            '25M-LIBRE INSTINTIVO-M-FESTIVAL',
-            '25M-PECHO-F-FESTIVAL',
-            '25M-PECHO-M-FESTIVAL',
-            '50M-PECHO-F-FESTIVAL',
-            '50M-PECHO-M-FESTIVAL',
-            '25M-MARIPOSA-F-FESTIVAL',
-            '25M-MARIPOSA-M-FESTIVAL',
-            '50M-ESPALDA-F-FESTIVAL',
-            '50M-ESPALDA-M-FESTIVAL',
-            '25M-LIBRE-F-FESTIVAL',
-            '25M-LIBRE-M-FESTIVAL',
-            '50M-LIBRE-F-FESTIVAL',
-            '50M-LIBRE-M-FESTIVAL',
-            '50M-ESPALDA-F-TORNEO',
-            '50M-ESPALDA-M-TORNEO',
-            '50M-PECHO-F-TORNEO',
-            '50M-PECHO-M-TORNEO',
-            '50M-LIBRE CON ALETAS-F-TORNEO',
-            '50M-LIBRE CON ALETAS-M-TORNEO',
-            '50M-MARIPOSA-F-TORNEO',
-            '50M-MARIPOSA-M-TORNEO',
-            '50M-LIBRE-F-TORNEO',
-            '50M-LIBRE-M-TORNEO'
+            '200 mts libres Infantil A - Master -F-',
+            '200 mts libres Infantil A - Master -M-',
+            '15 mts pat de libre Menores 1 -F-',
+            '15 mts pat de libre Menores 1 -M-',
+            '25 mts pat de libre Menores 2-3 -F-',
+            '25 mts pat de libre Menores 2-3 -M-',
+            '100 mts mariposa Infantil A - Master -F-',
+            '100 mts mariposa Infantil A - Master -M-',
+            '15 mts pat de espalda Menores 1 -F-',
+            '15 mts pat de espalda Menores 1 -M-',
+            '25 mts pat de espalda Menores 2-3 -F-',
+            '25 mts pat de espalda Menores 2-3 -M-',
+            '100 mts libre Infantil A - Master -F-',
+            '100 mts libre Infantil A - Master -M-',
+            '50 mts espalda Infantil A - Master -F-',
+            '50 mts espalda Infantil A - Master -M-',
+            '15 mts libre instintivo Menores 1 -F-',
+            '15 mts libre instintivo Menores 1 -M-',
+            '25 mts libre Menores 2-3 -F-',
+            '25 mts libre Menores 2-3 -M-',
+            '100 mts pecho Infantil A - Master -F-',
+            '100 mts pecho Infantil A - Master -M-',
+            '25 mts espalda Menores 2-3 -F-',
+            '25 mts espalda Menores 2-3 -M-',
+            '50 mts mariposa Infantil A - Master -F-',
+            '50 mts mariposa Infantil A - Master -M-',
+            '100 mts espalda Infantil A - Master -F-',
+            '100 mts espalda Infantil A - Master -M-',
+            '25 mts pecho Menores 2-3 -F-',
+            '25 mts pecho Menores 2-3 -M-',
+            '50 mts pecho Infantil A - Master -F-',
+            '50 mts pecho Infantil A - Master -M-',
+            '50 mts libre Menores 2-3 -F-',
+            '50 mts libre Menores 2-3 -M-',
+            '50 mts libre Infantil A - Master -F-',
+            '50 mts libre Infantil A - Master -M-'
         ];
 
         const STROKE_LABELS = {
@@ -4347,15 +4347,17 @@
                 .replace(/^-|-$/g, '');
         }
 
-        /** Convención del Sheet: -F- = Femenino, -M- = Masculino (antes de MENORES / sufijo de modalidad) */
+        /** Convención del Sheet: sufijo -F- / -M- (NNG) o legado -F-TORNEO / -M-FESTIVAL */
         function parsePruebaGender(sheetName) {
-            const upper = sheetName.toUpperCase();
-            if (/-F-(?:MENORES-)?(?:TORNEO|FESTIVAL|FESTITORNEO)$/.test(upper)
+            const upper = (sheetName || '').toUpperCase().trim();
+            if (/\s*-\s*F\s*-\s*$/.test(upper)
+                || /-F-(?:MENORES-)?(?:TORNEO|FESTIVAL|FESTITORNEO)$/.test(upper)
                 || /-F-MENORES$/.test(upper)
                 || /-F$/.test(upper)) {
                 return { code: 'F', label: 'Femenino', column: 'Nadadora', emoji: '🏊‍♀️' };
             }
-            if (/-M-(?:MENORES-)?(?:TORNEO|FESTIVAL|FESTITORNEO)$/.test(upper)
+            if (/\s*-\s*M\s*-\s*$/.test(upper)
+                || /-M-(?:MENORES-)?(?:TORNEO|FESTIVAL|FESTITORNEO)$/.test(upper)
                 || /-M-MENORES$/.test(upper)
                 || /-M$/.test(upper)) {
                 return { code: 'M', label: 'Masculino', column: 'Nadador', emoji: '🏊‍♂️' };
@@ -4364,32 +4366,43 @@
         }
 
         function parsePruebaSheetName(sheetName) {
-            let name = sheetName;
-            const type = name.endsWith('-TORNEO') || name.endsWith('-FESTIVAL') || name.endsWith('-FESTITORNEO')
-                ? 'festitorneo'
-                : 'festitorneo';
-            name = name.replace(/-(TORNEO|FESTIVAL|FESTITORNEO)$/, '');
-            const menores = name.endsWith('-MENORES');
-            if (menores) name = name.replace(/-MENORES$/, '');
-            const { code: genderCode, label: genderLabel } = parsePruebaGender(sheetName);
-            if (genderCode) name = name.replace(/-(F|M)$/, '');
+            const raw = (sheetName || '').toString().trim();
+            const type = 'festitorneo';
+            const { code: genderCode, label: genderLabel } = parsePruebaGender(raw);
+
+            // Formato NNG: "50 mts libre Infantil A - Master -F-"
+            const nng = raw.match(/^(\d+)\s*mts?\s+(.+?)\s+-\s*([FM])\s*-\s*$/i);
+            if (nng) {
+                return {
+                    distance: nng[1],
+                    stroke: nng[2].trim(),
+                    genderCode: nng[3].toUpperCase(),
+                    genderLabel: nng[3].toUpperCase() === 'F' ? 'Femenino' : 'Masculino',
+                    menores: /menores/i.test(nng[2]),
+                    type,
+                    displayName: raw
+                };
+            }
+
+            // Formato legado: 50M-LIBRE-F-TORNEO
+            let name = raw.replace(/-(TORNEO|FESTIVAL|FESTITORNEO)$/i, '');
+            const menores = /-MENORES$/i.test(name);
+            if (menores) name = name.replace(/-MENORES$/i, '');
+            if (genderCode) name = name.replace(/-(F|M)$/i, '');
             const distMatch = name.match(/^(\d+)M(?:-)?(.*)$/i);
             const distance = distMatch ? distMatch[1] : '';
             const strokeKey = distMatch ? distMatch[2].replace(/-/g, ' ').trim().toUpperCase() : name;
             const stroke = STROKE_LABELS[strokeKey] || strokeKey;
-            return { distance, stroke, genderCode, genderLabel, menores, type };
+            return { distance, stroke, genderCode, genderLabel, menores, type, displayName: raw };
         }
 
+        /** Etiqueta = nombre exacto de la pestaña del Sheet */
         function formatPruebaLabel(sheetName) {
-            const { distance, stroke, genderLabel, menores, type } = parsePruebaSheetName(sheetName);
-            const menoresLabel = menores ? ' Menores' : '';
-            return `${distance} m ${stroke}${menoresLabel} ${genderLabel}`.replace(/\s+/g, ' ').trim();
+            return (sheetName || '').toString().trim();
         }
 
         function formatPruebaTabLabel(sheetName) {
-            const { distance, stroke, genderLabel, menores, type } = parsePruebaSheetName(sheetName);
-            const menoresLabel = menores ? ' Men.' : '';
-            return `${distance}m ${stroke}${menoresLabel} ${genderLabel}`.replace(/\s+/g, ' ').trim();
+            return (sheetName || '').toString().trim();
         }
 
         /** Etiqueta corta para diploma de récord: "50 Mariposa", "100 Pecho" */
@@ -4397,15 +4410,17 @@
             const raw = (sheetNameOrLabel ?? '').toString().trim();
             if (!raw) return 'Natación';
 
-            if (/-(?:TORNEO|FESTIVAL|FESTITORNEO)$/i.test(raw)) {
-                const { distance, stroke } = parsePruebaSheetName(raw);
-                if (distance && stroke) return `${distance} ${stroke}`;
+            const parsed = parsePruebaSheetName(raw);
+            if (parsed.distance && parsed.stroke) {
+                // Tomar el estilo principal (primera palabra del bloque de prueba)
+                const strokeShort = parsed.stroke.split(/\s+(?:Menores|Infantil|Juvenil|Junior)/i)[0].trim();
+                return `${parsed.distance} ${strokeShort}`;
             }
 
-            const fromLabel = raw.match(/^(\d+)\s*m?\s+([A-Za-zÁÉÍÓÚáéíóúñÑ]+)/);
+            const fromLabel = raw.match(/^(\d+)\s*mts?\s+([A-Za-zÁÉÍÓÚáéíóúñÑ]+)/i);
             if (fromLabel) return `${fromLabel[1]} ${fromLabel[2]}`;
 
-            return raw.split('—')[0].split('·')[0].trim();
+            return raw.replace(/\s*-\s*[FM]\s*-\s*$/i, '').trim();
         }
 
         function getCurrentPruebaRecordLabel() {
@@ -4472,16 +4487,20 @@
         }
 
         function isPruebaSheetTitle(title) {
-            const upper = title.toUpperCase();
+            const raw = (title || '').toString().trim();
+            const upper = raw.toUpperCase();
+            if (!raw) return false;
+            if (upper.includes('RESULTADOS') || upper.includes('EQUIPO') || upper.includes('ACTIVADOR') || upper.includes('GENERAL')) {
+                return false;
+            }
+            // Formato NNG: "... -F-" / "... -M-"
+            if (/\s*-\s*[FM]\s*-\s*$/i.test(raw) && /\d+\s*MTS/i.test(raw)) return true;
+            // Formato legado
             const looksLikePrueba = upper.endsWith('-TORNEO')
                 || upper.endsWith('-FESTIVAL')
                 || upper.endsWith('-FESTITORNEO')
                 || /^\d+M-/.test(upper);
-            return looksLikePrueba
-                && !upper.includes('RESULTADOS')
-                && !upper.includes('EQUIPO')
-                && !upper.includes('ACTIVADOR')
-                && !upper.includes('GENERAL');
+            return looksLikePrueba;
         }
 
         function buildPruebasCompetitionConfig() {
