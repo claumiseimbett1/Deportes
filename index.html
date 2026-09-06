@@ -6199,7 +6199,10 @@
                     }
                     sibling = sibling.nextElementSibling;
                 }
-                category.style.display = visible ? '' : 'none';
+                const headerLabel = (category.textContent || '').trim().toLowerCase();
+                // Menores 1/2/3 y Especial: mostrar siempre (el Sheet a veces aún no tiene nadadores)
+                const alwaysShowGroup = /^menores\b/.test(headerLabel) || headerLabel === 'especial';
+                category.style.display = (visible || alwaysShowGroup) ? '' : 'none';
             });
         }
 
@@ -6213,12 +6216,37 @@
             syncResultsMobileCardsVisibility(table);
         }
 
-        const CATEGORY_HEADER_PATTERN = /^(?:categor[ií]a\s+)?(INFANTIL|JUVENIL|MAYORES|MASTER|ESPECIAL|MENORES)\b/i;
-        const CATEGORY_SUBHEADER_PATTERN = /^(INFANTIL|JUVENIL|MAYORES|MASTER|ESPECIAL|MENORES)\s+[A-Za-z0-9]+(?:\s+(?:Torneo|Festival|Festitorneo))?$/i;
+        const CATEGORY_HEADER_PATTERN = /^(?:categor[ií]a\s+)?(INFANTIL|JUVENIL|MAYORES|MASTER|ESPECIAL|MENORES|JUNIOR)\b/i;
+        const CATEGORY_SUBHEADER_PATTERN = /^(INFANTIL|JUVENIL|MAYORES|MASTER|ESPECIAL|MENORES)\s+[A-Za-z0-9]+(?:\s*-\s*[A-Za-z0-9]+)?(?:\s+(?:Torneo|Festival|Festitorneo))?$/i;
         const SHEET_METADATA_PATTERN = /^(pos\.?|posici[oó]n|nombre|club|cat(?:egor[ií]a)?|tiempo\s*final|record|activador)$/i;
 
         function isPruebaResultsTable(table) {
             return !!(table && table.id && table.id.startsWith('resultsTable-'));
+        }
+
+        /** Del nombre de pestaña: "… Menores 1 -F-" → "MENORES 1"; "… Menores 2-3 -M-" → "MENORES 2-3" */
+        function getDefaultMenoresSegmentLabel(sheetName) {
+            const raw = (sheetName || '').toString();
+            const match = raw.match(/\bMenores\s+(\d+(?:\s*-\s*\d+)?)/i);
+            if (match) {
+                return `MENORES ${match[1].replace(/\s+/g, '')}`;
+            }
+            if (/menores/i.test(raw)) return 'MENORES';
+            return '';
+        }
+
+        /**
+         * En el Drive el segmento horizontal a menudo dice solo "Menores".
+         * En pestañas Menores 1 eso es Menores 1; en Menores 2-3 se deja el detalle del Sheet.
+         */
+        function resolveSegmentLabelForSheet(label, sheetName) {
+            const display = formatSegmentDisplayLabel(label);
+            if (!display) return '';
+            const fromSheet = getDefaultMenoresSegmentLabel(sheetName);
+            if (/^MENORES$/i.test(display) && fromSheet) {
+                return fromSheet;
+            }
+            return display;
         }
 
         function isCategoryLabel(text) {
@@ -6360,6 +6388,7 @@
                 const panel = this.table.closest('.tab-content');
                 const sheetName = panel?.dataset?.sheetName || '';
                 const { menores } = sheetName ? parsePruebaSheetName(sheetName) : { menores: false };
+                const menoresSegmentLabel = getDefaultMenoresSegmentLabel(sheetName);
 
                 let htmlContent = '';
                 const startIndex = (data[0] && data[0][0] === '__header__') ? 1 : 0;
@@ -6376,9 +6405,12 @@
 
                 this.currentCategory = '';
                 if (menores && !hasMenoresHeader) {
-                    this.currentCategory = 'MENORES';
+                    this.currentCategory = menoresSegmentLabel || 'MENORES';
                 } else if (categoryHeadersInData.length === 1) {
-                    this.currentCategory = categoryHeadersInData[0];
+                    const only = categoryHeadersInData[0];
+                    this.currentCategory = /^menores$/i.test(only) && menoresSegmentLabel
+                        ? menoresSegmentLabel
+                        : only;
                 } else if (categoryHeadersInData.length === 0) {
                     const singleFromRows = getSingleCategoryLabelFromData(data, startIndex);
                     if (singleFromRows) this.currentCategory = singleFromRows;
@@ -6387,14 +6419,15 @@
                 let lastRenderedSegment = '';
 
                 if (menores && !hasMenoresHeader) {
-                    htmlContent += this.renderCategoryRow('MENORES');
-                    lastRenderedSegment = 'MENORES';
+                    const injected = resolveSegmentLabelForSheet(this.currentCategory, sheetName) || 'MENORES 1';
+                    htmlContent += this.renderCategoryRow(injected);
+                    lastRenderedSegment = injected;
                 } else if (
                     categoryHeadersInData.length === 0 &&
                     this.currentCategory &&
-                    /^(menores|especial)$/i.test(this.currentCategory)
+                    /^(menores(?:\s+\S+)?|especial)$/i.test(this.currentCategory)
                 ) {
-                    const segmentLabel = formatSegmentDisplayLabel(this.currentCategory);
+                    const segmentLabel = resolveSegmentLabelForSheet(this.currentCategory, sheetName);
                     htmlContent += this.renderCategoryRow(segmentLabel);
                     lastRenderedSegment = segmentLabel;
                 }
@@ -6406,15 +6439,16 @@
                     if (!row || row.length === 0 || isSkippableSheetRow(row)) continue;
 
                     if (this.isCategoryRow(row)) {
-                        this.currentCategory = getCategoryHeaderFromRow(row);
-                        const segmentLabel = formatSegmentDisplayLabel(this.currentCategory);
+                        const rawCategory = getCategoryHeaderFromRow(row);
+                        const segmentLabel = resolveSegmentLabelForSheet(rawCategory, sheetName);
+                        this.currentCategory = segmentLabel || rawCategory;
                         htmlContent += this.renderCategoryRow(segmentLabel);
                         lastRenderedSegment = segmentLabel;
                     } else if (this.isDataRow(row)) {
                         if (isPruebaTable) {
                             const rowCategory = (row[4] ?? '').toString().trim();
                             if (rowCategory) {
-                                const segmentLabel = formatSegmentDisplayLabel(rowCategory);
+                                const segmentLabel = resolveSegmentLabelForSheet(rowCategory, sheetName);
                                 if (segmentLabel && segmentLabel !== lastRenderedSegment) {
                                     htmlContent += this.renderCategoryRow(segmentLabel);
                                     this.currentCategory = segmentLabel;
@@ -7236,7 +7270,7 @@
                     const headerLabel = (section.header.querySelector('.category-header-text')?.textContent || section.header.textContent)
                         .trim()
                         .toLowerCase();
-                    const alwaysShowGroup = headerLabel === 'menores' || headerLabel === 'especial';
+                    const alwaysShowGroup = /^menores\b/.test(headerLabel) || headerLabel === 'especial';
                     section.header.style.display = (sectionVisible || alwaysShowGroup || singleCategoryTable) ? '' : 'none';
                 }
             });
