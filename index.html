@@ -1783,198 +1783,263 @@
             text-decoration: underline;
         }
 
-        /* CTA Section */
-        /* Patrocinadores */
+        /* Sponsors Section — formato Championship */
         .sponsors-section {
-            padding-top: var(--space-section);
-            padding-bottom: var(--space-section);
-            background:
-                radial-gradient(ellipse 70% 50% at 10% 0%, rgba(62, 182, 232, 0.12), transparent 55%),
-                radial-gradient(ellipse 60% 45% at 90% 100%, rgba(123, 32, 38, 0.08), transparent 50%),
-                linear-gradient(180deg, #ffffff 0%, var(--surface-muted) 100%);
-        }
-
-        .sponsors-section-intro {
-            text-align: center;
-            color: var(--text-gray);
-            font-size: 1.05rem;
-            font-weight: 500;
-            margin: -0.35rem auto var(--space-title);
-            max-width: 36rem;
-            line-height: 1.55;
+            padding: 100px 20px;
+            background: #ffffff;
         }
 
         .sponsors-grid {
             display: grid;
-            grid-template-columns: repeat(2, minmax(0, 1fr));
-            gap: clamp(1rem, 2.5vw, 1.75rem);
-            max-width: 960px;
-            margin: 0 auto;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 40px;
+            margin-top: 50px;
+            max-width: 1100px;
+            margin-left: auto;
+            margin-right: auto;
         }
 
-        @media (min-width: 800px) {
+        @media (min-width: 700px) {
             .sponsors-grid {
-                grid-template-columns: repeat(4, minmax(0, 1fr));
+                grid-template-columns: repeat(4, 1fr);
+                gap: 28px;
             }
-        }
-
-        .sponsor-card {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: flex-start;
-            gap: 0.85rem;
-            padding: clamp(1.1rem, 2vw, 1.5rem) 1rem;
-            text-align: center;
-            text-decoration: none;
-            color: inherit;
-            background: rgba(255, 255, 255, 0.72);
-            border: 1px solid rgba(11, 30, 74, 0.08);
-            border-radius: var(--border-radius);
-            transition: transform 0.35s ease, box-shadow 0.35s ease, border-color 0.35s ease;
-            animation: sponsorRise 0.7s ease both;
-        }
-
-        .sponsor-card:nth-child(1) { animation-delay: 0.05s; }
-        .sponsor-card:nth-child(2) { animation-delay: 0.12s; }
-        .sponsor-card:nth-child(3) { animation-delay: 0.19s; }
-        .sponsor-card:nth-child(4) { animation-delay: 0.26s; }
-
-        .sponsor-card:hover,
-        .sponsor-card:focus-visible {
-            transform: translateY(-4px);
-            box-shadow: var(--box-shadow-hover);
-            border-color: rgba(62, 182, 232, 0.45);
-            outline: none;
         }
 
         .sponsor-card--static {
             cursor: default;
         }
 
-        .sponsor-card--static:hover,
-        .sponsor-card--static:focus-visible {
+        .sponsor-card--static:hover {
             transform: none;
             box-shadow: none;
-            border-color: rgba(11, 30, 74, 0.08);
+            border-color: #f0f6ff;
+        }
+
+        .top4race-spotlight {
+            margin-top: 56px;
+            padding: 0;
+            overflow: hidden;
+            border-radius: var(--border-radius-large);
+            background: linear-gradient(180deg, #f5faff 0%, #ffffff 45%);
+            border: 2px solid #c8e6f5;
+            box-shadow: var(--box-shadow);
+            max-width: 900px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .top4race-ad-banner {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: center;
+            gap: 14px 22px;
+            padding: 18px 20px;
+            background: linear-gradient(90deg, #071530 0%, #0b1e4a 35%, #0b5079 70%, #3eb6e8 100%);
+            color: var(--text-white);
+            text-align: center;
+        }
+
+        .top4race-ad-logo-link {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 8px 14px;
+            background: rgba(255, 255, 255, 0.14);
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.28);
+            line-height: 0;
+            transition: var(--transition);
+        }
+
+        .top4race-ad-logo-link:hover {
+            background: rgba(255, 255, 255, 0.22);
+            transform: scale(1.02);
+        }
+
+        .top4race-ad-logo {
+            max-height: 46px;
+            max-width: 180px;
+            width: auto;
+            height: auto;
+            object-fit: contain;
+        }
+
+        .top4race-ad-text-col {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .top4race-ad-main {
+            font-size: clamp(1.05rem, 2.8vw, 1.45rem);
+            font-weight: 800;
+            letter-spacing: 0.03em;
+            text-transform: uppercase;
+        }
+
+        .top4race-ad-brand {
+            font-size: 0.95rem;
+            font-weight: 600;
+            opacity: 0.95;
+        }
+
+        .top4race-spotlight-body {
+            padding: 28px 40px 34px;
+        }
+
+        .top4race-spotlight-desc {
+            margin: 0;
+            font-size: 1.02rem;
+            line-height: 1.65;
+            color: #3d4a63;
+        }
+
+        @media (max-width: 768px) {
+            .top4race-spotlight {
+                margin-top: 40px;
+            }
+            .top4race-spotlight-body {
+                padding: 22px 22px 28px;
+            }
+        }
+
+        .sponsors-section-intro {
+            text-align: center;
+            color: #5a6a85;
+            font-size: 1.02rem;
+            font-weight: 500;
+            margin: -0.35rem auto 1.25rem;
+            max-width: 640px;
+            line-height: 1.45;
+        }
+
+        .sponsor-card {
+            background: #ffffff;
+            border: 2px solid #f0f6ff;
+            border-radius: 20px;
+            padding: 40px;
+            text-align: center;
+            transition: var(--transition);
+            cursor: pointer;
+            text-decoration: none;
+            display: block;
+            color: inherit;
+        }
+
+        .sponsor-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(11, 30, 74, 0.15);
+            border-color: var(--secondary-color);
         }
 
         .sponsor-logo {
-            width: 100%;
-            height: 110px;
+            height: 80px;
+            margin-bottom: 20px;
             display: flex;
             align-items: center;
             justify-content: center;
         }
 
         .sponsor-logo img {
-            max-width: 100%;
             max-height: 100%;
-            width: auto;
-            height: auto;
+            max-width: 100%;
             object-fit: contain;
-            border-radius: 8px;
-            transition: transform 0.35s ease;
+            filter: grayscale(100%);
+            transition: filter 0.3s ease;
         }
 
-        .sponsor-card:not(.sponsor-card--static):hover .sponsor-logo img,
-        .sponsor-card:not(.sponsor-card--static):focus-visible .sponsor-logo img {
-            transform: scale(1.04);
+        .sponsor-card:hover .sponsor-logo img {
+            filter: grayscale(0%);
         }
 
         .sponsor-name {
-            font-family: var(--font-display);
-            font-size: 0.95rem;
-            letter-spacing: 0.04em;
-            text-transform: uppercase;
+            font-size: 1.2em;
             color: var(--primary-color);
             font-weight: 600;
-            line-height: 1.3;
         }
 
         .sponsor-thank-you-section {
-            margin-top: clamp(2.5rem, 4vw, 3.75rem);
-            padding: clamp(1.75rem, 3vw, 2.5rem) clamp(1.25rem, 3vw, 2rem);
-            text-align: center;
-            background: linear-gradient(135deg, rgba(11, 30, 74, 0.04), rgba(62, 182, 232, 0.08));
-            border: 1px solid rgba(11, 30, 74, 0.08);
-            border-radius: var(--border-radius-large);
-            max-width: 720px;
-            margin-left: auto;
-            margin-right: auto;
+            margin-top: 80px;
+            padding: 60px 0;
+            background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+            border-radius: 25px;
+            border: 2px solid #f0f6ff;
         }
 
-        .sponsor-thank-you-section h3 {
-            font-family: var(--font-display);
+        .thank-you-message {
+            text-align: center;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .thank-you-message h3 {
             color: var(--primary-color);
-            font-size: clamp(1.35rem, 2vw + 0.8rem, 1.85rem);
-            margin-bottom: 0.65rem;
+            font-size: 2.2em;
+            margin-bottom: 20px;
             font-weight: 700;
         }
 
-        .sponsor-thank-you-section p {
-            color: var(--text-gray);
-            font-size: 1.02rem;
+        .thank-you-message p {
+            color: #666;
+            font-size: 1.2em;
             line-height: 1.6;
-            margin-bottom: 1.25rem;
+            margin-bottom: 40px;
         }
 
         .share-thanks-buttons {
             display: flex;
-            flex-wrap: wrap;
-            gap: 0.75rem;
             justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
         }
 
         .share-thanks-btn {
             display: inline-flex;
             align-items: center;
-            gap: 0.5rem;
+            gap: 10px;
+            padding: 15px 30px;
             border: none;
-            border-radius: var(--border-radius-small);
-            padding: 0.7rem 1.15rem;
-            font-family: var(--font-family);
-            font-size: 0.95rem;
+            border-radius: 25px;
+            font-size: 1.1em;
             font-weight: 600;
+            text-decoration: none;
             cursor: pointer;
-            transition: transform 0.25s ease, opacity 0.25s ease;
-            color: #fff;
+            transition: all 0.3s ease;
+            color: white;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            font-family: var(--font-family);
         }
 
         .share-thanks-btn:hover {
-            transform: translateY(-2px);
-            opacity: 0.92;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
         }
 
-        .share-thanks-btn.whatsapp-thanks {
-            background: #1faa59;
+        .whatsapp-thanks {
+            background: linear-gradient(135deg, #25d366, #128c7e);
         }
 
-        .share-thanks-btn.instagram-thanks {
-            background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
+        .whatsapp-thanks:hover {
+            background: linear-gradient(135deg, #128c7e, #25d366);
         }
 
-        @keyframes sponsorRise {
-            from {
-                opacity: 0;
-                transform: translateY(14px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+        .instagram-thanks {
+            background: linear-gradient(135deg, #e4405f, #833ab4);
+        }
+
+        .instagram-thanks:hover {
+            background: linear-gradient(135deg, #833ab4, #e4405f);
         }
 
         @media (prefers-reduced-motion: reduce) {
-            .sponsor-card {
-                animation: none;
-            }
-
             .sponsor-card:hover,
-            .sponsor-card:focus-visible,
-            .sponsor-logo img {
+            .top4race-ad-logo-link:hover,
+            .share-thanks-btn:hover {
                 transform: none;
-                transition: none;
             }
         }
 
@@ -2423,16 +2488,52 @@
                 padding-bottom: var(--space-section-tight);
             }
 
+            .sponsors-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 25px;
+                margin-top: 30px;
+            }
+
+            .sponsor-card {
+                padding: 25px;
+            }
+
             .sponsor-logo {
-                height: 96px;
+                height: 60px;
+                margin-bottom: 15px;
+            }
+
+            .sponsor-name {
+                font-size: 0.9em;
+            }
+
+            .sponsor-thank-you-section {
+                margin-top: 50px;
+                padding: 40px 0;
+                border-radius: 15px;
+            }
+
+            .thank-you-message h3 {
+                font-size: 1.8em;
+                margin-bottom: 15px;
+            }
+
+            .thank-you-message p {
+                font-size: 1.1em;
+                margin-bottom: 30px;
             }
 
             .share-thanks-buttons {
                 flex-direction: column;
-                align-items: stretch;
+                align-items: center;
+                gap: 15px;
             }
 
             .share-thanks-btn {
+                width: 100%;
+                max-width: 280px;
+                padding: 12px 20px;
+                font-size: 1em;
                 justify-content: center;
             }
 
@@ -4571,48 +4672,80 @@
         </div>
     </section>
 
-    <!-- Patrocinadores -->
+    <!-- Sponsors Section -->
     <section class="sponsors-section" id="patrocinadores">
         <div class="container">
             <h2 class="section-title">Nuestros patrocinadores</h2>
-            <p class="sponsors-section-intro">Cuatro aliados que impulsan el Festi-Torneo de Aniversario NNG en Montería.</p>
+            <p class="sponsors-section-intro">Esta edición cuenta con el apoyo de <strong>4 empresas</strong> aliadas.</p>
             <div class="sponsors-grid">
-                <div class="sponsor-card sponsor-card--static" aria-label="Maxi Recargas">
+                <div class="sponsor-card sponsor-card--static" aria-label="Maxi">
                     <div class="sponsor-logo">
-                        <img src="img/Maxi.jpg" alt="Logo Maxi Recargas" width="180" height="110" loading="lazy">
+                        <img src="img/Maxi.jpg" alt="Logo Maxi" width="180" height="80" loading="lazy">
                     </div>
                     <div class="sponsor-name">Maxi</div>
                 </div>
-                <a href="https://www.instagram.com/LATIENDADEANGELESSO/" target="_blank" rel="noopener noreferrer" class="sponsor-card" aria-label="La Tienda de Ángeles en Instagram">
+                <a href="https://www.instagram.com/LATIENDADEANGELESSO/" target="_blank" rel="noopener noreferrer" class="sponsor-card">
                     <div class="sponsor-logo">
-                        <img src="img/Tienda-de-Angeles.jpg" alt="Logo La Tienda de Ángeles" width="180" height="110" loading="lazy">
+                        <img src="img/Tienda-de-Angeles.jpg" alt="Logo Tienda de Ángeles" width="180" height="80" loading="lazy">
                     </div>
                     <div class="sponsor-name">Tienda de Ángeles</div>
                 </a>
                 <div class="sponsor-card sponsor-card--static" aria-label="IMDER Montería">
                     <div class="sponsor-logo">
-                        <img src="img/Imder.jpg" alt="Logo IMDER Montería" width="180" height="110" loading="lazy">
+                        <img src="img/Imder.jpg" alt="Logo IMDER Montería" width="180" height="80" loading="lazy">
                     </div>
                     <div class="sponsor-name">IMDER Montería</div>
                 </div>
                 <div class="sponsor-card sponsor-card--static" aria-label="Gibraltar">
                     <div class="sponsor-logo">
-                        <img src="img/Gibraltar.jpg" alt="Logo Gibraltar" width="180" height="110" loading="lazy">
+                        <img src="img/Gibraltar.jpg" alt="Logo Gibraltar" width="180" height="80" loading="lazy">
                     </div>
                     <div class="sponsor-name">Gibraltar</div>
                 </div>
             </div>
 
+            <article id="top4race" class="top4race-spotlight" itemscope itemtype="https://schema.org/ProfessionalService">
+                <meta itemprop="name" content="Top4Race">
+                <link itemprop="url" href="https://top4race.netlify.app/">
+                <div class="top4race-spotlight-body">
+                    <p class="top4race-spotlight-desc" itemprop="description">
+                        <strong>Top4Race</strong>, del Club Deportivo AquaTEN, aporta <strong>solución de chips y medición profesional</strong> para eventos deportivos en Córdoba: cronometraje electrónico y gestión técnica en <strong>aguas abiertas</strong>, <strong>atletismo</strong> y <strong>patinaje</strong>, con tiempos confiables y difusión de resultados para organizadores y participantes.
+                    </p>
+                </div>
+                <div class="top4race-ad-banner" role="complementary" aria-label="Aliado tecnológico Top4Race">
+                    <a href="https://top4race.netlify.app/" class="top4race-ad-logo-link" target="_blank" rel="sponsored noopener noreferrer" aria-label="Top4Race — abrir sitio web">
+                        <img src="img/top4race.jpg" alt="Logo Top4Race" class="top4race-ad-logo" width="180" height="64" loading="lazy">
+                    </a>
+                    <div class="top4race-ad-text-col">
+                        <span class="top4race-ad-main">Aliado tecnológico</span>
+                        <span class="top4race-ad-brand">Top4Race</span>
+                    </div>
+                </div>
+            </article>
+
             <div class="sponsor-thank-you-section">
-                <h3>¡Gracias por hacer posible este evento!</h3>
-                <p>El Festi-Torneo de Aniversario NNG no sería el mismo sin el respaldo de Maxi, Tienda de Ángeles, IMDER Montería y Gibraltar. ¡Comparte tu agradecimiento!</p>
-                <div class="share-thanks-buttons">
-                    <button type="button" class="share-thanks-btn whatsapp-thanks" onclick="shareThankYouMessage('whatsapp')">
-                        Compartir por WhatsApp
-                    </button>
-                    <button type="button" class="share-thanks-btn instagram-thanks" onclick="shareThankYouMessage('instagram')">
-                        Compartir en Instagram
-                    </button>
+                <div class="thank-you-message">
+                    <h3>¡Gracias por hacer posible este gran evento!</h3>
+                    <p>El Festi-Torneo de Aniversario NNG no sería posible sin el apoyo incondicional de nuestros patrocinadores. Su compromiso con el deporte y la comunidad de natación hace que cada brazada cuente y cada sueño se haga realidad. ¡Comparte tu agradecimiento!</p>
+
+                    <div class="share-thanks-buttons">
+                        <button type="button" class="share-thanks-btn whatsapp-thanks" onclick="shareThankYouMessage('whatsapp')">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                                <path d="M16.75 13.96C16.41 13.79 15.31 13.24 15.08 13.15C14.86 13.06 14.7 13.02 14.54 13.28C14.38 13.55 13.91 14.11 13.75 14.28C13.59 14.45 13.43 14.47 13.16 14.3C12.89 14.13 12.06 13.85 11.07 12.99C10.29 12.3 9.73 11.48 9.59 11.21C9.45 10.94 9.56 10.81 9.7 10.67C9.83 10.53 9.99 10.33 10.13 10.18C10.27 10.03 10.32 9.9 10.42 9.73C10.52 9.56 10.47 9.4 10.39 9.27C10.31 9.14 9.85 7.97 9.66 7.52C9.47 7.07 9.28 7.13 9.14 7.12H8.62C8.42 7.12 8.13 7.19 7.89 7.43C7.65 7.67 6.96 8.31 6.96 9.56C6.96 10.81 7.92 12.01 8.06 12.18C8.2 12.35 9.85 14.8 12.29 15.76C14.73 16.72 14.73 16.34 15.13 16.3C15.53 16.26 16.54 15.68 16.75 15.13C16.96 14.58 16.96 14.12 16.88 13.96H16.75Z"/>
+                                <path d="M12.04 21.82C17.56 21.82 22 17.38 22 11.86C22 6.34 17.56 1.9 12.04 1.9C6.52 1.9 2.08 6.34 2.08 11.86C2.08 14.13 2.84 16.24 4.12 17.9L2.56 21.34L6.17 19.95C7.73 21.13 9.79 21.82 12.04 21.82Z"/>
+                            </svg>
+                            Compartir por WhatsApp
+                        </button>
+
+                        <button type="button" class="share-thanks-btn instagram-thanks" onclick="shareThankYouMessage('instagram')">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                                <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
+                                <path d="M16 11.37C16 13.38 14.21 15 12 15C9.79 15 8 13.38 8 11.37C8 9.36 9.79 7.75 12 7.75C14.21 7.75 16 9.36 16 11.37Z"/>
+                                <path d="M17.5 6.5H17.51"/>
+                            </svg>
+                            Compartir en Instagram
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -7560,33 +7693,71 @@
 
         // Función simplificada para compartir resultados
         function shareThankYouMessage(platform) {
-            const thankYouMessage = `🙏 ¡Gracias a nuestros patrocinadores del ${EVENT_DISPLAY_NAME}!
+            const thankYouMessage = `🙏 ¡Gracias infinitas a nuestros increíbles patrocinadores y organizadores del ${EVENT_DISPLAY_NAME}! 🏊‍♂️🏊‍♀️
+🤝 Nuestros patrocinadores (4 empresas):
+Maxi
+Tienda de Ángeles · @LATIENDADEANGELESSO
+IMDER Montería
+Gibraltar
 
-🤝 Maxi · Tienda de Ángeles · IMDER Montería · Gibraltar
+Organizadores:
+Club Nadadores Nueva Generación
 
-🏊 Club Nadadores Nueva Generación — Montería, Córdoba
-#FestiTorneoNNG #NNG #Natación #Montería
+Aliado tecnológico:
+Top4Race · https://top4race.netlify.app/
 
-https://festitorneosinu.netlify.app`;
+#Natación #FestiTorneoNNG #NNG #NadadoresNuevaGeneracion #Montería #Córdoba #Swimming
+
+¡Gracias por creer en la natación cordobesa! 💙🏆`;
 
             if (platform === 'whatsapp') {
                 window.open(`https://wa.me/?text=${encodeURIComponent(thankYouMessage)}`, '_blank');
-                return;
+            } else if (platform === 'instagram') {
+                if (navigator.clipboard && navigator.clipboard.writeText) {
+                    navigator.clipboard.writeText(thankYouMessage).then(() => {
+                        showInstagramThankYouInstructions();
+                    }).catch(() => {
+                        fallbackCopyToClipboard(thankYouMessage);
+                        showInstagramThankYouInstructions();
+                    });
+                } else {
+                    fallbackCopyToClipboard(thankYouMessage);
+                    showInstagramThankYouInstructions();
+                }
             }
+        }
 
-            if (navigator.clipboard && navigator.clipboard.writeText) {
-                navigator.clipboard.writeText(thankYouMessage).then(() => {
-                    if (typeof showInstagramInstructions === 'function') {
-                        showInstagramInstructions();
-                    } else {
-                        alert('Mensaje copiado. Pégalo en Instagram.');
-                    }
-                }).catch(() => {
-                    alert(thankYouMessage);
-                });
-            } else {
-                alert(thankYouMessage);
-            }
+        function showInstagramThankYouInstructions() {
+            const instructionModal = document.createElement('div');
+            instructionModal.className = 'share-modal';
+            instructionModal.innerHTML = `
+                <div class="share-modal-content share-modal-content-center">
+                    <div class="share-modal-header">
+                        <h3 class="instagram-title">📱 Instagram - Mensaje de Agradecimiento</h3>
+                        <button class="close-modal" onclick="closeInstagramThankYouInstructions()">&times;</button>
+                    </div>
+                    <div class="share-content-padding">
+                        <div class="share-icon-large">📋</div>
+                        <h4 class="share-icon-title">¡Mensaje copiado exitosamente!</h4>
+                        <div class="share-instructions-text">
+                            <p><strong>Paso 1:</strong> Abre Instagram en tu dispositivo</p>
+                            <p><strong>Paso 2:</strong> Ve a tu perfil o stories</p>
+                            <p><strong>Paso 3:</strong> Pega el mensaje copiado</p>
+                            <p><strong>Paso 4:</strong> ¡Comparte tu agradecimiento!</p>
+                        </div>
+                        <div class="share-modal-footer">
+                            <button class="modal-btn modal-btn-primary" onclick="closeInstagramThankYouInstructions()">¡Entendido!</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(instructionModal);
+            instructionModal.style.display = 'flex';
+        }
+
+        function closeInstagramThankYouInstructions() {
+            const modal = document.querySelector('.share-modal');
+            if (modal) modal.remove();
         }
 
         function shareResult(swimmer, position, time, category) {
