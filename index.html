@@ -190,6 +190,7 @@
         .event-stats-section,
         .terms-section,
         .results-section,
+        .sponsors-section,
         .cta-section,
         .contact-section {
             scroll-margin-top: var(--header-offset);
@@ -1783,6 +1784,200 @@
         }
 
         /* CTA Section */
+        /* Patrocinadores */
+        .sponsors-section {
+            padding-top: var(--space-section);
+            padding-bottom: var(--space-section);
+            background:
+                radial-gradient(ellipse 70% 50% at 10% 0%, rgba(62, 182, 232, 0.12), transparent 55%),
+                radial-gradient(ellipse 60% 45% at 90% 100%, rgba(123, 32, 38, 0.08), transparent 50%),
+                linear-gradient(180deg, #ffffff 0%, var(--surface-muted) 100%);
+        }
+
+        .sponsors-section-intro {
+            text-align: center;
+            color: var(--text-gray);
+            font-size: 1.05rem;
+            font-weight: 500;
+            margin: -0.35rem auto var(--space-title);
+            max-width: 36rem;
+            line-height: 1.55;
+        }
+
+        .sponsors-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: clamp(1rem, 2.5vw, 1.75rem);
+            max-width: 960px;
+            margin: 0 auto;
+        }
+
+        @media (min-width: 800px) {
+            .sponsors-grid {
+                grid-template-columns: repeat(4, minmax(0, 1fr));
+            }
+        }
+
+        .sponsor-card {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            gap: 0.85rem;
+            padding: clamp(1.1rem, 2vw, 1.5rem) 1rem;
+            text-align: center;
+            text-decoration: none;
+            color: inherit;
+            background: rgba(255, 255, 255, 0.72);
+            border: 1px solid rgba(11, 30, 74, 0.08);
+            border-radius: var(--border-radius);
+            transition: transform 0.35s ease, box-shadow 0.35s ease, border-color 0.35s ease;
+            animation: sponsorRise 0.7s ease both;
+        }
+
+        .sponsor-card:nth-child(1) { animation-delay: 0.05s; }
+        .sponsor-card:nth-child(2) { animation-delay: 0.12s; }
+        .sponsor-card:nth-child(3) { animation-delay: 0.19s; }
+        .sponsor-card:nth-child(4) { animation-delay: 0.26s; }
+
+        .sponsor-card:hover,
+        .sponsor-card:focus-visible {
+            transform: translateY(-4px);
+            box-shadow: var(--box-shadow-hover);
+            border-color: rgba(62, 182, 232, 0.45);
+            outline: none;
+        }
+
+        .sponsor-card--static {
+            cursor: default;
+        }
+
+        .sponsor-card--static:hover,
+        .sponsor-card--static:focus-visible {
+            transform: none;
+            box-shadow: none;
+            border-color: rgba(11, 30, 74, 0.08);
+        }
+
+        .sponsor-logo {
+            width: 100%;
+            height: 110px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .sponsor-logo img {
+            max-width: 100%;
+            max-height: 100%;
+            width: auto;
+            height: auto;
+            object-fit: contain;
+            border-radius: 8px;
+            transition: transform 0.35s ease;
+        }
+
+        .sponsor-card:not(.sponsor-card--static):hover .sponsor-logo img,
+        .sponsor-card:not(.sponsor-card--static):focus-visible .sponsor-logo img {
+            transform: scale(1.04);
+        }
+
+        .sponsor-name {
+            font-family: var(--font-display);
+            font-size: 0.95rem;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+            color: var(--primary-color);
+            font-weight: 600;
+            line-height: 1.3;
+        }
+
+        .sponsor-thank-you-section {
+            margin-top: clamp(2.5rem, 4vw, 3.75rem);
+            padding: clamp(1.75rem, 3vw, 2.5rem) clamp(1.25rem, 3vw, 2rem);
+            text-align: center;
+            background: linear-gradient(135deg, rgba(11, 30, 74, 0.04), rgba(62, 182, 232, 0.08));
+            border: 1px solid rgba(11, 30, 74, 0.08);
+            border-radius: var(--border-radius-large);
+            max-width: 720px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .sponsor-thank-you-section h3 {
+            font-family: var(--font-display);
+            color: var(--primary-color);
+            font-size: clamp(1.35rem, 2vw + 0.8rem, 1.85rem);
+            margin-bottom: 0.65rem;
+            font-weight: 700;
+        }
+
+        .sponsor-thank-you-section p {
+            color: var(--text-gray);
+            font-size: 1.02rem;
+            line-height: 1.6;
+            margin-bottom: 1.25rem;
+        }
+
+        .share-thanks-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            justify-content: center;
+        }
+
+        .share-thanks-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            border: none;
+            border-radius: var(--border-radius-small);
+            padding: 0.7rem 1.15rem;
+            font-family: var(--font-family);
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.25s ease, opacity 0.25s ease;
+            color: #fff;
+        }
+
+        .share-thanks-btn:hover {
+            transform: translateY(-2px);
+            opacity: 0.92;
+        }
+
+        .share-thanks-btn.whatsapp-thanks {
+            background: #1faa59;
+        }
+
+        .share-thanks-btn.instagram-thanks {
+            background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
+        }
+
+        @keyframes sponsorRise {
+            from {
+                opacity: 0;
+                transform: translateY(14px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .sponsor-card {
+                animation: none;
+            }
+
+            .sponsor-card:hover,
+            .sponsor-card:focus-visible,
+            .sponsor-logo img {
+                transform: none;
+                transition: none;
+            }
+        }
+
         .cta-section {
             padding-top: var(--space-section);
             padding-bottom: var(--space-section);
@@ -2223,9 +2418,22 @@
                 padding: 8px 12px;
             }
 
-            .info-section, .results-section, .cta-section, .contact-section {
+            .info-section, .results-section, .sponsors-section, .cta-section, .contact-section {
                 padding-top: var(--space-section-tight);
                 padding-bottom: var(--space-section-tight);
+            }
+
+            .sponsor-logo {
+                height: 96px;
+            }
+
+            .share-thanks-buttons {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .share-thanks-btn {
+                justify-content: center;
             }
 
             .event-stats-section-bg,
@@ -3893,6 +4101,7 @@
                         <li><a href="#informacion" onclick="scrollToSection('info-section')">Información</a></li>
                         <li><a href="#terminos" onclick="scrollToSection('terms-section')">Términos</a></li>
                         <li><a href="#resultados" onclick="scrollToSection('results-section')">Resultados</a></li>
+                        <li><a href="#patrocinadores" onclick="scrollToSection('sponsors-section')">Patrocinadores</a></li>
                         <li><a href="#contacto" onclick="scrollToSection('contact-section')">Contacto</a></li>
                     </ul>
                 </div>
@@ -4357,6 +4566,53 @@
                     <p class="pdf-status-text">
                         <span class="pdf-status-icon">⏳</span> Generando PDF...
                     </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Patrocinadores -->
+    <section class="sponsors-section" id="patrocinadores">
+        <div class="container">
+            <h2 class="section-title">Nuestros patrocinadores</h2>
+            <p class="sponsors-section-intro">Cuatro aliados que impulsan el Festi-Torneo de Aniversario NNG en Montería.</p>
+            <div class="sponsors-grid">
+                <div class="sponsor-card sponsor-card--static" aria-label="Maxi Recargas">
+                    <div class="sponsor-logo">
+                        <img src="img/Maxi.jpg" alt="Logo Maxi Recargas" width="180" height="110" loading="lazy">
+                    </div>
+                    <div class="sponsor-name">Maxi</div>
+                </div>
+                <a href="https://www.instagram.com/LATIENDADEANGELESSO/" target="_blank" rel="noopener noreferrer" class="sponsor-card" aria-label="La Tienda de Ángeles en Instagram">
+                    <div class="sponsor-logo">
+                        <img src="img/Tienda-de-Angeles.jpg" alt="Logo La Tienda de Ángeles" width="180" height="110" loading="lazy">
+                    </div>
+                    <div class="sponsor-name">Tienda de Ángeles</div>
+                </a>
+                <div class="sponsor-card sponsor-card--static" aria-label="IMDER Montería">
+                    <div class="sponsor-logo">
+                        <img src="img/Imder.jpg" alt="Logo IMDER Montería" width="180" height="110" loading="lazy">
+                    </div>
+                    <div class="sponsor-name">IMDER Montería</div>
+                </div>
+                <div class="sponsor-card sponsor-card--static" aria-label="Gibraltar">
+                    <div class="sponsor-logo">
+                        <img src="img/Gibraltar.jpg" alt="Logo Gibraltar" width="180" height="110" loading="lazy">
+                    </div>
+                    <div class="sponsor-name">Gibraltar</div>
+                </div>
+            </div>
+
+            <div class="sponsor-thank-you-section">
+                <h3>¡Gracias por hacer posible este evento!</h3>
+                <p>El Festi-Torneo de Aniversario NNG no sería el mismo sin el respaldo de Maxi, Tienda de Ángeles, IMDER Montería y Gibraltar. ¡Comparte tu agradecimiento!</p>
+                <div class="share-thanks-buttons">
+                    <button type="button" class="share-thanks-btn whatsapp-thanks" onclick="shareThankYouMessage('whatsapp')">
+                        Compartir por WhatsApp
+                    </button>
+                    <button type="button" class="share-thanks-btn instagram-thanks" onclick="shareThankYouMessage('instagram')">
+                        Compartir en Instagram
+                    </button>
                 </div>
             </div>
         </div>
@@ -7303,6 +7559,36 @@
         }
 
         // Función simplificada para compartir resultados
+        function shareThankYouMessage(platform) {
+            const thankYouMessage = `🙏 ¡Gracias a nuestros patrocinadores del ${EVENT_DISPLAY_NAME}!
+
+🤝 Maxi · Tienda de Ángeles · IMDER Montería · Gibraltar
+
+🏊 Club Nadadores Nueva Generación — Montería, Córdoba
+#FestiTorneoNNG #NNG #Natación #Montería
+
+https://festitorneosinu.netlify.app`;
+
+            if (platform === 'whatsapp') {
+                window.open(`https://wa.me/?text=${encodeURIComponent(thankYouMessage)}`, '_blank');
+                return;
+            }
+
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(thankYouMessage).then(() => {
+                    if (typeof showInstagramInstructions === 'function') {
+                        showInstagramInstructions();
+                    } else {
+                        alert('Mensaje copiado. Pégalo en Instagram.');
+                    }
+                }).catch(() => {
+                    alert(thankYouMessage);
+                });
+            } else {
+                alert(thankYouMessage);
+            }
+        }
+
         function shareResult(swimmer, position, time, category) {
             showShareOptions(swimmer, position, time, category);
         }
