@@ -5420,8 +5420,8 @@
 
         const GENERAL_CLASSIFICATION_SHEETS = {
             'resultados-masculino': [
-                'RESULTADOS GENERALES-M',
                 'RESULTADOS GENERALES-M-FESTITORNEO',
+                'RESULTADOS GENERALES-M',
                 'RESULTADOS GENERALES-M-TORNEO',
                 'RESULTADOS GENERALES-M_TORNEO',
                 'RESULTADOS-GENERALES-M-TORNEO',
@@ -5430,8 +5430,8 @@
                 'RESULTADOS-GENERALES-M-FESTIVAL'
             ],
             'resultados-femenino': [
-                'RESULTADOS GENERALES-F',
                 'RESULTADOS GENERALES-F-FESTITORNEO',
+                'RESULTADOS GENERALES-F',
                 'RESULTADOS GENERALES-F-TORNEO',
                 'RESULTADOS GENERALES-F_TORNEO',
                 'RESULTADOS-GENERALES-F-TORNEO',
@@ -5440,8 +5440,8 @@
                 'RESULTADOS-GENERALES-F-FESTIVAL'
             ],
             'resultados-equipo': [
-                'RESULTADOS EQUIPOS',
                 'RESULTADOS EQUIPOS FESTITORNEO',
+                'RESULTADOS EQUIPOS',
                 'RESULTADOS EQUIPOS TORNEO',
                 'RESULTADOS-EQUIPOS-TORNEO',
                 'RESULTADOS EQUIPOS FESTIVAL',
@@ -5530,12 +5530,58 @@
             const fuzzy = pool.find(sheet => validateGeneralSheetMatch(sheet.title, config));
             if (fuzzy) return fuzzy;
 
-            const primaryName = alternatives[0];
-            if (primaryName) {
-                return { title: primaryName, gid: lookupGidForSheetTitle(primaryName) };
+            // Sin metadatos de pestañas: usar el primer nombre (FESTITORNEO va primero).
+            // Nombres cortos tipo "RESULTADOS GENERALES-F" hacen que gviz devuelva otra hoja.
+            if (alternatives[0]) {
+                return { title: alternatives[0], gid: lookupGidForSheetTitle(alternatives[0]) };
             }
 
             return null;
+        }
+
+        /** True si la hoja trae nadadores/equipos reales (no plantilla vacía de prueba). */
+        function generalClassificationDataHasEntries(data, gender) {
+            if (!data || !data.length) return false;
+            const startIndex = (data[0] && data[0][0] === '__header__') ? 1 : 0;
+            for (let i = startIndex; i < data.length; i++) {
+                const row = data[i];
+                if (!row || !row.length) continue;
+                if (getCategoryHeaderFromRow(row)) continue;
+                const name = (row[1] ?? '').toString().trim();
+                if (!name || name === '-' || /^nadador/i.test(name) || /^pos\.?$/i.test(name)) continue;
+                if (/^equipo$/i.test(name) || /^categoría$/i.test(name) || /^categoria$/i.test(name)) continue;
+                return true;
+            }
+            return false;
+        }
+
+        async function loadGeneralClassificationSheetData(config, preferredSheet = null) {
+            const tried = new Set();
+            const candidates = [];
+            if (preferredSheet?.title) candidates.push(preferredSheet);
+            (config.alternativeNames || []).forEach(title => {
+                candidates.push({ title, gid: lookupGidForSheetTitle(title) });
+            });
+
+            for (const candidate of candidates) {
+                const title = (candidate?.title || '').toString().trim();
+                if (!title) continue;
+                const key = title.toUpperCase();
+                if (tried.has(key)) continue;
+                tried.add(key);
+
+                try {
+                    const data = await loadSheetByGid(candidate.gid, title);
+                    if (data && data.length && generalClassificationDataHasEntries(data, config.gender)) {
+                        console.log(` Clasificación general OK desde "${title}" (${data.length} filas)`);
+                        return { data, sheet: { title, gid: candidate.gid } };
+                    }
+                    console.warn(`⚠️ "${title}" sin nombres/equipos útiles; probando otra pestaña...`);
+                } catch (error) {
+                    console.warn(`⚠️ No se pudo cargar "${title}":`, error.message);
+                }
+            }
+            return { data: null, sheet: preferredSheet };
         }
 
         function buildGeneralClassificationCompetitions() {
@@ -6162,7 +6208,17 @@
                     
                     if (foundSheet) {
                         console.log(`📄 Cargando datos de "${foundSheet.title}" (GID: ${foundSheet.gid ?? 'por nombre'})...`);
-                        const data = await loadSheetByGid(foundSheet.gid, foundSheet.title);
+                        let data = null;
+
+                        if (config.gender === 'femenino' || config.gender === 'masculino' || config.gender === 'equipo') {
+                            const loaded = await loadGeneralClassificationSheetData(config, foundSheet);
+                            data = loaded.data;
+                            if (loaded.sheet?.title) {
+                                console.log(`📌 Pestaña de clasificación usada: "${loaded.sheet.title}"`);
+                            }
+                        } else {
+                            data = await loadSheetByGid(foundSheet.gid, foundSheet.title);
+                        }
                         
                         if (data && data.length > 0) {
                             console.log(` Datos cargados: ${data.length} filas`);
@@ -6701,6 +6757,20 @@
             const dataCols = row.slice(0, 8).map(cell => (cell != null ? cell.toString().trim() : ''));
             const colA = dataCols[0];
             const colB = dataCols[1];
+            const colC = dataCols[2];
+            const colAge = dataCols[3];
+            const colCat = dataCols[4];
+            const colPts = dataCols[5];
+
+            // Fila de resultado (nadador/equipo): no tratar como encabezado de categoría.
+            // Evita que el club "MASTER" se confunda con la categoría Master.
+            const hasResultPayload = Boolean(colAge || colCat || (colPts && colPts !== '0') || (colC && colC !== '0' && colC !== '-'));
+            if (colB && !isCategoryLabel(colB) && colB !== '-' && !/^\d+$/.test(colB)) {
+                return null;
+            }
+            if (colA && !isCategoryLabel(colA) && colA !== '0' && !/^\d+$/.test(colA) && (colB || hasResultPayload)) {
+                return null;
+            }
 
             if (/^categor[ií]a$/i.test(colA) && colB && isCategoryLabel(colB)) {
                 return normalizeCategoryLabel(colB);
