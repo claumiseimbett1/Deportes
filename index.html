@@ -6735,9 +6735,32 @@
             return (text ?? '').toString().replace(/^categor[ií]a\s+/i, '').replace(/\s+/g, ' ').trim();
         }
 
+        /** Clave estable para agrupar ("Junior y mayores" ≈ "Junior-Mayores"). */
+        function categoryGroupKey(text) {
+            return normalizeCategoryLabel(text)
+                .normalize('NFD')
+                .replace(/[\u0300-\u036f]/g, '')
+                .toLowerCase()
+                .replace(/[-_/]+/g, ' ')
+                .replace(/\by\b/g, ' ')
+                .replace(/\s+/g, ' ')
+                .trim();
+        }
+
         function formatSegmentDisplayLabel(label) {
             const normalized = normalizeCategoryLabel(label);
             return normalized ? normalized.toUpperCase() : '';
+        }
+
+        function buildCategoryHeaderRowHtml(label, colspan = 8) {
+            const display = formatSegmentDisplayLabel(label) || normalizeCategoryLabel(label);
+            if (!display) return '';
+            return `
+                        <tr class="category-header">
+                            <td colspan="${colspan}" class="category-header-cell">
+                                <span class="category-header-text">${escapeHtml(display)}</span>
+                            </td>
+                        </tr>`;
         }
 
         function rowHasHorizontalSegmentInColumnA(row) {
@@ -7168,83 +7191,86 @@
         function updateGenderTableContent(table, data, genderLabel) {
             const tbody = table.querySelector('tbody');
             if (!tbody) return;
-            
-            // DEBUG: Verificar qué datos se están pasando a la tabla femenina
-            if (table.id === 'resultsTableFemenino') {
-                console.log(' DEBUG: updateGenderTableContent para tabla femenina');
-                console.log(' Datos recibidos:', data ? data.length + ' filas' : 'null/undefined');
-                console.log(' Primera fila (headers):', data ? data[0] : 'n/a');
-                console.log(' Segunda fila (primer dato):', data && data[1] ? data[1] : 'n/a');
-                console.log(' genderLabel:', genderLabel);
-            }
-            
+
             let htmlContent = '';
             let currentCategory = '';
+            let currentCategoryKey = '';
             const startIndex = (data[0] && data[0][0] === '__header__') ? 1 : 0;
+
+            const appendCategoryHeaderIfNeeded = (rawCategory) => {
+                const label = normalizeCategoryLabel(rawCategory);
+                if (!label) return;
+                const key = categoryGroupKey(label);
+                if (!key || key === currentCategoryKey) return;
+                currentCategory = label;
+                currentCategoryKey = key;
+                htmlContent += buildCategoryHeaderRowHtml(currentCategory, 8);
+            };
 
             for (let i = startIndex; i < data.length; i++) {
                 const row = data[i];
-                if (!row || row.length === 0) continue;
+                if (!row || row.length === 0 || isSkippableSheetRow(row)) continue;
 
                 const categoryHeader = getCategoryHeaderFromRow(row);
                 if (categoryHeader) {
-                    currentCategory = categoryHeader;
+                    appendCategoryHeaderIfNeeded(categoryHeader);
+                    continue;
+                }
+
+                const lugar = (row[0] ?? '').toString().trim();
+                const atleta = (row[1] ?? '').toString().trim();
+                const equipo = (row[2] ?? '').toString().trim();
+                const edad = (row[3] ?? '').toString().trim();
+                const categoria = (row[4] ?? '').toString().trim();
+                const puntosTotales = (row[5] ?? '').toString().trim();
+                const certificado = (row[9] ?? row[6] ?? '').toString().trim();
+
+                if (/^(lugar|pos\.?|posici[oó]n)$/i.test(lugar) || /^nadador$/i.test(atleta)) {
+                    continue;
+                }
+
+                // Skip si no hay atleta válido
+                if (!atleta || atleta === '-') {
+                    continue;
+                }
+
+                if (atleta.toLowerCase().includes('sin atletas')) {
+                    appendCategoryHeaderIfNeeded(categoria || currentCategory);
                     htmlContent += `
-                        <tr class="category-header">
-                            <td colspan="8" class="category-header-cell">
-                                <span class="category-header-text">${escapeHtml(currentCategory)}</span>
-                            </td>
-                        </tr>`;
-                } else if (row.length >= 6) {
-                    const lugar = (row[0] ?? '').toString().trim();
-                    const atleta = (row[1] ?? '').toString().trim();
-                    const equipo = (row[2] ?? '').toString().trim();
-                    const edad = (row[3] ?? '').toString().trim();
-                    const categoria = (row[4] ?? '').toString().trim();
-                    const puntosTotales = (row[5] ?? '').toString().trim();
-                    const certificado = (row[9] ?? row[6] ?? '').toString().trim();
-                    
-                    // Debug: verificar datos de certificado (reducido)
-                    if (atleta && atleta !== 'Sin atletas') {
-                        console.log(`🎓 ${atleta}: Certificado="${certificado || 'VACÍO'}" (${certificado === 'SI' ? 'HABILITADO' : 'DESHABILITADO'})`);
-                    }
-                    
-                    // Skip si no hay atleta válido
-                    if (!atleta || atleta === '-' || atleta.toLowerCase().includes('sin atletas')) {
-                        if (atleta && atleta.toLowerCase().includes('sin atletas')) {
-                            htmlContent += `
                                 <tr>
                                     <td data-label="Pos." class="rank rank-empty-cell">-</td>
                                     <td data-label="Atleta" class="athlete-empty-cell">Sin atletas</td>
                                     <td data-label="Equipo" class="team-empty-cell">-</td>
                                     <td data-label="Edad" class="age-empty-cell">-</td>
-                                    <td data-label="Categoría" class="category-empty-cell">${currentCategory || categoria}</td>
+                                    <td data-label="Categoría" class="category-empty-cell">${escapeHtml(currentCategory || categoria || '-')}</td>
                                     <td data-label="Puntos Totales" class="points-empty-cell">-</td>
                                     <td data-label="Compartir" class="points-empty-cell">-</td>
                                     <td data-label="Diploma" class="points-empty-cell">-</td>
                                 </tr>`;
-                        }
-                        continue;
-                    }
-                    
-                    // Generar medallas para las posiciones
-                    const { display: displayPos, isPodium } = formatRankDisplay(lugar);
-                    
-                    const diplomaButtonClick = `downloadDiploma('${(atleta || '').replace(/'/g, '\\\'')
-                    }', '${lugar || ''}', '${(equipo || '').replace(/'/g, '\\\'')
-                    }', '${(categoria || currentCategory || '').replace(/'/g, '\\\'')
-                    }')`;
+                    continue;
+                }
 
-                    htmlContent += `
+                // Separar por categoría usando la columna CATEGORIA del Sheet
+                appendCategoryHeaderIfNeeded(categoria);
+
+                const displayCategory = categoria || currentCategory;
+                const { display: displayPos, isPodium } = formatRankDisplay(lugar);
+
+                const diplomaButtonClick = `downloadDiploma('${(atleta || '').replace(/'/g, '\\\'')
+                }', '${lugar || ''}', '${(equipo || '').replace(/'/g, '\\\'')
+                }', '${(displayCategory || '').replace(/'/g, '\\\'')
+                }')`;
+
+                htmlContent += `
                         <tr class="${isPodium ? 'podium-row' : ''}">
                             <td data-label="Pos." class="rank">${displayPos || '-'}</td>
                             <td data-label="Atleta" class="athlete-cell athlete-name-cell">${escapeHtml(atleta || '-')}</td>
                             <td data-label="Equipo" class="team-cell">${escapeHtml(equipo || '-')}</td>
                             <td data-label="Edad">${escapeHtml(edad || '-')}</td>
-                            <td data-label="Categoría"><span class="category-badge">${escapeHtml(categoria || currentCategory)}</span></td>
+                            <td data-label="Categoría"><span class="category-badge">${escapeHtml(displayCategory)}</span></td>
                             <td data-label="Puntos Totales" class="points total-points-cell">${escapeHtml(puntosTotales || '0')}</td>
                             <td data-label="Compartir" class="share-cell">
-                                <button class="share-btn" onclick="shareResult('${atleta || ''}', '${lugar || ''}', 'N/A', '${categoria || currentCategory || ''}')">📱</button>
+                                <button class="share-btn" onclick="shareResult('${atleta || ''}', '${lugar || ''}', 'N/A', '${displayCategory || ''}')">📱</button>
                             </td>
                             <td data-label="Diploma" class="diploma-cell">
                                 <button class="diploma-btn enabled" onclick="${diplomaButtonClick}" title="Descargar diploma" data-status="${certificado || 'N/A'}">
@@ -7252,13 +7278,12 @@
                                 </button>
                             </td>
                         </tr>`;
-                }
             }
-            
+
             tbody.innerHTML = htmlContent || '<tr><td colspan="8" class="no-data-cell">No hay datos de clasificación disponibles</td></tr>';
             finalizeCategoryHeaders(table);
             buildResultsMobileCards(table);
-            
+
             // Actualizar el tiempo de última actualización de género
             if (lastUpdateElementGender) {
                 const now = new Date();
