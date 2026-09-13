@@ -4821,6 +4821,7 @@
         let loadAttempts = 0;
         const MAX_ATTEMPTS = 3;
         const EVENT_DISPLAY_NAME = 'Festi-Torneo de Aniversario NNG — El Nadador Más Rápido 2026';
+        const SITE_PUBLIC_URL = 'https://festitorneonng.netlify.app';
         let lastPruebasSearchMatches = [];
         let lastGenderSearchMatches = [];
 
@@ -7791,11 +7792,33 @@
         }
 
         // Función simplificada para compartir resultados
+        function isMobileShareDevice() {
+            return /Android|iPhone|iPad|iPod|Mobile|webOS|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent || '')
+                || ((navigator.maxTouchPoints || 0) > 1 && /Mac/i.test(navigator.platform || ''));
+        }
+
+        function buildWhatsAppShareUrl(message) {
+            return `https://wa.me/?text=${encodeURIComponent(message || '')}`;
+        }
+
+        /** Abre WhatsApp de forma fiable en móvil (window.open suele bloquearse). */
+        function openWhatsAppWithText(message) {
+            const url = buildWhatsAppShareUrl(message);
+            if (isMobileShareDevice()) {
+                window.location.assign(url);
+                return;
+            }
+            const opened = window.open(url, '_blank', 'noopener,noreferrer');
+            if (!opened) {
+                window.location.assign(url);
+            }
+        }
+
         function shareThankYouMessage(platform) {
             const thankYouMessage = `🙏 ¡Gracias infinitas a nuestros increíbles patrocinadores y organizadores del ${EVENT_DISPLAY_NAME}! 🏊‍♂️🏊‍♀️
 🤝 Nuestros patrocinadores (5 empresas):
 Maxi
-Tienda de Ángeles · @LATIENDADEANGELESSO
+Tienda de Ángeles
 IMDER Montería
 Gibraltar
 Mariana Cros
@@ -7808,10 +7831,12 @@ Top4Race · https://top4race.netlify.app/
 
 #Natación #FestiTorneoNNG #NNG #NadadoresNuevaGeneracion #Montería #Córdoba #Swimming
 
-¡Gracias por creer en la natación cordobesa! 💙🏆`;
+¡Gracias por creer en la natación cordobesa! 💙🏆
+
+${SITE_PUBLIC_URL}`;
 
             if (platform === 'whatsapp') {
-                window.open(`https://wa.me/?text=${encodeURIComponent(thankYouMessage)}`, '_blank');
+                openWhatsAppWithText(thankYouMessage);
             } else if (platform === 'instagram') {
                 if (navigator.clipboard && navigator.clipboard.writeText) {
                     navigator.clipboard.writeText(thankYouMessage).then(() => {
@@ -7873,17 +7898,24 @@ Top4Race · https://top4race.netlify.app/
             return upper !== 'N/A' && upper !== '-' && upper !== 'NULL' && upper !== 'UNDEFINED';
         }
 
+        function cleanSharePosition(position) {
+            return (position || '').toString()
+                .replace(/[🥇🥈🥉]/g, '')
+                .replace(/\s+/g, ' ')
+                .trim() || '-';
+        }
+
         function buildShareResultMessage(swimmer, position, time, category, { withHashtags = false } = {}) {
             const name = (swimmer || '').toString().trim() || 'Atleta';
-            const pos = (position || '').toString().trim() || '-';
+            const pos = cleanSharePosition(position);
             const cat = (category || '').toString().trim();
             const swimTime = (time || '').toString().trim();
             const pruebaAbrev = getCurrentEventName() || 'la prueba';
             const hashtagsPrueba = '#Natación #FestiTorneoNNG #NNG #NadadoresNuevaGeneracion #Córdoba #Swimming';
             const hashtagsEquipos = '#Natación #FestiTorneoNNG #NNG #NadadoresNuevaGeneracion #TeamWork #Córdoba';
-            const footer = withHashtags
-                ? `\n\nVer resultados completos: https://festitorneonng.netlify.app`
-                : `\n\nVer más resultados: https://festitorneonng.netlify.app`;
+            const linkLine = withHashtags
+                ? `\n\nVer resultados completos: ${SITE_PUBLIC_URL}`
+                : `\n\nVer más resultados: ${SITE_PUBLIC_URL}`;
 
             let message;
             if (hasShareableSwimTime(swimTime)) {
@@ -7897,7 +7929,7 @@ Top4Race · https://top4race.netlify.app/
                 if (withHashtags) message += `\n\n${hashtagsPrueba}`;
             }
 
-            return message + footer;
+            return message + linkLine;
         }
 
         // Compartir funcionalidad
@@ -7929,6 +7961,9 @@ Top4Race · https://top4race.netlify.app/
             }
             
             console.log('Prueba detectada:', prueba, '| Tiempo a compartir:', time);
+
+            const whatsappMessage = buildShareResultMessage(swimmer, position, time, category, { withHashtags: false });
+            const whatsappUrl = buildWhatsAppShareUrl(whatsappMessage);
             
             const shareModal = document.createElement('div');
             shareModal.className = 'share-modal';
@@ -7936,13 +7971,13 @@ Top4Race · https://top4race.netlify.app/
                 <div class="share-modal-content">
                     <div class="share-modal-header">
                         <h3>🏊‍♂️ Compartir Resultado</h3>
-                        <button class="close-modal" onclick="closeShareModal()">&times;</button>
+                        <button type="button" class="close-modal" onclick="closeShareModal()">&times;</button>
                     </div>
                     <div class="share-options">
-                        <button type="button" class="share-option whatsapp" onclick="shareToWhatsApp()">
+                        <a class="share-option whatsapp" href="${whatsappUrl}" target="_blank" rel="noopener noreferrer" id="whatsappShareLink">
                             <span class="share-icon">💬</span>
                             WhatsApp
-                        </button>
+                        </a>
                         <button type="button" class="share-option instagram" onclick="shareToInstagram()">
                             <span class="share-icon">📷</span>
                             Instagram Stories
@@ -7952,6 +7987,19 @@ Top4Race · https://top4race.netlify.app/
             `;
             
             document.body.appendChild(shareModal);
+
+            const whatsappLink = shareModal.querySelector('#whatsappShareLink');
+            if (whatsappLink) {
+                whatsappLink.addEventListener('click', function(e) {
+                    if (isMobileShareDevice()) {
+                        e.preventDefault();
+                        window.location.assign(whatsappUrl);
+                        setTimeout(closeShareModal, 400);
+                        return;
+                    }
+                    setTimeout(closeShareModal, 150);
+                });
+            }
             
             // Cerrar modal al hacer clic fuera de él
             shareModal.addEventListener('click', function(e) {
@@ -7982,9 +8030,7 @@ Top4Race · https://top4race.netlify.app/
                 payload.category,
                 { withHashtags: false }
             );
-
-            const whatsappUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(message)}`;
-            window.open(whatsappUrl, '_blank');
+            openWhatsAppWithText(message);
             closeShareModal();
         }
 
@@ -10315,7 +10361,7 @@ Top4Race · https://top4race.netlify.app/
                 pdf.setFont("helvetica", "normal");
                 pdf.setFontSize(10);
                 pdf.text("Para obtener los resultados completos, visita:", 20, 70);
-                pdf.text("https://festitorneonng.netlify.app", 20, 80);
+                pdf.text(SITE_PUBLIC_URL, 20, 80);
                 
                 // Información básica de eventos
                 pdf.setFont("helvetica", "bold");
