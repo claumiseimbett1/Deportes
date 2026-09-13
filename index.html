@@ -1823,6 +1823,11 @@
             border-color: #f0f6ff;
         }
 
+        /* Marcas estáticas siempre a color (en móvil no hay hover) */
+        .sponsor-card--static .sponsor-logo img {
+            filter: none;
+        }
+
         .top4race-spotlight {
             margin-top: 56px;
             padding: 0;
@@ -1906,10 +1911,32 @@
 
         @media (max-width: 768px) {
             .top4race-spotlight {
-                margin-top: 40px;
+                margin-top: 32px;
+                border-radius: 16px;
             }
             .top4race-spotlight-body {
-                padding: 22px 22px 28px;
+                padding: 18px 16px 20px;
+            }
+            .top4race-spotlight-desc {
+                font-size: 0.95rem;
+                line-height: 1.55;
+            }
+            .top4race-ad-banner {
+                flex-direction: column;
+                gap: 10px;
+                padding: 16px 14px;
+            }
+            .top4race-ad-logo-link {
+                width: 100%;
+                max-width: 240px;
+                padding: 10px 16px;
+            }
+            .top4race-ad-logo {
+                max-height: 52px;
+                max-width: 200px;
+            }
+            .top4race-ad-main {
+                font-size: 1rem;
             }
         }
 
@@ -2495,39 +2522,70 @@
                 padding-bottom: var(--space-section-tight);
             }
 
+            .sponsors-section-intro {
+                font-size: 0.95rem;
+                margin-bottom: 0.75rem;
+                padding: 0 4px;
+            }
+
             .sponsors-grid {
-                grid-template-columns: repeat(2, 1fr);
-                gap: 25px;
-                margin-top: 30px;
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+                gap: 12px;
+                margin-top: 20px;
             }
 
             .sponsor-card {
-                padding: 25px;
+                padding: 14px 10px 12px;
+                border-radius: 14px;
+                border-width: 1px;
+                min-width: 0;
             }
 
             .sponsor-logo {
-                height: 60px;
-                margin-bottom: 15px;
+                height: 78px;
+                margin-bottom: 8px;
+            }
+
+            .sponsor-logo img {
+                max-height: 78px;
+                width: auto;
+                max-width: 100%;
             }
 
             .sponsor-name {
-                font-size: 0.9em;
+                font-size: 0.8rem;
+                line-height: 1.25;
+                word-break: break-word;
+            }
+
+            /* Con 5 patrocinadores, centra el último en la fila impar */
+            .sponsors-grid .sponsor-card:last-child:nth-child(odd) {
+                grid-column: 1 / -1;
+                max-width: 168px;
+                width: 100%;
+                justify-self: center;
             }
 
             .sponsor-thank-you-section {
-                margin-top: 50px;
-                padding: 40px 0;
+                margin-top: 36px;
+                padding: 28px 0;
                 border-radius: 15px;
             }
 
+            .thank-you-message {
+                padding: 0 12px;
+            }
+
             .thank-you-message h3 {
-                font-size: 1.8em;
-                margin-bottom: 15px;
+                font-size: 1.35rem;
+                margin-bottom: 12px;
+                line-height: 1.25;
             }
 
             .thank-you-message p {
-                font-size: 1.1em;
-                margin-bottom: 30px;
+                font-size: 0.98rem;
+                margin-bottom: 22px;
+                line-height: 1.5;
             }
 
             .share-thanks-buttons {
@@ -2768,6 +2826,26 @@
         @media (max-width: 480px) {
             :root {
                 --header-offset: 66px;
+            }
+
+            .sponsors-grid {
+                gap: 10px;
+            }
+
+            .sponsor-card {
+                padding: 12px 8px 10px;
+            }
+
+            .sponsor-logo {
+                height: 88px;
+            }
+
+            .sponsor-logo img {
+                max-height: 88px;
+            }
+
+            .sponsors-grid .sponsor-card:last-child:nth-child(odd) {
+                max-width: 156px;
             }
 
             .video-hero {
