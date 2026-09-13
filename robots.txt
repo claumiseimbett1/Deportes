@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://festitorneosinu.netlify.app/sitemap.xml
+Sitemap: https://festitorneonng.netlify.app/sitemap.xml

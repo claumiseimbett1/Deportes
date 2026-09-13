@@ -7,7 +7,7 @@ Esta landing es la **página modelo de evento** para Top4Race / AquaTEN: mismo e
 **Evento:** 13 de septiembre de 2026 · Piscina Villa Olímpica, Montería (Córdoba).  
 **Convocatoria:** `documentos/FESTI-TORNEO-DE-ANIVERSARIO-NNG.pdf`
 
-**Producción:** [https://festitorneosinu.netlify.app/](https://festitorneosinu.netlify.app/)
+**Producción:** [https://festitorneonng.netlify.app/](https://festitorneonng.netlify.app/)
 
 ## Qué incluye el modelo
 
