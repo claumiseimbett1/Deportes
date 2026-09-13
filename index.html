@@ -7864,6 +7864,42 @@ Top4Race · https://top4race.netlify.app/
             showShareOptions(swimmer, position, time, category);
         }
 
+        let pendingSharePayload = null;
+
+        function hasShareableSwimTime(time) {
+            const t = (time ?? '').toString().trim();
+            if (!t) return false;
+            const upper = t.toUpperCase();
+            return upper !== 'N/A' && upper !== '-' && upper !== 'NULL' && upper !== 'UNDEFINED';
+        }
+
+        function buildShareResultMessage(swimmer, position, time, category, { withHashtags = false } = {}) {
+            const name = (swimmer || '').toString().trim() || 'Atleta';
+            const pos = (position || '').toString().trim() || '-';
+            const cat = (category || '').toString().trim();
+            const swimTime = (time || '').toString().trim();
+            const pruebaAbrev = getCurrentEventName() || 'la prueba';
+            const hashtagsPrueba = '#Natación #FestiTorneoNNG #NNG #NadadoresNuevaGeneracion #Córdoba #Swimming';
+            const hashtagsEquipos = '#Natación #FestiTorneoNNG #NNG #NadadoresNuevaGeneracion #TeamWork #Córdoba';
+            const footer = withHashtags
+                ? `\n\nVer resultados completos: https://festitorneosinu.netlify.app`
+                : `\n\nVer más resultados: https://festitorneosinu.netlify.app`;
+
+            let message;
+            if (hasShareableSwimTime(swimTime)) {
+                message = `🏊‍♂️ ${name}: ¡Felicitaciones por haber obtenido la posición No. ${pos} con un tiempo de ${swimTime} en ${pruebaAbrev} en el ${EVENT_DISPLAY_NAME}! 🏆`;
+                if (withHashtags) message += `\n\n${hashtagsPrueba}`;
+            } else if (cat === 'Clasificación por Equipos') {
+                message = `🏊‍♂️ Felicitaciones al equipo ${name} por haber obtenido la posición No. ${pos} en el ${EVENT_DISPLAY_NAME}! 🏆`;
+                if (withHashtags) message += `\n\n${hashtagsEquipos}`;
+            } else {
+                message = `🏊‍♂️ ${name}: ¡Felicitaciones por haber obtenido la posición No. ${pos} en la categoría ${cat || 'General'} en el ${EVENT_DISPLAY_NAME}! 🏆`;
+                if (withHashtags) message += `\n\n${hashtagsPrueba}`;
+            }
+
+            return message + footer;
+        }
+
         // Compartir funcionalidad
         function showShareOptions(swimmer, position, time, category) {
             // Limpiar y sanitizar datos de entrada
@@ -7871,6 +7907,8 @@ Top4Race · https://top4race.netlify.app/
             position = (position || '').toString().trim();
             time = (time || '').toString().replace(/['"\\]/g, '').trim();
             category = (category || '').toString().replace(/['"\\]/g, '').trim();
+
+            pendingSharePayload = { swimmer, position, time, category };
             
             // Determinar la prueba actual basado en la selección de Resultados por Pruebas
             const resultadosSection = document.getElementById('resultados');
@@ -7890,7 +7928,7 @@ Top4Race · https://top4race.netlify.app/
                 }
             }
             
-            console.log('Prueba detectada:', prueba);
+            console.log('Prueba detectada:', prueba, '| Tiempo a compartir:', time);
             
             const shareModal = document.createElement('div');
             shareModal.className = 'share-modal';
@@ -7901,11 +7939,11 @@ Top4Race · https://top4race.netlify.app/
                         <button class="close-modal" onclick="closeShareModal()">&times;</button>
                     </div>
                     <div class="share-options">
-                        <button class="share-option whatsapp" onclick="shareToWhatsApp('${swimmer}', '${position}', '${time}', '${category}')">
+                        <button type="button" class="share-option whatsapp" onclick="shareToWhatsApp()">
                             <span class="share-icon">💬</span>
                             WhatsApp
                         </button>
-                        <button class="share-option instagram" onclick="shareToInstagram('${swimmer}', '${position}', '${time}', '${category}')">
+                        <button type="button" class="share-option instagram" onclick="shareToInstagram()">
                             <span class="share-icon">📷</span>
                             Instagram Stories
                         </button>
@@ -7931,62 +7969,39 @@ Top4Race · https://top4race.netlify.app/
         }
 
         function shareToWhatsApp(swimmer, position, time, category) {
-            // Determinar el tipo de mensaje basado en el contexto
-            let message;
-            
-            if (time && time !== 'N/A' && time !== '-') {
-                // Para nadadores individuales con tiempo (pruebas específicas)
-                // Convertir nombres de prueba a abreviaciones
-                const pruebaAbrev = getCurrentEventName();
-                
-                message = `🏊‍♂️ ${swimmer}: ¡Felicitaciones por haber obtenido la posición No. ${position} con un tiempo de ${time} en ${pruebaAbrev} en el ${EVENT_DISPLAY_NAME}! 🏆 
+            const payload = pendingSharePayload || {
+                swimmer,
+                position,
+                time,
+                category
+            };
+            const message = buildShareResultMessage(
+                payload.swimmer,
+                payload.position,
+                payload.time,
+                payload.category,
+                { withHashtags: false }
+            );
 
-Ver más resultados: https://festitorneosinu.netlify.app`;
-            } else if (category === 'Clasificación por Equipos') {
-                // Para equipos - solo posición
-                message = `¡🏊‍♂️ Felicitaciones al equipo ${swimmer} por haber obtenido la posición No. ${position} en el ${EVENT_DISPLAY_NAME}! 🏆 
-
-Ver más resultados: https://festitorneosinu.netlify.app`;
-            } else {
-                // Para clasificación por género - usar categoría
-                message = `🏊‍♂️ ${swimmer}: ¡Felicitaciones por haber obtenido la posición No. ${position} en la categoría ${category} en el ${EVENT_DISPLAY_NAME}! 🏆 
-
-Ver más resultados: https://festitorneosinu.netlify.app`;
-            }
-            
-            const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(message)}`;
+            const whatsappUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(message)}`;
             window.open(whatsappUrl, '_blank');
             closeShareModal();
         }
 
         function shareToInstagram(swimmer, position, time, category) {
-            // Determinar el tipo de mensaje basado en el contexto
-            let message;
-            
-            if (time && time !== 'N/A' && time !== '-') {
-                // Para nadadores individuales con tiempo (pruebas específicas)
-                const pruebaAbrev = getCurrentEventName();
-                
-                message = `🏊‍♂️ ${swimmer}: ¡Felicitaciones por haber obtenido la posición No. ${position} con un tiempo de ${time} en ${pruebaAbrev} en el ${EVENT_DISPLAY_NAME}! 🏆 
-
-#Natación #FestiTorneoNNG #NNG #NadadoresNuevaGeneracion #Córdoba #Swimming
-
-Ver resultados completos: https://festitorneosinu.netlify.app`;
-            } else if (category === 'Clasificación por Equipos') {
-                // Para equipos - solo posición
-                message = `🏊‍♂️ Felicitaciones al equipo ${swimmer} por haber obtenido la posición No. ${position} en el ${EVENT_DISPLAY_NAME}! 🏆 
-
-#Natación #FestiTorneoNNG #NNG #NadadoresNuevaGeneracion #TeamWork #Córdoba
-
-Ver resultados completos: https://festitorneosinu.netlify.app`;
-            } else {
-                // Para clasificación por género - usar categoría
-                message = `🏊‍♂️ ${swimmer}: ¡Felicitaciones por haber obtenido la posición No. ${position} en la categoría ${category} en el ${EVENT_DISPLAY_NAME}! 🏆 
-
-#Natación #FestiTorneoNNG #NNG #NadadoresNuevaGeneracion #Córdoba #Swimming
-
-Ver resultados completos: https://festitorneosinu.netlify.app`;
-            }
+            const payload = pendingSharePayload || {
+                swimmer,
+                position,
+                time,
+                category
+            };
+            const message = buildShareResultMessage(
+                payload.swimmer,
+                payload.position,
+                payload.time,
+                payload.category,
+                { withHashtags: true }
+            );
             
             // Copiar al portapapeles y mostrar instrucciones
             if (navigator.clipboard && navigator.clipboard.writeText) {
