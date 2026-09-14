@@ -8553,27 +8553,24 @@ ${SITE_PUBLIC_URL}`;
 
                 await preloadClubLogos().catch(() => {});
 
-                // Fuente de verdad: Google Sheet completo (no solo lo visible en pantalla)
-                setStatus('<p class="status-loading-text"><span class="status-loading-icon">⏳</span> Cargando resultados oficiales desde Google Sheet...</p>');
-                let allSheetData = await loadCompletePdfSourceData((msg) => {
-                    setStatus(`<p class="status-loading-text"><span class="status-loading-icon">⏳</span> ${msg}</p>`);
-                });
+                setStatus('<p class="status-loading-text"><span class="status-loading-icon">⏳</span> Leyendo resultados de la página...</p>');
+                let allSheetData = getPdfDataFromLoadedTables();
+
+                const needsSheetFallback = !allSheetData.eventos.length
+                    && !allSheetData.femenino.length
+                    && !allSheetData.masculino.length
+                    && !allSheetData.equipos.length;
+
+                // Solo ir al Sheet si la página aún no tiene resultados cargados
+                if (needsSheetFallback) {
+                    setStatus('<p class="status-loading-text"><span class="status-loading-icon">⏳</span> Los resultados aún no están en pantalla. Cargando desde Google Sheet...</p>');
+                    allSheetData = await getAllSheetData();
+                }
 
                 allSheetData.eventos = allSheetData.eventos || [];
                 allSheetData.masculino = allSheetData.masculino || [];
                 allSheetData.femenino = allSheetData.femenino || [];
                 allSheetData.equipos = allSheetData.equipos || [];
-
-                const totalAthletes = allSheetData.eventos.reduce((sum, ev) => {
-                    return sum + organizePdfAthleteRows(ev.data || []).length;
-                }, 0);
-                console.log('📄 PDF fuente:', {
-                    pruebas: allSheetData.eventos.length,
-                    atletasPruebas: totalAthletes,
-                    femenino: allSheetData.femenino.length,
-                    masculino: allSheetData.masculino.length,
-                    equipos: allSheetData.equipos.length
-                });
 
                 setStatus('<p class="status-loading-text"><span class="status-loading-icon">⏳</span> Generando PDF...</p>');
 
@@ -8701,98 +8698,6 @@ ${SITE_PUBLIC_URL}`;
                 downloadBtn.disabled = false;
                 downloadBtn.style.opacity = '1';
             }
-        }
-
-        /**
-         * Carga TODAS las pestañas de pruebas + generales + equipos por nombre exacto.
-         * Evita PDFs incompletos cuando la página solo tiene una prueba visible o falló el listado de GIDs.
-         */
-        async function loadCompletePdfSourceData(onProgress) {
-            const notify = typeof onProgress === 'function' ? onProgress : () => {};
-            const allData = {
-                eventos: [],
-                masculino: [],
-                femenino: [],
-                equipos: []
-            };
-
-            notify(`Cargando ${PRUEBAS_SHEET_TABS.length} pruebas...`);
-            const eventResults = await Promise.all(PRUEBAS_SHEET_TABS.map(async (sheetName) => {
-                try {
-                    const rows = await loadSheetRowsByName(sheetName);
-                    const data = (rows || []).filter(sheetRowHasContent);
-                    if (!data.length) return null;
-                    return {
-                        name: formatPruebaLabel(sheetName),
-                        data,
-                        _sheetName: sheetName
-                    };
-                } catch (error) {
-                    console.warn(`⚠️ PDF: no se pudo cargar prueba "${sheetName}":`, error.message);
-                    return null;
-                }
-            }));
-            allData.eventos = eventResults.filter(Boolean);
-
-            const generalLoads = [
-                {
-                    key: 'femenino',
-                    names: GENERAL_CLASSIFICATION_SHEETS['resultados-femenino'] || ['RESULTADOS GENERALES-F-FESTITORNEO']
-                },
-                {
-                    key: 'masculino',
-                    names: GENERAL_CLASSIFICATION_SHEETS['resultados-masculino'] || ['RESULTADOS GENERALES-M-FESTITORNEO']
-                },
-                {
-                    key: 'equipos',
-                    names: GENERAL_CLASSIFICATION_SHEETS['resultados-equipo'] || ['RESULTADOS EQUIPOS FESTITORNEO']
-                }
-            ];
-
-            for (const entry of generalLoads) {
-                notify(`Cargando ${entry.key}...`);
-                for (const sheetName of entry.names) {
-                    try {
-                        const rows = await loadSheetRowsByName(sheetName);
-                        const data = (rows || []).filter(sheetRowHasContent);
-                        if (!data.length) continue;
-                        if (entry.key !== 'equipos' && !generalClassificationDataHasEntries(data, entry.key)) {
-                            continue;
-                        }
-                        allData[entry.key] = data;
-                        console.log(`📄 PDF ${entry.key} desde "${sheetName}" (${data.length} filas)`);
-                        break;
-                    } catch (error) {
-                        console.warn(`⚠️ PDF: falló "${sheetName}":`, error.message);
-                    }
-                }
-            }
-
-            // Completar huecos desde tablas ya renderizadas en la página
-            const domData = getPdfDataFromLoadedTables();
-            if (allData.eventos.length < PRUEBAS_SHEET_TABS.length) {
-                const loaded = new Set(allData.eventos.map(ev => ev._sheetName || ev.name));
-                domData.eventos.forEach(ev => {
-                    const key = ev._sheetName || ev.name;
-                    if (!loaded.has(key) && !loaded.has(ev.name) && (ev.data || []).length) {
-                        allData.eventos.push(ev);
-                        loaded.add(key);
-                    }
-                });
-            }
-            if (!allData.femenino.length && domData.femenino.length) allData.femenino = domData.femenino;
-            if (!allData.masculino.length && domData.masculino.length) allData.masculino = domData.masculino;
-            if (!allData.equipos.length && domData.equipos.length) allData.equipos = domData.equipos;
-
-            // Orden de pruebas = orden oficial del evento
-            const order = new Map(PRUEBAS_SHEET_TABS.map((name, index) => [formatPruebaLabel(name), index]));
-            allData.eventos.sort((a, b) => {
-                const ai = order.has(a.name) ? order.get(a.name) : 999;
-                const bi = order.has(b.name) ? order.get(b.name) : 999;
-                return ai - bi;
-            });
-
-            return allData;
         }
 
         // Función para determinar el rango de columnas según el tipo de hoja
@@ -9738,42 +9643,33 @@ ${SITE_PUBLIC_URL}`;
 
                 const categoryHeader = getCategoryHeaderFromRow(row);
                 if (categoryHeader) {
-                    currentCategory = preferredCategoryLabel(categoryHeader) || categoryHeader;
+                    currentCategory = formatSegmentDisplayLabel(categoryHeader) || categoryHeader;
                     return;
                 }
                 if (!isValidPdfAthleteRow(row)) return;
 
-                const pos = pdfCell(row[0]).replace(/[°º]/g, '').trim();
+                const pos = pdfCell(row[0]);
                 const athlete = pdfCell(row[1]);
                 const team = pdfCell(row[2]);
                 const age = pdfCell(row[3]);
-                const category = preferredCategoryLabel(pdfCell(row[4]) || currentCategory)
-                    || pdfCell(row[4])
-                    || currentCategory
-                    || 'GENERAL';
-                const categoryKey = preferredCategoryLabel(category) || category;
-                if (!currentCategory && categoryKey) currentCategory = categoryKey;
-
-                const rawTime = pdfCell(row[5]);
-                const timeFormatted = typeof formatTime === 'function'
-                    ? (formatTime(rawTime) || rawTime)
-                    : rawTime;
+                const category = pdfCell(row[4]) || currentCategory;
+                const categoryKey = formatSegmentDisplayLabel(category) || category || 'GENERAL';
+                if (!currentCategory && category) currentCategory = categoryKey;
 
                 const entry = {
-                    position: (!pos || pos === '0') ? '' : pos,
+                    position: pos || '',
                     athlete,
                     team,
                     age,
                     category: categoryKey,
-                    time: formatResultTimeDisplay(timeFormatted),
-                    points: pdfCell(row[6]) || '0',
-                    totalPoints: pdfCell(row[5]) || '0',
+                    time: typeof formatTime === 'function' ? (formatTime(row[5]) || pdfCell(row[5])) : pdfCell(row[5]),
+                    points: pdfCell(row[6]),
+                    totalPoints: pdfCell(row[5]),
                     points200m: includeSplitPoints ? pdfCell(row[6]) : '',
                     points50m: includeSplitPoints ? pdfCell(row[7]) : '',
                     points100m: includeSplitPoints ? pdfCell(row[8]) : '',
                     _posNum: parsePdfPosition(pos),
-                    _order: groups.has(categoryKey) ? groups.get(categoryKey).length : 0,
-                    _catIndex: categorySortIndex(categoryKey)
+                    _order: groups.has(categoryKey) ? groups.get(categoryKey).length : 0
                 };
 
                 if (!groups.has(categoryKey)) groups.set(categoryKey, []);
@@ -9781,19 +9677,15 @@ ${SITE_PUBLIC_URL}`;
             });
 
             const organized = [];
-            const sortedCategories = Array.from(groups.keys()).sort((a, b) => {
-                const diff = categorySortIndex(a) - categorySortIndex(b);
-                if (diff !== 0) return diff;
-                return String(a).localeCompare(String(b), 'es');
-            });
-
-            sortedCategories.forEach(categoryKey => {
-                const athletes = groups.get(categoryKey) || [];
+            groups.forEach((athletes, categoryKey) => {
                 athletes.sort((a, b) => {
                     if (a._posNum !== b._posNum) return a._posNum - b._posNum;
                     return a._order - b._order;
                 });
-                athletes.forEach(athlete => {
+                athletes.forEach((athlete, index) => {
+                    if (!athlete.position || athlete.position === '0') {
+                        athlete.position = String(index + 1);
+                    }
                     organized.push(athlete);
                 });
             });
@@ -9874,27 +9766,6 @@ ${SITE_PUBLIC_URL}`;
             return yPosition;
         }
 
-        function pdfDrawFittedText(pdf, text, x, y, maxWidth) {
-            const value = pdfCell(text);
-            if (!value) {
-                pdf.text('-', x, y);
-                return;
-            }
-            let size = 7.5;
-            pdf.setFontSize(size);
-            while (size > 5.5 && pdf.getTextWidth(value) > maxWidth) {
-                size -= 0.5;
-                pdf.setFontSize(size);
-            }
-            if (pdf.getTextWidth(value) <= maxWidth) {
-                pdf.text(value, x, y);
-            } else {
-                const lines = pdf.splitTextToSize(value, maxWidth);
-                pdf.text(lines[0] || value, x, y);
-            }
-            pdf.setFontSize(7.5);
-        }
-
         // Función mejorada para dibujar tabla profesional con paginación automática
         function drawProfessionalTable(pdf, data, startY, type, options = {}) {
             const boxX = 20;
@@ -9923,18 +9794,18 @@ ${SITE_PUBLIC_URL}`;
                 if (type === 'event') {
                     pdf.text("POS", boxX + 2, y + 6);
                     pdf.text("ATLETA", boxX + 12, y + 6);
-                    pdf.text("EQUIPO", boxX + 62, y + 6);
-                    pdf.text("EDAD", boxX + 98, y + 6);
-                    pdf.text("CAT", boxX + 112, y + 6);
-                    pdf.text("TIEMPO", boxX + 136, y + 6);
-                    pdf.text("PTS", boxX + 164, y + 6);
+                    pdf.text("EQUIPO", boxX + 58, y + 6);
+                    pdf.text("EDAD", boxX + 92, y + 6);
+                    pdf.text("CAT", boxX + 108, y + 6);
+                    pdf.text("TIEMPO", boxX + 128, y + 6);
+                    pdf.text("PTS", boxX + 156, y + 6);
                 } else if (type === 'gender') {
                     pdf.text("POS", boxX + 2, y + 6);
                     pdf.text("ATLETA", boxX + 12, y + 6);
-                    pdf.text("EQUIPO", boxX + 62, y + 6);
-                    pdf.text("EDAD", boxX + 98, y + 6);
-                    pdf.text("CAT", boxX + 112, y + 6);
-                    pdf.text("TOT", boxX + 148, y + 6);
+                    pdf.text("EQUIPO", boxX + 58, y + 6);
+                    pdf.text("EDAD", boxX + 92, y + 6);
+                    pdf.text("CAT", boxX + 108, y + 6);
+                    pdf.text("TOT", boxX + 140, y + 6);
                 } else if (type === 'team') {
                     pdf.text("POS", boxX + 3, y + 6);
                     pdf.text("EQUIPO", boxX + 18, y + 6);
@@ -10010,24 +9881,24 @@ ${SITE_PUBLIC_URL}`;
 
                 const textY = currentY + 5;
                 if (type === 'event') {
-                    pdf.text(pdfCell(row.position) || '-', boxX + 2, textY);
-                    pdfDrawFittedText(pdf, row.athlete, boxX + 12, textY, 48);
-                    pdfDrawFittedText(pdf, row.team, boxX + 62, textY, 34);
-                    pdf.text(pdfCell(row.age) || '-', boxX + 98, textY);
-                    pdfDrawFittedText(pdf, row.category, boxX + 112, textY, 22);
-                    pdfDrawFittedText(pdf, row.time, boxX + 136, textY, 26);
-                    pdf.text(pdfCell(row.points) || '0', boxX + 164, textY);
+                    pdf.text(pdfCell(row.position), boxX + 2, textY);
+                    pdf.text(pdfCell(row.athlete).substring(0, 22), boxX + 12, textY);
+                    pdf.text(pdfCell(row.team).substring(0, 14), boxX + 58, textY);
+                    pdf.text(pdfCell(row.age), boxX + 92, textY);
+                    pdf.text(pdfCell(row.category).substring(0, 10), boxX + 108, textY);
+                    pdf.text(pdfCell(row.time), boxX + 128, textY);
+                    pdf.text(pdfCell(row.points), boxX + 156, textY);
                 } else if (type === 'gender') {
-                    pdf.text(pdfCell(row.position) || '-', boxX + 2, textY);
-                    pdfDrawFittedText(pdf, row.athlete, boxX + 12, textY, 48);
-                    pdfDrawFittedText(pdf, row.team, boxX + 62, textY, 34);
-                    pdf.text(pdfCell(row.age) || '-', boxX + 98, textY);
-                    pdfDrawFittedText(pdf, row.category, boxX + 112, textY, 32);
-                    pdf.text(pdfCell(row.totalPoints) || '0', boxX + 148, textY);
+                    pdf.text(pdfCell(row.position), boxX + 2, textY);
+                    pdf.text(pdfCell(row.athlete).substring(0, 22), boxX + 12, textY);
+                    pdf.text(pdfCell(row.team).substring(0, 14), boxX + 58, textY);
+                    pdf.text(pdfCell(row.age), boxX + 92, textY);
+                    pdf.text(pdfCell(row.category).substring(0, 10), boxX + 108, textY);
+                    pdf.text(pdfCell(row.totalPoints), boxX + 140, textY);
                 } else if (type === 'team') {
-                    pdf.text(pdfCell(row.position) || '-', boxX + 3, textY);
-                    pdfDrawFittedText(pdf, row.team, boxX + 18, textY, 100);
-                    pdf.text(pdfCell(row.totalPoints) || '0', boxX + 130, textY);
+                    pdf.text(pdfCell(row.position), boxX + 3, textY);
+                    pdf.text(pdfCell(row.team).substring(0, 40), boxX + 18, textY);
+                    pdf.text(pdfCell(row.totalPoints), boxX + 130, textY);
                 }
 
                 currentY += rowHeight;
@@ -10207,7 +10078,7 @@ ${SITE_PUBLIC_URL}`;
                 const gidMasculino = lookupGidForSheetTitle('RESULTADOS GENERALES-M-TORNEO') || '1681548039';
 
                 const datosFemeninos = await loadDirectSheetData(gidFemenino, 'RESULTADOS GENERALES-F-TORNEO');
-                const femeninoRows = organizePdfAthleteRows(datosFemeninos, { includeSplitPoints: true })
+                const femeninoRows = organizePdfAthleteRows(datosFemeninos, { includeSplitPoints: true, mode: 'gender' })
                     .map(row => ({ ...row, genderType: 'femenino' }));
 
                 if (femeninoRows.length > 0) {
@@ -10224,7 +10095,7 @@ ${SITE_PUBLIC_URL}`;
                 }
 
                 const datosMasculinos = await loadDirectSheetData(gidMasculino, 'RESULTADOS GENERALES-M-TORNEO');
-                const masculinoRows = organizePdfAthleteRows(datosMasculinos, { includeSplitPoints: true })
+                const masculinoRows = organizePdfAthleteRows(datosMasculinos, { includeSplitPoints: true, mode: 'gender' })
                     .map(row => ({ ...row, genderType: 'masculino' }));
 
                 if (masculinoRows.length > 0) {
