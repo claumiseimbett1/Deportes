@@ -6771,7 +6771,16 @@
 
         const CATEGORY_HEADER_PATTERN = /^(?:categor[ií]a\s+)?(INFANTIL|JUVENIL|MAYORES|MASTER|ESPECIAL|MENORES|JUNIOR)\b/i;
         const CATEGORY_SUBHEADER_PATTERN = /^(INFANTIL|JUVENIL|MAYORES|MASTER|ESPECIAL|MENORES)\s+[A-Za-z0-9]+(?:\s*-\s*[A-Za-z0-9]+)?(?:\s+(?:Torneo|Festival|Festitorneo))?$/i;
-        const SHEET_METADATA_PATTERN = /^(pos\.?|posici[oó]n|nombre|club|cat(?:egor[ií]a)?|tiempo\s*final|record|activador)$/i;
+        const SHEET_METADATA_PATTERN = /^(pos\.?|posici[oó]n|lugar|nombre|nadador(?:a)?|atleta|equipo|club|cat(?:egor[ií]a)?|edad|tiempo\s*final|puntos(?:\s*totales)?|obs\.?|record|activador)$/i;
+        /** Orden oficial de categorías en pantalla (agrupa filas aunque el Sheet venga mezclado). */
+        const CATEGORY_DISPLAY_ORDER = [
+            'menores 1', 'menores 2', 'menores 3', 'menores',
+            'infantil a', 'infantil b', 'infantil',
+            'juvenil a', 'juvenil b', 'juvenil',
+            'junior mayores', 'junior',
+            'master 1', 'master 2', 'master',
+            'especial', 'mayores'
+        ];
 
         function isPruebaResultsTable(table) {
             return !!(table && table.id && table.id.startsWith('resultsTable-'));
@@ -6823,6 +6832,32 @@
                 .replace(/\by\b/g, ' ')
                 .replace(/\s+/g, ' ')
                 .trim();
+        }
+
+        function preferredCategoryLabel(text) {
+            const raw = normalizeCategoryLabel(text);
+            if (!raw) return '';
+            const key = categoryGroupKey(raw);
+            if (key.startsWith('junior')) return 'Junior y mayores';
+            return raw;
+        }
+
+        function categorySortIndex(text) {
+            const key = categoryGroupKey(text);
+            if (!key) return 9999;
+            const exact = CATEGORY_DISPLAY_ORDER.indexOf(key);
+            if (exact >= 0) return exact;
+            for (let i = 0; i < CATEGORY_DISPLAY_ORDER.length; i++) {
+                const token = CATEGORY_DISPLAY_ORDER[i];
+                if (key === token || key.startsWith(`${token} `)) return i;
+            }
+            return 900 + key.charCodeAt(0);
+        }
+
+        /** Tiempo vacío en Sheet → guion visible (no celda en blanco). */
+        function formatResultTimeDisplay(tiempo) {
+            const value = (tiempo ?? '').toString().trim();
+            return value || '—';
         }
 
         function formatSegmentDisplayLabel(label) {
@@ -6979,9 +7014,52 @@
                 const sheetName = panel?.dataset?.sheetName || '';
                 const { menores } = sheetName ? parsePruebaSheetName(sheetName) : { menores: false };
                 const menoresSegmentLabel = getDefaultMenoresSegmentLabel(sheetName);
+                const isPruebaTable = isPruebaResultsTable(this.table);
+                const startIndex = (data[0] && data[0][0] === '__header__') ? 1 : 0;
+
+                // Pruebas: agrupar SIEMPRE por columna Categoría (orden oficial),
+                // aunque el Sheet traiga filas mezcladas entre bloques.
+                if (isPruebaTable) {
+                    const entries = [];
+                    for (let i = startIndex; i < data.length; i++) {
+                        const row = data[i];
+                        if (!row || row.length === 0 || isSkippableSheetRow(row)) continue;
+                        if (this.isCategoryRow(row)) continue;
+                        if (!this.isDataRow(row)) continue;
+                        const rawCategory = preferredCategoryLabel((row[4] ?? '').toString().trim())
+                            || preferredCategoryLabel(this.currentCategory)
+                            || (menores ? (menoresSegmentLabel || 'MENORES') : '');
+                        entries.push({ row, index: i, category: rawCategory || 'Sin categoría' });
+                    }
+
+                    entries.sort((a, b) => {
+                        const catDiff = categorySortIndex(a.category) - categorySortIndex(b.category);
+                        if (catDiff !== 0) return catDiff;
+                        return a.index - b.index;
+                    });
+
+                    let htmlContent = '';
+                    let lastKey = '';
+                    entries.forEach(entry => {
+                        const key = categoryGroupKey(entry.category);
+                        if (key !== lastKey) {
+                            const label = resolveSegmentLabelForSheet(entry.category, sheetName) || entry.category;
+                            this.currentCategory = label;
+                            htmlContent += this.renderCategoryRow(label);
+                            lastKey = key;
+                        }
+                        htmlContent += this.renderDataRow(entry.row, entry.index);
+                    });
+
+                    this.tbody.innerHTML = htmlContent || this.getNoDataMessage();
+                    finalizeCategoryHeaders(this.table);
+                    if (isResultsCardTable(this.table)) {
+                        buildResultsMobileCards(this.table);
+                    }
+                    return;
+                }
 
                 let htmlContent = '';
-                const startIndex = (data[0] && data[0][0] === '__header__') ? 1 : 0;
 
                 const categoryHeadersInData = [];
                 let hasMenoresHeader = false;
@@ -7022,8 +7100,6 @@
                     lastRenderedSegment = segmentLabel;
                 }
 
-                const isPruebaTable = isPruebaResultsTable(this.table);
-
                 for (let i = startIndex; i < data.length; i++) {
                     const row = data[i];
                     if (!row || row.length === 0 || isSkippableSheetRow(row)) continue;
@@ -7035,17 +7111,6 @@
                         htmlContent += this.renderCategoryRow(segmentLabel);
                         lastRenderedSegment = segmentLabel;
                     } else if (this.isDataRow(row)) {
-                        if (isPruebaTable) {
-                            const rowCategory = (row[4] ?? '').toString().trim();
-                            if (rowCategory) {
-                                const segmentLabel = resolveSegmentLabelForSheet(rowCategory, sheetName);
-                                if (segmentLabel && segmentLabel !== lastRenderedSegment) {
-                                    htmlContent += this.renderCategoryRow(segmentLabel);
-                                    this.currentCategory = segmentLabel;
-                                    lastRenderedSegment = segmentLabel;
-                                }
-                            }
-                        }
                         htmlContent += this.renderDataRow(row, i);
                     }
                 }
@@ -7130,6 +7195,7 @@
                         const [pos, nombre, equipo, edad, categoria, tiempo, puntos, diploma, obs] = row;
                         const categoriaDisplay = resolveRowCategory(categoria, this.currentCategory);
                         const isRecordHolder = index === this.recordRowIndex;
+                        const tiempoDisplay = formatResultTimeDisplay(tiempo);
                         const diplomaButtonClick = `generateDiploma('${(nombre || '').replace(/'/g, '\\\'')}', '${(equipo || '').replace(/'/g, '\\\'')}', '${(categoriaDisplay || '').replace(/'/g, '\\\'')}', '${tiempo || ''}', getCurrentPruebaRecordLabel())`;
                         
                         return `<tr>
@@ -7138,7 +7204,7 @@
                             <td data-label="Equipo">${equipo || ''}</td>
                             <td data-label="Edad">${edad || ''}</td>
                             <td data-label="Categoría"><span class="category-badge">${escapeHtml(categoriaDisplay)}</span></td>
-                            <td data-label="Tiempo Final" class="time">${tiempo || ''}</td>
+                            <td data-label="Tiempo Final" class="time">${escapeHtml(tiempoDisplay)}</td>
                             <td data-label="Puntos"><strong class="total-points-cell">${puntos || ''}</strong></td>
                             <td data-label="Compartir"><button onclick="shareResult('${nombre}', '${pos || index}', '${tiempo}', '${categoriaDisplay}')" class="share-btn">📱</button></td>
                             <td data-label="Certificado" class="diploma-cell">
@@ -7151,11 +7217,12 @@
                         const [pos, nombre, equipo, edad, categoria, tiempo, puntos, obs] = row.slice(0, 8);
                         const categoriaDisplay = resolveRowCategory(categoria, this.currentCategory);
                         const isRecordHolder = index === this.recordRowIndex;
+                        const tiempoDisplay = formatResultTimeDisplay(tiempo);
                         const diplomaButtonClick = `generateDiploma('${escapeJsString(nombre)}', '${escapeJsString(equipo)}', '${escapeJsString(categoriaDisplay)}', '${escapeJsString(tiempo)}', getCurrentPruebaRecordLabel())`;
                         const athleteLabel = this.table?.querySelector('thead th:nth-child(2)')?.textContent?.trim() || 'Nadador/a';
                         
                         const safeNombre = escapeJsString(nombre);
-                        const safeTiempo = escapeJsString(tiempo);
+                        const safeTiempo = escapeJsString(tiempo || tiempoDisplay);
                         const safeCategoria = escapeJsString(categoriaDisplay);
                         const safePos = escapeJsString(pos || index);
                         const { display: displayPos, isPodium } = formatRankDisplay(pos);
@@ -7164,10 +7231,10 @@
                             <td data-label="Pos." class="rank">${escapeHtml(displayPos)}</td>
                             <td data-label="${escapeHtml(athleteLabel)}" class="athlete-cell"><strong>${escapeHtml(nombre || '')}</strong></td>
                             <td data-label="Equipo" class="team-cell">${escapeHtml(equipo || '')}</td>
-                            <td data-label="Edad">${escapeHtml(edad || '')}</td>
+                            <td data-label="Edad">${escapeHtml(edad || '-')}</td>
                             <td data-label="Categoría"><span class="category-badge">${escapeHtml(categoriaDisplay)}</span></td>
-                            <td data-label="Tiempo Final" class="time">${escapeHtml(tiempo || '')}</td>
-                            <td data-label="Puntos"><strong class="total-points-cell">${escapeHtml(puntos || '')}</strong></td>
+                            <td data-label="Tiempo Final" class="time">${escapeHtml(tiempoDisplay)}</td>
+                            <td data-label="Puntos"><strong class="total-points-cell">${escapeHtml(puntos || '0')}</strong></td>
                             <td data-label="Obs" class="obs-cell ${isRecordHolder ? 'record-indicator' : ''}">${escapeHtml(obs || '')}</td>
                             <td data-label="Compartir"><button onclick="shareResult('${safeNombre}', '${safePos}', '${safeTiempo}', '${safeCategoria}')" class="share-btn">📱</button></td>
                             <td data-label="Diploma" class="diploma-cell">
@@ -7276,7 +7343,7 @@
             const startIndex = (data[0] && data[0][0] === '__header__') ? 1 : 0;
 
             const appendCategoryHeaderIfNeeded = (rawCategory) => {
-                const label = normalizeCategoryLabel(rawCategory);
+                const label = preferredCategoryLabel(rawCategory) || normalizeCategoryLabel(rawCategory);
                 if (!label) return;
                 const key = categoryGroupKey(label);
                 if (!key || key === currentCategoryKey) return;
