@@ -4313,8 +4313,9 @@
             background: var(--tertiary-color) url("img/fondo-mnm-azul.png") center / cover no-repeat;
         }
 
-        .video-container .hero-photo {
+        .video-container .hero-video {
             object-fit: cover;
+            object-position: center;
         }
 
         .video-overlay {
@@ -4497,7 +4498,9 @@
     <!-- Hero Section -->
     <section class="video-hero" id="inicio">
         <div class="video-container">
-            <img class="hero-photo" src="img/fondo-mnm-azul.png" alt="" aria-hidden="true">
+            <video class="hero-video" autoplay muted loop playsinline preload="auto" poster="img/fondo-mnm-azul.png" aria-hidden="true">
+                <source src="video/RELEVOSMASTER2026.mp4" type="video/mp4">
+            </video>
         </div>
         <div class="video-overlay">
             <div class="hero-content">
