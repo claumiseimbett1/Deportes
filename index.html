@@ -71,6 +71,8 @@
           "image": [
             "https://competenciarelevosmnm.netlify.app/img/logo-mnm.png",
             "https://competenciarelevosmnm.netlify.app/img/fondo-mnm-azul.png",
+            "https://competenciarelevosmnm.netlify.app/img/premiacion-mnm.jpg",
+            "https://competenciarelevosmnm.netlify.app/img/medallas-mnm.png",
             "https://competenciarelevosmnm.netlify.app/img/logoTop4Race2.png"
           ],
           "location": {
@@ -1900,6 +1902,77 @@
         /* Marcas estáticas siempre a color (en móvil no hay hover) */
         .sponsor-card--static .sponsor-logo img {
             filter: none;
+        }
+
+        @media (min-width: 1100px) {
+            .sponsors-grid--slots {
+                grid-template-columns: repeat(6, 1fr);
+            }
+        }
+
+        .sponsor-card.sponsor-card--slot {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 0.6rem;
+            min-height: 150px;
+            padding: 24px 16px;
+            border: 2px dashed rgba(19, 68, 146, 0.28);
+            background:
+                linear-gradient(135deg, rgba(0, 169, 220, 0.06), rgba(242, 228, 0, 0.06)),
+                #f8fbff;
+        }
+
+        .sponsor-card.sponsor-card--slot:hover,
+        .sponsor-card.sponsor-card--slot:focus-visible {
+            border-style: solid;
+            border-color: var(--secondary-color);
+        }
+
+        .sponsor-slot-icon {
+            display: grid;
+            place-items: center;
+            width: 46px;
+            height: 46px;
+            border-radius: 50%;
+            background: var(--primary-color);
+            color: #ffffff;
+            font-size: 1.7rem;
+            font-weight: 700;
+            line-height: 1;
+            transition: background 0.2s ease, color 0.2s ease;
+        }
+
+        .sponsor-card.sponsor-card--slot:hover .sponsor-slot-icon,
+        .sponsor-card.sponsor-card--slot:focus-visible .sponsor-slot-icon {
+            background: var(--accent-yellow);
+            color: var(--surface-dark);
+        }
+
+        .sponsor-slot-text {
+            font-weight: 700;
+            font-size: 0.95rem;
+            color: var(--primary-color);
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+
+        @media (max-width: 768px) {
+            .sponsor-card.sponsor-card--slot {
+                min-height: 116px;
+                padding: 16px 10px;
+            }
+
+            .sponsor-slot-icon {
+                width: 38px;
+                height: 38px;
+                font-size: 1.4rem;
+            }
+
+            .sponsor-slot-text {
+                font-size: 0.8rem;
+            }
         }
 
         .top4race-spotlight {
@@ -4447,6 +4520,12 @@
             white-space: nowrap;
         }
 
+        #pruebasTabsContent .results-table thead th:last-child,
+        #pruebasTabsContent .results-table td.diploma-cell,
+        #pruebasTabsContent .mobile-results-card-actions .diploma-btn {
+            display: none;
+        }
+
         .relay-categories {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
@@ -4503,6 +4582,490 @@
             max-width: 760px;
         }
 
+        .relay-awards {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr);
+            gap: clamp(1.25rem, 3vw, 2.5rem);
+            align-items: center;
+            max-width: 1000px;
+            margin: var(--space-section-tight) auto 0;
+            background: #ffffff;
+            border-radius: 18px;
+            box-shadow: var(--box-shadow);
+            overflow: hidden;
+            border-bottom: 5px solid var(--accent-yellow);
+        }
+
+        .relay-awards-media img {
+            display: block;
+            width: 100%;
+            height: 100%;
+            aspect-ratio: 1 / 1;
+            object-fit: cover;
+        }
+
+        .relay-awards-text {
+            padding: 1.5rem clamp(1.25rem, 3vw, 2rem) 1.5rem 0;
+            color: #0d2a5c;
+        }
+
+        .relay-awards-title {
+            font-family: var(--font-display);
+            font-size: clamp(1.4rem, 2vw + 0.6rem, 1.9rem);
+            color: var(--primary-color);
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            margin: 0 0 0.6rem;
+        }
+
+        .relay-awards-list {
+            list-style: none;
+            margin: 1rem 0;
+            padding: 0;
+            display: grid;
+            gap: 0.45rem;
+        }
+
+        .relay-awards-list li {
+            display: flex;
+            justify-content: space-between;
+            gap: 1rem;
+            padding: 0.55rem 0.85rem;
+            border-radius: 10px;
+            background: #f3f7fd;
+            font-weight: 700;
+        }
+
+        .relay-awards-list li span {
+            color: var(--primary-color);
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+        }
+
+        .relay-awards-note {
+            font-size: 0.9rem;
+            color: var(--text-gray);
+            margin: 0;
+        }
+
+        .medals-section {
+            position: relative;
+            overflow: hidden;
+            isolation: isolate;
+            padding: var(--space-section) 0;
+            text-align: center;
+            color: #ffffff;
+            background:
+                radial-gradient(ellipse 60% 55% at 50% 58%, rgba(0, 169, 220, 0.35), transparent 70%),
+                radial-gradient(circle at 12% 18%, rgba(242, 228, 0, 0.16), transparent 32%),
+                radial-gradient(circle at 88% 82%, rgba(0, 169, 220, 0.22), transparent 36%),
+                linear-gradient(160deg, #071a3d 0%, #0d2a5c 48%, #134492 100%);
+        }
+
+        .medals-section::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            z-index: -1;
+            background-image:
+                linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+            background-size: 44px 44px;
+            mask-image: radial-gradient(ellipse 75% 70% at 50% 50%, #000 30%, transparent 85%);
+            -webkit-mask-image: radial-gradient(ellipse 75% 70% at 50% 50%, #000 30%, transparent 85%);
+        }
+
+        .medals-section::after {
+            content: "";
+            position: absolute;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            height: 6px;
+            background: linear-gradient(90deg, var(--primary-color) 0 33.33%, var(--secondary-color) 33.33% 66.66%, var(--accent-yellow) 66.66% 100%);
+        }
+
+        .medals-section-glow {
+            position: absolute;
+            z-index: -1;
+            left: 50%;
+            top: 58%;
+            width: min(900px, 120vw);
+            aspect-ratio: 2.4 / 1;
+            transform: translate(-50%, -50%);
+            background: radial-gradient(ellipse at center, rgba(255, 255, 255, 0.22), rgba(0, 169, 220, 0.12) 45%, transparent 70%);
+            filter: blur(10px);
+        }
+
+        .medals-section-inner {
+            position: relative;
+        }
+
+        .medals-eyebrow {
+            display: inline-block;
+            margin: 0 0 0.8rem;
+            padding: 0.35rem 0.95rem;
+            border-radius: 999px;
+            background: rgba(242, 228, 0, 0.14);
+            border: 1px solid rgba(242, 228, 0, 0.55);
+            color: var(--accent-yellow);
+            font-size: 0.8rem;
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+        }
+
+        .medals-title {
+            margin: 0;
+            font-family: var(--font-display);
+            font-size: clamp(2rem, 4vw + 1rem, 3.4rem);
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+            color: #ffffff;
+            text-shadow: 0 4px 24px rgba(0, 169, 220, 0.45);
+        }
+
+        .medals-lead {
+            max-width: 680px;
+            margin: 0.9rem auto 0;
+            color: rgba(255, 255, 255, 0.85);
+            font-size: clamp(0.98rem, 0.6vw + 0.85rem, 1.1rem);
+            line-height: 1.6;
+        }
+
+        .medals-lead strong {
+            color: var(--accent-yellow);
+        }
+
+        .medals-stage {
+            margin: clamp(1.8rem, 4vw, 3rem) auto 0;
+            max-width: 980px;
+            position: relative;
+        }
+
+        .medals-stage::after {
+            content: "";
+            display: block;
+            width: 78%;
+            height: 26px;
+            margin: -6px auto 0;
+            border-radius: 50%;
+            background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0.45), transparent 70%);
+            filter: blur(4px);
+        }
+
+        .medals-stage img {
+            display: block;
+            width: 100%;
+            height: auto;
+            filter: drop-shadow(0 18px 30px rgba(0, 0, 0, 0.45)) drop-shadow(0 0 22px rgba(0, 169, 220, 0.35));
+            animation: medalsFloat 5s ease-in-out infinite;
+        }
+
+        @keyframes medalsFloat {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .medals-podium {
+            list-style: none;
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            margin: 1.6rem 0 0;
+            padding: 0;
+        }
+
+        .medals-podium-item {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.55rem 1.2rem;
+            border-radius: 999px;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            color: #0d2a5c;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+        }
+
+        .medals-podium-item span {
+            font-family: var(--font-display);
+            font-size: 1.1rem;
+        }
+
+        .medals-podium-item--gold { background: linear-gradient(135deg, #fff3a6, #e6b800); }
+        .medals-podium-item--silver { background: linear-gradient(135deg, #ffffff, #b9c0c8); }
+        .medals-podium-item--bronze { background: linear-gradient(135deg, #f3c39b, #b5652d); color: #3a1c06; }
+
+        @media (prefers-reduced-motion: reduce) {
+            .medals-stage img {
+                animation: none;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .medals-podium {
+                gap: 0.45rem;
+                flex-wrap: nowrap;
+            }
+
+            .medals-podium-item {
+                padding: 0.45rem 0.75rem;
+                font-size: 0.78rem;
+                gap: 0.3rem;
+            }
+
+            .medals-podium-item span {
+                font-size: 0.95rem;
+            }
+        }
+
+        .event-popup-trigger {
+            margin-top: 1.1rem;
+            padding: 0.7rem 1.4rem;
+            border: 2px solid var(--accent-yellow);
+            border-radius: 999px;
+            background: rgba(13, 42, 92, 0.55);
+            color: #ffffff;
+            font-weight: 700;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: background 0.2s ease, color 0.2s ease;
+        }
+
+        .event-popup-trigger:hover,
+        .event-popup-trigger:focus-visible {
+            background: var(--accent-yellow);
+            color: var(--surface-dark);
+        }
+
+        .event-popup {
+            position: fixed;
+            inset: 0;
+            margin: auto;
+            height: fit-content;
+            padding: 0;
+            border: 0;
+            background: transparent;
+            width: min(520px, calc(100vw - 1.5rem));
+            max-height: calc(100dvh - 1.5rem);
+            overflow: visible;
+        }
+
+        .event-popup:focus,
+        .event-popup:focus-visible,
+        .event-popup-card:focus,
+        .event-popup-card:focus-visible {
+            outline: none;
+        }
+
+        .event-popup::backdrop {
+            background: rgba(13, 42, 92, 0.72);
+            backdrop-filter: blur(3px);
+        }
+
+        .event-popup[open] .event-popup-card {
+            animation: eventPopupIn 0.3s ease-out;
+        }
+
+        @keyframes eventPopupIn {
+            from { opacity: 0; transform: translateY(16px) scale(0.98); }
+            to { opacity: 1; transform: none; }
+        }
+
+        .event-popup-card {
+            position: relative;
+            max-height: calc(100dvh - 1.5rem);
+            overflow-y: auto;
+            background: #ffffff;
+            border-radius: 20px;
+            box-shadow: 0 24px 60px rgba(0, 0, 0, 0.35);
+        }
+
+        .event-popup-close {
+            position: absolute;
+            top: 0.6rem;
+            right: 0.7rem;
+            width: 2.2rem;
+            height: 2.2rem;
+            border: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.18);
+            color: #ffffff;
+            font-size: 1.6rem;
+            line-height: 1;
+            cursor: pointer;
+        }
+
+        .event-popup-close:hover,
+        .event-popup-close:focus-visible {
+            background: var(--accent-yellow);
+            color: var(--surface-dark);
+        }
+
+        .event-popup-header {
+            padding: 1.4rem 1.5rem 1.2rem;
+            text-align: center;
+            color: #ffffff;
+            background:
+                linear-gradient(rgba(13, 42, 92, 0.78), rgba(13, 42, 92, 0.88)),
+                var(--surface-dark) url("img/fondo-mnm-azul.png") center / cover no-repeat;
+            border-bottom: 5px solid var(--accent-yellow);
+        }
+
+        .event-popup-logo {
+            width: 84px;
+            height: auto;
+        }
+
+        .event-popup-eyebrow {
+            margin: 0.4rem 0 0.2rem;
+            font-size: 0.85rem;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            color: var(--secondary-color);
+            font-weight: 700;
+        }
+
+        .event-popup-header h2 {
+            margin: 0;
+            font-family: var(--font-display);
+            font-size: clamp(1.35rem, 3vw + 0.6rem, 1.8rem);
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+            color: #ffffff;
+        }
+
+        .event-popup-body {
+            padding: 1.2rem 1.4rem 1.4rem;
+            color: #0d2a5c;
+        }
+
+        .event-popup-facts,
+        .event-popup-categories {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        .event-popup-facts {
+            display: grid;
+            gap: 0.6rem;
+        }
+
+        .event-popup-facts li {
+            display: flex;
+            gap: 0.8rem;
+            align-items: flex-start;
+            padding: 0.7rem 0.85rem;
+            border-radius: 12px;
+            background: #f3f7fd;
+            border-left: 4px solid var(--secondary-color);
+        }
+
+        .event-popup-facts li > div {
+            display: flex;
+            flex-direction: column;
+            line-height: 1.35;
+        }
+
+        .event-popup-facts span:not(.event-popup-label),
+        .event-popup-facts a {
+            font-size: 0.9rem;
+            color: var(--text-gray);
+        }
+
+        .event-popup-facts a {
+            color: var(--primary-color);
+            text-decoration: underline;
+        }
+
+        .event-popup-icon {
+            font-size: 1.35rem;
+            line-height: 1.2;
+        }
+
+        .event-popup-label {
+            font-size: 0.72rem;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: var(--secondary-color);
+        }
+
+        .event-popup-subtitle {
+            margin: 1.2rem 0 0.6rem;
+            font-family: var(--font-display);
+            font-size: 1.1rem;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            color: var(--primary-color);
+            text-align: center;
+        }
+
+        .event-popup-categories {
+            display: grid;
+            gap: 0.4rem;
+        }
+
+        .event-popup-categories li {
+            display: flex;
+            justify-content: space-between;
+            gap: 1rem;
+            padding: 0.5rem 0.85rem;
+            border-radius: 10px;
+            border: 1px solid #e5edf8;
+            font-weight: 700;
+        }
+
+        .event-popup-categories li span {
+            color: var(--primary-color);
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+        }
+
+        .event-popup-note {
+            margin: 0.8rem 0 0;
+            font-size: 0.85rem;
+            text-align: center;
+            color: var(--text-gray);
+        }
+
+        .event-popup-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.6rem;
+            margin-top: 1.1rem;
+        }
+
+        .event-popup-btn {
+            flex: 1 1 180px;
+            padding: 0.8rem 1rem;
+            border-radius: 12px;
+            border: 2px solid var(--primary-color);
+            background: #ffffff;
+            color: var(--primary-color);
+            font-weight: 700;
+            font-size: 0.95rem;
+            text-align: center;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .event-popup-btn--primary {
+            background: var(--primary-color);
+            color: #ffffff;
+        }
+
+        .event-popup-btn:hover,
+        .event-popup-btn:focus-visible {
+            background: var(--accent-yellow);
+            border-color: var(--accent-yellow);
+            color: var(--surface-dark);
+        }
+
         @media (max-width: 768px) {
             .hero-brand-mark {
                 width: clamp(120px, 38vw, 170px);
@@ -4510,6 +5073,14 @@
 
             .relay-categories {
                 grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+
+            .relay-awards {
+                grid-template-columns: 1fr;
+            }
+
+            .relay-awards-text {
+                padding: 0 1.25rem 1.5rem;
             }
         }
     </style>
@@ -4578,9 +5149,65 @@
                 <p class="subtitle hero-date">Sábado 7 de noviembre de 2026 · 6:00 pm</p>
                 <p class="subtitle hero-clubs"><span class="club-name-badge club-name-badge-mnm">Club Montería Natación Master</span></p>
                 <p class="subtitle hero-location">Piscina Villa Olímpica · Montería, Córdoba</p>
+                <button type="button" class="event-popup-trigger" onclick="openEventPopup()">Ver categorías, fecha y valor</button>
             </div>
         </div>
     </section>
+
+    <!-- Event info popup -->
+    <dialog class="event-popup" id="eventPopup" aria-labelledby="eventPopupTitle">
+        <div class="event-popup-card">
+            <button type="button" class="event-popup-close" onclick="closeEventPopup()" aria-label="Cerrar">&times;</button>
+            <div class="event-popup-header">
+                <img src="img/logo-mnm-blanco.png" alt="" class="event-popup-logo" width="120" height="120">
+                <p class="event-popup-eyebrow">20 minutos · Relevo 4 x 50 m libre</p>
+                <h2 id="eventPopupTitle">IV Competencia de Relevos MNM</h2>
+            </div>
+            <div class="event-popup-body">
+                <ul class="event-popup-facts">
+                    <li>
+                        <span class="event-popup-icon" aria-hidden="true">📅</span>
+                        <div>
+                            <span class="event-popup-label">Fecha</span>
+                            <strong>Sábado 7 de noviembre de 2026</strong>
+                            <span>6:00 pm</span>
+                        </div>
+                    </li>
+                    <li>
+                        <span class="event-popup-icon" aria-hidden="true">💲</span>
+                        <div>
+                            <span class="event-popup-label">Valor</span>
+                            <strong>$160.000 COP por relevo</strong>
+                            <span>Inscripciones hasta el jueves 5 de noviembre</span>
+                        </div>
+                    </li>
+                    <li>
+                        <span class="event-popup-icon" aria-hidden="true">📍</span>
+                        <div>
+                            <span class="event-popup-label">Lugar</span>
+                            <strong>Piscina de la Villa Olímpica</strong>
+                            <a href="https://www.google.com/maps/search/?api=1&query=Villa+Ol%C3%ADmpica+Cra.+14+%2348a-48+Monter%C3%ADa" target="_blank" rel="noopener noreferrer">Cra. 14 #48a-48 · Montería, Córdoba</a>
+                        </div>
+                    </li>
+                </ul>
+
+                <h3 class="event-popup-subtitle">Categorías por sumatoria de edades</h3>
+                <ul class="event-popup-categories">
+                    <li><span>Infantiles</span> 40 - 44 años</li>
+                    <li><span>Jóvenes</span> 45 - 56 años</li>
+                    <li><span>Mayores</span> 57 - 96 años</li>
+                    <li><span>Máster 1</span> 97 - 140 años</li>
+                    <li><span>Máster 2</span> 141 años y +</li>
+                </ul>
+                <p class="event-popup-note">Relevos femeninos y masculinos · Medallas de oro, plata y bronce por categoría</p>
+
+                <div class="event-popup-actions">
+                    <a class="event-popup-btn event-popup-btn--primary" href="https://wa.me/573196583574?text=Hola%2C%20quiero%20inscribir%20un%20relevo%20en%20la%20IV%20Competencia%20de%20Relevos%20MNM" target="_blank" rel="noopener noreferrer">Inscribirme por WhatsApp</a>
+                    <button type="button" class="event-popup-btn" onclick="closeEventPopup()">Ver la página</button>
+                </div>
+            </div>
+        </div>
+    </dialog>
 
     <!-- Inspirational Quotes Slider Section -->
     <section class="quotes-slider-section quotes-slider-background">
@@ -4792,30 +5419,72 @@
             <div class="relay-categories">
                 <div class="relay-category">
                     <span class="relay-category-name">Infantiles</span>
-                    <span class="relay-category-range">40 a 44 años</span>
+                    <span class="relay-category-range">40 - 44 años</span>
                     <span class="relay-category-note">Sumatoria de edades</span>
                 </div>
                 <div class="relay-category">
                     <span class="relay-category-name">Jóvenes</span>
-                    <span class="relay-category-range">45 a 56 años</span>
+                    <span class="relay-category-range">45 - 56 años</span>
                     <span class="relay-category-note">Sumatoria de edades</span>
                 </div>
                 <div class="relay-category">
                     <span class="relay-category-name">Mayores</span>
-                    <span class="relay-category-range">57 a 96 años</span>
+                    <span class="relay-category-range">57 - 96 años</span>
                     <span class="relay-category-note">Sumatoria de edades</span>
                 </div>
                 <div class="relay-category">
-                    <span class="relay-category-name">Máster (1)</span>
-                    <span class="relay-category-range">97 a 140 años</span>
+                    <span class="relay-category-name">Máster 1</span>
+                    <span class="relay-category-range">97 - 140 años</span>
                     <span class="relay-category-note">Sumatoria de edades</span>
                 </div>
                 <div class="relay-category">
-                    <span class="relay-category-name">Máster (2)</span>
-                    <span class="relay-category-range">141 años en adelante</span>
+                    <span class="relay-category-name">Máster 2</span>
+                    <span class="relay-category-range">141 años y +</span>
                     <span class="relay-category-note">Sumatoria de edades</span>
                 </div>
             </div>
+
+            <div class="relay-awards" id="premiacion">
+                <picture class="relay-awards-media">
+                    <source srcset="img/premiacion-mnm.webp" type="image/webp">
+                    <img src="img/premiacion-mnm.jpg" alt="Medallas MNM de oro, plata y bronce de la IV Competencia de Relevos MNM" width="800" height="800" loading="lazy" decoding="async">
+                </picture>
+                <div class="relay-awards-text">
+                    <h3 class="relay-awards-title">Premiación</h3>
+                    <p>Medallas MNM de <strong>oro, plata y bronce</strong> para los tres primeros relevos de cada categoría, en <strong>femenino y masculino</strong>.</p>
+                    <ul class="relay-awards-list">
+                        <li><span>Infantiles</span> 40 - 44 años</li>
+                        <li><span>Jóvenes</span> 45 - 56 años</li>
+                        <li><span>Mayores</span> 57 - 96 años</li>
+                        <li><span>Máster 1</span> 97 - 140 años</li>
+                        <li><span>Máster 2</span> 141 años y +</li>
+                    </ul>
+                    <p class="relay-awards-note">La premiación se realiza al finalizar la competencia. Los nadadores deben asistir con el uniforme del club.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Medals Section -->
+    <section class="medals-section" id="medallas" aria-labelledby="medalsTitle">
+        <div class="medals-section-glow" aria-hidden="true"></div>
+        <div class="container medals-section-inner">
+            <p class="medals-eyebrow">Premiación oficial · IV edición</p>
+            <h2 class="medals-title" id="medalsTitle">Nuestras medallas</h2>
+            <p class="medals-lead">Diseñadas para esta competencia: un cronómetro que celebra los <strong>20 minutos de relevo</strong>. Oro, plata y bronce para los tres primeros relevos de cada categoría, en femenino y masculino.</p>
+
+            <figure class="medals-stage">
+                <picture>
+                    <source srcset="img/medallas-mnm.webp" type="image/webp">
+                    <img src="img/medallas-mnm.png" alt="Medallas de oro, plata y bronce de la IV Competencia de Relevos MNM con forma de cronómetro, logo MM y el número 20" width="979" height="398" loading="lazy" decoding="async">
+                </picture>
+            </figure>
+
+            <ul class="medals-podium">
+                <li class="medals-podium-item medals-podium-item--gold"><span>1°</span> Oro</li>
+                <li class="medals-podium-item medals-podium-item--silver"><span>2°</span> Plata</li>
+                <li class="medals-podium-item medals-podium-item--bronze"><span>3°</span> Bronce</li>
+            </ul>
         </div>
     </section>
 
@@ -5076,38 +5745,32 @@
     <section class="sponsors-section" id="patrocinadores">
         <div class="container">
             <h2 class="section-title">Nuestros patrocinadores</h2>
-            <p class="sponsors-section-intro">Esta edición cuenta con el apoyo de <strong>5 empresas</strong> aliadas.</p>
-            <div class="sponsors-grid">
-                <div class="sponsor-card sponsor-card--static" aria-label="Maxi">
-                    <div class="sponsor-logo">
-                        <img src="img/Maxi.png" alt="Logo Maxi" width="180" height="80" loading="lazy">
-                    </div>
-                    <div class="sponsor-name">Maxi</div>
-                </div>
-                <div class="sponsor-card sponsor-card--static" aria-label="Tienda de Ángeles">
-                    <div class="sponsor-logo">
-                        <img src="img/Tienda-de-Angeles.png" alt="Logo Tienda de Ángeles" width="180" height="80" loading="lazy">
-                    </div>
-                    <div class="sponsor-name">Tienda de Ángeles</div>
-                </div>
-                <div class="sponsor-card sponsor-card--static" aria-label="IMDER Montería">
-                    <div class="sponsor-logo">
-                        <img src="img/Imder.jpg" alt="Logo IMDER Montería" width="180" height="80" loading="lazy">
-                    </div>
-                    <div class="sponsor-name">IMDER Montería</div>
-                </div>
-                <div class="sponsor-card sponsor-card--static" aria-label="Gibraltar">
-                    <div class="sponsor-logo">
-                        <img src="img/Gibraltar.jpg" alt="Logo Gibraltar" width="180" height="80" loading="lazy">
-                    </div>
-                    <div class="sponsor-name">Gibraltar</div>
-                </div>
-                <div class="sponsor-card sponsor-card--static" aria-label="Mariana Cros">
-                    <div class="sponsor-logo">
-                        <img src="img/MarianaCros.png" alt="Logo Mariana Cros" width="180" height="80" loading="lazy">
-                    </div>
-                    <div class="sponsor-name">Mariana Cros</div>
-                </div>
+            <p class="sponsors-section-intro">Hay <strong>6 espacios</strong> para las marcas que acompañen esta edición. ¿Quieres que tu empresa esté aquí? Escríbenos.</p>
+            <div class="sponsors-grid sponsors-grid--slots">
+                <a class="sponsor-card sponsor-card--slot" href="https://wa.me/573196583574?text=Hola%2C%20quiero%20ser%20patrocinador%20de%20la%20IV%20Competencia%20de%20Relevos%20MNM" target="_blank" rel="noopener noreferrer">
+                    <span class="sponsor-slot-icon" aria-hidden="true">+</span>
+                    <span class="sponsor-slot-text">Tu marca aquí</span>
+                </a>
+                <a class="sponsor-card sponsor-card--slot" href="https://wa.me/573196583574?text=Hola%2C%20quiero%20ser%20patrocinador%20de%20la%20IV%20Competencia%20de%20Relevos%20MNM" target="_blank" rel="noopener noreferrer">
+                    <span class="sponsor-slot-icon" aria-hidden="true">+</span>
+                    <span class="sponsor-slot-text">Tu marca aquí</span>
+                </a>
+                <a class="sponsor-card sponsor-card--slot" href="https://wa.me/573196583574?text=Hola%2C%20quiero%20ser%20patrocinador%20de%20la%20IV%20Competencia%20de%20Relevos%20MNM" target="_blank" rel="noopener noreferrer">
+                    <span class="sponsor-slot-icon" aria-hidden="true">+</span>
+                    <span class="sponsor-slot-text">Tu marca aquí</span>
+                </a>
+                <a class="sponsor-card sponsor-card--slot" href="https://wa.me/573196583574?text=Hola%2C%20quiero%20ser%20patrocinador%20de%20la%20IV%20Competencia%20de%20Relevos%20MNM" target="_blank" rel="noopener noreferrer">
+                    <span class="sponsor-slot-icon" aria-hidden="true">+</span>
+                    <span class="sponsor-slot-text">Tu marca aquí</span>
+                </a>
+                <a class="sponsor-card sponsor-card--slot" href="https://wa.me/573196583574?text=Hola%2C%20quiero%20ser%20patrocinador%20de%20la%20IV%20Competencia%20de%20Relevos%20MNM" target="_blank" rel="noopener noreferrer">
+                    <span class="sponsor-slot-icon" aria-hidden="true">+</span>
+                    <span class="sponsor-slot-text">Tu marca aquí</span>
+                </a>
+                <a class="sponsor-card sponsor-card--slot" href="https://wa.me/573196583574?text=Hola%2C%20quiero%20ser%20patrocinador%20de%20la%20IV%20Competencia%20de%20Relevos%20MNM" target="_blank" rel="noopener noreferrer">
+                    <span class="sponsor-slot-icon" aria-hidden="true">+</span>
+                    <span class="sponsor-slot-text">Tu marca aquí</span>
+                </a>
             </div>
 
             <article id="top4race" class="top4race-spotlight" itemscope itemtype="https://schema.org/ProfessionalService">
@@ -5201,6 +5864,44 @@
         let lastUpdateTime = null;
         let loadAttempts = 0;
         const MAX_ATTEMPTS = 3;
+        const EVENT_POPUP_SEEN_KEY = 'mnmRelevosPopupSeen';
+
+        function openEventPopup() {
+            const popup = document.getElementById('eventPopup');
+            if (!popup || popup.open) return;
+            if (typeof popup.showModal === 'function') {
+                popup.showModal();
+            } else {
+                popup.setAttribute('open', '');
+            }
+        }
+
+        function closeEventPopup() {
+            const popup = document.getElementById('eventPopup');
+            if (!popup) return;
+            if (typeof popup.close === 'function') {
+                popup.close();
+            } else {
+                popup.removeAttribute('open');
+            }
+        }
+
+        (function initEventPopup() {
+            const popup = document.getElementById('eventPopup');
+            if (!popup) return;
+            popup.addEventListener('click', event => {
+                if (event.target === popup) closeEventPopup();
+            });
+
+            let seen = false;
+            try { seen = sessionStorage.getItem(EVENT_POPUP_SEEN_KEY) === '1'; } catch (e) {}
+            if (seen || location.hash) return;
+            setTimeout(() => {
+                openEventPopup();
+                try { sessionStorage.setItem(EVENT_POPUP_SEEN_KEY, '1'); } catch (e) {}
+            }, 1500);
+        })();
+
         const EVENT_DISPLAY_NAME = 'IV Competencia de Relevos MNM 2026';
         const SITE_PUBLIC_URL = 'https://competenciarelevosmnm.netlify.app';
         let lastPruebasSearchMatches = [];
@@ -7164,6 +7865,20 @@
             return raw;
         }
 
+        /** Categorías por sumatoria de edades (clave = categoryGroupKey) */
+        const RELAY_CATEGORY_INFO = {
+            'infantiles': { name: 'Infantiles', range: '40 - 44 años' },
+            'jovenes': { name: 'Jóvenes', range: '45 - 56 años' },
+            'mayores': { name: 'Mayores', range: '57 - 96 años' },
+            'master 1': { name: 'Máster 1', range: '97 - 140 años' },
+            'master 2': { name: 'Máster 2', range: '141 años y +' }
+        };
+
+        function formatRelayCategoryHeader(label) {
+            const info = RELAY_CATEGORY_INFO[categoryGroupKey(label)];
+            return info ? `${info.name} · ${info.range}` : label;
+        }
+
         function formatRelayShareName(nombre, equipo) {
             const swimmers = (nombre || '').split('\n').filter(Boolean).join(', ');
             if (equipo && swimmers) return `Relevo ${equipo} (${swimmers})`;
@@ -7355,7 +8070,7 @@
                         if (key !== lastKey) {
                             const label = resolveSegmentLabelForSheet(entry.category, sheetName) || entry.category;
                             this.currentCategory = label;
-                            htmlContent += this.renderCategoryRow(label);
+                            htmlContent += this.renderCategoryRow(isRelaySheetTab(sheetName) ? formatRelayCategoryHeader(label) : label);
                             lastKey = key;
                         }
                         htmlContent += this.renderDataRow(entry.row, entry.index);
@@ -8304,13 +9019,6 @@
 
         function shareThankYouMessage(platform) {
             const thankYouMessage = `🙏 ¡Gracias infinitas a nuestros increíbles patrocinadores y organizadores del ${EVENT_DISPLAY_NAME}! 🏊‍♂️🏊‍♀️
-🤝 Nuestros patrocinadores (5 empresas):
-Maxi
-Tienda de Ángeles
-IMDER Montería
-Gibraltar
-Mariana Cros
-
 Organizadores:
 Club Montería Natación Master
 
@@ -11006,8 +11714,8 @@ ${SITE_PUBLIC_URL}`;
                         content: [
                             "• 20 minutos de relevo 4 x 50 m libre (relevo continuo)",
                             "• Relevos por sexo y sumatoria de edades:",
-                            "   Infantiles 40-44 · Jóvenes 45-56 · Mayores 57-96",
-                            "   Máster (1) 97-140 · Máster (2) 141 en adelante"
+                            "   Infantiles 40 - 44 años · Jóvenes 45 - 56 años · Mayores 57 - 96 años",
+                            "   Máster 1 97 - 140 años · Máster 2 141 años y +"
                         ]
                     },
                     {

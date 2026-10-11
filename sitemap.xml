@@ -16,6 +16,12 @@
     <image:image>
       <image:loc>https://competenciarelevosmnm.netlify.app/img/logo-mm.png</image:loc>
     </image:image>
+    <image:image>
+      <image:loc>https://competenciarelevosmnm.netlify.app/img/premiacion-mnm.jpg</image:loc>
+    </image:image>
+    <image:image>
+      <image:loc>https://competenciarelevosmnm.netlify.app/img/medallas-mnm.png</image:loc>
+    </image:image>
     <video:video>
       <video:thumbnail_loc>https://competenciarelevosmnm.netlify.app/img/fondo-mnm-azul.png</video:thumbnail_loc>
       <video:title>IV Competencia de Relevos MNM 2026 — Natación en Montería</video:title>
