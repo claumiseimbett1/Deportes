@@ -71,7 +71,6 @@
           "image": [
             "https://competenciarelevosmnm.netlify.app/img/logo-mnm.png",
             "https://competenciarelevosmnm.netlify.app/img/fondo-mnm-azul.png",
-            "https://competenciarelevosmnm.netlify.app/img/premiacion-mnm.jpg",
             "https://competenciarelevosmnm.netlify.app/img/medallas-mnm.png",
             "https://competenciarelevosmnm.netlify.app/img/logoTop4Race2.png"
           ],
@@ -4582,72 +4581,6 @@
             max-width: 760px;
         }
 
-        .relay-awards {
-            display: grid;
-            grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr);
-            gap: clamp(1.25rem, 3vw, 2.5rem);
-            align-items: center;
-            max-width: 1000px;
-            margin: var(--space-section-tight) auto 0;
-            background: #ffffff;
-            border-radius: 18px;
-            box-shadow: var(--box-shadow);
-            overflow: hidden;
-            border-bottom: 5px solid var(--accent-yellow);
-        }
-
-        .relay-awards-media img {
-            display: block;
-            width: 100%;
-            height: 100%;
-            aspect-ratio: 1 / 1;
-            object-fit: cover;
-        }
-
-        .relay-awards-text {
-            padding: 1.5rem clamp(1.25rem, 3vw, 2rem) 1.5rem 0;
-            color: #0d2a5c;
-        }
-
-        .relay-awards-title {
-            font-family: var(--font-display);
-            font-size: clamp(1.4rem, 2vw + 0.6rem, 1.9rem);
-            color: var(--primary-color);
-            text-transform: uppercase;
-            letter-spacing: 0.04em;
-            margin: 0 0 0.6rem;
-        }
-
-        .relay-awards-list {
-            list-style: none;
-            margin: 1rem 0;
-            padding: 0;
-            display: grid;
-            gap: 0.45rem;
-        }
-
-        .relay-awards-list li {
-            display: flex;
-            justify-content: space-between;
-            gap: 1rem;
-            padding: 0.55rem 0.85rem;
-            border-radius: 10px;
-            background: #f3f7fd;
-            font-weight: 700;
-        }
-
-        .relay-awards-list li span {
-            color: var(--primary-color);
-            text-transform: uppercase;
-            letter-spacing: 0.03em;
-        }
-
-        .relay-awards-note {
-            font-size: 0.9rem;
-            color: var(--text-gray);
-            margin: 0;
-        }
-
         .medals-section {
             position: relative;
             overflow: hidden;
@@ -5074,14 +5007,6 @@
             .relay-categories {
                 grid-template-columns: repeat(2, minmax(0, 1fr));
             }
-
-            .relay-awards {
-                grid-template-columns: 1fr;
-            }
-
-            .relay-awards-text {
-                padding: 0 1.25rem 1.5rem;
-            }
         }
     </style>
 </head>
@@ -5441,25 +5366,6 @@
                     <span class="relay-category-name">Máster 2</span>
                     <span class="relay-category-range">141 años y +</span>
                     <span class="relay-category-note">Sumatoria de edades</span>
-                </div>
-            </div>
-
-            <div class="relay-awards" id="premiacion">
-                <picture class="relay-awards-media">
-                    <source srcset="img/premiacion-mnm.webp" type="image/webp">
-                    <img src="img/premiacion-mnm.jpg" alt="Medallas MNM de oro, plata y bronce de la IV Competencia de Relevos MNM" width="800" height="800" loading="lazy" decoding="async">
-                </picture>
-                <div class="relay-awards-text">
-                    <h3 class="relay-awards-title">Premiación</h3>
-                    <p>Medallas MNM de <strong>oro, plata y bronce</strong> para los tres primeros relevos de cada categoría, en <strong>femenino y masculino</strong>.</p>
-                    <ul class="relay-awards-list">
-                        <li><span>Infantiles</span> 40 - 44 años</li>
-                        <li><span>Jóvenes</span> 45 - 56 años</li>
-                        <li><span>Mayores</span> 57 - 96 años</li>
-                        <li><span>Máster 1</span> 97 - 140 años</li>
-                        <li><span>Máster 2</span> 141 años y +</li>
-                    </ul>
-                    <p class="relay-awards-note">La premiación se realiza al finalizar la competencia. Los nadadores deben asistir con el uniforme del club.</p>
                 </div>
             </div>
         </div>
