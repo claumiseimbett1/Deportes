@@ -63,5 +63,6 @@ Ediciones congeladas del mismo esquema modelo. El sitio activo está en la raíz
 - `archive/iv-championship/` — IV Championship 2025
 - `archive/v-championship/` — V Championship Master 2026
 - `archive/i-festitorneo/` — I Festitorneo Regional del Sinú 2026 (`index.html`, `img/`, `documentos/`, `video/`, etc.)
+- `archive/festitorneo-nng-2026/` — Festi-Torneo de Aniversario NNG 2026 (respaldo del 2026-10-10)
 
-Para congelar esta edición NNG antes de un cambio mayor, copia `index.html`, `img/` y `documentos/` a una carpeta nueva en `archive/` (mismo esquema de carpetas; sin ZIP).
+Para congelar una edición antes de un cambio mayor, copia `index.html`, `img/` y `documentos/` a una carpeta nueva en `archive/` (mismo esquema de carpetas; sin ZIP).
