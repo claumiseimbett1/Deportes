@@ -5244,6 +5244,25 @@
                 gap: 0.7rem;
             }
         }
+
+        @media (max-width: 768px) {
+            .share-btn {
+                width: 40px;
+                height: 40px;
+                font-size: 16px;
+            }
+
+            .search-input {
+                min-height: 42px;
+            }
+
+            .hero-eyebrow,
+            .mobile-results-label,
+            .event-stats-section .stat-label,
+            .event-stats-section .stat-description {
+                font-size: 0.75rem;
+            }
+        }
     </style>
 </head>
 <body>
@@ -5255,7 +5274,7 @@
                     <img src="img/AQUATEN_LogoTransparenteGRANDE.png" alt="Logo AquaTEN">
                 </a>
                 <a class="logo-box logo-box--light logo-box--top4race logo-link" href="https://top4race.netlify.app/" target="_blank" rel="noopener noreferrer" aria-label="Top4Race">
-                    <img src="img/logoTop4Race2.png" alt="Logo Top4Race">
+                    <img src="img/logoTop4Race2-sm.webp" alt="Logo Top4Race">
                 </a>
             </div>
 
@@ -5281,7 +5300,7 @@
                 <a class="logo-box logo-box--light logo-box--event logo-link" href="https://monterianatacionmaster.netlify.app/" target="_blank" rel="noopener noreferrer" aria-label="Club Montería Natación Master">
                     <picture>
                         <source media="(max-width: 768px)" srcset="img/logo-mm.png">
-                        <img src="img/logo-mnm.png" alt="Club Montería Natación Master MNM">
+                        <img src="img/logo-mnm-sm.webp" alt="Club Montería Natación Master MNM">
                     </picture>
                 </a>
             </div>
@@ -5298,13 +5317,14 @@
     <!-- Hero Section -->
     <section class="video-hero" id="inicio">
         <div class="video-container">
-            <video class="hero-video" autoplay muted loop playsinline preload="auto" poster="img/fondo-mnm-azul.png" aria-hidden="true">
-                <source src="video/RELEVOSMASTER2026.mp4" type="video/mp4">
+            <video class="hero-video" autoplay muted loop playsinline preload="metadata" poster="img/fondo-mnm-azul.png" aria-hidden="true">
+                <source src="video/RELEVOSMASTER2026-mobile.mp4" type="video/mp4" media="(max-width: 768px)">
+                <source src="video/RELEVOSMASTER2026-web.mp4" type="video/mp4">
             </video>
         </div>
         <div class="video-overlay">
             <div class="hero-content">
-                <img class="hero-brand-mark" src="img/logo-mnm-blanco.png" alt="Club Montería Natación Master">
+                <img class="hero-brand-mark" src="img/logo-mnm-blanco-sm.webp" alt="Club Montería Natación Master" width="480" height="361">
                 <p class="hero-eyebrow">20 minutos · Relevo 4 x 50 m libre · #Sabemosdenatación</p>
                 <h1>IV Competencia de Relevos MNM</h1>
                 <p class="subtitle hero-date">Sábado 7 de noviembre de 2026 · 6:00 pm</p>
@@ -5320,7 +5340,7 @@
         <div class="event-popup-card">
             <button type="button" class="event-popup-close" onclick="closeEventPopup()" aria-label="Cerrar">&times;</button>
             <div class="event-popup-header">
-                <img src="img/logo-mnm-blanco.png" alt="" class="event-popup-logo" width="120" height="120">
+                <img src="img/logo-mnm-blanco-sm.webp" alt="" class="event-popup-logo" width="120" height="90">
                 <p class="event-popup-eyebrow">20 minutos · Relevo 4 x 50 m libre</p>
                 <h2 id="eventPopupTitle">IV Competencia de Relevos MNM</h2>
             </div>
@@ -5900,7 +5920,7 @@
                 </div>
                 <div class="top4race-ad-banner" role="complementary" aria-label="Aliado tecnológico Top4Race">
                     <a href="https://top4race.netlify.app/" class="top4race-ad-logo-link" target="_blank" rel="sponsored noopener noreferrer" aria-label="Top4Race — abrir sitio web">
-                        <img src="img/top4race.jpg" alt="Logo Top4Race" class="top4race-ad-logo" width="180" height="64" loading="lazy">
+                        <img src="img/top4race-sm.webp" alt="Logo Top4Race" class="top4race-ad-logo" width="240" height="160" loading="lazy" decoding="async">
                     </a>
                     <div class="top4race-ad-text-col">
                         <span class="top4race-ad-main">Aliado tecnológico</span>
