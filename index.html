@@ -5008,6 +5008,242 @@
                 grid-template-columns: repeat(2, minmax(0, 1fr));
             }
         }
+
+        /* Estadísticas: marcador compacto */
+        .event-stats-section .stats-grid {
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 0;
+            max-width: 900px;
+            padding: 0.4rem;
+            border-radius: 22px;
+            background: linear-gradient(135deg, #0d2a5c 0%, #134492 60%, #1a5bb8 100%);
+            box-shadow: 0 18px 40px rgba(13, 42, 92, 0.28);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .event-stats-section .stats-grid::after {
+            content: "";
+            position: absolute;
+            inset: auto 0 0 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--secondary-color) 0 50%, var(--accent-yellow) 50% 100%);
+        }
+
+        .event-stats-section .stat-card {
+            display: grid;
+            grid-template-columns: auto 1fr;
+            grid-template-areas:
+                "icon number"
+                "icon label"
+                "icon desc";
+            column-gap: 0.85rem;
+            align-items: center;
+            text-align: left;
+            padding: 1.1rem 1.25rem;
+            background: transparent;
+            border: 0;
+            border-radius: 0;
+            box-shadow: none;
+        }
+
+        .event-stats-section .stat-card + .stat-card {
+            border-left: 1px solid rgba(255, 255, 255, 0.14);
+        }
+
+        .event-stats-section .stat-card:hover {
+            transform: none;
+            box-shadow: none;
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .event-stats-section .stat-card::after {
+            display: none;
+        }
+
+        .event-stats-section .stat-card .sticker-icon {
+            grid-area: icon;
+            width: 48px;
+            height: 48px;
+            margin: 0;
+            padding: 11px;
+            border-radius: 14px;
+            background: rgba(255, 255, 255, 0.12);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+        }
+
+        .event-stats-section .stat-card .sticker-icon svg [stroke]:not([stroke="none"]) {
+            stroke: var(--accent-yellow);
+        }
+
+        .event-stats-section .stat-card .sticker-icon svg [fill]:not([fill="none"]) {
+            fill: var(--accent-yellow);
+        }
+
+        .event-stats-section .stat-number {
+            grid-area: number;
+            margin: 0;
+            font-family: var(--font-display);
+            font-size: clamp(1.7rem, 2vw + 1rem, 2.3rem);
+            line-height: 1;
+            color: #ffffff;
+        }
+
+        .event-stats-section .stat-card:hover .stat-number {
+            color: var(--accent-yellow);
+            text-shadow: none;
+        }
+
+        .event-stats-section .stat-label {
+            grid-area: label;
+            margin-top: 0.2rem;
+            font-size: 0.82rem;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: var(--secondary-color);
+        }
+
+        .event-stats-section .stat-card:hover .stat-label {
+            color: var(--secondary-color);
+        }
+
+        .event-stats-section .stat-description {
+            grid-area: desc;
+            margin: 0.1rem 0 0;
+            font-size: 0.82rem;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .event-stats-section .event-goal-card {
+            max-width: 900px;
+            margin-left: auto;
+            margin-right: auto;
+            padding: 1.1rem 1.4rem;
+            text-align: left;
+            border: 1px solid #e5edf8;
+            border-left: 5px solid var(--accent-yellow);
+            border-radius: 16px;
+            box-shadow: 0 8px 22px rgba(13, 42, 92, 0.08);
+        }
+
+        .event-stats-section .event-goal-card:hover {
+            transform: translateY(-3px);
+        }
+
+        .event-stats-section .goal-card-title {
+            margin-bottom: 0.4rem;
+            font-size: 1.05rem;
+        }
+
+        .event-stats-section .goal-card-text {
+            font-size: 0.95rem;
+        }
+
+        /* Información del evento: tarjetas compactas */
+        .info-section .cards-grid {
+            grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
+            gap: 0.9rem;
+        }
+
+        .info-section .info-card {
+            display: grid;
+            grid-template-columns: auto 1fr;
+            grid-template-areas:
+                "icon title"
+                "icon text";
+            column-gap: 0.9rem;
+            align-content: start;
+            text-align: left;
+            padding: 1rem 1.15rem;
+            border-radius: 16px;
+            border: 1px solid #e5edf8;
+            border-top: 4px solid var(--primary-color);
+            box-shadow: 0 6px 18px rgba(13, 42, 92, 0.07);
+        }
+
+        .info-section .info-card:nth-child(3n+2) { border-top-color: var(--secondary-color); }
+        .info-section .info-card:nth-child(3n) { border-top-color: var(--accent-yellow); }
+
+        .info-section .info-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 14px 28px rgba(0, 169, 220, 0.16);
+        }
+
+        .info-section .info-card .sticker-icon {
+            grid-area: icon;
+            width: 46px;
+            height: 46px;
+            margin: 0.1rem 0 0;
+            padding: 11px;
+            border-radius: 14px;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            box-shadow: 0 6px 14px rgba(19, 68, 146, 0.25);
+        }
+
+        .info-section .info-card .sticker-icon svg [stroke]:not([stroke="none"]) {
+            stroke: #ffffff;
+        }
+
+        .info-section .info-card .sticker-icon svg [fill]:not([fill="none"]) {
+            fill: #ffffff;
+        }
+
+        .info-section .info-card h3 {
+            grid-area: title;
+            margin: 0 0 0.25rem;
+            font-size: 1.1rem;
+            line-height: 1.25;
+        }
+
+        .info-section .info-card p {
+            grid-area: text;
+            margin: 0;
+            font-size: 0.93rem;
+            line-height: 1.5;
+        }
+
+        @media (max-width: 640px) {
+            .event-stats-section .stats-grid {
+                padding: 0.25rem;
+                border-radius: 18px;
+            }
+
+            .event-stats-section .stat-card {
+                grid-template-columns: 1fr;
+                grid-template-areas:
+                    "icon"
+                    "number"
+                    "label"
+                    "desc";
+                justify-items: center;
+                align-content: start;
+                text-align: center;
+                row-gap: 0.15rem;
+                padding: 0.9rem 0.4rem 1rem;
+            }
+
+            .event-stats-section .stat-card .sticker-icon {
+                width: 38px;
+                height: 38px;
+                padding: 9px;
+                margin-bottom: 0.35rem;
+            }
+
+            .event-stats-section .stat-label {
+                font-size: 0.68rem;
+                letter-spacing: 0.05em;
+            }
+
+            .event-stats-section .stat-description {
+                font-size: 0.72rem;
+                line-height: 1.3;
+            }
+
+            .info-section .cards-grid {
+                grid-template-columns: 1fr;
+                gap: 0.7rem;
+            }
+        }
     </style>
 </head>
 <body>
@@ -5227,16 +5463,7 @@
                 <!-- Nadadores Inscritos -->
                 <div class="stat-card">
                     <div class="sticker-icon">
-                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <!-- Head -->
-                            <circle cx="12" cy="12" r="6" fill="#555"/>
-                            <!-- Swimming cap -->
-                            <path d="M6 12C6 8 8.5 5 12 5S18 8 18 12V15C18 16 17 17 16 17H8C7 17 6 16 6 15V12Z" fill="#666"/>
-                            <!-- Goggles -->
-                            <circle cx="9.5" cy="11.5" r="2" fill="#ffffff" stroke="#555" stroke-width="1"/>
-                            <circle cx="14.5" cy="11.5" r="2" fill="#ffffff" stroke="#555" stroke-width="1"/>
-                            <rect x="11.5" y="11" width="1" height="1" fill="#555" rx="0.5"/>
-                        </svg>
+                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M8 2L10.5 8M16 2L13.5 8" stroke="#555" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="14.5" r="6" stroke="#555" stroke-width="2"/><path d="M12 11.5L12.9 13.4L15 13.6L13.4 15L13.9 17L12 15.9L10.1 17L10.6 15L9 13.6L11.1 13.4L12 11.5Z" stroke="#555" stroke-width="1.2" stroke-linejoin="round"/></svg>
                     </div>
                     <h3 class="stat-number" id="swimmerCount">IV</h3>
                     <p class="stat-label">Edición</p>
@@ -5246,20 +5473,7 @@
                 <!-- Clubes Participantes -->
                 <div class="stat-card">
                     <div class="sticker-icon">
-                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <!-- House roof -->
-                            <path d="M3 12L12 3L21 12" stroke="#666" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-                            <!-- House body -->
-                            <path d="M5 12V19C5 19.5523 5.44772 20 6 20H18C18.5523 20 19 19.5523 19 19V12" stroke="#555" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                            <!-- Door -->
-                            <rect x="10" y="15" width="4" height="5" stroke="#666" stroke-width="1.8" rx="0.5"/>
-                            <circle cx="12.8" cy="17.5" r="0.3" fill="#555"/>
-                            <!-- Windows -->
-                            <rect x="7" y="13" width="2.5" height="2.5" stroke="#555" stroke-width="1.5" rx="0.2"/>
-                            <rect x="14.5" y="13" width="2.5" height="2.5" stroke="#555" stroke-width="1.5" rx="0.2"/>
-                            <!-- Chimney -->
-                            <rect x="16" y="7" width="1.5" height="4" stroke="#555" stroke-width="1.5"/>
-                        </svg>
+                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><circle cx="12" cy="13.5" r="7.5" stroke="#555" stroke-width="2"/><path d="M12 13.5V9.5M12 13.5L14.5 15" stroke="#555" stroke-width="2" stroke-linecap="round"/><path d="M10 2.5H14M12 2.5V6M18.5 6.5L19.8 5.2" stroke="#555" stroke-width="2" stroke-linecap="round"/></svg>
                     </div>
                     <h3 class="stat-number" id="clubCount">20</h3>
                     <p class="stat-label">Minutos</p>
@@ -5269,10 +5483,7 @@
                 <!-- Patrocinadores -->
                 <div class="stat-card">
                     <div class="sticker-icon">
-                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M12 2L14.4 8.8L22 9.6L17 14.4L18.8 22L12 18.4L5.2 22L7 14.4L2 9.6L9.6 8.8L12 2Z" fill="none" stroke="#666" stroke-width="2.5"/>
-                            <circle cx="12" cy="12" r="2" fill="#555"/>
-                        </svg>
+                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M2 9C4 7.5 6 7.5 8 9C10 10.5 12 10.5 14 9C16 7.5 18 7.5 20 9L22 10" stroke="#555" stroke-width="2" stroke-linecap="round"/><path d="M2 15C4 13.5 6 13.5 8 15C10 16.5 12 16.5 14 15C16 13.5 18 13.5 20 15L22 16" stroke="#555" stroke-width="2" stroke-linecap="round"/><circle cx="17" cy="4.5" r="1.8" stroke="#555" stroke-width="1.8"/></svg>
                     </div>
                     <h3 class="stat-number" id="sponsorCount">4x50</h3>
                     <p class="stat-label">Metros libre</p>
