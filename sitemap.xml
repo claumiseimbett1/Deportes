@@ -1,9 +1,40 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1"
+        xmlns:video="http://www.google.com/schemas/sitemap-video/1.1">
   <url>
-    <loc>https://festitorneonng.netlify.app/</loc>
-    <lastmod>2026-06-26</lastmod>
-    <changefreq>weekly</changefreq>
+    <loc>https://competenciarelevosmnm.netlify.app/</loc>
+    <lastmod>2026-10-10</lastmod>
+    <changefreq>daily</changefreq>
     <priority>1.0</priority>
+    <image:image>
+      <image:loc>https://competenciarelevosmnm.netlify.app/img/logo-mnm.png</image:loc>
+    </image:image>
+    <image:image>
+      <image:loc>https://competenciarelevosmnm.netlify.app/img/fondo-mnm-azul.png</image:loc>
+    </image:image>
+    <image:image>
+      <image:loc>https://competenciarelevosmnm.netlify.app/img/logo-mm.png</image:loc>
+    </image:image>
+    <video:video>
+      <video:thumbnail_loc>https://competenciarelevosmnm.netlify.app/img/fondo-mnm-azul.png</video:thumbnail_loc>
+      <video:title>IV Competencia de Relevos MNM 2026 — Natación en Montería</video:title>
+      <video:description>Video promocional de la IV Competencia de Relevos del Club Montería Natación Master: 20 minutos de relevo 4 x 50 m libre en la Piscina Villa Olímpica de Montería, Córdoba. Sábado 7 de noviembre de 2026.</video:description>
+      <video:content_loc>https://competenciarelevosmnm.netlify.app/video/RELEVOSMASTER2026.mp4</video:content_loc>
+      <video:duration>5</video:duration>
+      <video:publication_date>2026-10-10T20:00:00-05:00</video:publication_date>
+      <video:family_friendly>yes</video:family_friendly>
+      <video:requires_subscription>no</video:requires_subscription>
+      <video:live>no</video:live>
+      <video:tag>natación Montería</video:tag>
+      <video:tag>relevos</video:tag>
+      <video:tag>Club Montería Natación Master</video:tag>
+    </video:video>
+  </url>
+  <url>
+    <loc>https://competenciarelevosmnm.netlify.app/documentos/IV-COMPETENCIA-DE-RELEVOS-MNM.pdf</loc>
+    <lastmod>2026-10-10</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
   </url>
 </urlset>

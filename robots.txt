@@ -1,4 +1,19 @@
+# IV Competencia de Relevos MNM — Club Montería Natación Master
+# https://competenciarelevosmnm.netlify.app/
+
 User-agent: *
 Allow: /
+Allow: /img/
+Allow: /video/
+Allow: /documentos/IV-COMPETENCIA-DE-RELEVOS-MNM.pdf
 
-Sitemap: https://festitorneonng.netlify.app/sitemap.xml
+# Eventos anteriores, página de confirmación y archivos técnicos
+Disallow: /archive/
+Disallow: /gracias.html
+Disallow: /scripts/
+Disallow: /documentos/_nng_pdf_extract.txt
+Disallow: /documentos/FESTI-TORNEO-DE-ANIVERSARIO-NNG.pdf
+Disallow: /documentos/I%20FESTITORNEO-2026%20(1).pdf
+Disallow: /documentos/sembrado_
+
+Sitemap: https://competenciarelevosmnm.netlify.app/sitemap.xml

@@ -1,26 +1,26 @@
-# Festi-Torneo de Aniversario NNG 2026 — página modelo de evento
+# IV Competencia de Relevos MNM 2026 — página modelo de evento
 
-Sitio estático del **Festi-Torneo de Aniversario NNG — El Nadador Más Rápido 2026**, organizado por el **Club Nadadores Nueva Generación (NNG)** con apoyo de la Liga de Natación de Córdoba y el IMDER Montería.
+Sitio estático de la **IV Competencia de Relevos MNM**, organizada por el **Club Montería Natación Master (MNM)**: 20 minutos de relevo continuo 4 x 50 m libre, categorías por sumatoria de edades.
 
 Esta landing es la **página modelo de evento** para Top4Race / AquaTEN: mismo esquema reutilizable (hero, info, convocatoria, resultados desde Google Sheets, diplomas PDF, compartir) adaptado a la marca y datos de cada competencia.
 
-**Evento:** 13 de septiembre de 2026 · Piscina Villa Olímpica, Montería (Córdoba).  
-**Convocatoria:** `documentos/FESTI-TORNEO-DE-ANIVERSARIO-NNG.pdf`
+**Evento:** sábado 7 de noviembre de 2026 · 6:00 pm · Piscina Villa Olímpica, Montería (Córdoba).  
+**Invitación:** `documentos/IV-COMPETENCIA-DE-RELEVOS-MNM.pdf`
 
-**Producción:** [https://festitorneonng.netlify.app/](https://festitorneonng.netlify.app/)
+**Producción:** [https://competenciarelevosmnm.netlify.app/](https://competenciarelevosmnm.netlify.app/)
 
 ## Qué incluye el modelo
 
 - Resultados en vivo desde Google Sheets (API y CSV).
 - Tablas por prueba, género y clasificación por equipos; búsqueda y filtros.
 - Diplomas descargables (jsPDF) y textos para compartir (WhatsApp / Instagram).
-- Hero a sangre con foto de marca, convocatoria PDF y contacto del club.
-- Identidad visual NNG (navy, cian, rojo) + soporte tecnológico Top4Race / AquaTEN.
+- Hero a sangre con video de marca, invitación PDF y contacto del club.
+- Identidad visual MNM (azul #134492, navy, cian, amarillo; fondos de franjas) + soporte tecnológico Top4Race / AquaTEN.
 - Diseño responsive; sección Top4Race (`#top4race`) deshabilitada por defecto.
 
 ## SEO (resumen)
 
-El `index.html` incluye title/description locales, canonical, Open Graph, Twitter Card, `robots` y JSON-LD (`SportsEvent`, `WebSite`, Top4Race). Tras cambiar dominio o imagen social, actualiza canonical, `og:*` y el bloque JSON-LD.
+El `index.html` incluye title/description orientados a "natación Montería", geo-etiquetas de Montería, canonical, hreflang `es-CO`, Open Graph (imagen y video), Twitter Card, `robots` y JSON-LD (`SportsEvent` con lugar, oferta, video e invitación PDF; club organizador con dirección; `WebSite`; Top4Race). `sitemap.xml` incluye entradas de imagen y video y la invitación PDF; `robots.txt` bloquea `archive/`, `gracias.html` y PDFs de eventos anteriores. Tras cambiar dominio o imagen social, actualiza canonical, `og:*`, el bloque JSON-LD, `sitemap.xml` y `robots.txt`.
 
 ## Estructura del proyecto
 
@@ -28,15 +28,15 @@ El `index.html` incluye title/description locales, canonical, Open Graph, Twitte
 |------|-------------|
 | `index.html` | Página modelo activa: marcado, estilos, SEO y lógica (Sheets, tablas, PDF). |
 | `style.css` | Estilos adicionales (el layout principal vive en `index.html`). |
-| `img/` | Logo NNG, foto de equipo, logos Top4Race y plantillas de diplomas. |
-| `video/` | Recurso opcional (el hero NNG usa foto). |
-| `documentos/` | Convocatoria NNG y política de datos. |
+| `img/` | Logos MNM y siglas MM, fondos de franjas, favicon, logos Top4Race y plantillas de diplomas. |
+| `video/` | `RELEVOSMASTER2026.mp4` (video del hero). |
+| `documentos/` | Invitación de relevos MNM y política de datos. |
 | `archive/` | Ediciones anteriores congeladas (no se despliegan). |
 | `sitemap.xml` / `robots.txt` | SEO técnico. |
 
 ## Mapa del sitio (anclas)
 
-- `#inicio` — Hero (foto NNG)
+- `#inicio` — Hero (video MNM)
 - `#informacion` — Información del evento
 - `#terminos` — Convocatoria / documentos
 - `#resultados` — Resultados y tablas
