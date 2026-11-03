@@ -1905,7 +1905,8 @@
 
         @media (min-width: 1100px) {
             .sponsors-grid--slots {
-                grid-template-columns: repeat(6, 1fr);
+                grid-template-columns: repeat(3, 1fr);
+                max-width: 980px;
             }
         }
 
@@ -2704,11 +2705,11 @@
                 word-break: break-word;
             }
 
-            /* Con 5 patrocinadores, centra el último en la fila impar */
+            /* Con 3 patrocinadores, centra el último en la fila impar al mismo ancho */
             .sponsors-grid .sponsor-card:last-child:nth-child(odd) {
                 grid-column: 1 / -1;
-                max-width: 168px;
-                width: 100%;
+                width: calc((100% - 12px) / 2);
+                max-width: none;
                 justify-self: center;
             }
 
@@ -2990,7 +2991,8 @@
             }
 
             .sponsors-grid .sponsor-card:last-child:nth-child(odd) {
-                max-width: 156px;
+                width: calc((100% - 10px) / 2);
+                max-width: none;
             }
 
             .video-hero {
@@ -5880,32 +5882,26 @@
     <section class="sponsors-section" id="patrocinadores">
         <div class="container">
             <h2 class="section-title">Nuestros patrocinadores</h2>
-            <p class="sponsors-section-intro">Hay <strong>6 espacios</strong> para las marcas que acompañen esta edición. ¿Quieres que tu empresa esté aquí? Escríbenos.</p>
+            <p class="sponsors-section-intro">Esta edición cuenta con el apoyo de <strong>DR-Innova</strong>, <strong>Almacén La Elegancia</strong> y <strong>Konkretes</strong>.</p>
             <div class="sponsors-grid sponsors-grid--slots">
-                <a class="sponsor-card sponsor-card--slot" href="https://wa.me/573196583574?text=Hola%2C%20quiero%20ser%20patrocinador%20de%20la%20IV%20Competencia%20de%20Relevos%20MNM" target="_blank" rel="noopener noreferrer">
-                    <span class="sponsor-slot-icon" aria-hidden="true">+</span>
-                    <span class="sponsor-slot-text">Tu marca aquí</span>
-                </a>
-                <a class="sponsor-card sponsor-card--slot" href="https://wa.me/573196583574?text=Hola%2C%20quiero%20ser%20patrocinador%20de%20la%20IV%20Competencia%20de%20Relevos%20MNM" target="_blank" rel="noopener noreferrer">
-                    <span class="sponsor-slot-icon" aria-hidden="true">+</span>
-                    <span class="sponsor-slot-text">Tu marca aquí</span>
-                </a>
-                <a class="sponsor-card sponsor-card--slot" href="https://wa.me/573196583574?text=Hola%2C%20quiero%20ser%20patrocinador%20de%20la%20IV%20Competencia%20de%20Relevos%20MNM" target="_blank" rel="noopener noreferrer">
-                    <span class="sponsor-slot-icon" aria-hidden="true">+</span>
-                    <span class="sponsor-slot-text">Tu marca aquí</span>
-                </a>
-                <a class="sponsor-card sponsor-card--slot" href="https://wa.me/573196583574?text=Hola%2C%20quiero%20ser%20patrocinador%20de%20la%20IV%20Competencia%20de%20Relevos%20MNM" target="_blank" rel="noopener noreferrer">
-                    <span class="sponsor-slot-icon" aria-hidden="true">+</span>
-                    <span class="sponsor-slot-text">Tu marca aquí</span>
-                </a>
-                <a class="sponsor-card sponsor-card--slot" href="https://wa.me/573196583574?text=Hola%2C%20quiero%20ser%20patrocinador%20de%20la%20IV%20Competencia%20de%20Relevos%20MNM" target="_blank" rel="noopener noreferrer">
-                    <span class="sponsor-slot-icon" aria-hidden="true">+</span>
-                    <span class="sponsor-slot-text">Tu marca aquí</span>
-                </a>
-                <a class="sponsor-card sponsor-card--slot" href="https://wa.me/573196583574?text=Hola%2C%20quiero%20ser%20patrocinador%20de%20la%20IV%20Competencia%20de%20Relevos%20MNM" target="_blank" rel="noopener noreferrer">
-                    <span class="sponsor-slot-icon" aria-hidden="true">+</span>
-                    <span class="sponsor-slot-text">Tu marca aquí</span>
-                </a>
+                <div class="sponsor-card sponsor-card--static" aria-label="DR-Innova">
+                    <div class="sponsor-logo">
+                        <img src="img/dr-innova.png" alt="Logo DR-Innova" width="3472" height="2034" loading="lazy" decoding="async">
+                    </div>
+                    <div class="sponsor-name">DR-Innova</div>
+                </div>
+                <div class="sponsor-card sponsor-card--static" aria-label="Almacén La Elegancia">
+                    <div class="sponsor-logo">
+                        <img src="img/Almacen-La-Elegancia.jpg" alt="Logo Almacén La Elegancia" width="818" height="290" loading="lazy" decoding="async">
+                    </div>
+                    <div class="sponsor-name">Almacén La Elegancia</div>
+                </div>
+                <div class="sponsor-card sponsor-card--static" aria-label="Konkretes">
+                    <div class="sponsor-logo">
+                        <img src="img/konkretes.png" alt="Logo Konkretes" width="2448" height="794" loading="lazy" decoding="async">
+                    </div>
+                    <div class="sponsor-name">Konkretes</div>
+                </div>
             </div>
 
             <article id="top4race" class="top4race-spotlight" itemscope itemtype="https://schema.org/ProfessionalService">
@@ -9154,6 +9150,11 @@
 
         function shareThankYouMessage(platform) {
             const thankYouMessage = `🙏 ¡Gracias infinitas a nuestros increíbles patrocinadores y organizadores del ${EVENT_DISPLAY_NAME}! 🏊‍♂️🏊‍♀️
+Patrocinadores:
+DR-Innova
+Almacén La Elegancia
+Konkretes
+
 Organizadores:
 Club Montería Natación Master
 
