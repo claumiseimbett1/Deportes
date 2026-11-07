@@ -4999,6 +4999,47 @@
             color: var(--surface-dark);
         }
 
+        .event-popup-lead {
+            margin: 0;
+            text-align: center;
+            font-size: 1.08rem;
+            line-height: 1.45;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+
+        .event-popup-sponsors {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 0.55rem;
+            margin-top: 0.75rem;
+        }
+
+        .event-popup-sponsor {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 78px;
+            padding: 0.4rem 0.35rem;
+            border-radius: 12px;
+            border: 1px solid #e5edf8;
+            background: #ffffff;
+        }
+
+        .event-popup-sponsor img {
+            width: 100%;
+            height: 62px;
+            object-fit: contain;
+        }
+
+        .event-popup-actions {
+            justify-content: center;
+        }
+
+        .event-popup-actions .event-popup-btn {
+            flex: 0 1 220px;
+        }
+
         @media (max-width: 768px) {
             .hero-brand-mark {
                 width: clamp(120px, 38vw, 170px);
@@ -5330,7 +5371,7 @@
                 <p class="subtitle hero-date">Sábado 7 de noviembre de 2026 · 6:00 pm</p>
                 <p class="subtitle hero-clubs"><span class="club-name-badge club-name-badge-mnm">Club Montería Natación Master</span></p>
                 <p class="subtitle hero-location">Piscina Villa Olímpica · Montería, Córdoba</p>
-                <button type="button" class="event-popup-trigger" onclick="openEventPopup()">Ver categorías, fecha y valor</button>
+                <button type="button" class="event-popup-trigger" onclick="openEventPopup()">Inscripciones cerradas</button>
             </div>
         </div>
     </section>
@@ -5341,50 +5382,27 @@
             <button type="button" class="event-popup-close" onclick="closeEventPopup()" aria-label="Cerrar">&times;</button>
             <div class="event-popup-header">
                 <img src="img/logo-mnm-blanco-sm.webp" alt="" class="event-popup-logo" width="120" height="90">
-                <p class="event-popup-eyebrow">20 minutos · Relevo 4 x 50 m libre</p>
-                <h2 id="eventPopupTitle">IV Competencia de Relevos MNM</h2>
+                <p class="event-popup-eyebrow">IV Competencia de Relevos MNM</p>
+                <h2 id="eventPopupTitle">Inscripciones cerradas</h2>
             </div>
             <div class="event-popup-body">
-                <ul class="event-popup-facts">
-                    <li>
-                        <span class="event-popup-icon" aria-hidden="true">📅</span>
-                        <div>
-                            <span class="event-popup-label">Fecha</span>
-                            <strong>Sábado 7 de noviembre de 2026</strong>
-                            <span>6:00 pm</span>
-                        </div>
-                    </li>
-                    <li>
-                        <span class="event-popup-icon" aria-hidden="true">💲</span>
-                        <div>
-                            <span class="event-popup-label">Valor</span>
-                            <strong>$160.000 COP por relevo</strong>
-                            <span>Inscripciones hasta el jueves 5 de noviembre</span>
-                        </div>
-                    </li>
-                    <li>
-                        <span class="event-popup-icon" aria-hidden="true">📍</span>
-                        <div>
-                            <span class="event-popup-label">Lugar</span>
-                            <strong>Piscina de la Villa Olímpica</strong>
-                            <a href="https://www.google.com/maps/search/?api=1&query=Villa+Ol%C3%ADmpica+Cra.+14+%2348a-48+Monter%C3%ADa" target="_blank" rel="noopener noreferrer">Cra. 14 #48a-48 · Montería, Córdoba</a>
-                        </div>
-                    </li>
-                </ul>
+                <p class="event-popup-lead">Nos vemos en la Piscina Villa Olímpica, Montería, a las 6:00 pm.</p>
 
-                <h3 class="event-popup-subtitle">Categorías por sumatoria de edades</h3>
-                <ul class="event-popup-categories">
-                    <li><span>Infantiles</span> 40 - 44 años</li>
-                    <li><span>Jóvenes</span> 45 - 56 años</li>
-                    <li><span>Mayores</span> 57 - 96 años</li>
-                    <li><span>Máster 1</span> 97 - 140 años</li>
-                    <li><span>Máster 2</span> 141 años y +</li>
-                </ul>
-                <p class="event-popup-note">Relevos femeninos y masculinos · Medallas de oro, plata y bronce por categoría</p>
+                <h3 class="event-popup-subtitle">Gracias a los patrocinadores</h3>
+                <div class="event-popup-sponsors">
+                    <div class="event-popup-sponsor">
+                        <img src="img/dr-innova.png" alt="DR-Innova" width="3472" height="2034">
+                    </div>
+                    <div class="event-popup-sponsor">
+                        <img src="img/Almacen-La-Elegancia.jpg" alt="Almacén La Elegancia" width="818" height="290">
+                    </div>
+                    <div class="event-popup-sponsor">
+                        <img src="img/konkretes.png" alt="Konkretes" width="2448" height="794">
+                    </div>
+                </div>
 
                 <div class="event-popup-actions">
-                    <a class="event-popup-btn event-popup-btn--primary" href="https://wa.me/573196583574?text=Hola%2C%20quiero%20inscribir%20un%20relevo%20en%20la%20IV%20Competencia%20de%20Relevos%20MNM" target="_blank" rel="noopener noreferrer">Inscribirme por WhatsApp</a>
-                    <button type="button" class="event-popup-btn" onclick="closeEventPopup()">Ver la página</button>
+                    <button type="button" class="event-popup-btn event-popup-btn--primary" onclick="closeEventPopup()">Ver la página</button>
                 </div>
             </div>
         </div>
@@ -5995,7 +6013,7 @@
         let lastUpdateTime = null;
         let loadAttempts = 0;
         const MAX_ATTEMPTS = 3;
-        const EVENT_POPUP_SEEN_KEY = 'mnmRelevosPopupSeen';
+        const EVENT_POPUP_SEEN_KEY = 'mnmRelevosClosedNotice';
 
         function openEventPopup() {
             const popup = document.getElementById('eventPopup');
